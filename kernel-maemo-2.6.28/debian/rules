@@ -63,6 +63,7 @@ kernel-stamp: configure-stamp
 modules-stamp: configure-stamp
 	echo "compile $(PRODUCT) kernel modules"
 	cd $(KSRC) && $(MAKE) $(NJOBS) $(EXTRAVERSION) modules
+	$(MAKE) -C $(KSRC) M=debian/joikuspot EXTRAVERSION=$(EXTRAVERSION) modules
 	touch $@
 
 modules-extra: configure-stamp
@@ -80,8 +81,8 @@ clean:
 	dh_testroot
 
 	mkdir -p $(BUILDTMP)
-	$(MAKE) clean
-	-rm -f scripts/basic/{docproc,fixdep,hash} scripts/kconfig/mconf
+	$(MAKE) mrproper
+	-rm -f scripts/basic/{docproc,fixdep,hash} scripts/kconfig/mconf scripts/kconfig/*.o scripts/kconfig/lxdialog/*.o
 	rm -f modules/modversions.h modules/ksyms.ver debian/files conf.vars scripts/cramfs/cramfsck \
 		scripts/cramfs/mkcramfs applied_patches debian/buildinfo stamp-* .config* \
 		debian/$(FLASHER_PACKAGE).postinst

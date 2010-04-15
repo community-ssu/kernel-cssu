@@ -1,3 +1,11 @@
+kernel-maemo (2.6.28-maemo19) fremantle; urgency=low
+
+  * added overclocking (up to 1.2GHz) support, set default max to 600MHz
+  * added Joikuspot module and SLIP support
+  * control: added Provides for new features 
+
+ -- Thomas Tanner <maemo@tannerlab.com>  Sun, 04 Apr 2010 00:00:00 +0100
+
 kernel-maemo (2.6.28-maemo18) fremantle; urgency=low
 
   * add kexec patches to enable kexec support on N900
