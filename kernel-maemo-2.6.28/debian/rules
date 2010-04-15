@@ -25,7 +25,7 @@ KSRC := $(CURDIR)
 export KBUILD_OUTPUT = $(BUILDTMP)
 
 DEFCONFIG := rx51maemo_defconfig
-KVER = $(shell cat $(KSRC)/include/config/kernel.release 2> /dev/null)
+KVER = $(shell cat $(BUILDTMP)/include/config/kernel.release 2> /dev/null)
 ARCH = $(shell dpkg-architecture -qDEB_HOST_ARCH_CPU)
 INCLUDE_HEADERS = acpi asm-generic crypto drm Kbuild keys math-emu media mtd net pcmcia rdma rxrpc scsi sound video xen
 INCLUDE_HEADERS_ARCH = asm-$(ARCH) config linux
@@ -107,26 +107,6 @@ install-kernel:
 			-k $(BUILDTMP)/arch/arm/boot/zImage -v $(RELEASE)
 	#rm -rf debian/fiasco debian/fiasco.deb
 	chmod 644 $(CURDIR)/debian/$(KERNEL_PACKAGE)/boot/zImage-$(RELEASE).fiasco
-
-install-debug: install-modules
-	install -d -m 755 $(CURDIR)/debian/$(DEBUG_PACKAGE)/usr/lib/debug/lib/modules/$(KVER)
-	install $(BUILDTMP)/vmlinux \
-		$(CURDIR)/debian/$(DEBUG_PACKAGE)/usr/lib/debug/vmlinux-$(KVER)
-	chmod a-x $(CURDIR)/debian/$(DEBUG_PACKAGE)/usr/lib/debug/vmlinux-*
-	mkdir -p $(CURDIR)/debian/$(DEBUG_PACKAGE)/lib/modules/$(KVER)
-
-	for f in $$(find $(CURDIR)/debian/$(MODULES_PACKAGE) -name "*.ko"); do \
-		objcopy --only-keep-debug $$f $(CURDIR)/debian/$(DEBUG_PACKAGE)/usr/lib/debug/lib/modules/$(KVER)/$$(basename $$f); \
-		strip --remove-section=.comment --remove-section=.note --strip-unneeded  $(CURDIR)/debian/$(MODULES_PACKAGE)/lib/modules/$(KVER)/$$(basename $$f); \
-		objcopy --add-gnu-debuglink $(CURDIR)/debian/$(DEBUG_PACKAGE)/usr/lib/debug/lib/modules/$(KVER)/$$(basename $$f) $(CURDIR)/debian/$(MODULES_PACKAGE)/lib/modules/$(KVER)/$$(basename $$f); \
-	done
-
-install-modules-debug: install-debug
-	install -d -m 755 $(CURDIR)/debian/$(DEBUG_MODULES_PACKAGE)/lib/modules/$(KVER)
-	-for f in $(DEBUG_MODULES); do \
-		mv $(CURDIR)/debian/$(MODULES_PACKAGE)/lib/modules/$(KVER)/$$f  \
-		   $(CURDIR)/debian/$(DEBUG_MODULES_PACKAGE)/lib/modules/$(KVER)/$$f; \
-	done
 
 install-modules:
 	dh_testdir

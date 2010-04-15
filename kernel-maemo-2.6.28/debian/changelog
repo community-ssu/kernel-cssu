@@ -1,3 +1,11 @@
+kernel-maemo (2.6.28-maemo12) fremantle; urgency=low
+
+  * enabled g_serial and usb ethernet gadget
+  * fix broken installation of modules
+  * add Matan's ppp_async patch
+
+ -- Thomas Tanner <tanner@maemory.com>  Sun, 28 Feb 2010 00:00:00 +0100
+
 kernel-maemo (2.6.28-maemo11) fremantle; urgency=low
 
   * enabled PPP module
