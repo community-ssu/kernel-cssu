@@ -11,3 +11,4 @@ ppp_async_matan.diff
 2.6.28.10.diff
 block2mtd-yoush.diff
 gentoo-fsfixes.diff
+kexec.diff

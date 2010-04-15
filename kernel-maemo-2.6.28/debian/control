@@ -2,7 +2,7 @@ Source: kernel-maemo
 Section: utils
 Priority: optional
 Maintainer: Thomas Tanner <maemo@tannerlab.com>
-XSBC-Bugtracker: mailto:maemo-bugs@tannerlab.com
+XSBC-Bugtracker: http://talk.maemo.org/showthread.php?t=43420
 XSBC-Original-Maintainer:  Yauheni Kaliuta <yauheni.kaliuta@nokia.com>
 Build-Depends: debhelper (>= 4.0.0), quilt, sdk-fiasco-gen, libncurses5-dev
 Build-Depends-Indep: bzip2
@@ -11,17 +11,19 @@ Standards-Version: 3.8.0
 Package: kernel-maemo
 Architecture: armel
 Description: Flashable Linux kernel
- This package provides a flashable kernel image
+ This package provides a flashable kernel image.
+ Use the kernel-flasher-maemo package to automatically flash it.
 
 Package: kernel-flasher-maemo
 Section: user/system
 Architecture: armel
 Pre-Depends: kernel-maemo (= ${binary:Version}), kernel-modules-maemo (= ${binary:Version}), softupd (>= 0.4.0)
-Recommends: usbip, iptables, mtd-utils
+Recommends: usbip, iptables, mtd-utils, kexec-tools
 Description: Linux kernel updater for an enhanced Maemo 5 kernel 2.6.28.10
  This package will flash the kernel image upon installation
  and eat kernel's files from /boot. If you want to revert to the stock
- kernel, run "apt-get install --reinstall kernel kernel-flasher" as root.
+ kernel, run "apt-get install --reinstall kernel kernel-flasher" as root
+ or use the flasher to flash the extracted zImage from the firmware image.
  .
  This custom kernel contains additional modules for IPv6, packet filtering,
  QoS,  NAT, tunneling, kernel configuration, Wifi mesh networking,
@@ -29,9 +31,10 @@ Description: Linux kernel updater for an enhanced Maemo 5 kernel 2.6.28.10
  NTFS read support, ISO9660, UDF, CIFS, automounter,
  UNIONFS, device mapper and dm-loop, cryptography, cryptoloop,
  EFI partitions, UTF8 codepages, mouse+joystick input, PPP,
- serial support, USB/IP and generic USB device drivers.
+ serial support, USB/IP and generic USB device drivers
+ and kexec support.
  .
- Know bugs: Touchscreen calibration (osso-applet-screencalibration) is incompatible
+ Known bugs: Touchscreen calibration (osso-applet-screencalibration) is incompatible
  with the enabled evdev modules. You need to use the stock Nokia kernel for calibration.
 XB-Maemo-Icon-26:
  iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAABmJLR0QAAAAA

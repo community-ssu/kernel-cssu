@@ -1,0 +1,156 @@
+--- kernel-maemo-2.6.28.orig/arch/arm/boot/compressed/head.S
++++ kernel-maemo-2.6.28/arch/arm/boot/compressed/head.S
+@@ -27,6 +27,14 @@
+ 		.macro	writeb, ch, rb
+ 		mcr	p14, 0, \ch, c0, c5, 0
+ 		.endm
++elif defined(CONFIG_CPU_V7)
++		.macro	loadsp, rb
++		.endm
++		.macro  writeb, ch, rb
++wait:		mrc	p14, 0, pc, c0, c1, 0
++		bcs	wait
++		mcr	p14, 0, \ch, c0, c5, 0
++		.endm
+ #else
+ 		.macro	loadsp, rb
+ 		.endm
+--- kernel-maemo-2.6.28.orig/arch/arm/boot/compressed/misc.c
++++ kernel-maemo-2.6.28/arch/arm/boot/compressed/misc.c
+@@ -47,6 +47,17 @@
+ 	asm("mcr p14, 0, %0, c0, c5, 0" : : "r" (ch));
+ }
+ 
++#elif defined(CONFIG_CPU_V7)
++
++static void icedcc_putc(int ch)
++{
++	asm(
++	"wait:	mrc	p14, 0, pc, c0, c1, 0			\n\
++		bcs	wait					\n\
++		mcr	p14, 0, %0, c0, c5, 0			"
++	: : "r" (ch));
++}
++
+ #else
+ 
+ static void icedcc_putc(int ch)
+--- kernel-maemo-2.6.28.orig/arch/arm/include/asm/cacheflush.h
++++ kernel-maemo-2.6.28/arch/arm/include/asm/cacheflush.h
+@@ -138,16 +138,16 @@
+  *	Please note that the implementation of these, and the required
+  *	effects are cache-type (VIVT/VIPT/PIPT) specific.
+  *
+- *	flush_cache_kern_all()
++ *	flush_kern_all()
+  *
+  *		Unconditionally clean and invalidate the entire cache.
+  *
+- *	flush_cache_user_mm(mm)
++ *	flush_user_all()
+  *
+  *		Clean and invalidate all user space cache entries
+  *		before a change of page tables.
+  *
+- *	flush_cache_user_range(start, end, flags)
++ *	flush_user_range(start, end, flags)
+  *
+  *		Clean and invalidate a range of cache entries in the
+  *		specified address space before a change of page tables.
+@@ -163,6 +163,20 @@
+  *		- start  - virtual start address
+  *		- end    - virtual end address
+  *
++ *	coherent_user_range(start, end)
++ *
++ *		Ensure coherency between the Icache and the Dcache in the
++ *		region described by start, end.  If you have non-snooping
++ *		Harvard caches, you need to implement this function.
++ *		- start  - virtual start address
++ *		- end    - virtual end address
++ *
++ *	flush_kern_dcache_area(kaddr, size)
++ *
++ *		Ensure that the data held in page is written back.
++ *		- kaddr  - page address
++ *		- size   - region size
++ *
+  *	DMA Cache Coherency
+  *	===================
+  *
+--- kernel-maemo-2.6.28.orig/arch/arm/kernel/debug.S
++++ kernel-maemo-2.6.28/arch/arm/kernel/debug.S
+@@ -49,6 +49,26 @@
+ 1002:
+ 		.endm
+ 
++#elif defined(CONFIG_CPU_V7)
++
++		.macro	addruart, rx
++		.endm
++
++		.macro	senduart, rd, rx
++		mcr	p14, 0, \rd, c0, c5, 0
++		.endm
++
++		.macro  busyuart, rd, rx
++busy:		mrc	p14, 0, pc, c0, c1, 0
++		bcs	busy
++		.endm
++
++		.macro	waituart, rd, rx
++wait:		mrc	p14, 0, pc, c0, c1, 0
++		bcs	wait
++
++		.endm
++
+ #else
+ 
+ 		.macro	addruart, rx
+--- kernel-maemo-2.6.28.orig/arch/arm/mm/mmu.c
++++ kernel-maemo-2.6.28/arch/arm/mm/mmu.c
+@@ -953,4 +953,6 @@
+ 		pmd[1] = __pmd(pmdval + (1 << (PGDIR_SHIFT - 1)));
+ 		flush_pmd_entry(pmd);
+ 	}
++
++	local_flush_tlb_all();
+ }
+--- kernel-maemo-2.6.28.orig/arch/arm/mm/proc-v6.S
++++ kernel-maemo-2.6.28/arch/arm/mm/proc-v6.S
+@@ -56,8 +56,6 @@
+  *	to what would be the reset vector.
+  *
+  *	- loc   - location to jump to for soft reset
+- *
+- *	It is assumed that:
+  */
+ 	.align	5
+ ENTRY(cpu_v6_reset)
+--- kernel-maemo-2.6.28.orig/arch/arm/mm/proc-v7.S
++++ kernel-maemo-2.6.28/arch/arm/mm/proc-v7.S
+@@ -28,7 +28,14 @@
+ ENDPROC(cpu_v7_proc_init)
+ 
+ ENTRY(cpu_v7_proc_fin)
+-	mov	pc, lr
++	stmfd	sp!, {lr}
++	cpsid	if				@ disable interrupts
++	bl	v7_flush_kern_cache_all
++	mrc	p15, 0, r0, c1, c0, 0		@ ctrl register
++	bic	r0, r0, #0x1000			@ ...i............
++	bic	r0, r0, #0x0006			@ .............ca.
++	mcr	p15, 0, r0, c1, c0, 0		@ disable caches
++	ldmfd	sp!, {pc}
+ ENDPROC(cpu_v7_proc_fin)
+ 
+ /*
+@@ -39,8 +46,6 @@
+  *	to what would be the reset vector.
+  *
+  *	- loc   - location to jump to for soft reset
+- *
+- *	It is assumed that:
+  */
+ 	.align	5
+ ENTRY(cpu_v7_reset)

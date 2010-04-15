@@ -1,3 +1,10 @@
+kernel-maemo (2.6.28-maemo18) fremantle; urgency=low
+
+  * add kexec patches to enable kexec support on N900
+  * control: TMO thread as bugtracker. mention new features
+
+ -- Thomas Tanner <maemo@tannerlab.com>  Wed, 31 Mar 2010 00:00:00 +0100
+
 kernel-maemo (2.6.28-maemo17) fremantle; urgency=low
 
   * set architecture for all packages to armel
