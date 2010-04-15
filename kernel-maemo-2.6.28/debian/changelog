@@ -1,3 +1,12 @@
+kernel-maemo (2.6.28-maemo20) fremantle; urgency=low
+
+  * added underclocking (125MHz) support, set default min. to 250MHz
+  * workaround: ignore min=125MHz and max=600MHz requests form default pmconfig and telephone app
+    (accepted replacement values would be, e.g.,  124999 and 599000)
+  * add Matan's bq27200 patch enable the module
+
+ -- Thomas Tanner <maemo@tannerlab.com>  Fri, 09 Apr 2010 00:00:00 +0100
+
 kernel-maemo (2.6.28-maemo19) fremantle; urgency=low
 
   * added overclocking (up to 1.2GHz) support, set default max to 600MHz
