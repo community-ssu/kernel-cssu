@@ -1,3 +1,13 @@
+kernel-maemo (2.6.28-maemo22) fremantle; urgency=low
+
+   * support dsp rate customization via /sys/power/dsp_opps_rate
+   * voltage customization renamed to /sys/power/vdd1_opps_vsel
+   * replace 810MHz with 805MHz
+   * increase voltage for 1.1GHz
+   * increase DSP rate for 1.1/1.15GHz to 520MHz
+
+ -- Thomas Tanner <maemo@tannerlab.com>  Tue, 13 Apr 2010 00:00:00 +0100
+
 kernel-maemo (2.6.28-maemo21) fremantle; urgency=low
 
    * support voltage customization via /sys/power/sr_vdd1_opps_vsel (patch by Matan)

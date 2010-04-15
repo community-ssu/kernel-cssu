@@ -4,11 +4,11 @@ set -e
 
 cd /lib/modules
 
+rm -f /lib/modules/current
 ls -1d * | grep -v current | while read i; do
    /sbin/depmod $i || :
 done
-rm -f /lib/modules/current
-ln -s /lib/modules/@KVER@ /lib/modules/current
+ln -s @KVER@ /lib/modules/current
 
 #DEBHELPER#
 
