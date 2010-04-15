@@ -1,0 +1,6 @@
+#!/bin/sh
+
+rm -rf  /lib/modules/2.6.28.10maemo-omap1
+
+#DEBHELPER#
+

@@ -1,0 +1,13 @@
+#!/bin/sh
+
+# move old upstart scripts out of the way
+cd /etc/event.d
+test -f kernel && mv kernel /root/kernel.upstart.old
+test -f kernel-maemo && mv kernel-maemo /root/kernel-maemo.upstart.old
+cd /etc
+test -f lastboot && rm lastboot
+test -f lastreboot && rm lastreboot
+
+#DEBHELPER#
+
+exit 0

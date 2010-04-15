@@ -1,0 +1,7 @@
+kernel-maemo (2.6.28-maemo23) fremantle; urgency=low
+
+   * renamed package to kernel-power due to trademark issues
+   * transitional package to kernel-power
+
+ -- Thomas Tanner <maemo@tannerlab.com>  Wed, 14 Apr 2010 00:00:00 +0100
+

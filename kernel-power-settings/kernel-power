@@ -1,0 +1,15 @@
+start on started dsme
+stop on starting shutdown
+service
+console none
+script
+	test -f /etc/lastboot && TDIFF=$(expr $(date +%s) - $(stat -t /etc/lastboot |awk '{print $14}'))
+	if test -z "$TDIFF" || test "$TDIFF" -gt 300; then
+		touch /etc/lastboot
+		test -x /usr/sbin/kernel-load || exit 1
+		/usr/sbin/kernel-load
+		exit 0
+	else
+		exit 1
+	fi
+end script
