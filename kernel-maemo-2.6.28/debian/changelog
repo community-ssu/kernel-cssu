@@ -1,3 +1,10 @@
+kernel-maemo (2.6.28-maemo14) fremantle; urgency=low
+
+  * upgrade to latest Nokia kernel 20100903+0m5
+  * control: add note about touchscreen calibration bug
+
+ -- Thomas Tanner <maemo@tannerlab.com>  Tue, 23 Mar 2010 00:00:00 +0100
+
 kernel-maemo (2.6.28-maemo13) fremantle; urgency=low
 
   * control: rename kernel-module* to kernel-feature*, add qos
@@ -114,6 +121,187 @@ kernel (2.6.28-2010maemo1) fremantle; urgency=low
   * first custom PR1.1 kernel
 
  -- Thomas Tanner <tanner@maemory.com>  Thu, 04 Feb 2010 00:00:00 +0100
+
+kernel (2.6.28-20100903+0m5) unstable; urgency=low
+
+  * This entry has been added by BIFH queue processor
+    version has been changed to 2.6.28-20100903+0m5
+
+ -- Lyubimkin Eugene <ext-lyubimkin.eugene@nokia.com>  Wed, 03 Mar 2010 10:11:53 +0200
+
+kernel (2.6.28-20100903) unstable; urgency=low
+
+  * Fixes: NB#149006 - PVR: fix kernel crash due to freeing resource still in
+    use 
+
+ -- Eugene Lyubimkin <ext-lyubimkin.eugene@nokia.com>  Tue, 02 Mar 2010 11:57:38 +0200
+
+kernel (2.6.28-20100902) unstable; urgency=low
+
+  * Fixes: NB#154900 - WLAN connection not disconnected after
+    moving out of range 
+
+ -- Eugene Lyubimkin <ext-lyubimkin.eugene@nokia.com>  Fri, 26 Feb 2010 09:30:22 +0200
+
+kernel (2.6.28-20100701) unstable; urgency=low
+
+  * Fixes: NB#155821 - Support for new Gaia version ES2.0
+  * Fixes: NB#152297 - N900 doesn't start charging
+
+ -- Eugene Lyubimkin <ext-lyubimkin.eugene@nokia.com>  Wed, 17 Feb 2010 15:47:00 +0200
+
+kernel (2.6.28-20100602) unstable; urgency=low
+
+  * Fixes: NB#149752 - kernel oops after lots of IO 
+  * Fixes: NB#154526 - Implement Wi-Fi Multimedia (WMM) support
+  * Fixes: NB#143075 - Reduce latency in WLAN VoIP calls without WMM Powersave
+  * Fixes: NB#147683 - Increase timeout for incoming BT connections
+
+ -- Eugene Lyubimkin <ext-lyubimkin.eugene@nokia.com>  Fri, 12 Feb 2010 11:08:02 +0200
+
+kernel (2.6.28-20100601) unstable; urgency=low
+
+  * Fixes: NB#138218 - [REGF]Unable to answer incoming VoIP call via wired
+    headset
+
+ -- Eugene Lyubimkin <ext-lyubimkin.eugene@nokia.com>  Tue, 09 Feb 2010 13:13:21 +0200
+
+kernel (2.6.28-20100504) intrepid; urgency=low
+
+  * Fixes: NB#145909 - remove thumb support from kernel
+  * No changes in any certification category.
+
+ -- Yauheni Kaliuta <yauheni.kaliuta@nokia.com>  Fri, 05 Feb 2010 16:15:24 +0200
+
+kernel (2.6.28-20100503) intrepid; urgency=low
+
+  * Fixes: NB#102554 - Unpaired clk_enable and clk_disable calls in
+    McSPI
+
+ -- Yauheni Kaliuta <yauheni.kaliuta@nokia.com>  Thu, 04 Feb 2010 17:07:49 +0200
+
+kernel (2.6.28-20100502) intrepid; urgency=low
+
+  * Video+fs build
+  * Fixes: NB#155441 - UBI security fix in volue creation
+  * Video/All: 585 lines changed.
+
+ -- Yauheni Kaliuta <yauheni.kaliuta@nokia.com>  Wed, 03 Feb 2010 16:37:55 +0200
+
+kernel (2.6.28-20100501) intrepid; urgency=low
+
+  * Video build
+  * Remove display glitches during certain transitions
+  * Increase stability by removing race conditions in the PVR driver
+  * Fixes: NB#134983 - Avoid visual glitches on the LCD when toggling
+    TV-out
+  * Fixes: NB#143321 - Fix DISPC functional clock calculations
+  * Fixes: NB#150134 - PVR: Fix races in the SGXOSTimer path
+  * Video/All: 585 lines changed.
+
+ -- Yauheni Kaliuta <yauheni.kaliuta@nokia.com>  Tue, 02 Feb 2010 17:28:09 +0200
+
+kernel (2.6.28-20100303) intrepid; urgency=low
+
+  * Net build
+  * Rate index processing fixes in mistrel algorithm.
+  * Fixes: NB#106780 - minstrel: rate_control_get_rate() NULL pointer
+  * Audio/All: 2 lines changed.
+
+ -- Yauheni Kaliuta <yauheni.kaliuta@nokia.com>  Wed, 20 Jan 2010 10:00:20 +0200
+
+kernel (2.6.28-20100302) intrepid; urgency=low
+
+  * Audio build
+  * Fixes: NB#152715 - Improve basic headset detection reliability
+  * Audio/All: 2 lines changed.
+
+ -- Yauheni Kaliuta <yauheni.kaliuta@nokia.com>  Tue, 19 Jan 2010 10:43:55 +0200
+
+kernel (2.6.28-20100301) intrepid; urgency=low
+
+  * Linux-fixes build
+  * Fixes: NB#138476 - optimization for copy_page()
+  * No changes in any certification category.
+
+ -- Yauheni Kaliuta <yauheni.kaliuta@nokia.com>  Mon, 18 Jan 2010 09:36:22 +0200
+
+kernel (2.6.28-20100201) intrepid; urgency=low
+
+  * Fixes: NB#152741 -  Some devices are rebooting when the device is
+    idle
+  * No changes in any certification category.
+
+ -- Yauheni Kaliuta <yauheni.kaliuta@nokia.com>  Tue, 12 Jan 2010 13:08:02 +0200
+
+kernel (2.6.28-20095104) intrepid; urgency=low
+
+  * Camera+dspbridge+peripherals build
+  * Fixes: NB#140333 - Accelerometer module removal may cause hang
+  * No changes in any certification category.
+
+ -- Yauheni Kaliuta <yauheni.kaliuta@nokia.com>  Fri, 18 Dec 2009 14:17:05 +0200
+
+kernel (2.6.28-20095103) intrepid; urgency=low
+
+  * Net+USB+SSI+camera+dspbridge build
+  * Fixes: NB#149165 - DSPBRIDGE: fix infinite busy loop for video
+    recording
+  * Cellular/Common: 48 lines changed.
+
+ -- Yauheni Kaliuta <yauheni.kaliuta@nokia.com>  Thu, 17 Dec 2009 13:20:46 +0200
+
+kernel (2.6.28-20095102) intrepid; urgency=low
+
+  * Net+USB+SSI+camera build
+  * Fixes: NB#145807 - Device Reboot observed in certain scenario.
+  * Fixes: NB#150073 - SBL overflow for resizer is happening too often
+  * Fixes: NB#113978 - H3A statiscs for captured image are corrupted
+  * Fixes: NB#105590 - G_FMT returns wrong image width if it's not
+    divisible by 16.
+  * Cellular/Common: 48 lines changed.
+
+ -- Yauheni Kaliuta <yauheni.kaliuta@nokia.com>  Thu, 17 Dec 2009 09:55:40 +0200
+
+kernel (2.6.28-20095101) intrepid; urgency=low
+
+  * Net+USB+SSI build
+  * Fixes: NB#150485 - SSI driver returns wrong configuration
+  * Cellular/Common: 48 lines changed.
+  * Video/All: 31698 lines changed.
+
+ -- Yauheni Kaliuta <yauheni.kaliuta@nokia.com>  Tue, 15 Dec 2009 17:27:44 +0200
+
+kernel (2.6.28-20095003) intrepid; urgency=low
+
+  * Net+USB build
+  * fix enumeration problem
+  * Fixes: NB#150292 - Re-enumerate USB after rebooting the PC in
+    ACT_DEAD
+  * Fixes: NB#138844 - Kernel crash in bluetooth driver
+  * Fixes: NB#150471 - Free space disappears after PR1.0.1 to PR1.1
+    upgrade
+  * Video/All: 31698 lines changed.
+
+ -- Yauheni Kaliuta <yauheni.kaliuta@nokia.com>  Mon, 14 Dec 2009 14:54:36 +0200
+
+kernel (2.6.28-20095002) intrepid; urgency=low
+
+  * Fs+net+video build
+  * Fixes: NB#140581 - PVR crashes kernel when flushing the Dcache
+  * Video/All: 31698 lines changed.
+
+ -- Yauheni Kaliuta <yauheni.kaliuta@nokia.com>  Wed, 09 Dec 2009 17:37:29 +0200
+
+kernel (2.6.28-20095001) intrepid; urgency=low
+
+  * FS+net build
+  * Fixes: NB#149337 - repeating kernel oopses in ieee80211_beacon_loss
+  * Fixes: NB#148525 - Free space disappears after PR1.0.1 to PR1.1
+    upgrade
+  * No changes in any certification category.
+
+ -- Yauheni Kaliuta <yauheni.kaliuta@nokia.com>  Wed, 09 Dec 2009 09:50:07 +0200
 
 kernel (2.6.28-20094803.3+0m5) intrepid; urgency=low
 
