@@ -4,7 +4,7 @@ Priority: optional
 Maintainer: Thomas Tanner <maemo@tannerlab.com>
 XSBC-Bugtracker: mailto:maemo-bugs@tannerlab.com
 XSBC-Original-Maintainer:  Yauheni Kaliuta <yauheni.kaliuta@nokia.com>
-Build-Depends: debhelper (>= 4.0.0), quilt, sdk-fiasco-gen
+Build-Depends: debhelper (>= 4.0.0), quilt, sdk-fiasco-gen, libncurses5-dev
 Build-Depends-Indep: bzip2
 Standards-Version: 3.8.0
 
