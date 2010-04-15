@@ -13,4 +13,8 @@ block2mtd-yoush.diff
 gentoo-fsfixes.diff
 kexec.diff
 bq_matan.diff
+leds-lp5523.diff
+trig-keyb.diff
+twl-scrollock.diff
+squashfs.diff
 overclock.diff

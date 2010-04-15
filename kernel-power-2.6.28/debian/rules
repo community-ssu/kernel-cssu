@@ -5,26 +5,23 @@ WEEK := $(shell date +%Y%W)
 RELEASE := $(shell dpkg-parsechangelog | awk '/^Version: / { print $$2 }')
 #REVISION := $(shell echo "$(RELEASE)" | sed 's/\(.*\)-\(.*\)/\2/')
 #no need to update modules so often, api is quite stable between weekly releases
-REVISION := maemo
+REVISION := power
 #EXTRAVERSION := EXTRAVERSION-$(REVISION)
 
 PACKAGE := kernel
-FLASHER_PACKAGE := kernel-flasher-maemo
+FLASHER_PACKAGE := kernel-power-flasher
 #SOURCE_PACKAGE := $(PACKAGE)-source
-KERNEL_PACKAGE := $(PACKAGE)-maemo
-MODULES_PACKAGE := $(PACKAGE)-modules-maemo
-HEADERS_PACKAGE := $(PACKAGE)-headers-maemo
-KBUILD_PACKAGE := $(PACKAGE)-kbuild
-DEBUG_PACKAGE := $(PACKAGE)-debug
-DEBUG_MODULES_PACKAGE := $(PACKAGE)-modules-debug
-LIBC_PACKAGE := linux-kernel-headers-maemo
+KERNEL_PACKAGE := $(PACKAGE)-power
+MODULES_PACKAGE := $(PACKAGE)-power-modules
+HEADERS_PACKAGE := $(PACKAGE)-power-headers
+LIBC_PACKAGE := linux-kernel-power-headers
 
 BUILDTMP := $(CURDIR)/debian/build
 #KSRC := $(BUILDTMP)/$(PACKAGE)
 KSRC := $(CURDIR)
 export KBUILD_OUTPUT = $(BUILDTMP)
 
-DEFCONFIG := rx51maemo_defconfig
+DEFCONFIG := rx51power_defconfig
 KVER = $(shell cat $(BUILDTMP)/include/config/kernel.release 2> /dev/null)
 ARCH = $(shell dpkg-architecture -qDEB_HOST_ARCH_CPU)
 INCLUDE_HEADERS = acpi asm-generic crypto drm Kbuild keys math-emu media mtd net pcmcia rdma rxrpc scsi sound video xen
@@ -103,8 +100,6 @@ install-kernel:
 	fiasco-gen -o $(CURDIR)/debian/$(KERNEL_PACKAGE)/boot/zImage-$(RELEASE).fiasco -g \
 			-k $(BUILDTMP)/arch/arm/boot/zImage -v $(RELEASE)
 	chmod 644 $(CURDIR)/debian/$(KERNEL_PACKAGE)/boot/zImage-$(RELEASE).fiasco
-	#mkdir -p $(CURDIR)/debian/$(KERNEL_PACKAGE)/etc/event.d
-	#cp $(CURDIR)/debian/upstart $(CURDIR)/debian/$(KERNEL_PACKAGE)/etc/event.d/kernel-maemo
 
 install-modules:
 	dh_testdir

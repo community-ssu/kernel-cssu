@@ -1,5 +1,5 @@
---- kernel-maemo-2.6.28.orig/arch/arm/mach-omap2/omap3-opp.h
-+++ kernel-maemo-2.6.28/arch/arm/mach-omap2/omap3-opp.h
+--- kernel-power-2.6.28.orig/arch/arm/mach-omap2/omap3-opp.h
++++ kernel-power-2.6.28/arch/arm/mach-omap2/omap3-opp.h
 @@ -4,13 +4,23 @@
  #include <mach/omap-pm.h>
  
@@ -18,7 +18,7 @@
  #define S500M   500000000
  #define S250M   250000000
 -#define S125M   125000000
-+#define S125M   124999000
++#define S125M   124999000 /* temporary workaround to ignore telephone app's stubborn request for the lowest available frequency */
  
  /* DSP speeds */
 +#define S520M   520000000
@@ -71,8 +71,8 @@
 +extern struct omap_opp omap3_l3_rate_table[];
  
  #endif
---- kernel-maemo-2.6.28.orig/arch/arm/plat-omap/include/mach/omap34xx.h
-+++ kernel-maemo-2.6.28/arch/arm/plat-omap/include/mach/omap34xx.h
+--- kernel-power-2.6.28.orig/arch/arm/plat-omap/include/mach/omap34xx.h
++++ kernel-power-2.6.28/arch/arm/plat-omap/include/mach/omap34xx.h
 @@ -114,7 +114,8 @@
  #define VDD2_OPP3	0x3
  
@@ -83,8 +83,8 @@
  #define MIN_VDD2_OPP	VDD2_OPP1
  #define MAX_VDD2_OPP	VDD2_OPP3
  
---- kernel-maemo-2.6.28.orig/arch/arm/mach-omap2/smartreflex.c
-+++ kernel-maemo-2.6.28/arch/arm/mach-omap2/smartreflex.c
+--- kernel-power-2.6.28.orig/arch/arm/mach-omap2/smartreflex.c
++++ kernel-power-2.6.28/arch/arm/mach-omap2/smartreflex.c
 @@ -513,7 +513,7 @@
  	sr->req_opp_no = target_opp_no;
  
@@ -102,26 +102,8 @@
  			nvalue_reciprocal = sr->opp1_nvalue;
  			break;
  		default:
-@@ -564,6 +565,8 @@
- 			(ERRCONFIG_VPBOUNDINTEN | ERRCONFIG_VPBOUNDINTST));
- 
- 	if (sr->srid == SR1) {
-+		/*printk(KERN_NOTICE "OPP%d setting voltage %d\n",
-+								target_opp_no,mpu_opps[target_opp_no].vsel);*/
- 		errminlimit = (target_opp_no > SR_MAX_LOW_OPP) ?
- 			SR1_ERRMINLIMIT_HIGHOPP : SR1_ERRMINLIMIT_LOWOPP;
- 
-@@ -866,6 +869,8 @@
- 	current_opp_no = get_opp_no(current_opp);
- 
- 	if (vdd == PRCM_VDD1) {
-+		/*printk(KERN_DEBUG "OPP%d bypass setting voltage %d\n",
-+								target_opp_no,target_vsel);*/
- 		t2_smps_steps = abs(target_vsel - current_vsel);
- 		errorgain = (target_opp_no > SR_MAX_LOW_OPP) ?
- 			PRM_VP1_CONFIG_ERRORGAIN_HIGHOPP :
---- kernel-maemo-2.6.28.orig/arch/arm/plat-omap/cpu-omap.c
-+++ kernel-maemo-2.6.28/arch/arm/plat-omap/cpu-omap.c
+--- kernel-power-2.6.28.orig/arch/arm/plat-omap/cpu-omap.c
++++ kernel-power-2.6.28/arch/arm/plat-omap/cpu-omap.c
 @@ -148,10 +148,13 @@
  							VERY_HI_RATE) / 1000;
  	}
@@ -139,8 +121,8 @@
  	policy->cur = omap_getspeed(0);
  
  	policy->cpuinfo.transition_latency = 300 * 1000;
---- kernel-maemo-2.6.28.orig/arch/arm/mach-omap2/smartreflex.h
-+++ kernel-maemo-2.6.28/arch/arm/mach-omap2/smartreflex.h
+--- kernel-power-2.6.28.orig/arch/arm/mach-omap2/smartreflex.h
++++ kernel-power-2.6.28/arch/arm/mach-omap2/smartreflex.h
 @@ -254,7 +254,7 @@
  /* XXX: end remove/move */
  
@@ -150,8 +132,8 @@
  
  /* XXX: find more appropriate place for these once DVFS is in place */
  extern u32 current_vdd1_opp;
---- kernel-maemo-2.6.28.orig/drivers/cpufreq/cpufreq.c
-+++ kernel-maemo-2.6.28/drivers/cpufreq/cpufreq.c
+--- kernel-power-2.6.28.orig/drivers/cpufreq/cpufreq.c
++++ kernel-power-2.6.28/drivers/cpufreq/cpufreq.c
 @@ -465,7 +465,7 @@
  /**
   * cpufreq_per_cpu_attr_write() / store_##file_name() - sysfs write access
@@ -161,13 +143,12 @@
  static ssize_t store_##file_name					\
  (struct cpufreq_policy *policy, const char *buf, size_t count)		\
  {									\
-@@ -479,15 +479,16 @@
+@@ -479,15 +479,15 @@
  	ret = sscanf (buf, "%u", &new_policy.object);			\
  	if (ret != 1)							\
  		return -EINVAL;						\
 -									\
 -	ret = __cpufreq_set_policy(policy, &new_policy);		\
-+	printk(KERN_DEBUG "cpufreq: request %u -> %u\n",policy->object,new_policy.object);	\
 +	if (new_policy.object != ignore && new_policy.object >= 100000)	\
 +	    ret = __cpufreq_set_policy(policy, &new_policy);		\
  	policy->user_policy.object = policy->object;			\
@@ -182,8 +163,8 @@
  
  /**
   * show_cpuinfo_cur_freq - current CPU frequency as detected by hardware
---- kernel-maemo-2.6.28.orig/arch/arm/mach-omap2/pm.c
-+++ kernel-maemo-2.6.28/arch/arm/mach-omap2/pm.c
+--- kernel-power-2.6.28.orig/arch/arm/mach-omap2/pm.c
++++ kernel-power-2.6.28/arch/arm/mach-omap2/pm.c
 @@ -39,6 +39,62 @@
  #include "prm-regbits-34xx.h"
  #include "pm.h"
@@ -307,7 +288,7 @@
 +	int i;
 +	char *b=buf;
 +	for(i=1;i<=MAX_VDD1_OPP;i++)
-+		b+=sprintf(b, "%lu ", dsp_opps[i].rate);
++		b+=sprintf(b, "%u ", (u16) (dsp_opps[i].rate/1000000));
 +	b+=sprintf(b, "\n");
 +	return b-buf;
 +}
@@ -316,10 +297,10 @@
 +					struct kobj_attribute *attr,
 +					const char *buf, size_t n)
 +{
-+	unsigned long value[16];
++	u16 value[16];
 +	int i;
 +
-+	if (sscanf(buf, "%lu %lu %lu %lu %lu %lu %lu %lu %lu %lu %lu %lu %lu %lu %lu %lu",
++	if (sscanf(buf, "%hu %hu %hu %hu %hu %hu %hu %hu %hu %hu %hu %hu %hu %hu %hu %hu",
 +				&value[0], &value[1], &value[2], &value[3],
 +				&value[4], &value[5], &value[6], &value[7],
 +				&value[8], &value[9], &value[10], &value[11],
@@ -332,8 +313,8 @@
 +	mutex_lock(&dvfs_mutex);
 +
 +	for(i=1;i<=MAX_VDD1_OPP;i++) {
-+		if(value[i-1]<=600000) {
-+			dsp_opps[i].rate = value[i-1];
++		if(value[i-1]<=600) {
++			dsp_opps[i].rate = 1000000 * (u32)value[i-1];
 +		}
 +	}
 +

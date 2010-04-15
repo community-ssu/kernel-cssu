@@ -1,3 +1,14 @@
+kernel-power (2.6.28-maemo24) fremantle; urgency=low
+
+   * renamed package to kernel-power due to trademark issues
+   * control: updated (renamed to kernel-power*), new features in Provides
+   * DSP frequencies are specified as MHz
+   * enabled crypto seqiv and twofish modules
+   * added patches by Matan Ziv-Av: squashfs and led triggers and bugfixes
+   * squashfs is build as module
+
+ -- Thomas Tanner <maemo@tannerlab.com>  Wed, 14 Apr 2010 00:00:00 +0100
+
 kernel-maemo (2.6.28-maemo22) fremantle; urgency=low
 
    * support dsp rate customization via /sys/power/dsp_opps_rate
