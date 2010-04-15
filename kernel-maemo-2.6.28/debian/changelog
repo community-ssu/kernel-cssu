@@ -1,3 +1,13 @@
+kernel-maemo (2.6.28-maemo10) fremantle; urgency=low
+
+  * integrate mobile hotspot patches from
+    http://vcs.maemo.org/svn/mobilehotspot/trunk/patches/
+  * enable QoS and more netfilter modules for hotspot
+  * specify Provides for different enhancements
+  * remove fiasco-gen dependency and download the package directly
+
+ -- Thomas Tanner <tanner@maemory.com>  Wed, 17 Feb 2010 00:00:00 +0100
+
 kernel-maemo (2.6.28-maemo9) fremantle; urgency=low
 
   * switch package name due to some other broken package in extras-devel

@@ -4,7 +4,7 @@ Priority: optional
 Maintainer: Thomas Tanner <tanner@maemory.com>
 XSBC-Original-Maintainer:  Yauheni Kaliuta <yauheni.kaliuta@nokia.com>
 XSBC-Bugtracker: mailto:tanner@maemory.com
-Build-Depends: debhelper (>= 4.0.0), fiasco-gen, quilt
+Build-Depends: debhelper (>= 4.0.0), quilt, sdk-fiasco-gen
 Build-Depends-Indep: bzip2
 Standards-Version: 3.8.0
 
@@ -115,5 +115,9 @@ Description: Linux Kernel Headers for development
 Package: kernel-modules-maemo
 Architecture: armel
 Depends: module-init-tools (>= 3.3), kernel-maemo (= ${binary:Version})
+Provides: kernel-modules-netfilter, kernel-modules-ipv6, kernel-modules-ext4, kernel-modules-xfs, kernel-modules-reiserfs,
+  kernel-modules-nilfs2, kernel-modules-ntfs-read, kernel-modules-udf, kernel-modules-cifs, kernel-modules-automounter,
+  kernel-modules-unionfs, kernel-modules-crypto, kernel-modules-dmloop, kernel-modules-utf8, kernel-modules-mousejoy,
+  kernel-modules-usbip
 Description: Linux kernel modules
  This package provides kernel modules

@@ -29,6 +29,7 @@ INCLUDE_HEADERS = acpi asm-generic asm-$(ARCH) config crypto drm Kbuild keys lin
 RM_SCRIPTS = bloat-o-meter show_delta
 DEBUG_MODULES = oprofile.ko
 MAKE += $(MAKEFLAGS)
+FIASCOURL = "http://repository.maemo.org/pool/fremantle/non-free/s/sdk-fiasco-gen/sdk-fiasco-gen_2.8.2.0.1+0m5_armel.deb"
 
 ifneq (,$(findstring parallel,$(DEB_BUILD_OPTIONS)))
     PARALLEL_JOBS := $(shell echo $(DEB_BUILD_OPTIONS) | \
@@ -110,8 +111,12 @@ install-kernel:
 	dh_installdirs
 
 	install -d -m 755 $(CURDIR)/debian/$(KERNEL_PACKAGE)/boot
+	#wget -Odebian/fiasco.deb $(FIASCOURL) && dpkg-deb -x debian/fiasco.deb debian/fiasco
+	#debian/fiasco/usr/bin/fiasco-gen -o $(CURDIR)/debian/$(KERNEL_PACKAGE)/boot/zImage-$(RELEASE).fiasco -g \
+	#		-k $(KSRC)/arch/arm/boot/zImage -v $(RELEASE)
 	fiasco-gen -o $(CURDIR)/debian/$(KERNEL_PACKAGE)/boot/zImage-$(RELEASE).fiasco -g \
 			-k $(KSRC)/arch/arm/boot/zImage -v $(RELEASE)
+	#rm -rf debian/fiasco debian/fiasco.deb
 	chmod 644 $(CURDIR)/debian/$(KERNEL_PACKAGE)/boot/zImage-$(RELEASE).fiasco
 
 install-debug: install-modules
