@@ -1,0 +1,388 @@
+--- kernel-maemo-2.6.28.test.orig/fs/ext4/ext4.h
++++ kernel-maemo-2.6.28.test/fs/ext4/ext4.h
+@@ -255,6 +255,7 @@
+ #define EXT4_STATE_NEW			0x00000002 /* inode is newly created */
+ #define EXT4_STATE_XATTR		0x00000004 /* has in-inode xattrs */
+ #define EXT4_STATE_NO_EXPAND		0x00000008 /* No space for expansion */
++#define EXT4_STATE_DA_ALLOC_CLOSE	0x00000010 /* Alloc DA blks on close */
+ 
+ /* Used to pass group descriptor data when online resize is done */
+ struct ext4_new_group_input {
+@@ -302,7 +303,9 @@
+ #define EXT4_IOC_GROUP_EXTEND		_IOW('f', 7, unsigned long)
+ #define EXT4_IOC_GROUP_ADD		_IOW('f', 8, struct ext4_new_group_input)
+ #define EXT4_IOC_MIGRATE		_IO('f', 9)
++ /* note ioctl 10 reserved for an early version of the FIEMAP ioctl */
+  /* note ioctl 11 reserved for filesystem-independent FIEMAP ioctl */
++#define EXT4_IOC_ALLOC_DA_BLKS		_IO('f', 12)
+ 
+ /*
+  * ioctl commands in 32 bit emulation
+@@ -1092,6 +1095,7 @@
+ extern void ext4_truncate(struct inode *);
+ extern void ext4_set_inode_flags(struct inode *);
+ extern void ext4_get_inode_flags(struct ext4_inode_info *);
++extern int ext4_alloc_da_blocks(struct inode *inode);
+ extern void ext4_set_aops(struct inode *inode);
+ extern int ext4_writepage_trans_blocks(struct inode *);
+ extern int ext4_meta_trans_blocks(struct inode *, int nrblocks, int idxblocks);
+--- kernel-maemo-2.6.28.test.orig/fs/ext4/file.c
++++ kernel-maemo-2.6.28.test/fs/ext4/file.c
+@@ -33,9 +33,14 @@
+  */
+ static int ext4_release_file(struct inode *inode, struct file *filp)
+ {
++	if (EXT4_I(inode)->i_state & EXT4_STATE_DA_ALLOC_CLOSE) {
++		ext4_alloc_da_blocks(inode);
++		EXT4_I(inode)->i_state &= ~EXT4_STATE_DA_ALLOC_CLOSE;
++	}
+ 	/* if we are the last writer on the inode, drop the block reservation */
+ 	if ((filp->f_mode & FMODE_WRITE) &&
+-			(atomic_read(&inode->i_writecount) == 1))
++			(atomic_read(&inode->i_writecount) == 1) &&
++		        !EXT4_I(inode)->i_reserved_data_blocks)
+ 	{
+ 		down_write(&EXT4_I(inode)->i_data_sem);
+ 		ext4_discard_preallocations(inode);
+--- kernel-maemo-2.6.28.test.orig/fs/ext4/inode.c
++++ kernel-maemo-2.6.28.test/fs/ext4/inode.c
+@@ -46,10 +46,8 @@
+ static inline int ext4_begin_ordered_truncate(struct inode *inode,
+ 					      loff_t new_size)
+ {
+-	return jbd2_journal_begin_ordered_truncate(
+-					EXT4_SB(inode->i_sb)->s_journal,
+-					&EXT4_I(inode)->jinode,
+-					new_size);
++	return jbd2_journal_begin_ordered_truncate(&EXT4_I(inode)->jinode,
++						   new_size);
+ }
+ 
+ static void ext4_invalidatepage(struct page *page, unsigned long offset);
+@@ -1021,6 +1019,14 @@
+ 	EXT4_I(inode)->i_reserved_data_blocks -= used;
+ 
+ 	spin_unlock(&EXT4_I(inode)->i_block_reservation_lock);
++
++	/*
++	 * If have done all the pending block allocation and if the we
++	 * don't have any writer on the inode, we can discard the
++	 * inode's preallocations.
++	 */
++	if (!total && (atomic_read(&inode->i_writecount) == 0))
++		ext4_discard_preallocations(inode);
+ }
+ 
+ /*
+@@ -2748,6 +2754,48 @@
+ 	return;
+ }
+ 
++/*
++ * Force all delayed allocation blocks to be allocated for a given inode.
++ */
++int ext4_alloc_da_blocks(struct inode *inode)
++{
++	if (!EXT4_I(inode)->i_reserved_data_blocks &&
++	    !EXT4_I(inode)->i_reserved_meta_blocks)
++		return 0;
++
++	/*
++	 * We do something simple for now.  The filemap_flush() will
++	 * also start triggering a write of the data blocks, which is
++	 * not strictly speaking necessary (and for users of
++	 * laptop_mode, not even desirable).  However, to do otherwise
++	 * would require replicating code paths in:
++	 * 
++	 * ext4_da_writepages() ->
++	 *    write_cache_pages() ---> (via passed in callback function)
++	 *        __mpage_da_writepage() -->
++	 *           mpage_add_bh_to_extent()
++	 *           mpage_da_map_blocks()
++	 *
++	 * The problem is that write_cache_pages(), located in
++	 * mm/page-writeback.c, marks pages clean in preparation for
++	 * doing I/O, which is not desirable if we're not planning on
++	 * doing I/O at all.
++	 *
++	 * We could call write_cache_pages(), and then redirty all of
++	 * the pages by calling redirty_page_for_writeback() but that
++	 * would be ugly in the extreme.  So instead we would need to
++	 * replicate parts of the code in the above functions,
++	 * simplifying them becuase we wouldn't actually intend to
++	 * write out the pages, but rather only collect contiguous
++	 * logical block extents, call the multi-block allocator, and
++	 * then update the buffer heads with the block allocations.
++	 * 
++	 * For now, though, we'll cheat by calling filemap_flush(),
++	 * which will map the blocks, and start the I/O, but not
++	 * actually wait for the I/O to complete.
++	 */
++	return filemap_flush(inode->i_mapping);
++}
+ 
+ /*
+  * bmap() is special.  It gets used by applications such as lilo and by
+@@ -3757,6 +3805,9 @@
+ 	if (!ext4_can_truncate(inode))
+ 		return;
+ 
++	if (inode->i_size == 0)
++		ei->i_state |= EXT4_STATE_DA_ALLOC_CLOSE;
++
+ 	if (EXT4_I(inode)->i_flags & EXT4_EXTENTS_FL) {
+ 		ext4_ext_truncate(inode);
+ 		return;
+--- kernel-maemo-2.6.28.test.orig/fs/ext4/ioctl.c
++++ kernel-maemo-2.6.28.test/fs/ext4/ioctl.c
+@@ -263,6 +263,20 @@
+ 		return err;
+ 	}
+ 
++	case EXT4_IOC_ALLOC_DA_BLKS:
++	{
++		int err;
++		if (!is_owner_or_cap(inode))
++			return -EACCES;
++
++		err = mnt_want_write(filp->f_path.mnt);
++		if (err)
++			return err;
++		err = ext4_alloc_da_blocks(inode);
++		mnt_drop_write(filp->f_path.mnt);
++		return err;
++	}
++
+ 	default:
+ 		return -ENOTTY;
+ 	}
+--- kernel-maemo-2.6.28.test.orig/fs/ext4/namei.c
++++ kernel-maemo-2.6.28.test/fs/ext4/namei.c
+@@ -2298,7 +2298,7 @@
+ 	struct inode *old_inode, *new_inode;
+ 	struct buffer_head *old_bh, *new_bh, *dir_bh;
+ 	struct ext4_dir_entry_2 *old_de, *new_de;
+-	int retval;
++	int retval, force_da_alloc = 0;
+ 
+ 	old_bh = new_bh = dir_bh = NULL;
+ 
+@@ -2436,6 +2436,7 @@
+ 		ext4_mark_inode_dirty(handle, new_inode);
+ 		if (!new_inode->i_nlink)
+ 			ext4_orphan_add(handle, new_inode);
++		force_da_alloc = 1;
+ 	}
+ 	retval = 0;
+ 
+@@ -2444,6 +2445,8 @@
+ 	brelse(old_bh);
+ 	brelse(new_bh);
+ 	ext4_journal_stop(handle);
++	if (retval == 0 && force_da_alloc)
++		ext4_alloc_da_blocks(old_inode);
+ 	return retval;
+ }
+ 
+--- kernel-maemo-2.6.28.test.orig/fs/jbd/journal.c
++++ kernel-maemo-2.6.28.test/fs/jbd/journal.c
+@@ -427,7 +427,7 @@
+ }
+ 
+ /*
+- * Called under j_state_lock.  Returns true if a transaction was started.
++ * Called under j_state_lock.  Returns true if a transaction commit was started.
+  */
+ int __log_start_commit(journal_t *journal, tid_t target)
+ {
+@@ -495,7 +495,8 @@
+ 
+ /*
+  * Start a commit of the current running transaction (if any).  Returns true
+- * if a transaction was started, and fills its tid in at *ptid
++ * if a transaction is going to be committed (or is currently already
++ * committing), and fills its tid in at *ptid
+  */
+ int journal_start_commit(journal_t *journal, tid_t *ptid)
+ {
+@@ -505,15 +506,19 @@
+ 	if (journal->j_running_transaction) {
+ 		tid_t tid = journal->j_running_transaction->t_tid;
+ 
+-		ret = __log_start_commit(journal, tid);
+-		if (ret && ptid)
++		__log_start_commit(journal, tid);
++		/* There's a running transaction and we've just made sure
++		 * it's commit has been scheduled. */
++		if (ptid)
+ 			*ptid = tid;
+-	} else if (journal->j_committing_transaction && ptid) {
++		ret = 1;
++	} else if (journal->j_committing_transaction) {
+ 		/*
+ 		 * If ext3_write_super() recently started a commit, then we
+ 		 * have to wait for completion of that transaction
+ 		 */
+-		*ptid = journal->j_committing_transaction->t_tid;
++		if (ptid)
++			*ptid = journal->j_committing_transaction->t_tid;
+ 		ret = 1;
+ 	}
+ 	spin_unlock(&journal->j_state_lock);
+--- kernel-maemo-2.6.28.test.orig/fs/jbd2/checkpoint.c
++++ kernel-maemo-2.6.28.test/fs/jbd2/checkpoint.c
+@@ -686,6 +686,7 @@
+ 	   safely remove this transaction from the log */
+ 
+ 	__jbd2_journal_drop_transaction(journal, transaction);
++	kfree(transaction);
+ 
+ 	/* Just in case anybody was waiting for more transactions to be
+            checkpointed... */
+@@ -760,5 +761,4 @@
+ 	J_ASSERT(journal->j_running_transaction != transaction);
+ 
+ 	jbd_debug(1, "Dropping transaction %d, all done\n", transaction->t_tid);
+-	kfree(transaction);
+ }
+--- kernel-maemo-2.6.28.test.orig/fs/jbd2/commit.c
++++ kernel-maemo-2.6.28.test/fs/jbd2/commit.c
+@@ -361,7 +361,7 @@
+ 	int space_left = 0;
+ 	int first_tag = 0;
+ 	int tag_flag;
+-	int i;
++	int i, to_free = 0;
+ 	int tag_bytes = journal_tag_bytes(journal);
+ 	struct buffer_head *cbh = NULL; /* For transactional checksums */
+ 	__u32 crc32_sum = ~0;
+@@ -997,12 +997,10 @@
+ 	journal->j_committing_transaction = NULL;
+ 	spin_unlock(&journal->j_state_lock);
+ 
+-	if (journal->j_commit_callback)
+-		journal->j_commit_callback(journal, commit_transaction);
+-
+ 	if (commit_transaction->t_checkpoint_list == NULL &&
+ 	    commit_transaction->t_checkpoint_io_list == NULL) {
+ 		__jbd2_journal_drop_transaction(journal, commit_transaction);
++		to_free = 1;
+ 	} else {
+ 		if (journal->j_checkpoint_transactions == NULL) {
+ 			journal->j_checkpoint_transactions = commit_transaction;
+@@ -1021,11 +1019,16 @@
+ 	}
+ 	spin_unlock(&journal->j_list_lock);
+ 
++	if (journal->j_commit_callback)
++		journal->j_commit_callback(journal, commit_transaction);
++
+ 	trace_mark(jbd2_end_commit, "dev %s transaction %d head %d",
+-		   journal->j_devname, journal->j_commit_sequence,
++		   journal->j_devname, commit_transaction->t_tid,
+ 		   journal->j_tail_sequence);
+ 	jbd_debug(1, "JBD: commit %d complete, head %d\n",
+ 		  journal->j_commit_sequence, journal->j_tail_sequence);
++	if (to_free)
++		kfree(commit_transaction);
+ 
+ 	wake_up(&journal->j_wait_done_commit);
+ }
+--- kernel-maemo-2.6.28.test.orig/fs/jbd2/transaction.c
++++ kernel-maemo-2.6.28.test/fs/jbd2/transaction.c
+@@ -2050,46 +2050,26 @@
+ }
+ 
+ /*
+- * File truncate and transaction commit interact with each other in a
+- * non-trivial way.  If a transaction writing data block A is
+- * committing, we cannot discard the data by truncate until we have
+- * written them.  Otherwise if we crashed after the transaction with
+- * write has committed but before the transaction with truncate has
+- * committed, we could see stale data in block A.  This function is a
+- * helper to solve this problem.  It starts writeout of the truncated
+- * part in case it is in the committing transaction.
+- *
+- * Filesystem code must call this function when inode is journaled in
+- * ordered mode before truncation happens and after the inode has been
+- * placed on orphan list with the new inode size. The second condition
+- * avoids the race that someone writes new data and we start
+- * committing the transaction after this function has been called but
+- * before a transaction for truncate is started (and furthermore it
+- * allows us to optimize the case where the addition to orphan list
+- * happens in the same transaction as write --- we don't have to write
+- * any data in such case).
++ * This function must be called when inode is journaled in ordered mode
++ * before truncation happens. It starts writeout of truncated part in
++ * case it is in the committing transaction so that we stand to ordered
++ * mode consistency guarantees.
+  */
+-int jbd2_journal_begin_ordered_truncate(journal_t *journal,
+-					struct jbd2_inode *jinode,
++int jbd2_journal_begin_ordered_truncate(struct jbd2_inode *inode,
+ 					loff_t new_size)
+ {
+-	transaction_t *inode_trans, *commit_trans;
++	journal_t *journal;
++	transaction_t *commit_trans;
+ 	int ret = 0;
+ 
+-	/* This is a quick check to avoid locking if not necessary */
+-	if (!jinode->i_transaction)
++	if (!inode->i_transaction && !inode->i_next_transaction)
+ 		goto out;
+-	/* Locks are here just to force reading of recent values, it is
+-	 * enough that the transaction was not committing before we started
+-	 * a transaction adding the inode to orphan list */
++	journal = inode->i_transaction->t_journal;
+ 	spin_lock(&journal->j_state_lock);
+ 	commit_trans = journal->j_committing_transaction;
+ 	spin_unlock(&journal->j_state_lock);
+-	spin_lock(&journal->j_list_lock);
+-	inode_trans = jinode->i_transaction;
+-	spin_unlock(&journal->j_list_lock);
+-	if (inode_trans == commit_trans) {
+-		ret = filemap_fdatawrite_range(jinode->i_vfs_inode->i_mapping,
++	if (inode->i_transaction == commit_trans) {
++		ret = filemap_fdatawrite_range(inode->i_vfs_inode->i_mapping,
+ 			new_size, LLONG_MAX);
+ 		if (ret)
+ 			jbd2_journal_abort(journal, ret);
+--- kernel-maemo-2.6.28.test.orig/fs/ocfs2/journal.h
++++ kernel-maemo-2.6.28.test/fs/ocfs2/journal.h
+@@ -445,10 +445,8 @@
+ static inline int ocfs2_begin_ordered_truncate(struct inode *inode,
+ 					       loff_t new_size)
+ {
+-	return jbd2_journal_begin_ordered_truncate(
+-				OCFS2_SB(inode->i_sb)->journal->j_journal,
+-				&OCFS2_I(inode)->ip_jinode,
+-				new_size);
++	return jbd2_journal_begin_ordered_truncate(&OCFS2_I(inode)->ip_jinode,
++						   new_size);
+ }
+ 
+ #endif /* OCFS2_JOURNAL_H */
+--- kernel-maemo-2.6.28.test.orig/include/linux/jbd2.h
++++ kernel-maemo-2.6.28.test/include/linux/jbd2.h
+@@ -1087,8 +1087,7 @@
+ extern int	   jbd2_journal_bmap(journal_t *, unsigned long, unsigned long long *);
+ extern int	   jbd2_journal_force_commit(journal_t *);
+ extern int	   jbd2_journal_file_inode(handle_t *handle, struct jbd2_inode *inode);
+-extern int	   jbd2_journal_begin_ordered_truncate(journal_t *journal,
+-				struct jbd2_inode *inode, loff_t new_size);
++extern int	   jbd2_journal_begin_ordered_truncate(struct jbd2_inode *inode, loff_t new_size);
+ extern void	   jbd2_journal_init_jbd_inode(struct jbd2_inode *jinode, struct inode *inode);
+ extern void	   jbd2_journal_release_jbd_inode(journal_t *journal, struct jbd2_inode *jinode);
+ 
+@@ -1148,8 +1147,8 @@
+ int jbd2_log_do_checkpoint(journal_t *journal);
+ 
+ void __jbd2_log_wait_for_space(journal_t *journal);
+-extern void	__jbd2_journal_drop_transaction(journal_t *, transaction_t *);
+-extern int	jbd2_cleanup_journal_tail(journal_t *);
++extern void __jbd2_journal_drop_transaction(journal_t *, transaction_t *);
++extern int jbd2_cleanup_journal_tail(journal_t *);
+ 
+ /* Debugging code only: */
+ 

@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
 # Linux kernel version: 2.6.28maemo-omap1
-# Sun Feb 28 20:48:24 2010
+# Tue Mar  9 09:28:49 2010
 #
 CONFIG_ARM=y
 CONFIG_SYS_SUPPORTS_APM_EMULATION=y
@@ -119,7 +119,7 @@ CONFIG_KMOD=y
 CONFIG_BLOCK=y
 # CONFIG_LBD is not set
 # CONFIG_BLK_DEV_IO_TRACE is not set
-# CONFIG_LSF is not set
+CONFIG_LSF=y
 # CONFIG_BLK_DEV_BSG is not set
 # CONFIG_BLK_DEV_INTEGRITY is not set
 
@@ -730,9 +730,9 @@ CONFIG_MTD_PARTITIONS=y
 # User Modules And Translation Layers
 #
 CONFIG_MTD_CHAR=y
-# CONFIG_MTD_BLKDEVS is not set
-# CONFIG_MTD_BLOCK is not set
-# CONFIG_MTD_BLOCK_RO is not set
+CONFIG_MTD_BLKDEVS=m
+CONFIG_MTD_BLOCK=m
+CONFIG_MTD_BLOCK_RO=m
 # CONFIG_FTL is not set
 # CONFIG_NFTL is not set
 # CONFIG_INFTL is not set
@@ -773,7 +773,7 @@ CONFIG_MTD_CFI_I2=y
 # CONFIG_MTD_SLRAM is not set
 # CONFIG_MTD_PHRAM is not set
 # CONFIG_MTD_MTDRAM is not set
-# CONFIG_MTD_BLOCK2MTD is not set
+CONFIG_MTD_BLOCK2MTD=m
 
 #
 # Disk-On-Chip Device Drivers
@@ -781,7 +781,17 @@ CONFIG_MTD_CFI_I2=y
 # CONFIG_MTD_DOC2000 is not set
 # CONFIG_MTD_DOC2001 is not set
 # CONFIG_MTD_DOC2001PLUS is not set
-# CONFIG_MTD_NAND is not set
+CONFIG_MTD_NAND=m
+# CONFIG_MTD_NAND_VERIFY_WRITE is not set
+# CONFIG_MTD_NAND_ECC_SMC is not set
+# CONFIG_MTD_NAND_MUSEUM_IDS is not set
+# CONFIG_MTD_NAND_GPIO is not set
+# CONFIG_MTD_NAND_OMAP2 is not set
+CONFIG_MTD_NAND_IDS=m
+# CONFIG_MTD_NAND_DISKONCHIP is not set
+CONFIG_MTD_NAND_NANDSIM=m
+# CONFIG_MTD_NAND_PLATFORM is not set
+# CONFIG_MTD_ALAUDA is not set
 CONFIG_MTD_ONENAND=y
 # CONFIG_MTD_ONENAND_VERIFY_WRITE is not set
 # CONFIG_MTD_ONENAND_GENERIC is not set
@@ -1943,7 +1953,7 @@ CONFIG_XFS_FS=m
 # CONFIG_XFS_POSIX_ACL is not set
 # CONFIG_XFS_RT is not set
 # CONFIG_XFS_DEBUG is not set
-CONFIG_NILFS2_FS=m
+# CONFIG_NILFS2_FS is not set
 # CONFIG_OCFS2_FS is not set
 CONFIG_DNOTIFY=y
 CONFIG_INOTIFY=y

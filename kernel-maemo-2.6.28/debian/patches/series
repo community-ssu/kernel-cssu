@@ -3,7 +3,10 @@ maemo-build.diff
 unionfs-2.5.3.diff
 dm-loop.diff
 usbip.diff
-nilfs2-2.0.18.diff
+#nilfs2-2.0.18.diff
 minstrel-aziwoqpa.diff
 iphb-matan.diff
 ppp_async_matan.diff
+2.6.28.10.diff
+block2mtd-yoush.diff
+gentoo-fsfixes.diff

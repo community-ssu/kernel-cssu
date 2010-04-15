@@ -1,9 +1,9 @@
 Source: kernel-maemo
 Section: utils
 Priority: optional
-Maintainer: Thomas Tanner <tanner@maemory.com>
+Maintainer: Thomas Tanner <maemo@tannerlab.com>
+XSBC-Bugtracker: mailto:maemo-bugs@tannerlab.com
 XSBC-Original-Maintainer:  Yauheni Kaliuta <yauheni.kaliuta@nokia.com>
-XSBC-Bugtracker: mailto:tanner@maemory.com
 Build-Depends: debhelper (>= 4.0.0), quilt, sdk-fiasco-gen
 Build-Depends-Indep: bzip2
 Standards-Version: 3.8.0
@@ -17,19 +17,19 @@ Package: kernel-flasher-maemo
 Section: user/system
 Architecture: armel
 Pre-Depends: kernel-maemo (= ${binary:Version}), kernel-modules-maemo (= ${binary:Version}), softupd (>= 0.4.0)
-Recommends: usbip, iptables, nilfs-utils
-Description: Linux kernel updater for an enhanced Maemo 5 kernel
+Recommends: usbip, iptables, mtd-utils
+Description: Linux kernel updater for an enhanced Maemo 5 kernel 2.6.28.10
  This package will flash the kernel image upon installation
  and eat kernel's files from /boot. If you want to revert to the stock
  kernel, run "apt-get install --reinstall kernel kernel-flasher" as root.
  .
  This custom kernel contains additional modules for IPv6, packet filtering,
- NAT, tunneling, kernel configuration, Wifi mesh networking,
+ QoS,  NAT, tunneling, kernel configuration, Wifi mesh networking,
  builtin ext3 for booting from other media, ext4, XFS, reiserfs,
- NILFS2, NTFS read support, ISO9660, UDF, CIFS, automounter,
+ NTFS read support, ISO9660, UDF, CIFS, automounter,
  UNIONFS, device mapper and dm-loop, cryptography, cryptoloop,
- EFI partitions, UTF8 codepages, mouse+joystick input,
- USB/IP and generic USB device drivers.
+ EFI partitions, UTF8 codepages, mouse+joystick input, PPP,
+ serial support, USB/IP and generic USB device drivers.
 XB-Maemo-Icon-26:
  iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAABmJLR0QAAAAA
  AAD5Q7t/AAAACXBIWXMAAABIAAAASABGyWs+AAAACXZwQWcAAAAwAAAAMADO
@@ -115,9 +115,9 @@ Description: Linux Kernel Headers for development
 Package: kernel-modules-maemo
 Architecture: armel
 Depends: module-init-tools (>= 3.3), kernel-maemo (= ${binary:Version})
-Provides: kernel-modules-netfilter, kernel-modules-ipv6, kernel-modules-ext4, kernel-modules-xfs, kernel-modules-reiserfs,
-  kernel-modules-nilfs2, kernel-modules-ntfs-read, kernel-modules-udf, kernel-modules-cifs, kernel-modules-automounter,
-  kernel-modules-unionfs, kernel-modules-crypto, kernel-modules-dmloop, kernel-modules-utf8, kernel-modules-mousejoy,
-  kernel-modules-usbip
+Provides: kernel-feature-netfilter, kernel-feature-ipv6, kernel-feature-ext4, kernel-feature-xfs, kernel-feature-reiserfs,
+  kernel-feature-ntfs-read, kernel-feature-udf, kernel-feature-cifs, kernel-feature-automounter,
+  kernel-feature-unionfs, kernel-feature-crypto, kernel-feature-dmloop, kernel-feature-utf8, kernel-feature-mousejoy,
+  kernel-feature-usbip, kernel-feature-ppp, kernel-feature-qos, kernel-feature-block2mtd
 Description: Linux kernel modules
- This package provides kernel modules
+ This package provides kernel modules for the enhanced Maemo 5 kernel 2.6.28.10

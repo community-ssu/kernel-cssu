@@ -2,11 +2,7 @@
 
 set -e
 
-cd /lib/modules
-
-ls -1d * | grep -v current | while read i; do
-   /sbin/depmod $i || :
-done
+rm /lib/modules/2.6.28.10maemo-omap1/modules.*
 
 #DEBHELPER#
 

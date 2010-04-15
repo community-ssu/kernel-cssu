@@ -1,3 +1,17 @@
+kernel-maemo (2.6.28-maemo13) fremantle; urgency=low
+
+  * control: rename kernel-module* to kernel-feature*, add qos
+  * change my email address
+  * update to 2.6.28.10 (minus existing Nokia patches)
+  * clean modules dir when uninstalling
+  * enable mtdblock, block2mtd, nandsim modules
+  * enable large file support for mounting standard ext4
+  * disable NILFS2 (not useful for flash devices)
+  * patch block2mtd for mounting ubifs rootfs image (Nikita V. Youshchenko)
+  * add ext4 and jdb filesystem patches from gentoo
+
+ -- Thomas Tanner <maemo@tannerlab.com>  Fri, 19 Mar 2010 00:00:00 +0100
+
 kernel-maemo (2.6.28-maemo12) fremantle; urgency=low
 
   * enabled g_serial and usb ethernet gadget
