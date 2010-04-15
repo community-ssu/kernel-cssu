@@ -1,3 +1,11 @@
+kernel-power (2.6.28-maemo25) fremantle; urgency=low
+
+   * control: new bugtracker, fix builddeps, set display name, mention reboot
+   * added ondemand-avoid patches by Matan Ziv-Av
+   * avoid frequency 125Mhz by default, change back 124999->125000
+
+ -- Thomas Tanner <maemo@tannerlab.com>  Thu, 15 Apr 2010 00:00:00 +0100
+
 kernel-power (2.6.28-maemo24) fremantle; urgency=low
 
    * renamed package to kernel-power due to trademark issues

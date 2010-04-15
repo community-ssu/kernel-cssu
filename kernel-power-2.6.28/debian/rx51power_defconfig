@@ -1,6 +1,6 @@
 #
 # Automatically generated make config: don't edit
-# Linux kernel version: 2.6.28.10maemo-omap1
+# Linux kernel version: 2.6.28.10power-omap1
 # Wed Apr 14 22:22:49 2010
 #
 CONFIG_ARM=y

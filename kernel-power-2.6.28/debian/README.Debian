@@ -3,7 +3,7 @@ Extended kernel-sources for Nokia N900
 
 * Downloading the sources:
 
- apt-get source kernel-maemo
+ apt-get source kernel-power
 
 * Building the kernel packages:
 
@@ -16,9 +16,9 @@ Extended kernel-sources for Nokia N900
 * Modifying the kernel configuration:
 
 in the kernel top directory do:
- cp debian/rx51maemo_defconfig .config
+ cp debian/rx51power_defconfig .config
  make menuconfig
- cp .config debian/rx51maemo_defconfig
+ cp .config debian/rx51power_defconfig
  make mrproper
 and the rebuild it again
 
@@ -48,4 +48,3 @@ to create or update your patch
 For more details read the quilt documentation.
 
 Thomas Tanner <maemo@tannerlab.com>
-

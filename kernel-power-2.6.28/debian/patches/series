@@ -17,4 +17,5 @@ leds-lp5523.diff
 trig-keyb.diff
 twl-scrollock.diff
 squashfs.diff
+ondemand-avoid.diff
 overclock.diff

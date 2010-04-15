@@ -1,6 +1,6 @@
 --- kernel-power-2.6.28.orig/arch/arm/mach-omap2/omap3-opp.h
 +++ kernel-power-2.6.28/arch/arm/mach-omap2/omap3-opp.h
-@@ -4,13 +4,23 @@
+@@ -4,6 +4,15 @@
  #include <mach/omap-pm.h>
  
  /* MPU speeds */
@@ -16,9 +16,8 @@
  #define S600M   600000000
  #define S550M   550000000
  #define S500M   500000000
- #define S250M   250000000
--#define S125M   125000000
-+#define S125M   124999000 /* temporary workaround to ignore telephone app's stubborn request for the lowest available frequency */
+@@ -11,6 +20,7 @@
+ #define S125M   125000000
  
  /* DSP speeds */
 +#define S520M   520000000
@@ -355,3 +354,16 @@
  #ifdef CONFIG_OMAP_PM_SRF
  	error = sysfs_create_file(power_kobj,
  				  &vdd1_opp_attr.attr);
+--- kernel-power-2.6.28.orig/drivers/cpufreq/cpufreq_ondemand.c
++++ kernel-power-2.6.28/drivers/cpufreq/cpufreq_ondemand.c
+@@ -844,6 +844,10 @@
+ 	u64 idle_time;
+ 	int cpu = get_cpu();
+ 
++	/* N900 hack */
++	avoid_frequencies_table[0] = 125000;
++	avoid_frequencies_count=1;
++
+ 	idle_time = get_cpu_idle_time_us(cpu, &wall);
+ 	put_cpu();
+ 	if (idle_time != -1ULL) {
