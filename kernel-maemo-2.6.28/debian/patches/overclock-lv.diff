@@ -1,0 +1,196 @@
+--- kernel-maemo-2.6.28.orig/arch/arm/mach-omap2/omap3-opp.h
++++ kernel-maemo-2.6.28/arch/arm/mach-omap2/omap3-opp.h
+@@ -4,11 +4,20 @@
+ #include <mach/omap-pm.h>
+ 
+ /* MPU speeds */
++#define S1200M  1200000000
++#define S1100M  1100000000
++#define S1000M  1000000000
++#define S950M   950000000
++#define S900M   900000000
++#define S850M   850000000
++#define S810M   810000000
++#define S750M   750000000
++#define S700M   700000000
+ #define S600M   600000000
+ #define S550M   550000000
+ #define S500M   500000000
+ #define S250M   250000000
+-#define S125M   125000000
++#define S125M   124999000
+ 
+ /* DSP speeds */
+ #define S430M   430000000
+@@ -23,16 +32,24 @@
+ 
+ static struct omap_opp omap3_mpu_rate_table[] = {
+ 	{0, 0, 0},
+-	/*OPP1*/
+ 	{0, VDD1_OPP1, 0x1E},
+-	/*OPP2*/
+-	{S250M, VDD1_OPP2, 0x26},
+-	/*OPP3*/
+-	{S500M, VDD1_OPP3, 0x30},
+-	/*OPP4*/
+-	{S550M, VDD1_OPP4, 0x36},
+-	/*OPP5*/
+-	{S600M, VDD1_OPP5, 0x3C},
++	/*underclocking*/
++	{S125M, VDD1_OPP2, 0x1E},
++	/*default*/
++	{S250M, VDD1_OPP3, 0x26},
++	{S500M, VDD1_OPP4, 0x30},
++	{S550M, VDD1_OPP5, 0x30},
++	{S600M, 6, 0x36},
++	/*overclocking*/
++	{S700M, 7, 0x36},
++	{S750M, 8, 0x36},
++	{S810M, 9, 0x36},
++	{S850M, 10, 0x36},
++	{S900M, 11, 0x36},
++	{S950M, 12, 0x36},
++	{S1000M, 13, 0x3C},
++	{S1100M, 14, 0x3C},
++	{S1200M, 15, 0x40},
+ };
+ 
+ static struct omap_opp omap3_l3_rate_table[] = {
+@@ -47,16 +64,24 @@
+ 
+ static struct omap_opp omap3_dsp_rate_table[] = {
+ 	{0, 0, 0},
+-	/*OPP1*/
++	/*underclocking*/
+ 	{S90M, VDD1_OPP1, 0x1E},
+-	/*OPP2*/
+-	{S180M, VDD1_OPP2, 0x26},
+-	/*OPP3*/
+-	{S360M, VDD1_OPP3, 0x30},
+-	/*OPP4*/
+-	{S400M, VDD1_OPP4, 0x36},
+-	/*OPP5*/
+-	{S430M, VDD1_OPP5, 0x3C},
++	/*default*/
++	{S90M, VDD1_OPP2, 0x1E},
++	{S180M, VDD1_OPP3, 0x26},
++	{S360M, VDD1_OPP4, 0x30},
++	{S400M, VDD1_OPP5, 0x36},
++	{S430M, 6, 0x36},
++	/*overclocking*/
++	{S430M, 7, 0x36},
++	{S430M, 8, 0x36},
++	{S430M, 9, 0x36},/*800MHz*/
++	{S500M, 10, 0x3C},
++	{S500M, 11, 0x3C},
++	{S500M, 12, 0x3C},
++	{S500M, 13, 0x3C},
++	{S500M, 14, 0x3C},
++	{S500M, 15, 0x3C},
+ };
+ 
+ #endif
+--- kernel-maemo-2.6.28.orig/arch/arm/plat-omap/include/mach/omap34xx.h
++++ kernel-maemo-2.6.28/arch/arm/plat-omap/include/mach/omap34xx.h
+@@ -114,7 +114,8 @@
+ #define VDD2_OPP3	0x3
+ 
+ #define MIN_VDD1_OPP	VDD1_OPP1
+-#define MAX_VDD1_OPP	VDD1_OPP5
++/*#define MAX_VDD1_OPP	VDD1_OPP5*/
++#define MAX_VDD1_OPP	15
+ #define MIN_VDD2_OPP	VDD2_OPP1
+ #define MAX_VDD2_OPP	VDD2_OPP3
+ 
+--- kernel-maemo-2.6.28.orig/arch/arm/mach-omap2/smartreflex.c
++++ kernel-maemo-2.6.28/arch/arm/mach-omap2/smartreflex.c
+@@ -513,7 +513,7 @@
+ 	sr->req_opp_no = target_opp_no;
+ 
+ 	if (sr->srid == SR1) {
+-		switch (target_opp_no) {
++		switch (min(target_opp_no-1,5)) {
+ 		case 5:
+ 			nvalue_reciprocal = sr->opp5_nvalue;
+ 			break;
+@@ -527,6 +527,7 @@
+ 			nvalue_reciprocal = sr->opp2_nvalue;
+ 			break;
+ 		case 1:
++		case 0:
+ 			nvalue_reciprocal = sr->opp1_nvalue;
+ 			break;
+ 		default:
+--- kernel-maemo-2.6.28.orig/arch/arm/plat-omap/cpu-omap.c
++++ kernel-maemo-2.6.28/arch/arm/plat-omap/cpu-omap.c
+@@ -148,10 +148,13 @@
+ 							VERY_HI_RATE) / 1000;
+ 	}
+ 
+-	clk_set_rate(mpu_clk, policy->cpuinfo.max_freq * 1000);
++	/*clk_set_rate(mpu_clk, policy->cpuinfo.max_freq * 1000);*/
++	clk_set_rate(mpu_clk, 600000 * 1000); /*N900 hack: set default max to 600MHz */
+ 
+-	policy->min = policy->cpuinfo.min_freq;
+-	policy->max = policy->cpuinfo.max_freq;
++	/*policy->min = policy->cpuinfo.min_freq;*/
++	/*policy->max = policy->cpuinfo.max_freq;*/
++	policy->min = 250000;
++	policy->max = 600000; /*N900 hack: set default to 250-600MHz */
+ 	policy->cur = omap_getspeed(0);
+ 
+ 	policy->cpuinfo.transition_latency = 300 * 1000;
+--- kernel-maemo-2.6.28.orig/arch/arm/mach-omap2/smartreflex.h
++++ kernel-maemo-2.6.28/arch/arm/mach-omap2/smartreflex.h
+@@ -254,7 +254,7 @@
+ /* XXX: end remove/move */
+ 
+ /* SR_MAX_LOW_OPP: the highest of the "low OPPs", 1 and 2. */
+-#define SR_MAX_LOW_OPP		2
++#define SR_MAX_LOW_OPP		3
+ 
+ /* XXX: find more appropriate place for these once DVFS is in place */
+ extern u32 current_vdd1_opp;
+--- kernel-maemo-2.6.28.orig/drivers/cpufreq/cpufreq.c
++++ kernel-maemo-2.6.28/drivers/cpufreq/cpufreq.c
+@@ -465,7 +465,7 @@
+ /**
+  * cpufreq_per_cpu_attr_write() / store_##file_name() - sysfs write access
+  */
+-#define store_one(file_name, object)			\
++#define store_one(file_name, object,ignore)			\
+ static ssize_t store_##file_name					\
+ (struct cpufreq_policy *policy, const char *buf, size_t count)		\
+ {									\
+@@ -479,15 +479,16 @@
+ 	ret = sscanf (buf, "%u", &new_policy.object);			\
+ 	if (ret != 1)							\
+ 		return -EINVAL;						\
+-									\
+-	ret = __cpufreq_set_policy(policy, &new_policy);		\
++	printk(KERN_DEBUG "cpufreq: request %u -> %u\n",policy->object,new_policy.object);	\
++	if (new_policy.object != ignore && new_policy.object >= 100000)	\
++	    ret = __cpufreq_set_policy(policy, &new_policy);		\
+ 	policy->user_policy.object = policy->object;			\
+ 									\
+ 	return ret ? ret : count;					\
+ }
+ 
+-store_one(scaling_min_freq,min);
+-store_one(scaling_max_freq,max);
++store_one(scaling_min_freq,min,600000);
++store_one(scaling_max_freq,max,600000);
+ 
+ /**
+  * show_cpuinfo_cur_freq - current CPU frequency as detected by hardware
+--- kernel-maemo-2.6.28.orig/Makefile
++++ kernel-maemo-2.6.28/Makefile
+@@ -1,7 +1,7 @@
+ VERSION = 2
+ PATCHLEVEL = 6
+ SUBLEVEL = 28
+-EXTRAVERSION = .10maemo
++EXTRAVERSION = .10maemo-lv
+ NAME = Erotic Pickled Herring
+ 
+ # *DOCUMENTATION*

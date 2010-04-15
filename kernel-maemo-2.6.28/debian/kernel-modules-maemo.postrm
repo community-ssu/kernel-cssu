@@ -1,8 +1,0 @@
-#!/bin/sh
-
-set -e
-
-rm /lib/modules/2.6.28.10maemo-omap1/modules.*
-
-#DEBHELPER#
-

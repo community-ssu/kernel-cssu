@@ -1,16 +1,16 @@
 --- kernel-maemo-2.6.28.orig/arch/arm/mach-omap2/omap3-opp.h
 +++ kernel-maemo-2.6.28/arch/arm/mach-omap2/omap3-opp.h
-@@ -4,11 +4,20 @@
+@@ -4,13 +4,23 @@
  #include <mach/omap-pm.h>
  
  /* MPU speeds */
-+#define S1200M  1200000000
++#define S1150M  1150000000
 +#define S1100M  1100000000
 +#define S1000M  1000000000
 +#define S950M   950000000
 +#define S900M   900000000
 +#define S850M   850000000
-+#define S800M   800000000
++#define S810M   810000000
 +#define S750M   750000000
 +#define S700M   700000000
  #define S600M   600000000
@@ -21,13 +21,18 @@
 +#define S125M   124999000
  
  /* DSP speeds */
++#define S520M   500000000
  #define S430M   430000000
-@@ -23,16 +32,24 @@
+ #define S400M   400000000
+ #define S360M   360000000
+@@ -21,42 +31,8 @@
+ #define S83M    83000000
+ #define S166M   166000000
  
- static struct omap_opp omap3_mpu_rate_table[] = {
- 	{0, 0, 0},
+-static struct omap_opp omap3_mpu_rate_table[] = {
+-	{0, 0, 0},
 -	/*OPP1*/
- 	{0, VDD1_OPP1, 0x1E},
+-	{0, VDD1_OPP1, 0x1E},
 -	/*OPP2*/
 -	{S250M, VDD1_OPP2, 0x26},
 -	/*OPP3*/
@@ -36,33 +41,22 @@
 -	{S550M, VDD1_OPP4, 0x36},
 -	/*OPP5*/
 -	{S600M, VDD1_OPP5, 0x3C},
-+	/*underclocking*/
-+	{S125M, VDD1_OPP2, 0x1E},
-+	/*default*/
-+	{S250M, VDD1_OPP3, 0x26},
-+	{S500M, VDD1_OPP4, 0x30},
-+	{S550M, VDD1_OPP5, 0x36},
-+	{S600M, 6, 0x3C},
-+	/*overclocking*/
-+	{S700M, 7, 0x3C},
-+	{S750M, 8, 0x3C},
-+	{S800M, 9, 0x3C},
-+	{S850M, 10, 0x3C},
-+	{S900M, 11, 0x3C},
-+	{S950M, 12, 0x3C},
-+	{S1000M, 13, 0x3C},
-+	{S1100M, 14, 0x3C},
-+	{S1200M, 15, 0x3C},
- };
- 
- static struct omap_opp omap3_l3_rate_table[] = {
-@@ -47,16 +64,24 @@
- 
- static struct omap_opp omap3_dsp_rate_table[] = {
- 	{0, 0, 0},
+-};
+-
+-static struct omap_opp omap3_l3_rate_table[] = {
+-	{0, 0, 0},
 -	/*OPP1*/
-+	/*underclocking*/
- 	{S90M, VDD1_OPP1, 0x1E},
+-	{0, VDD2_OPP1, 0x1E},
+-	/*OPP2*/
+-	{S83M, VDD2_OPP2, 0x24},
+-	/*OPP3*/
+-	{S166M, VDD2_OPP3, 0x2C},
+-};
+-
+-static struct omap_opp omap3_dsp_rate_table[] = {
+-	{0, 0, 0},
+-	/*OPP1*/
+-	{S90M, VDD1_OPP1, 0x1E},
 -	/*OPP2*/
 -	{S180M, VDD1_OPP2, 0x26},
 -	/*OPP3*/
@@ -71,23 +65,10 @@
 -	{S400M, VDD1_OPP4, 0x36},
 -	/*OPP5*/
 -	{S430M, VDD1_OPP5, 0x3C},
-+	/*default*/
-+	{S90M, VDD1_OPP2, 0x1E},
-+	{S180M, VDD1_OPP3, 0x26},
-+	{S360M, VDD1_OPP4, 0x30},
-+	{S400M, VDD1_OPP5, 0x36},
-+	{S430M, 6, 0x3C},
-+	/*overclocking*/
-+	{S430M, 7, 0x3C},
-+	{S430M, 8, 0x3C},
-+	{S430M, 9, 0x3C},/*800MHz*/
-+	{S500M, 10, 0x3C},
-+	{S500M, 11, 0x3C},
-+	{S500M, 12, 0x3C},
-+	{S500M, 13, 0x3C},
-+	{S500M, 14, 0x3C},
-+	{S500M, 15, 0x3C},
- };
+-};
++extern struct omap_opp omap3_mpu_rate_table[];
++extern struct omap_opp omap3_dsp_rate_table[];
++extern struct omap_opp omap3_l3_rate_table[];
  
  #endif
 --- kernel-maemo-2.6.28.orig/arch/arm/plat-omap/include/mach/omap34xx.h
@@ -104,7 +85,70 @@
  
 --- kernel-maemo-2.6.28.orig/arch/arm/mach-omap2/smartreflex.c
 +++ kernel-maemo-2.6.28/arch/arm/mach-omap2/smartreflex.c
-@@ -513,7 +513,7 @@
+@@ -37,6 +37,62 @@
+ #include "prm.h"
+ #include "smartreflex.h"
+ #include "prm-regbits-34xx.h"
++#include "omap3-opp.h"
++
++struct omap_opp omap3_mpu_rate_table[] = {
++	{0, 0, 0},
++	{0, 1, 0x1E},
++	/*underclocking*/
++	{S125M, 2, 0x1E},
++	/*default*/
++	{S250M, 3, 0x26},
++	{S500M, 4, 0x30},
++	{S550M, 5, 0x36},
++	{S600M, 6, 0x3C},
++	/*overclocking*/
++	{S700M, 7, 0x3C},
++	{S750M, 8, 0x3C},
++	{S810M, 9, 0x3C},
++	{S850M, 10, 0x3C},
++	{S900M, 11, 0x3C},
++	{S950M, 12, 0x3C},
++	{S1000M, 13, 0x3C},
++	{S1100M, 14, 0x43},
++	{S1150M, 15, 0x48},
++};
++
++struct omap_opp omap3_l3_rate_table[] = {
++	{0, 0, 0},
++	/*OPP1*/
++	{0, VDD2_OPP1, 0x1E},
++	/*OPP2*/
++	{S83M, VDD2_OPP2, 0x24},
++	/*OPP3*/
++	{S166M, VDD2_OPP3, 0x2C},
++};
++
++struct omap_opp omap3_dsp_rate_table[] = {
++	{0, 0, 0},
++	/*underclocking*/
++	{S90M,  1, 0x1E},
++	/*default*/
++	{S90M,  2, 0x1E},
++	{S180M, 3, 0x26},
++	{S360M, 4, 0x30},
++	{S400M, 5, 0x36},
++	{S430M, 6, 0x3C},
++	/*overclocking*/
++	{S430M, 7, 0x3C},
++	{S430M, 8, 0x3C},
++	{S430M, 9, 0x3C},/*800MHz*/
++	{S520M, 10, 0x3C},
++	{S520M, 11, 0x3C},
++	{S520M, 12, 0x3C},
++	{S520M, 13, 0x3C},
++	{S520M, 14, 0x3C},
++	{S520M, 15, 0x3C},
++};
++
+ 
+ /*
+  * VP_TRANXDONE_TIMEOUT: maximum microseconds to wait for the VP to
+@@ -513,7 +569,7 @@
  	sr->req_opp_no = target_opp_no;
  
  	if (sr->srid == SR1) {
@@ -113,7 +157,7 @@
  		case 5:
  			nvalue_reciprocal = sr->opp5_nvalue;
  			break;
-@@ -527,6 +527,7 @@
+@@ -527,6 +583,7 @@
  			nvalue_reciprocal = sr->opp2_nvalue;
  			break;
  		case 1:
@@ -121,6 +165,93 @@
  			nvalue_reciprocal = sr->opp1_nvalue;
  			break;
  		default:
+@@ -564,6 +621,8 @@
+ 			(ERRCONFIG_VPBOUNDINTEN | ERRCONFIG_VPBOUNDINTST));
+ 
+ 	if (sr->srid == SR1) {
++		/*printk(KERN_NOTICE "OPP%d setting voltage %d\n",
++								target_opp_no,mpu_opps[target_opp_no].vsel);*/
+ 		errminlimit = (target_opp_no > SR_MAX_LOW_OPP) ?
+ 			SR1_ERRMINLIMIT_HIGHOPP : SR1_ERRMINLIMIT_LOWOPP;
+ 
+@@ -866,6 +925,8 @@
+ 	current_opp_no = get_opp_no(current_opp);
+ 
+ 	if (vdd == PRCM_VDD1) {
++		/*printk(KERN_DEBUG "OPP%d bypass setting voltage %d\n",
++								target_opp_no,target_vsel);*/
+ 		t2_smps_steps = abs(target_vsel - current_vsel);
+ 		errorgain = (target_opp_no > SR_MAX_LOW_OPP) ?
+ 			PRM_VP1_CONFIG_ERRORGAIN_HIGHOPP :
+@@ -940,6 +1001,57 @@
+ 	return SR_PASS;
+ }
+ 
++static ssize_t omap_sr_vdd1_opps_vsel_show(struct kobject *kobj,
++					struct kobj_attribute *attr, char *buf)
++{
++	int i;
++	char *b=buf;
++	for(i=1;i<=MAX_VDD1_OPP;i++)
++		b+=sprintf(b, "%d ", mpu_opps[i].vsel);
++	b+=sprintf(b, "\n");
++	return b-buf;
++}
++
++static ssize_t omap_sr_vdd1_opps_vsel_store(struct kobject *kobj,
++					struct kobj_attribute *attr,
++					const char *buf, size_t n)
++{
++	unsigned short value[16];
++	int i;
++
++	if (sscanf(buf, "%hu %hu %hu %hu %hu %hu %hu %hu %hu %hu %hu %hu %hu %hu %hu %hu",
++				&value[0], &value[1], &value[2], &value[3],
++				&value[4], &value[5], &value[6], &value[7],
++				&value[8], &value[9], &value[10], &value[11],
++				&value[12], &value[13], &value[14], &value[15]
++				) != MAX_VDD1_OPP) {
++		printk(KERN_ERR "sr_vdd1_opps_vsel: Invalid value\n");
++		return -EINVAL;
++	}
++
++	mutex_lock(&dvfs_mutex);
++
++	for(i=1;i<=MAX_VDD1_OPP;i++) {
++		if(value[i-1]<0x49) {
++			mpu_opps[i].vsel = value[i-1];
++		}
++	}
++
++	mutex_unlock(&dvfs_mutex);
++
++	return n;
++}
++
++static struct kobj_attribute sr_vdd1_opps_vsel = {
++	.attr = {
++	.name = __stringify(sr_vdd1_opps_vsel),
++	.mode = 0644,
++	},
++	.show = omap_sr_vdd1_opps_vsel_show,
++	.store = omap_sr_vdd1_opps_vsel_store,
++};
++
++
+ /* Sysfs interface to select SR VDD1 auto compensation */
+ static ssize_t omap_sr_vdd1_autocomp_show(struct kobject *kobj,
+ 					struct kobj_attribute *attr, char *buf)
+@@ -1075,6 +1187,10 @@
+ 
+ 	printk(KERN_INFO "SmartReflex driver initialized\n");
+ 
++	ret = sysfs_create_file(power_kobj, &sr_vdd1_opps_vsel.attr);
++	if (ret)
++		printk(KERN_ERR "sysfs_create_file failed: %d\n", ret);
++
+ 	ret = sysfs_create_file(power_kobj, &sr_vdd1_autocomp.attr);
+ 	if (ret)
+ 		printk(KERN_ERR "sysfs_create_file failed: %d\n", ret);
 --- kernel-maemo-2.6.28.orig/arch/arm/plat-omap/cpu-omap.c
 +++ kernel-maemo-2.6.28/arch/arm/plat-omap/cpu-omap.c
 @@ -148,10 +148,13 @@
@@ -178,7 +309,7 @@
  
 -store_one(scaling_min_freq,min);
 -store_one(scaling_max_freq,max);
-+store_one(scaling_min_freq,min,600000);
++store_one(scaling_min_freq,min,0);
 +store_one(scaling_max_freq,max,600000);
  
  /**

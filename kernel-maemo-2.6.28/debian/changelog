@@ -1,3 +1,17 @@
+kernel-maemo (2.6.28-maemo21) fremantle; urgency=low
+
+   * support voltage customization via /sys/power/sr_vdd1_opps_vsel (patch by Matan)
+   * replace invalid 800MHz with 810MHz
+   * increase voltage for 1.1/1.15GHz
+   * enable powersave and conservative CPUfreq governors
+   * ignore missing modules dir in postrm
+   * update /lib/modules/current
+   * control: moved kernel Provides to kernel-flasher
+   * enable PPP_ASYNC for PPTP/MPPE
+   * README.Debian: kernel instructions
+
+ -- Thomas Tanner <maemo@tannerlab.com>  Mon, 12 Apr 2010 00:00:00 +0100
+
 kernel-maemo (2.6.28-maemo20) fremantle; urgency=low
 
   * added underclocking (125MHz) support, set default min. to 250MHz

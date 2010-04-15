@@ -1,0 +1,10 @@
+#!/bin/sh
+
+#set -e
+
+test -d /lib/modules/@KVER@ && rm -f /lib/modules/@KVER@/modules.*
+rm -f /lib/modules/current
+ln -s 2.6.28-omap1 /lib/modules/current
+
+#DEBHELPER#
+

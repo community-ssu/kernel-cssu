@@ -32,7 +32,6 @@ INCLUDE_HEADERS_ARCH = asm-$(ARCH) config linux
 RM_SCRIPTS = bloat-o-meter show_delta
 DEBUG_MODULES = oprofile.ko
 MAKE += $(MAKEFLAGS)
-FIASCOURL = "http://repository.maemo.org/pool/fremantle/non-free/s/sdk-fiasco-gen/sdk-fiasco-gen_2.8.2.0.1+0m5_armel.deb"
 
 ifneq (,$(findstring parallel,$(DEB_BUILD_OPTIONS)))
     PARALLEL_JOBS := $(shell echo $(DEB_BUILD_OPTIONS) | \
@@ -85,7 +84,7 @@ clean:
 	-rm -f scripts/basic/{docproc,fixdep,hash} scripts/kconfig/mconf scripts/kconfig/*.o scripts/kconfig/lxdialog/*.o
 	rm -f modules/modversions.h modules/ksyms.ver debian/files conf.vars scripts/cramfs/cramfsck \
 		scripts/cramfs/mkcramfs applied_patches debian/buildinfo stamp-* .config* \
-		debian/$(FLASHER_PACKAGE).postinst
+		debian/$(FLASHER_PACKAGE).postinst debian/$(MODULES_PACKAGE).postinst debian/$(MODULES_PACKAGE).postrm
 	rm -rf debian/tmp-*
 	rm -rf debian/build
 	rm -f *-stamp
@@ -101,13 +100,11 @@ install-kernel:
 	dh_installdirs
 
 	install -d -m 755 $(CURDIR)/debian/$(KERNEL_PACKAGE)/boot
-	#wget -Odebian/fiasco.deb $(FIASCOURL) && dpkg-deb -x debian/fiasco.deb debian/fiasco
-	#debian/fiasco/usr/bin/fiasco-gen -o $(CURDIR)/debian/$(KERNEL_PACKAGE)/boot/zImage-$(RELEASE).fiasco -g \
-	#		-k $(KSRC)/arch/arm/boot/zImage -v $(RELEASE)
 	fiasco-gen -o $(CURDIR)/debian/$(KERNEL_PACKAGE)/boot/zImage-$(RELEASE).fiasco -g \
 			-k $(BUILDTMP)/arch/arm/boot/zImage -v $(RELEASE)
-	#rm -rf debian/fiasco debian/fiasco.deb
 	chmod 644 $(CURDIR)/debian/$(KERNEL_PACKAGE)/boot/zImage-$(RELEASE).fiasco
+	#mkdir -p $(CURDIR)/debian/$(KERNEL_PACKAGE)/etc/event.d
+	#cp $(CURDIR)/debian/upstart $(CURDIR)/debian/$(KERNEL_PACKAGE)/etc/event.d/kernel-maemo
 
 install-modules:
 	dh_testdir
@@ -213,6 +210,14 @@ endif
 		-e 's,@KVER@,$(KVER),g' \
 		< $(CURDIR)/debian/$(FLASHER_PACKAGE).postinst.in \
 		> $(CURDIR)/debian/$(FLASHER_PACKAGE).postinst
+	sed \
+		-e 's,@KVER@,$(KVER),g' \
+		< $(CURDIR)/debian/$(MODULES_PACKAGE).postinst.in \
+		> $(CURDIR)/debian/$(MODULES_PACKAGE).postinst
+	sed \
+		-e 's,@KVER@,$(KVER),g' \
+		< $(CURDIR)/debian/$(MODULES_PACKAGE).postrm.in \
+		> $(CURDIR)/debian/$(MODULES_PACKAGE).postrm
 	dh_testdir
 	dh_testroot
 	dh_installchangelogs -s

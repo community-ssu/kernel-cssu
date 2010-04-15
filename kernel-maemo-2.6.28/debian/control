@@ -8,17 +8,16 @@ Build-Depends: debhelper (>= 4.0.0), quilt, sdk-fiasco-gen, libncurses5-dev
 Build-Depends-Indep: bzip2
 Standards-Version: 3.8.0
 
-Package: kernel-maemo
-Architecture: armel
-Description: Flashable Linux kernel
- This package provides a flashable kernel image.
- Use the kernel-flasher-maemo package to automatically flash it.
-
 Package: kernel-flasher-maemo
 Section: user/system
 Architecture: armel
 Pre-Depends: kernel-maemo (= ${binary:Version}), kernel-modules-maemo (= ${binary:Version}), softupd (>= 0.4.0)
 Recommends: usbip, iptables, mtd-utils, kexec-tools
+Provides: kernel-feature-netfilter, kernel-feature-ipv6, kernel-feature-ext4, kernel-feature-xfs, kernel-feature-reiserfs,
+  kernel-feature-ntfs-read, kernel-feature-udf, kernel-feature-cifs, kernel-feature-automounter,
+  kernel-feature-unionfs, kernel-feature-crypto, kernel-feature-dmloop, kernel-feature-utf8, kernel-feature-mousejoy,
+  kernel-feature-usbip, kernel-feature-ppp, kernel-feature-qos, kernel-feature-block2mtd, kernel-feature-kexec,
+  kernel-feature-overclock, kernel-feature-joikuspot, kernel-feature-slip, kernel-feature-battery, kernel-feature-pptp
 Description: Linux kernel updater for an enhanced Maemo 5 kernel 2.6.28.10
  This package will flash the kernel image upon installation. If you want to revert to the
  stock Nokia kernel, run "apt-get install --reinstall kernel kernel-flasher" as root
@@ -30,7 +29,7 @@ Description: Linux kernel updater for an enhanced Maemo 5 kernel 2.6.28.10
  builtin ext3 for booting from other media, ext4, XFS, reiserfs,
  NTFS read support, ISO9660, UDF, CIFS, automounter,
  UNIONFS, device mapper and dm-loop, cryptography, cryptoloop,
- EFI partitions, UTF8 codepages, mouse+joystick input, PPP,
+ EFI partitions, UTF8 codepages, mouse+joystick input, PPP, PPTP,
  serial support, USB/IP and generic USB device drivers, battery info,
  overclocking and kexec support.
  .
@@ -107,6 +106,12 @@ XB-Maemo-Icon-26:
  MDItMDZUMTk6Mjk6MjMrMDE6MDBL9SgPAAAAJXRFWHRtb2RpZnktZGF0ZQAy
  MDA5LTA5LTI3VDA5OjM1OjM0KzAyOjAwrPojkwAAAABJRU5ErkJggg==
 
+Package: kernel-maemo
+Architecture: armel
+Description: Flashable Linux kernel
+ This package provides a flashable kernel image.
+ Use the kernel-flasher-maemo package to automatically flash it.
+
 Package: kernel-headers-maemo
 Architecture: armel
 Depends: ${shlibs:Depends}
@@ -123,10 +128,5 @@ Description: Linux Kernel Headers for development
 Package: kernel-modules-maemo
 Architecture: armel
 Depends: module-init-tools (>= 3.3), kernel-maemo (= ${binary:Version})
-Provides: kernel-feature-netfilter, kernel-feature-ipv6, kernel-feature-ext4, kernel-feature-xfs, kernel-feature-reiserfs,
-  kernel-feature-ntfs-read, kernel-feature-udf, kernel-feature-cifs, kernel-feature-automounter,
-  kernel-feature-unionfs, kernel-feature-crypto, kernel-feature-dmloop, kernel-feature-utf8, kernel-feature-mousejoy,
-  kernel-feature-usbip, kernel-feature-ppp, kernel-feature-qos, kernel-feature-block2mtd, kernel-feature-kexec,
-  kernel-feature-overclock, kernel-feature-joikuspot, kernel-feature-slip, kernel-feature-battery
 Description: Linux kernel modules
  This package provides kernel modules for the enhanced Maemo 5 kernel 2.6.28.10

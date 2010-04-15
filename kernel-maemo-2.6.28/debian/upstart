@@ -1,0 +1,11 @@
+start on started dsme
+stop on starting shutdown
+service
+console none
+script
+  echo 1 > /sys/devices/system/cpu/cpu0/cpufreq/ondemand/ignore_nice_load
+  #echo 75 > /sys/devices/system/cpu/cpu0/cpufreq/ondemand/up_threshold
+  #echo 150000 > /sys/devices/system/cpu/cpu0/cpufreq/ondemand/sampling_rate
+  modprobe bq27x00_battery
+end script
+

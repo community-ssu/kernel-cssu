@@ -1,6 +1,6 @@
 --- kernel-maemo-2.6.28.orig/arch/arm/mach-omap2/omap3-opp.h
 +++ kernel-maemo-2.6.28/arch/arm/mach-omap2/omap3-opp.h
-@@ -4,6 +4,15 @@
+@@ -4,11 +4,20 @@
  #include <mach/omap-pm.h>
  
  /* MPU speeds */
@@ -10,18 +10,24 @@
 +#define S950M   950000000
 +#define S900M   900000000
 +#define S850M   850000000
-+#define S800M   800000000
++#define S810M   810000000
 +#define S750M   750000000
 +#define S700M   700000000
  #define S600M   600000000
  #define S550M   550000000
  #define S500M   500000000
-@@ -23,16 +32,23 @@
+ #define S250M   250000000
+-#define S125M   125000000
++#define S125M   124999000
+ 
+ /* DSP speeds */
+ #define S430M   430000000
+@@ -23,16 +32,24 @@
  
  static struct omap_opp omap3_mpu_rate_table[] = {
  	{0, 0, 0},
 -	/*OPP1*/
- 	{0, VDD1_OPP1, 0x1E},
+-	{0, VDD1_OPP1, 0x1E},
 -	/*OPP2*/
 -	{S250M, VDD1_OPP2, 0x26},
 -	/*OPP3*/
@@ -30,26 +36,28 @@
 -	{S550M, VDD1_OPP4, 0x36},
 -	/*OPP5*/
 -	{S600M, VDD1_OPP5, 0x3C},
++	{0, VDD1_OPP1, 0x19},
 +	/*underclocking*/
-+	{S125M, VDD1_OPP2, 0x1E},
++	{S125M, VDD1_OPP2, 0x19},
 +	/*default*/
-+	{S250M, VDD1_OPP3, 0x26},
-+	{S500M, VDD1_OPP4, 0x30},
-+	{S550M, VDD1_OPP5, 0x30},
-+	{S600M, 6, 0x30},
++	{S250M, VDD1_OPP3, 0x19},
++	{S500M, VDD1_OPP4, 0x21},
++	{S550M, VDD1_OPP5, 0x26},
++	{S600M, 6, 0x26},
 +	/*overclocking*/
-+	{S700M, 7, 0x36},
-+	{S750M, 8, 0x36},
-+	{S800M, 9, 0x36},
-+	{S850M, 10, 0x36},
++	{S700M, 7, 0x2D},
++	{S750M, 8, 0x2D},
++	{S810M, 9, 0x30},
++	{S850M, 10, 0x30},
 +	{S900M, 11, 0x36},
 +	{S950M, 12, 0x36},
-+	{S1000M, 13, 0x36},
-+	{S1100M, 14, 0x36},
++	{S1000M, 13, 0x3C},
++	{S1100M, 14, 0x3C},
++	{S1200M, 15, 0x40},
  };
  
  static struct omap_opp omap3_l3_rate_table[] = {
-@@ -47,16 +63,23 @@
+@@ -47,16 +64,24 @@
  
  static struct omap_opp omap3_dsp_rate_table[] = {
  	{0, 0, 0},
@@ -69,16 +77,17 @@
 +	{S180M, VDD1_OPP3, 0x26},
 +	{S360M, VDD1_OPP4, 0x30},
 +	{S400M, VDD1_OPP5, 0x36},
-+	{S430M, 6, 0x3C},
++	{S430M, 6, 0x36},
 +	/*overclocking*/
-+	{S430M, 7, 0x3C},
-+	{S430M, 8, 0x3C},
-+	{S430M, 9, 0x3C},/*800MHz*/
++	{S430M, 7, 0x36},
++	{S430M, 8, 0x36},
++	{S430M, 9, 0x36},/*800MHz*/
 +	{S500M, 10, 0x3C},
 +	{S500M, 11, 0x3C},
 +	{S500M, 12, 0x3C},
 +	{S500M, 13, 0x3C},
 +	{S500M, 14, 0x3C},
++	{S500M, 15, 0x3C},
  };
  
  #endif
@@ -90,7 +99,7 @@
  #define MIN_VDD1_OPP	VDD1_OPP1
 -#define MAX_VDD1_OPP	VDD1_OPP5
 +/*#define MAX_VDD1_OPP	VDD1_OPP5*/
-+#define MAX_VDD1_OPP	14
++#define MAX_VDD1_OPP	15
  #define MIN_VDD2_OPP	VDD2_OPP1
  #define MAX_VDD2_OPP	VDD2_OPP3
  
@@ -143,3 +152,46 @@
  
  /* XXX: find more appropriate place for these once DVFS is in place */
  extern u32 current_vdd1_opp;
+--- kernel-maemo-2.6.28.orig/drivers/cpufreq/cpufreq.c
++++ kernel-maemo-2.6.28/drivers/cpufreq/cpufreq.c
+@@ -465,7 +465,7 @@
+ /**
+  * cpufreq_per_cpu_attr_write() / store_##file_name() - sysfs write access
+  */
+-#define store_one(file_name, object)			\
++#define store_one(file_name, object,ignore)			\
+ static ssize_t store_##file_name					\
+ (struct cpufreq_policy *policy, const char *buf, size_t count)		\
+ {									\
+@@ -479,15 +479,16 @@
+ 	ret = sscanf (buf, "%u", &new_policy.object);			\
+ 	if (ret != 1)							\
+ 		return -EINVAL;						\
+-									\
+-	ret = __cpufreq_set_policy(policy, &new_policy);		\
++	printk(KERN_DEBUG "cpufreq: request %u -> %u\n",policy->object,new_policy.object);	\
++	if (new_policy.object != ignore && new_policy.object >= 100000)	\
++	    ret = __cpufreq_set_policy(policy, &new_policy);		\
+ 	policy->user_policy.object = policy->object;			\
+ 									\
+ 	return ret ? ret : count;					\
+ }
+ 
+-store_one(scaling_min_freq,min);
+-store_one(scaling_max_freq,max);
++store_one(scaling_min_freq,min,600000);
++store_one(scaling_max_freq,max,600000);
+ 
+ /**
+  * show_cpuinfo_cur_freq - current CPU frequency as detected by hardware
+--- kernel-maemo-2.6.28.orig/Makefile
++++ kernel-maemo-2.6.28/Makefile
+@@ -1,7 +1,7 @@
+ VERSION = 2
+ PATCHLEVEL = 6
+ SUBLEVEL = 28
+-EXTRAVERSION = .10maemo
++EXTRAVERSION = .10maemo-ulv
+ NAME = Erotic Pickled Herring
+ 
+ # *DOCUMENTATION*
