@@ -109,7 +109,7 @@ Description: Linux kernel headers
  This package provides kernel headers.
 
 Package: linux-kernel-headers-maemo
-Architecture: any
+Architecture: armel
 Depends: ${shlibs:Depends}
 Description: Linux Kernel Headers for development
  This package provides headers from the Linux kernel. These headers
