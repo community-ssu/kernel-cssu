@@ -13,29 +13,29 @@ if test -f /etc/kernel-power/pre-mount.once; then
 fi
 
 fforce=/etc/kernel-power/force_fsck
-#temporary overwrite0=off, 1=on
+#temporarly overwrite 0=off, 1=on
 force=
 if test -f $fforce; then
-	force=`cat $fforce` 
-    if test ! "$force" = 1;
+    force=`cat $fforce` 
+    if test ! "$force" = 1; then
     	rm $fforce # disabled
     	exit 0
-	fi
+    fi
 else
-	cfg=/etc/default/kernel-power
-	test -f $cfg || exit 0
-	FSCK_HOME=0
-	source $cfg
-	if test "$FSCK_HOME" = 1; then
-		force=
-	elif test "$FSCK_HOME" = force; then
+    cfg=/etc/default/kernel-power
+    test -f $cfg || exit 0
+    FSCK_HOME=0
+    source $cfg
+    if test "$FSCK_HOME" = 1; then
+	force=
+    elif test "$FSCK_HOME" = force; then
     	force=1
     else
     	exit 0 # disabled
     fi 
 fi
 
-part=sfdisk -l /dev/mmcblk0 | awk '$6 == 83 { print $1; exit }'
+part=`sfdisk -l /dev/mmcblk0 | awk '$6 == 83 { print $1; exit }'`
 test -z "$part" && exit 0
 
 mkdir -p /etc/kernel-power/

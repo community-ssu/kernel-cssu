@@ -8,7 +8,7 @@ cd /etc
 test -f lastboot && rm lastboot
 test -f lastreboot && rm lastreboot
 
-if ! grep "# KERNEL-POWER-HOOK" /etc/default/mount-opts; then
+if ! grep -q "# KERNEL-POWER-HOOK" /etc/default/mount-opts; then
 	echo "test -x /etc/kernel-power/pre-mount && /etc/kernel-power/pre-mount # KERNEL-POWER-HOOK" >> /etc/default/mount-opts
 fi
 

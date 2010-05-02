@@ -12,7 +12,7 @@ Architecture: armel
 Depends: kernel-power-flasher, sudo
 Description: Tools for the customization of kernel settings
  of the enhanced Maemo 5 kernel 2.6.28.10.
- 
+ .
 XB-Maemo-Icon-26:
  iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAAGXRFWHRTb2Z0
  d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAACYtJREFUeNrUWkurZUcVXvXY

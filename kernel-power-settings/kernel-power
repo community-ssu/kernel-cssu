@@ -11,6 +11,7 @@ script
         exit 1
     fi
     test -f /etc/default/kernel-power || exit 1
+    touch /etc/kernel-power/.loaded
     STATE=`/sbin/getbootstate`
     if test $STATE = USER; then
         source /etc/default/kernel-power
@@ -21,8 +22,7 @@ script
         fi
     fi
     test -x /usr/sbin/kernel-config || exit 1
-    touch /etc/kernel-power/.loaded
-    /usr/sbin/kernel-config defaults
+    /usr/sbin/kernel-config load
     exit 0
 end script
 
