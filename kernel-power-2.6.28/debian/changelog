@@ -1,3 +1,9 @@
+kernel-power (2.6.28-maemo26) fremantle; urgency=low
+
+  * 599Mhz is now interpreted as 600MHz, keep ignoring 600MHz setting by telephone app
+
+ -- Thomas Tanner <maemo@tannerlab.com>  Fri, 16 Apr 2010 23:11:43 +0200
+
 kernel-power (2.6.28-maemo25) fremantle; urgency=low
 
    * control: new bugtracker, fix builddeps, set display name, mention reboot
