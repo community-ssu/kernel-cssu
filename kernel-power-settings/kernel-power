@@ -3,13 +3,30 @@ stop on starting shutdown
 service
 console none
 script
-	test -f /etc/lastboot && TDIFF=$(expr $(date +%s) - $(stat -t /etc/lastboot |awk '{print $14}'))
-	if test -z "$TDIFF" || test "$TDIFF" -gt 300; then
-		touch /etc/lastboot
-		test -x /usr/sbin/kernel-load || exit 1
-		/usr/sbin/kernel-load
-		exit 0
-	else
-		exit 1
-	fi
+    mkdir -p /etc/kernel-power
+    if test -f /etc/kernel-power/.loaded; then
+        # rebooted w/o clean shutdown, continue
+        rm -f /etc/kernel-power/.loaded
+        touch /etc/kernel-power/.notloaded
+        exit 1
+    fi
+    test -f /etc/default/kernel-power || exit 1
+    STATE=`/sbin/getbootstate`
+    if test $STATE = USER; then
+        source /etc/default/kernel-power
+        if test "$EARLYSSH" = 1 && test -x /etc/init.d/ssh; then
+            /sbin/modprobe g_nokia
+            /sbin/ifup usb0
+            /etc/init.d/ssh start
+        fi
+    fi
+    test -x /usr/sbin/kernel-config || exit 1
+    touch /etc/kernel-power/.loaded
+    /usr/sbin/kernel-config defaults
+    exit 0
+end script
+
+post-stop script
+    rm -f /etc/kernel-power/.loaded
+    rm -f /etc/kernel-power/.notloaded
 end script

@@ -1,0 +1,51 @@
+#!/bin/sh
+# pre-mounting script
+# called by /etc/default/mount-opts sourced by /etc/event.d/rcS-late
+# (c) Copyright 2010 by Thomas Tanner <maemo@tannerlab.com>
+# licensed under GPLv3
+# version 0.1 (2. May 2010)
+
+if test -f /etc/kernel-power/pre-mount.once; then
+	# execute pre-mount script once
+	mv /etc/kernel-power/pre-mount.once /etc/kernel-power/pre-mount.done
+	date >> /etc/kernel-power/pre-mount.log
+	sh /etc/kernel-power/pre-mount.done >> /etc/kernel-power/pre-mount.log
+fi
+
+fforce=/etc/kernel-power/force_fsck
+#temporary overwrite0=off, 1=on
+force=
+if test -f $fforce; then
+	force=`cat $fforce` 
+    if test ! "$force" = 1;
+    	rm $fforce # disabled
+    	exit 0
+	fi
+else
+	cfg=/etc/default/kernel-power
+	test -f $cfg || exit 0
+	FSCK_HOME=0
+	source $cfg
+	if test "$FSCK_HOME" = 1; then
+		force=
+	elif test "$FSCK_HOME" = force; then
+    	force=1
+    else
+    	exit 0 # disabled
+    fi 
+fi
+
+part=sfdisk -l /dev/mmcblk0 | awk '$6 == 83 { print $1; exit }'
+test -z "$part" && exit 0
+
+mkdir -p /etc/kernel-power/
+date >> /etc/kernel-power/pre-mount.log
+
+# dont continue if reboot during fsck
+echo 0 > $fforce
+test $force = 1 && force="-f"
+fsck -y $force -t ext3 $part >> /etc/kernel-power/pre-mount.log
+
+rm $fforce # use defaults
+
+exit 0

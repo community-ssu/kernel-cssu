@@ -1,0 +1,11 @@
+description "load modules from /etc/modules"
+start on started hildon-desktop 
+console none
+script
+    grep '^[^#]' /etc/modules |
+    while read module args
+    do
+        [ "$module" ] || continue
+        modprobe $module $args || :
+    done
+end script

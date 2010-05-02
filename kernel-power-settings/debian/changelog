@@ -1,3 +1,12 @@
+kernel-power-settings (0.4) fremantle; urgency=low
+
+   * new general script kernel-config: new FREQS. IGNORE_NICE_LOAD fields
+   * load /etc/modules on boot
+   * add pre-mount hook to /etc/default/mount-opts to optionally
+     perform fsck /home and to run /etc/kernel-power/pre-mount.once
+
+ -- Thomas Tanner <maemo@tannerlab.com>  Sun, 2 May 2010 00:00:00 +0100
+
 kernel-power-settings (0.3) fremantle; urgency=low
 
    * postinst: exit 0
