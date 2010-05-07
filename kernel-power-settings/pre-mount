@@ -22,7 +22,7 @@ if test -f $fforce; then
     	exit 0
     fi
 else
-    cfg=/etc/default/kernel-power
+    cfg=/etc/default/kernel-boot
     test -f $cfg || exit 0
     FSCK_HOME=0
     source $cfg

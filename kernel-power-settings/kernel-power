@@ -10,23 +10,18 @@ script
         touch /etc/kernel-power/.notloaded
         exit 1
     fi
-    test -f /etc/default/kernel-power || exit 1
     touch /etc/kernel-power/.loaded
-    STATE=`/sbin/getbootstate`
-    if test $STATE = USER; then
-        source /etc/default/kernel-power
-        if test "$EARLYSSH" = 1 && test -x /etc/init.d/ssh; then
+    if test -f /etc/default/kernel-boot && test `/sbin/getbootstate` = USER; then
+        source /etc/default/kernel-boot
+        if test "$EARLY_SSH" = 1 && test -x /etc/init.d/ssh; then
             /sbin/modprobe g_nokia
+	    sleep 1
             /sbin/ifup usb0
             /etc/init.d/ssh start
         fi
     fi
+    test -f /etc/default/kernel-power || exit 1
     test -x /usr/sbin/kernel-config || exit 1
     /usr/sbin/kernel-config load
     exit 0
-end script
-
-post-stop script
-    rm -f /etc/kernel-power/.loaded
-    rm -f /etc/kernel-power/.notloaded
 end script

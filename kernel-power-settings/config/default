@@ -10,8 +10,3 @@ SAMPLING_RATE=300000
 SMARTREFLEX_VDD1=0
 SMARTREFLEX_VDD2=0
 IGNORE_NICE_LOAD=0
-# start USB networking and sshd early during boot
-EARLYSSH=0
-# fsck of /home partition before mounting?
-# 1=if necessary, force=always check
-FSCK_HOME=0

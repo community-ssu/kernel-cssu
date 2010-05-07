@@ -1,4 +1,4 @@
 #!/bin/sh
-echo "warning: this script is obsolete. calling kernel-config"
+echo "warning: this command is deprecated. executing: kernel-config load $1"
 /usr/sbin/kernel-config load $1
 exit $?

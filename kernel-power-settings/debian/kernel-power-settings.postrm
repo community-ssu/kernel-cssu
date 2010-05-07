@@ -5,6 +5,13 @@ if grep -q "# KERNEL-POWER-HOOK" /etc/default/mount-opts; then
     mv /etc/default/mount-opts.tmp /etc/default/mount-opts
 fi
 
+case "$1" in
+purge)
+    rm -f /etc/default/kernel-power /etc/default/kernel-boot
+    rm -rf /etc/kernel-power
+    ;;
+esac
+
 #DEBHELPER#
 
 exit 0
