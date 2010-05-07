@@ -1,3 +1,9 @@
+kernel-power-settings (0.5) fremantle; urgency=low
+
+   * fix important typos in default configs
+
+ -- Thomas Tanner <maemo@tannerlab.com>  Sun, 2 May 2010 00:00:00 +0100
+
 kernel-power-settings (0.4) fremantle; urgency=low
 
    * new general script kernel-config: new FREQS, IGNORE_NICE_LOAD, EARLYSSH, FSCK_HOME options
