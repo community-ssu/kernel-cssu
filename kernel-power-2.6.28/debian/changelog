@@ -1,3 +1,9 @@
+kernel-power (2.6.28-maemo27) fremantle; urgency=low
+
+  * prerm: minor fix to warn check for HAM only during deinstallation, not on upgrades
+
+ -- Thomas Tanner <maemo@tannerlab.com>  Sun,  9 May 2010 14:33:40 +0200
+
 kernel-power (2.6.28-maemo26) fremantle; urgency=low
 
   * 599Mhz is now interpreted as 600MHz, keep ignoring 600MHz setting by telephone app
