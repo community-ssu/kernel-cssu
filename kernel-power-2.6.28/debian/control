@@ -9,23 +9,26 @@ Standards-Version: 3.8.0
 Package: kernel-power-flasher
 Section: user/system
 Architecture: armel
-Pre-Depends: kernel-power (= ${binary:Version}), kernel-power-modules (= ${binary:Version}), softupd (>= 0.4.0)
+Pre-Depends: kernel-power (= ${binary:Version}), kernel-power-modules (= ${binary:Version}), softupd (>= 0.4.0), maemo-installer-utils
+Depends: sudo
 Conflicts: kernel-flasher-maemo (<= 2.6.28-maemo22), kernel-maemo, kernel-modules-maemo, kernel-headers-maemo, linux-kernel-headers-maemo
 Recommends: kernel-power-settings, usbip, iptables, mtd-utils, kexec-tools
 Provides: kernel-feature-netfilter, kernel-feature-ipv6, kernel-feature-ext4, kernel-feature-xfs, kernel-feature-reiserfs,
   kernel-feature-ntfs-read, kernel-feature-udf, kernel-feature-cifs, kernel-feature-automounter, kernel-feature-squashfs, 
   kernel-feature-unionfs, kernel-feature-crypto, kernel-feature-dmloop, kernel-feature-utf8, kernel-feature-mousejoy,
   kernel-feature-usbip, kernel-feature-ppp, kernel-feature-qos, kernel-feature-block2mtd, kernel-feature-kexec,
-  kernel-feature-overclock, kernel-feature-joikuspot, kernel-feature-slip, kernel-feature-battery, kernel-feature-pptp
+  kernel-feature-overclock, kernel-feature-joikuspot, kernel-feature-slip, kernel-feature-battery, kernel-feature-pptp,
+  kernel-feature-wlan-monitor
 XB-Maemo-Display-Name: Enhanced Linux kernel for power users
 Description: Linux kernel updater for an enhanced Maemo 5 kernel 2.6.28.10
  This package will flash the kernel image upon installation.
  You must shutdown and boot your device again for the kernel to become active.
  .
- If you want to revert to the stock Nokia kernel, run
- "apt-get install --reinstall kernel kernel-flasher" as root
- or use the flasher to flash the extracted zImage from the firmware image.
- For discussion of the kernel please visit http://talk.maemo.org/showthread.php?t=43420
+ For more details and help please visit http://wiki.maemo.org/Kernel_Power
+ .
+ If you want to deinstall this kernel to revert to the original Nokia kernel, 
+ you must run the "Deinstall kernel-power" application. Deinstallation in
+ the Application Manager is not possible.
  .
  This custom kernel contains additional modules for IPv6, packet filtering,
  QoS, NAT, tunneling, kernel configuration, Wifi mesh networking,
@@ -36,8 +39,8 @@ Description: Linux kernel updater for an enhanced Maemo 5 kernel 2.6.28.10
  serial support, USB/IP and generic USB device drivers, battery info,
  overclocking and kexec support.
  .
- Warning: Overclocking may damage your device, void your warranty and is at your own risk!
- Overclocking is disabled by default and needs to be enabled during runtime.
+ Warning: Overclocking voids your warranty, may damage your device and is at your own risk!
+ Overclocking is disabled by default and can be enabled during runtime.
  .
  Known bugs: Touchscreen calibration (osso-applet-screencalibration) is incompatible
  with the enabled evdev modules. You need to use the stock Nokia kernel for calibration.

@@ -1,0 +1,22 @@
+--- kernel-power-2.6.28.orig/drivers/usb/gadget/ether.c
++++ kernel-power-2.6.28/drivers/usb/gadget/ether.c
+@@ -241,7 +241,8 @@
+ 	.bind			= rndis_do_config,
+ 	.bConfigurationValue	= 2,
+ 	/* .iConfiguration = DYNAMIC */
+-	.bmAttributes		= USB_CONFIG_ATT_SELFPOWER,
++	.bmAttributes	= USB_CONFIG_ATT_ONE,
++	.bMaxPower	= 250, /* 500mA */
+ };
+ 
+ /*-------------------------------------------------------------------------*/
+@@ -269,7 +270,8 @@
+ 	.bind			= eth_do_config,
+ 	.bConfigurationValue	= 1,
+ 	/* .iConfiguration = DYNAMIC */
+-	.bmAttributes		= USB_CONFIG_ATT_SELFPOWER,
++	.bmAttributes	= USB_CONFIG_ATT_ONE,
++	.bMaxPower	= 250, /* 500mA */
+ };
+ 
+ /*-------------------------------------------------------------------------*/

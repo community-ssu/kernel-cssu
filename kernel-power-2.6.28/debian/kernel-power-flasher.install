@@ -1,0 +1,3 @@
+debian/kernel-power-deinstall /usr/sbin
+debian/kernel-power-deinstall.desktop /usr/share/applications/hildon
+debian/kernel-power-flasher.sudoers /etc/sudoers.d

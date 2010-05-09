@@ -17,5 +17,9 @@ leds-lp5523.diff
 trig-keyb.diff
 twl-scrollock.diff
 squashfs.diff
+led_dbrightness.diff
+wl1251-monitor-mode.diff
+mmcnames-fanoush.diff
+gethercharge.diff
 ondemand-avoid.diff
 overclock.diff

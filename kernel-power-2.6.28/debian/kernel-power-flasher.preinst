@@ -1,0 +1,27 @@
+#!/bin/sh
+
+test "$1" = install || exit 0 # upgrades are fine
+f=/tmp/kernel-power-msg
+cat > $f <<EOF
+This package will install an enhanced Linux kernel,
+with many additional features and bugfixes.
+By default, all extra features are disabled
+but they can be enabled by the user during runtime.
+For more details please read the package description or
+visit http://wiki.maemo.org/Kernel_Power
+
+Warning: The kernel is an essential component of your device
+and a misconfiguration of it may brick your device 
+and could require reflashing the firmware in the worst case.
+This kernel, however, is very stable and installation should be safe.
+
+If you want keep the current kernel, cancel the installation now
+by tapping the blurred area above this dialog.
+
+After the installation, you need to shutdown your device and
+boot it again to activate the new kernel.
+EOF
+maemo-confirm-text "Kernel-Power Flasher" $f
+res=$?
+rm -f $f
+exit $res

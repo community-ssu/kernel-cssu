@@ -3,10 +3,8 @@
 
 WEEK := $(shell date +%Y%W)
 RELEASE := $(shell dpkg-parsechangelog | awk '/^Version: / { print $$2 }')
-#REVISION := $(shell echo "$(RELEASE)" | sed 's/\(.*\)-\(.*\)/\2/')
-#no need to update modules so often, api is quite stable between weekly releases
-REVISION := power
-#EXTRAVERSION := EXTRAVERSION-$(REVISION)
+REVISION := $(shell echo "$(RELEASE)" | sed 's/\(.*\)-maemo\(.*\)/.10power\2/')
+EXTRAVERSION := EXTRAVERSION=$(REVISION)
 
 PACKAGE := kernel
 FLASHER_PACKAGE := kernel-power-flasher
@@ -45,7 +43,7 @@ configure-stamp:
 	dh_testdir
 	mkdir -p $(BUILDTMP)
 	$(MAKE) clean
-	QUILT_PATCHES=debian/patches quilt push -a || test $$? = 2
+	QUILT_PATCHES=debian/patches quilt push -a -q || test $$? = 2
 	cp debian/$(DEFCONFIG) arch/arm/configs/
 
 	cd $(KSRC) && $(MAKE) $(EXTRAVERSION) $(DEFCONFIG)
@@ -85,7 +83,7 @@ clean:
 	rm -rf debian/tmp-*
 	rm -rf debian/build
 	rm -f *-stamp
-	QUILT_PATCHES=debian/patches quilt pop -a -R || test $$? = 2
+	QUILT_PATCHES=debian/patches quilt pop -a -q -R || test $$? = 2
 	-rm arch/arm/configs/$(DEFCONFIG)
 	-rm -rf .pc
 
@@ -217,6 +215,7 @@ endif
 	dh_testroot
 	dh_installchangelogs -s
 	dh_installdocs -s
+	dh_install -s
 ifeq ($(ARCH),arm)
 	dh_strip -p$(HEADERS_PACKAGE)
 endif
@@ -227,5 +226,5 @@ endif
 	dh_gencontrol -s
 	dh_md5sums -s
 	dh_builddeb -s
-binary: binary-indep binary-arch
+binary: binary-arch #binary-indep 
 .PHONY: build clean binary-indep binary-arch binary install
