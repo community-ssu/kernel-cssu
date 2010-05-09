@@ -1,3 +1,11 @@
+kernel-power-settings (0.7) fremantle; urgency=low
+
+  * postinst: run update-sudoers
+  * added tonism's starving config with default limits
+  * pre-mount: more messages, fix warning
+
+ -- Thomas Tanner <maemo@tannerlab.com>  Sun,  9 May 2010 10:06:22 +0200
+
 kernel-power-settings (0.6) fremantle; urgency=low
 
   * bugfix (typos): dsprate was not set, shifted frequencies in show and save

@@ -16,6 +16,8 @@ fi
 bootcfg=/etc/default/kernel-boot
 test -f $bootcfg || cp /usr/share/kernel-power-settings/boot $bootcfg
 
+update-sudoers
+
 #DEBHELPER#
 
 exit 0
