@@ -8,4 +8,8 @@ script
         [ "$module" ] || continue
         modprobe $module $args || :
     done
+    dbusmsg="run-standalone.sh dbus-send --type=method_call --dest=org.freedesktop.Notifications /org/freedesktop/Notifications org.freedesktop.Notifications.SystemNoteInfoprint"
+    if test -f /etc/kernel-power/.notloaded; then
+        $dbusmsg string:"Warning: A unexpected reboot occured. Your custom kernel settings were NOT loaded."
+    fi
 end script

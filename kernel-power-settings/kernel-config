@@ -25,7 +25,7 @@ fi
 
 cfr=/sys/devices/system/cpu/cpu0/cpufreq
 cfd=$cfr/ondemand
-pwr=/sys/power/
+pwr=/sys/power
 
 echo ondemand > $cfr/scaling_governor
 if test -f $cfd/avoid_frequencies -a -f $pwr/vdd1_opps_vsel -a -f $pwr/dsp_opps_rate; then :
@@ -144,31 +144,29 @@ load|loaddef)
     source $arg
     if test -n "$VDD1_OPPS_VSEL" -o -n "$DSP_OPPS_RATE"; then
         echo "warning: old configuration format detected. please save in the new format."
-	test -n "$MIN_FREQ" && echo $MIN_FREQ > $cfr/scaling_min_freq
-	test -n "$MAX_FREQ" && echo $MAX_FREQ > $cfr/scaling_max_freq
-	test -n "$VDD1_OPPS_VSEL" && echo $VDD1_OPPS_VSEL > $pwr/vdd1_opps_vsel
-	test -n "$DSP_OPPS_RATE" && echo $DSP_OPPS_RATE > $pwr/dsp_opps_rate
+        if test -n "$MAX_FREQ"; then
+            test $MAX_FREQ = 600000 && MAX_FREQ=599000
+            echo $MAX_FREQ > $cfr/scaling_max_freq
+        fi
+        test -n "$MIN_FREQ" && echo $MIN_FREQ > $cfr/scaling_min_freq
+        test -n "$MAX_FREQ" && echo $MAX_FREQ > $cfr/scaling_max_freq
+        test -n "$VDD1_OPPS_VSEL" && echo $VDD1_OPPS_VSEL > $pwr/vdd1_opps_vsel
+        test -n "$DSP_OPPS_RATE" && echo $DSP_OPPS_RATE > $pwr/dsp_opps_rate
         test -n "$SMARTREFLEX_VDD1" && echo $SMARTREFLEX_VDD1 > $pwr/sr_vdd1_autocomp
-	test -n "$SMARTREFLEX_VDD2" && echo $SMARTREFLEX_VDD2 > $pwr/sr_vdd2_autocomp
+        test -n "$SMARTREFLEX_VDD2" && echo $SMARTREFLEX_VDD2 > $pwr/sr_vdd2_autocomp
         test -n "$IGNORE_NICE_LOAD" && echo $IGNORE_NICE_LOAD > $cfd/ignore_nice_load
-	test -n "$UP_THRESHOLD" && echo $UP_THRESHOLD > $cfd/up_threshold
+        test -n "$UP_THRESHOLD" && echo $UP_THRESHOLD > $cfd/up_threshold
         test -n "$SAMPLING_RATE" && echo $SAMPLING_RATE > $cfd/sampling_rate
         exit 1
     fi
-    #echo $allfreq
-    #echo $vsel
-    #echo $rate
     active=
     minfreq=
     maxfreq=
-    #echo $FREQS
     for f in $FREQS; do
-        #echo processing $f
         freq=`echo $f | cut -d: -f1`
         f=`echo $f | cut -d: -f2`
         volt=`echo $f | cut -d, -f1`
         dsp=`echo $f | cut -d, -f2`
-        #echo freq $freq volt $volt dsp $dsp
         if test ! $freq = 0; then
             test -z "$minfreq" -o "$freq" -lt "$minfreq" && minfreq=$freq
             test -z "$maxfreq" -o "$freq" -gt "$maxfreq" && maxfreq=$freq
@@ -198,15 +196,11 @@ load|loaddef)
         done
         vsel=$tvsel
         rate=$trate
-        #echo $vsel
     done
-    #echo vsel $vsel
-    #echo rate $rate
     test -n "$MINFREQ" && minfreq=$MINFREQ
     test -n "$MAXFREQ" && maxfreq=$MAXFREQ
     test "$minfreq" -gt 100000 && minfreq=$((minfreq/1000))
     test "$maxfreq" -gt 100000 && maxfreq=$((maxfreq/1000))
-    #echo $minfreq $maxfreq
     avoid=
     for f in $allfreq; do
         if test "$f" -lt $((minfreq*1000)); then
@@ -217,11 +211,11 @@ load|loaddef)
         *) avoid="$avoid $f" ;;
         esac
     done
-    #echo $avoid
     echo $avoid > $cfd/avoid_frequencies
     echo $vsel > $pwr/vdd1_opps_vsel
     echo $rate > $pwr/dsp_opps_rate
     test $maxfreq = 600 && maxfreq=599
+    echo $((maxfreq*1000)) > $cfr/scaling_max_freq
     echo $((minfreq*1000)) > $cfr/scaling_min_freq
     echo $((maxfreq*1000)) > $cfr/scaling_max_freq
     test -n "$SMARTREFLEX_VDD1" && echo $SMARTREFLEX_VDD1 > $pwr/sr_vdd1_autocomp
@@ -272,6 +266,8 @@ limits)
 	echo "minimum must not be greater than maximum: $limits"
 	exit 1
     fi
+    test $maxfreq = 600000 && maxfreq=599000
+    echo $maxfreq > $cfr/scaling_max_freq
     echo $minfreq > $cfr/scaling_min_freq
     echo $maxfreq > $cfr/scaling_max_freq
     echo "the limits were set to [$limits]"
@@ -288,19 +284,20 @@ lock)
     dsp=
     freq=$((arg*1000))
     ifreq=
-    i=0
-    for f in 0 $allfreq; do
+    i=1
+    avoid=
+    for f in $allfreq; do
         i=$((i+1))
-        test $f = $freq || continue
-        ifreq=$i
-        break
+        if test $f = $freq; then
+            ifreq=$i
+            break
+        fi
+        avoid="$avoid $f"
     done
     if test -z "ifreq"; then
         echo invalid frequency $freq
         exit 1
     fi
-    echo $ifreq $altfreq
-    test -f $cfd/avoid_frequencies && echo > $cfd/avoid_frequencies # enable all freqs
     echo userspace > $cfr/scaling_governor 
     echo $altfreq > $cfr/scaling_setspeed # temporarily set alternative frequencies
     volt=$2
@@ -312,7 +309,6 @@ lock)
             test $i = $ifreq && v=$volt
             vsel="$vsel $v"
         done
-        echo $vsel
         echo $vsel > $pwr/vdd1_opps_vsel
     fi
     dsp=$3
@@ -324,11 +320,17 @@ lock)
             test $i = $ifreq && r=$dsp
             dsp="$dsp $r"
         done
-        echo $dsp
         echo $dsp > $pwr/dsp_opps_rate
     fi
     echo locking frequency $freq
-    echo $freq > $cfr/scaling_setspeed
+    echo ondemand > $cfr/scaling_governor 
+    echo $avoid > $cfd/avoid_frequencies # avoid all other freqs
+    maxfreq=$freq
+    test $maxfreq = 600000 && maxfreq=599000
+    # min after max? kernel docs are wrong?
+    echo $maxfreq > $cfr/scaling_max_freq
+    echo $freq > $cfr/scaling_min_freq
+    echo $maxfreq > $cfr/scaling_max_freq
     ;;
 esac
 exit 0
