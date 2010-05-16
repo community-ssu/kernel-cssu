@@ -20,7 +20,7 @@ Description: Tools for the customization of kernel settings
  The command /usr/sbin/kernel-config can be used to load, save and
  show CPU frequency, voltage and DSP settings.
  It can also set defaults which are loaded during boot.
- Different profiles can be stored in user directory.
+ Different profiles can be stored in the user's home directory.
  .
  This package contains boot options to enable file system checks
  of /home before mounting or to start a SSH server with USB networking.
