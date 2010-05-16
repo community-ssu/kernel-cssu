@@ -10,5 +10,11 @@ ls -1d * | grep -v current | while read i; do
 done
 ln -s @KVER@ /lib/modules/current
 
+if grep -q "MODULE_PATH=/lib/modules/current" /sbin/preinit; then
+    sed 's%MODULE_PATH=/lib/modules/current%MODULE_PATH=/lib/modules/`uname -r` #fixed by kernel-power%' /sbin/preinit > /sbin/preinit.tmp && \
+    chmod +x /sbin/preinit.tmp && \
+    mv /sbin/preinit.tmp /sbin/preinit
+fi
+
 #DEBHELPER#
 

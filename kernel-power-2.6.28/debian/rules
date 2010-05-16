@@ -4,6 +4,7 @@
 WEEK := $(shell date +%Y%W)
 RELEASE := $(shell dpkg-parsechangelog | awk '/^Version: / { print $$2 }')
 REVISION := $(shell echo "$(RELEASE)" | sed 's/\(.*\)-maemo\(.*\)/.10power\2/')
+#REVISION := $(shell echo "$(RELEASE)" | sed 's/\(.*\)-maemo\(.*\)/.10powerusb\2/')
 EXTRAVERSION := EXTRAVERSION=$(REVISION)
 
 PACKAGE := kernel
@@ -42,6 +43,7 @@ endif
 configure-stamp:
 	dh_testdir
 	mkdir -p $(BUILDTMP)
+	$(MAKE) mrproper KBUILD_OUTPUT=$(CURDIR)
 	$(MAKE) clean
 	QUILT_PATCHES=debian/patches quilt push -a -q || test $$? = 2
 	cp debian/$(DEFCONFIG) arch/arm/configs/

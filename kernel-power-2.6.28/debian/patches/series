@@ -21,5 +21,7 @@ led_dbrightness.diff
 wl1251-monitor-mode.diff
 mmcnames-fanoush.diff
 gethercharge.diff
+#usbhost_egoshin.diff
+#nootg.diff
 ondemand-avoid.diff
 overclock.diff

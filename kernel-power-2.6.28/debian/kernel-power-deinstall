@@ -1,7 +1,6 @@
 #!/bin/sh
-
-f=/tmp/kernel-power-msg
-cat > $f <<EOF
+tmp=/tmp/kernel-deinstall
+cat > $tmp <<EOF
 This program will remove the enhanced power-user Linux kernel
 and restore the original Nokia kernel.
 The settings will be kept but will have no effect.
@@ -16,30 +15,51 @@ Otherwise confirm the dialog to proceed with the deinstallation.
 After the installation, you need to shutdown your device and
 boot it again to activate the original Nokia kernel.
 EOF
-maemo-confirm-text "Kernel-Power Flasher" $f
+maemo-confirm-text "Kernel-Power Flasher" $tmp
 res=$?
-rm -f $f
-dbusmsg="run-standalone.sh dbus-send --type=method_call --dest=org.freedesktop.Notifications /org/freedesktop/Notifications org.freedesktop.Notifications.SystemNoteInfoprint"
+rm -f $tmp
+dbus="run-standalone.sh dbus-send --type=method_call --dest=org.freedesktop.Notifications /org/freedesktop/Notifications"
+dbusmsg () { $dbus org.freedesktop.Notifications.SystemNoteInfoprint string:"$1"; }
+dbusbox () { $dbus org.freedesktop.Notifications.SystemNoteDialog string:"$1" uint32:0 string:OK; }
 
-if test ! "$res" = 0; then
-    $dbusmsg string:"User has cancelled the deinstallation. No changes were made."
+if test "$res" != 0; then
+    dbusmsg "User has cancelled the deinstallation. No changes were made."
     exit 1
 fi
 
 if pgrep -f /usr/bin/hildon-application-manager > /dev/null; then
-    $dbusmsg string:"Error: Application Manager is running. Please close it before deinstallation."
+    dbusbox "Error: Application Manager is running. Please close it before deinstallation."
+    exit 1
+fi
+if pgrep -f apt-worker > /dev/null; then
+    dbusbox "Error: apt is running. Please wait and try again later."
     exit 1
 fi
 
-$dbusmsg string:"Please wait while deinstalling enhanced kernel..."
+dbusmsg "Please wait while restoring Nokia kernel..."
 
-if apt-get install --reinstall -y kernel kernel-flasher | grep "cannot be downloaded"; then
-    $dbusmsg string:"Error during deinstallation. Could not install Nokia kernel."
+apt-get install --reinstall -y kernel kernel-flasher > $tmp
+ok=$?
+cat $tmp
+if grep -qE "(Could not resolve host|cannot be downloaded)" $tmp; then
+    dbusbox "Error during deinstallation: Could not download Nokia kernel. Please make sure the internet connection is working."
+    rm $tmp
     exit 1
 fi
-if ! apt-get remove -y kernel-power kernel-power-modules; then
-    $dbusmsg string:"Warning: Could not remove enhanced kernel."
+if test $ok = 0 && grep -q "Image flashed successfully" $tmp; then :
 else
-    $dbusmsg string:"Kernel sucessfully deinstalled. Nokia kernel was restored."
+    dbusbox "Error during deinstallation: Could not install Nokia kernel."
+    rm $tmp
+    exit 1
 fi
-
+dbusmsg "Nokia kernel was restored. Removing enhanced kernel packages..."
+apt-get remove -y kernel-power kernel-power-modules > $tmp
+ok=$?
+cat $tmp
+if test $ok = 0; then
+    dbusbox "Kernel sucessfully deinstalled. Nokia kernel was restored."
+else
+    dbusbox "Warning: Nokia kernel was restored but could not remove enhanced kernel."
+fi
+rm $tmp
+exit $ok
