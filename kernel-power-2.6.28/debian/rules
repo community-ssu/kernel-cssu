@@ -42,8 +42,8 @@ endif
 
 configure-stamp:
 	dh_testdir
+	#$(MAKE) mrproper KBUILD_OUTPUT=$(CURDIR)
 	mkdir -p $(BUILDTMP)
-	$(MAKE) mrproper KBUILD_OUTPUT=$(CURDIR)
 	$(MAKE) clean
 	QUILT_PATCHES=debian/patches quilt push -a -q || test $$? = 2
 	cp debian/$(DEFCONFIG) arch/arm/configs/
