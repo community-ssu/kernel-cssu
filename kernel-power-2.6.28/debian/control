@@ -18,7 +18,7 @@ Provides: kernel-feature-netfilter, kernel-feature-ipv6, kernel-feature-ext4, ke
   kernel-feature-unionfs, kernel-feature-crypto, kernel-feature-dmloop, kernel-feature-utf8, kernel-feature-mousejoy,
   kernel-feature-usbip, kernel-feature-ppp, kernel-feature-qos, kernel-feature-block2mtd, kernel-feature-kexec,
   kernel-feature-overclock, kernel-feature-joikuspot, kernel-feature-slip, kernel-feature-battery, kernel-feature-pptp,
-  kernel-feature-wlan-monitor
+  kernel-feature-wlan-monitor, kernel-feature-oabi
 XB-Maemo-Display-Name: Enhanced Linux kernel for power users
 Description: Linux kernel updater for an enhanced Maemo 5 kernel 2.6.28.10
  This package will flash the kernel image upon installation.
@@ -37,10 +37,10 @@ Description: Linux kernel updater for an enhanced Maemo 5 kernel 2.6.28.10
  unionfs, device mapper and dm-loop, cryptography, cryptoloop,
  EFI partitions, UTF8 codepages, mouse+joystick input, PPP, PPTP,
  serial support, USB/IP and generic USB device drivers, battery info,
- overclocking and kexec support.
+ WLAN monitoring, OABI, overclocking and kexec support.
  .
  Warning: Overclocking voids your warranty, may damage your device and is at your own risk!
- Overclocking is disabled by default and can be enabled during runtime.
+ Overclocking is disabled by default and can be configured during runtime.
  .
  Known bugs: Touchscreen calibration (osso-applet-screencalibration) is incompatible
  with the enabled evdev modules. You need to use the stock Nokia kernel for calibration.
