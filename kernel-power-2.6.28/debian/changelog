@@ -1,7 +1,14 @@
+kernel-power (2.6.28-maemo30) fremantle; urgency=low
+
+  * disable OABI too
+
+ -- Thomas Tanner <maemo@tannerlab.com>  Mon, 17 May 2010 08:52:48 +0200
+
 kernel-power (2.6.28-maemo29) fremantle; urgency=low
 
   * revert most changes to v27: disabled more QoS modules, IP multiple table+multipath,
     MMC block bouncing, old wlan-monitor patch, remove USB OHCI,EHCI
+  * updated post-installation instructions
 
  -- Thomas Tanner <maemo@tannerlab.com>  Mon, 17 May 2010 07:45:30 +0200
 

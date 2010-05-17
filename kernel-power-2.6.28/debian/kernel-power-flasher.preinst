@@ -18,8 +18,8 @@ This kernel, however, is very stable and installation should be safe.
 If you want keep the current kernel, cancel the installation now
 by tapping the blurred area above this dialog.
 
-After the installation, you need to shutdown your device and
-boot it again to activate the new kernel.
+After the installation, you need to unplug the USB cable,
+completely shutdown your device, and boot again to activate the kernel.
 EOF
 maemo-confirm-text "Kernel-Power Flasher" $f
 res=$?
