@@ -1,3 +1,10 @@
+kernel-power (2.6.28-maemo33) fremantle; urgency=low
+
+  * enable all v28 features again, except for OABI
+   (commenting out features in configuration had no effect)
+
+ -- Thomas Tanner <maemo@tannerlab.com>  Tue, 18 May 2010 23:13:39 +0200
+
 kernel-power (2.6.28-maemo32) fremantle; urgency=low
 
   * copied config from v27
