@@ -1,3 +1,10 @@
+kernel-power (2.6.28-maemo34) fremantle; urgency=low
+
+  * install blacklist properly
+  * control: remove OABI
+
+ -- Thomas Tanner <maemo@tannerlab.com>  Wed, 19 May 2010 17:54:12 +0200
+
 kernel-power (2.6.28-maemo33) fremantle; urgency=low
 
   * enable all v28 features again, except for OABI
