@@ -43,8 +43,6 @@ Description: Linux kernel updater for an enhanced Maemo 5 kernel 2.6.28.10
  Warning: Overclocking voids your warranty, may damage your device and is at your own risk!
  Overclocking is disabled by default and can be configured during runtime.
  .
- Known bugs: Touchscreen calibration (osso-applet-screencalibration) is incompatible
- with the enabled evdev modules. You need to use the stock Nokia kernel for calibration.
 XB-Maemo-Icon-26:
  iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAABmJLR0QAAAAA
  AAD5Q7t/AAAACXBIWXMAAABIAAAASABGyWs+AAAACXZwQWcAAAAwAAAAMADO

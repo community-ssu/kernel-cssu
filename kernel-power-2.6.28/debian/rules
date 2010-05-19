@@ -106,6 +106,8 @@ install-modules:
 	dh_testroot
 
 	mkdir -p $(CURDIR)/debian/$(MODULES_PACKAGE)/lib/modules/$(KVER)
+	mkdir -p $(CURDIR)/debian/$(MODULES_PACKAGE)/etc/modprobe.d
+	echo blacklist mousedev > $(CURDIR)/debian/$(MODULES_PACKAGE)/etc/modprobe.d/kernel-power
 	for f in $$(find $(BUILDTMP) -name "*.ko"); do \
 		install -c -m 644 $$f $(CURDIR)/debian/$(MODULES_PACKAGE)/lib/modules/$(KVER)/$$(basename $$f); \
 		strip --remove-section=.comment --remove-section=.note --strip-unneeded  $(CURDIR)/debian/$(MODULES_PACKAGE)/lib/modules/$(KVER)/$$(basename $$f); \
