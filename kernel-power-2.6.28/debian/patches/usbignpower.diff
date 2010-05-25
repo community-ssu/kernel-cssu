@@ -1,0 +1,28 @@
+--- kernel-power-2.6.28.orig/drivers/usb/core/generic.c
++++ kernel-power-2.6.28/drivers/usb/core/generic.c
+@@ -97,10 +97,10 @@
+ 		 */
+ 
+ 		/* Rule out configs that draw too much bus current */
+-		if (c->desc.bMaxPower * 2 > udev->bus_mA) {
++		/*if (c->desc.bMaxPower * 2 > udev->bus_mA) {
+ 			insufficient_power++;
+ 			continue;
+-		}
++		}*/
+ 
+ 		/* When the first config's first interface is one of Microsoft's
+ 		 * pet nonstandard Ethernet-over-USB protocols, ignore it unless
+@@ -132,10 +132,10 @@
+ 			best = c;
+ 	}
+ 
+-	if (insufficient_power > 0)
++	/*if (insufficient_power > 0)
+ 		dev_info(&udev->dev, "rejected %d configuration%s "
+ 			"due to insufficient available bus power\n",
+-			insufficient_power, plural(insufficient_power));
++			insufficient_power, plural(insufficient_power));*/
+ 
+ 	if (best) {
+ 		i = best->desc.bConfigurationValue;

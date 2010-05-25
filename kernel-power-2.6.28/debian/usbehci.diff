@@ -1,0 +1,12 @@
+--- rx51power_defconfig.orig	2010-05-20 00:18:55.000000000 +0200
++++ rx51power_defconfig	2010-05-20 00:44:07.000000000 +0200
+@@ -1646,6 +1646,9 @@
+ # USB Host Controller Drivers
+ #
+ # CONFIG_USB_C67X00_HCD is not set
++CONFIG_USB_EHCI_HCD=y
++# CONFIG_OMAP_EHCI_PHY_MODE is not set
++CONFIG_OMAP_EHCI_TLL_MODE=y
+ # CONFIG_USB_EHCI_HCD is not set
+ # CONFIG_USB_ISP116X_HCD is not set
+ # CONFIG_USB_OHCI_HCD is not set

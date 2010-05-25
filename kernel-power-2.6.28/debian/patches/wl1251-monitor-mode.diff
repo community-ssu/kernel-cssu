@@ -1,5 +1,7 @@
---- kernel-power-2.6.28.orig/drivers/net/wireless/wl12xx/wl1251_cmd.c
-+++ kernel-power-2.6.28/drivers/net/wireless/wl12xx/wl1251_cmd.c
+Index: kernel-power-2.6.28/drivers/net/wireless/wl12xx/wl1251_cmd.c
+===================================================================
+--- kernel-power-2.6.28.orig/drivers/net/wireless/wl12xx/wl1251_cmd.c	2010-05-14 23:59:06.832141497 +0200
++++ kernel-power-2.6.28/drivers/net/wireless/wl12xx/wl1251_cmd.c	2010-05-14 23:59:07.524273985 +0200
 @@ -204,11 +204,11 @@
  	return 0;
  }
@@ -59,8 +61,10 @@
  	ret = wl1251_cmd_send(wl, cmd_tx, cmd, sizeof(*cmd));
  	if (ret < 0) {
  		wl1251_error("tx %s cmd for channel %d failed",
---- kernel-power-2.6.28.orig/drivers/net/wireless/wl12xx/wl1251_cmd.h
-+++ kernel-power-2.6.28/drivers/net/wireless/wl12xx/wl1251_cmd.h
+Index: kernel-power-2.6.28/drivers/net/wireless/wl12xx/wl1251_cmd.h
+===================================================================
+--- kernel-power-2.6.28.orig/drivers/net/wireless/wl12xx/wl1251_cmd.h	2010-05-14 23:59:06.832141497 +0200
++++ kernel-power-2.6.28/drivers/net/wireless/wl12xx/wl1251_cmd.h	2010-05-14 23:59:07.524273985 +0200
 @@ -35,7 +35,8 @@
  int wl1251_cmd_configure(struct wl1251 *wl, u16 id, void *buf, size_t len);
  int wl1251_cmd_vbm(struct wl1251 *wl, u8 identity,
@@ -71,8 +75,19 @@
  int wl1251_cmd_join(struct wl1251 *wl, u8 bss_type, u8 channel,
  		    u16 beacon_interval, u8 dtim_interval);
  int wl1251_cmd_ps_mode(struct wl1251 *wl, u8 ps_mode);
---- kernel-power-2.6.28.orig/drivers/net/wireless/wl12xx/wl1251_init.c
-+++ kernel-power-2.6.28/drivers/net/wireless/wl12xx/wl1251_init.c
+Index: kernel-power-2.6.28/drivers/net/wireless/wl12xx/wl1251_init.c
+===================================================================
+--- kernel-power-2.6.28.orig/drivers/net/wireless/wl12xx/wl1251_init.c	2010-05-14 23:59:07.063992150 +0200
++++ kernel-power-2.6.28/drivers/net/wireless/wl12xx/wl1251_init.c	2010-05-15 00:46:16.884045939 +0200
+@@ -35,7 +35,7 @@
+ {
+ 	int ret;
+ 
+-	ret = wl1251_acx_feature_cfg(wl);
++	ret = wl1251_acx_feature_cfg(wl, DF_SNIFF_MODE_ENABLE);
+ 	if (ret < 0) {
+ 		wl1251_warning("couldn't set feature config");
+ 		return ret;
 @@ -399,8 +399,13 @@
  	if (ret < 0)
  		goto out_free_data_path;
@@ -89,8 +104,10 @@
  	if (ret < 0)
  		goto out_free_data_path;
  
---- kernel-power-2.6.28.orig/drivers/net/wireless/wl12xx/wl1251_main.c
-+++ kernel-power-2.6.28/drivers/net/wireless/wl12xx/wl1251_main.c
+Index: kernel-power-2.6.28/drivers/net/wireless/wl12xx/wl1251_main.c
+===================================================================
+--- kernel-power-2.6.28.orig/drivers/net/wireless/wl12xx/wl1251_main.c	2010-05-14 23:59:07.063992150 +0200
++++ kernel-power-2.6.28/drivers/net/wireless/wl12xx/wl1251_main.c	2010-05-15 03:33:55.871890108 +0200
 @@ -667,7 +667,11 @@
  	if (ret < 0)
  		return ret;
@@ -104,7 +121,40 @@
  	if (ret < 0)
  		return ret;
  
-@@ -1180,6 +1184,13 @@
+@@ -967,6 +971,12 @@
+ 		goto out;
+ 	}
+ 
++	ret = wl1251_acx_feature_cfg(wl, 0);
++	if (ret < 0) {
++		wl1251_warning("couldn't set feature config");
++		goto out;
++	}
++
+ 	wl->vif = conf->vif;
+ 
+ 	switch (conf->type) {
+@@ -998,10 +1008,19 @@
+ 					 struct ieee80211_if_init_conf *conf)
+ {
+ 	struct wl1251 *wl = hw->priv;
++	int ret = 0;
+ 
+ 	mutex_lock(&wl->mutex);
++
+ 	wl1251_debug(DEBUG_MAC80211, "mac80211 remove interface");
++
+ 	wl->vif = NULL;
++
++	ret = wl1251_acx_feature_cfg(wl, DF_SNIFF_MODE_ENABLE);
++	if (ret < 0) {
++		wl1251_warning("couldn't set feature config");
++	}
++
+ 	mutex_unlock(&wl->mutex);
+ }
+ 
+@@ -1180,6 +1199,13 @@
  	if (ret < 0)
  		goto out;
  
@@ -118,3 +168,98 @@
  	wl->channel = channel;
  
  	if (conf->flags & IEEE80211_CONF_PS && !wl->psm_requested) {
+Index: kernel-power-2.6.28/drivers/net/wireless/wl12xx/wl1251_acx.c
+===================================================================
+--- kernel-power-2.6.28.orig/drivers/net/wireless/wl12xx/wl1251_acx.c	2010-05-15 00:00:22.995807778 +0200
++++ kernel-power-2.6.28/drivers/net/wireless/wl12xx/wl1251_acx.c	2010-05-15 00:14:02.111891358 +0200
+@@ -212,7 +212,7 @@
+ 	return ret;
+ }
+ 
+-int wl1251_acx_feature_cfg(struct wl1251 *wl)
++int wl1251_acx_feature_cfg(struct wl1251 *wl, u32 data_flow_options)
+ {
+ 	struct acx_feature_config *feature;
+ 	int ret;
+@@ -226,7 +226,7 @@
+ 	}
+ 
+ 	/* DF_ENCRYPTION_DISABLE and DF_SNIFF_MODE_ENABLE are disabled */
+-	feature->data_flow_options = 0;
++	feature->data_flow_options = data_flow_options;
+ 	feature->options = 0;
+ 
+ 	ret = wl1251_cmd_configure(wl, ACX_FEATURE_CFG,
+Index: kernel-power-2.6.28/drivers/net/wireless/wl12xx/wl1251_acx.h
+===================================================================
+--- kernel-power-2.6.28.orig/drivers/net/wireless/wl12xx/wl1251_acx.h	2010-05-15 00:01:16.660049057 +0200
++++ kernel-power-2.6.28/drivers/net/wireless/wl12xx/wl1251_acx.h	2010-05-15 00:14:27.776191658 +0200
+@@ -1454,7 +1454,7 @@
+ int wl1251_acx_sleep_auth(struct wl1251 *wl, u8 sleep_auth);
+ int wl1251_acx_fw_version(struct wl1251 *wl, char *buf, size_t len);
+ int wl1251_acx_tx_power(struct wl1251 *wl, int power);
+-int wl1251_acx_feature_cfg(struct wl1251 *wl);
++int wl1251_acx_feature_cfg(struct wl1251 *wl, u32 data_flow_options);
+ int wl1251_acx_mem_map(struct wl1251 *wl,
+ 		       struct acx_header *mem_map, size_t len);
+ int wl1251_acx_data_path_params(struct wl1251 *wl,
+Index: kernel-power-2.6.28/drivers/net/wireless/wl12xx/wl1251_rx.c
+===================================================================
+--- kernel-power-2.6.28.orig/drivers/net/wireless/wl12xx/wl1251_rx.c	2010-05-16 15:04:08.279402004 +0200
++++ kernel-power-2.6.28/drivers/net/wireless/wl12xx/wl1251_rx.c	2010-05-16 18:56:57.075800531 +0200
+@@ -100,7 +100,54 @@
+ 		status->flag |= RX_FLAG_FAILED_FCS_CRC;
+ 
+ 
+-	/* FIXME: set status->rate_idx */
++	switch (desc->rate) {
++		/* skip 1 and 12 Mbps because they have same value 0x0a */
++	case RATE_2MBPS:
++		status->rate_idx = 1;
++		break;
++	case RATE_5_5MBPS:
++		status->rate_idx = 2;
++		break;
++	case RATE_11MBPS:
++		status->rate_idx = 3;
++		break;
++	case RATE_6MBPS:
++		status->rate_idx = 4;
++		break;
++	case RATE_9MBPS:
++		status->rate_idx = 5;
++		break;
++	case RATE_18MBPS:
++		status->rate_idx = 7;
++		break;
++	case RATE_24MBPS:
++		status->rate_idx = 8;
++		break;
++	case RATE_36MBPS:
++		status->rate_idx = 9;
++		break;
++	case RATE_48MBPS:
++		status->rate_idx = 10;
++		break;
++	case RATE_54MBPS:
++		status->rate_idx = 11;
++		break;
++	}
++
++	/* for 1 and 12 Mbps we have to check the modulation */
++	if (desc->rate == RATE_1MBPS) {
++		if ((desc->mod_pre & OFDM_RATE_BIT) == 0) {
++			/* CCK -> RATE_1MBPS*/
++			status->rate_idx = 0;
++		} else {
++			/* OFDM -> RATE_12MBPS */
++			status->rate_idx = 6;
++		}
++	}
++
++	if ((desc->mod_pre & SHORT_PREAMBLE_BIT) != 0) {
++		status->flag |= RX_FLAG_SHORTPRE;
++	}
+ }
+ 
+ static void wl1251_rx_body(struct wl1251 *wl,

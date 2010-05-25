@@ -1,0 +1,39 @@
+--- kernel-power-2.6.28.orig/drivers/usb/musb/musb_procfs.c
++++ kernel-power-2.6.28/drivers/usb/musb/musb_procfs.c
+@@ -657,9 +657,12 @@
+ 		if (mbase) {
+ 			reg = musb_readb(mbase, MUSB_DEVCTL);
+ 			reg |= MUSB_DEVCTL_HR;
++			reg |= MUSB_DEVCTL_HM;
++			ctx.devctl |= MUSB_DEVCTL_HR;
++			ctx.devctl |= MUSB_DEVCTL_HM;
+ 			musb_writeb(mbase, MUSB_DEVCTL, reg);
+-			/* MUSB_HST_MODE( ((struct musb*)data) ); */
+-			/* WARNING("Host Mode\n"); */
++			MUSB_HST_MODE( ((struct musb*)data) );
++			WARNING("Host Mode\n");
+ 		}
+ 		break;
+ 
+--- kernel-power-2.6.28.orig/drivers/usb/musb/musb_core.c
++++ kernel-power-2.6.28/drivers/usb/musb/musb_core.c
+@@ -113,7 +113,7 @@
+ #endif
+ 
+ static struct musb *the_musb;
+-static struct musb_ctx ctx;
++struct musb_ctx ctx;
+ 
+ #ifndef CONFIG_MUSB_PIO_ONLY
+ static int __initdata use_dma = 1;
+--- kernel-power-2.6.28.orig/drivers/usb/musb/musb_core.h
++++ kernel-power-2.6.28/drivers/usb/musb/musb_core.h
+@@ -350,6 +350,8 @@
+ 	u8	naklimit0;
+ };
+ 
++extern struct musb_ctx ctx;
++
+ /*
+  * struct musb - Driver instance data.
+  */

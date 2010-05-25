@@ -1,0 +1,52 @@
+--- kernel-power-2.6.28.orig/drivers/i2c/i2c-core.c
++++ kernel-power-2.6.28/drivers/i2c/i2c-core.c
+@@ -1042,7 +1042,26 @@
+ 				(msgs[ret].flags & I2C_M_RECV_LEN) ? "+" : "");
+ 		}
+ #endif
+-
++		// inserted
++		int i;
++		if (msgs[0].addr == 0x6b) {
++		  printk("%s ", dev_name(&adap->dev));
++		  for (ret = 0; ret < num; ret++) { // nr of messages in this call
++		    if (!(msgs[ret].flags & I2C_M_RD)) {
++		      printk("(W):");
++		      for (i = 0; i < msgs[ret].len; i++) {
++		        printk(" 0x%02x", msgs[ret].buf[i]);
++		      }
++		    }
++		    else {
++		      printk("(R) %d bytes", msgs[ret].len);
++		    }
++		    printk(", ");
++		  }
++		  printk("\n");
++		}
++		// end inserted
++		
+ 		if (in_atomic() || irqs_disabled()) {
+ 			ret = mutex_trylock(&adap->bus_lock);
+ 			if (!ret)
+@@ -1054,7 +1073,20 @@
+ 
+ 		ret = adap->algo->master_xfer(adap,msgs,num);
+ 		mutex_unlock(&adap->bus_lock);
+-
++		
++		// inserted
++		int j;
++		for (i = 0; i < num; i++) {
++		  if (msgs[i].addr == 0x6b && (msgs[i].flags & I2C_M_RD)) {
++		    printk("i2c_read: ");
++		    for (j = 0; j < msgs[i].len; j++) {
++		      printk(" 0x%02x", msgs[i].buf[j]);
++		    }
++		    printk("\n");
++		  }
++		}
++		// end inserted
++		
+ 		return ret;
+ 	} else {
+ 		dev_dbg(&adap->dev, "I2C level transfers not supported\n");

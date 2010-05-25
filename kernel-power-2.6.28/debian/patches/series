@@ -1,5 +1,6 @@
 nokia-20094803.3+0m5.diff
 nokia-20100903+0m5.diff
+nokia-20101501+0m5.diff
 maemo-build.diff
 unionfs-2.5.3.diff
 dm-loop.diff
@@ -23,6 +24,9 @@ mmcnames-fanoush.diff
 gethercharge.diff
 ondemand-avoid.diff
 overclock.diff
-#usbhost_egoshin.diff
+#usbwhitelist.diff
 #nootg.diff
 #usbhost2.diff
+#usbignpower.diff
+#bq24150-sniff.diff
+#usbhost4.diff

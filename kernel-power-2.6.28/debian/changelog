@@ -1,3 +1,12 @@
+kernel-power (2.6.28-maemo35) fremantle; urgency=low
+
+  * activate new wlan-monitor patch
+  * added system update flag to prevent deinstallation in Application manager
+  * upgrade to Nokia 20101501+0m5 (without disabling smartreflex):
+    fixes WLAN memory leaks and improves stability
+
+ -- Thomas Tanner <maemo@tannerlab.com>  Tue, 25 May 2010 09:40:35 +0200
+
 kernel-power (2.6.28-maemo34) fremantle; urgency=low
 
   * install blacklist properly
@@ -278,6 +287,48 @@ kernel (2.6.28-2010maemo1) fremantle; urgency=low
   * first custom PR1.1 kernel
 
  -- Thomas Tanner <tanner@maemory.com>  Thu, 04 Feb 2010 00:00:00 +0100
+
+kernel (2.6.28-20101501+0m5) unstable; urgency=low
+
+  * This entry has been added by BIFH queue processor
+    version has been changed to 2.6.28-20101501+0m5
+
+ -- Lyubimkin Eugene <ext-lyubimkin.eugene@nokia.com>  Thu, 15 Apr 2010 09:13:02 +0300
+
+kernel (2.6.28-20101501) unstable; urgency=low
+
+  * Fixes: NB#162856 - Camera: Support alternative SSL3250A flash controller
+
+ -- Eugene Lyubimkin <ext-lyubimkin.eugene@nokia.com>  Wed, 14 Apr 2010 09:06:17 +0300
+
+kernel (2.6.28-20101103) unstable; urgency=low
+
+  * Fixes: NB#159905 - Samsung eMMC chip 43470T9/KLMBG8EEGM support is
+    missing 
+
+ -- Eugene Lyubimkin <ext-lyubimkin.eugene@nokia.com>  Wed, 17 Mar 2010 17:13:46 +0200
+
+kernel (2.6.28-20101102) unstable; urgency=low
+
+  * Fixes: NB#160765 - remove sysfs interface that allows user to enable
+    Smartleflex
+
+ -- Eugene Lyubimkin <ext-lyubimkin.eugene@nokia.com>  Tue, 16 Mar 2010 16:52:21 +0200
+
+kernel (2.6.28-20101001) unstable; urgency=low
+
+  * Fixes: NB#158654 - Memleak when raising wlan0 interface up
+  * Fixes: NB#158655 - Memleak after association request with iwconfig
+  * Fixes: NB#144089 - WLAN ad-hoc network leaks in kernel memory
+
+ -- Eugene Lyubimkin <ext-lyubimkin.eugene@nokia.com>  Wed, 10 Mar 2010 13:52:15 +0200
+
+kernel (2.6.28-20100904) unstable; urgency=low
+
+  * Fixes: NB#145487 - Some devices are rebooting when the device is idle
+  * Fixes: NB#158605 - omapdss DISPC error: VID1_FIFO_UNDERFLOW
+
+ -- Eugene Lyubimkin <ext-lyubimkin.eugene@nokia.com>  Fri, 05 Mar 2010 12:11:31 +0200
 
 kernel (2.6.28-20100903+0m5) unstable; urgency=low
 

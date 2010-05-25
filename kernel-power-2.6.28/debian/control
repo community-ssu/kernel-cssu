@@ -20,6 +20,7 @@ Provides: kernel-feature-netfilter, kernel-feature-ipv6, kernel-feature-ext4, ke
   kernel-feature-overclock, kernel-feature-joikuspot, kernel-feature-slip, kernel-feature-battery, kernel-feature-pptp,
   kernel-feature-wlan-monitor
 XB-Maemo-Display-Name: Enhanced Linux kernel for power users
+XB-Maemo-Flags: system-update
 Description: Linux kernel updater for an enhanced Maemo 5 kernel 2.6.28.10
  This package will flash the kernel image upon installation.
  After the installation, you need to unplug the USB cable,
