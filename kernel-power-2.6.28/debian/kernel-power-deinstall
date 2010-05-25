@@ -4,6 +4,8 @@ cat > $tmp <<EOF
 This program will remove the enhanced power-user Linux kernel
 and restore the original Nokia kernel.
 The settings will be kept but will have no effect.
+Warning: This deinstallation method is currently experimental and could lead to a bricked device.
+For a safe but manual deinstallation method please visit http://wiki.maemo.org/Kernel_Power
 
 For the deinstallation please make sure that you are connected to
 the Internet and that Application Manager is not running.

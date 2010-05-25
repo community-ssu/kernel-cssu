@@ -1,3 +1,17 @@
+kernel-power (2.6.28-maemo37) fremantle; urgency=low
+
+  * disable buitin extra network options from v28 due to possible side-effects
+  * remove system-update flag due to HAM problems
+
+ -- Thomas Tanner <maemo@tannerlab.com>  Tue, 25 May 2010 23:07:37 +0200
+
+kernel-power (2.6.28-maemo36) fremantle; urgency=low
+
+  * deinstall warning
+  * reupload due to autobuilder issue
+
+ -- Thomas Tanner <maemo@tannerlab.com>  Tue, 25 May 2010 18:01:59 +0200
+
 kernel-power (2.6.28-maemo35) fremantle; urgency=low
 
   * activate new wlan-monitor patch
