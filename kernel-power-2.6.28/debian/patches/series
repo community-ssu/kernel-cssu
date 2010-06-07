@@ -25,8 +25,8 @@ gethercharge.diff
 ondemand-avoid.diff
 overclock.diff
 #usbwhitelist.diff
-#nootg.diff
-#usbhost2.diff
 #usbignpower.diff
+#nootg.diff
 #bq24150-sniff.diff
 #usbhost4.diff
+#usbhostmode.diff
