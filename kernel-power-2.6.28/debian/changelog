@@ -1,9 +1,17 @@
+kernel-power (2.6.28-maemo39) fremantle; urgency=low
+
+  * new kernel-power-bootimg package for the kernel zImage
+
+ -- Thomas Tanner <maemo@tannerlab.com>  Tue,  3 Aug 2010 22:25:38 +0200
+
 kernel-power (2.6.28-maemo38) fremantle; urgency=low
 
+  * add missing linux headers to kernel-power-headers
   * enable netfiler tcpmss+mac
   * increase kernel log buffer to 64K
+  * add ARM thumb2 fix
 
- -- Thomas Tanner <maemo@tannerlab.com>  Tue,  1 Jun 2010 09:25:38 +0200
+ -- Thomas Tanner <maemo@tannerlab.com>  Tue,  3 Aug 2010 09:25:38 +0200
 
 kernel-power (2.6.28-maemo37) fremantle; urgency=low
 

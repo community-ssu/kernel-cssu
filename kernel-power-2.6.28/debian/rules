@@ -11,6 +11,7 @@ PACKAGE := kernel
 FLASHER_PACKAGE := kernel-power-flasher
 #SOURCE_PACKAGE := $(PACKAGE)-source
 KERNEL_PACKAGE := $(PACKAGE)-power
+BOOTIMG_PACKAGE := $(PACKAGE)-power-bootimg
 MODULES_PACKAGE := $(PACKAGE)-power-modules
 HEADERS_PACKAGE := $(PACKAGE)-power-headers
 LIBC_PACKAGE := linux-kernel-power-headers
@@ -23,8 +24,8 @@ export KBUILD_OUTPUT = $(BUILDTMP)
 DEFCONFIG := rx51power_defconfig
 KVER = $(shell cat $(BUILDTMP)/include/config/kernel.release 2> /dev/null)
 ARCH = $(shell dpkg-architecture -qDEB_HOST_ARCH_CPU)
-INCLUDE_HEADERS = acpi asm-generic crypto drm Kbuild keys math-emu media mtd net pcmcia rdma rxrpc scsi sound video xen
 INCLUDE_HEADERS_ARCH = asm-$(ARCH) config linux
+INCLUDE_HEADERS = asm-$(ARCH) linux acpi asm-generic crypto drm Kbuild keys math-emu media mtd net pcmcia rdma rxrpc scsi sound video xen
 RM_SCRIPTS = bloat-o-meter show_delta
 DEBUG_MODULES = oprofile.ko
 MAKE += $(MAKEFLAGS)
@@ -101,6 +102,15 @@ install-kernel:
 			-k $(BUILDTMP)/arch/arm/boot/zImage -v $(RELEASE)
 	chmod 644 $(CURDIR)/debian/$(KERNEL_PACKAGE)/boot/zImage-$(RELEASE).fiasco
 
+install-bootimg:
+	dh_testdir
+	dh_testroot
+	dh_installdirs
+
+	install -d -m 755 $(CURDIR)/debian/$(BOOTIMG_PACKAGE)/boot
+	install -c -m 644 $(BUILDTMP)/arch/arm/boot/zImage $(CURDIR)/debian/$(BOOTIMG_PACKAGE)/boot/zImage-$(RELEASE)
+	chmod 644 $(CURDIR)/debian/$(BOOTIMG_PACKAGE)/boot/zImage-$(RELEASE)
+
 install-modules:
 	dh_testdir
 	dh_testroot
@@ -175,7 +185,7 @@ install-modules-extra:
 install-extra: install-modules-extra
 
 
-install-arch: build-arch install-kernel install-modules install-headers install-libc-headers
+install-arch: build-arch install-kernel install-bootimg install-modules install-headers install-libc-headers
 
 ifeq ($(ARCH),arm)
 build-arch: kernel-stamp modules-stamp headers

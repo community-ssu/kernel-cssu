@@ -119,6 +119,13 @@ Description: Flashable Linux kernel
  This package provides a flashable kernel image.
  Use the kernel-flasher-maemo package to automatically flash it.
 
+Package: kernel-power-bootimg
+Architecture: armel
+Description: Linux kernel boot image
+ This package provides a bootable and flashable kernel image for kexec and
+ flashing via USB cable in /boot.
+ This package is optional and only useful for multiboot or experts.
+
 Package: kernel-power-headers
 Architecture: armel
 Depends: ${shlibs:Depends}
@@ -137,6 +144,6 @@ Description: Linux Kernel Headers for development
 Package: kernel-power-modules
 Architecture: armel
 Conflicts: kernel-modules-maemo
-Depends: module-init-tools (>= 3.3), kernel-power (= ${binary:Version})
+Depends: module-init-tools (>= 3.3), kernel-power (= ${binary:Version}) | kernel-power-bootimg (= ${binary:Version})
 Description: Linux kernel modules
  This package provides kernel modules for the enhanced Maemo 5 kernel 2.6.28.10

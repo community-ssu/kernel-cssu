@@ -1,0 +1,902 @@
+--- kernel-power-2.6.28.orig/drivers/usb/core/generic.c
++++ kernel-power-2.6.28/drivers/usb/core/generic.c
+@@ -97,10 +97,10 @@
+ 		 */
+ 
+ 		/* Rule out configs that draw too much bus current */
+-		if (c->desc.bMaxPower * 2 > udev->bus_mA) {
++		/*if (c->desc.bMaxPower * 2 > udev->bus_mA) {
+ 			insufficient_power++;
+ 			continue;
+-		}
++		}*/
+ 
+ 		/* When the first config's first interface is one of Microsoft's
+ 		 * pet nonstandard Ethernet-over-USB protocols, ignore it unless
+@@ -132,10 +132,10 @@
+ 			best = c;
+ 	}
+ 
+-	if (insufficient_power > 0)
++	/*if (insufficient_power > 0)
+ 		dev_info(&udev->dev, "rejected %d configuration%s "
+ 			"due to insufficient available bus power\n",
+-			insufficient_power, plural(insufficient_power));
++			insufficient_power, plural(insufficient_power));*/
+ 
+ 	if (best) {
+ 		i = best->desc.bConfigurationValue;
+--- kernel-power-2.6.28.orig/drivers/usb/core/otg_whitelist.h
++++ kernel-power-2.6.28/drivers/usb/core/otg_whitelist.h
+@@ -14,7 +14,7 @@
+ #else
+ static inline int is_targeted(struct usb_device *d)
+ {
+-	return 0;
++	return 1;
+ }
+ #endif
+ 
+--- kernel-power-2.6.28.orig/drivers/usb/gadget/ether.c
++++ kernel-power-2.6.28/drivers/usb/gadget/ether.c
+@@ -241,7 +241,8 @@
+ 	.bind			= rndis_do_config,
+ 	.bConfigurationValue	= 2,
+ 	/* .iConfiguration = DYNAMIC */
+-	.bmAttributes		= USB_CONFIG_ATT_SELFPOWER,
++	.bmAttributes	= USB_CONFIG_ATT_ONE,
++	.bMaxPower	= 250, /* 500mA */
+ };
+ 
+ /*-------------------------------------------------------------------------*/
+@@ -269,7 +270,8 @@
+ 	.bind			= eth_do_config,
+ 	.bConfigurationValue	= 1,
+ 	/* .iConfiguration = DYNAMIC */
+-	.bmAttributes		= USB_CONFIG_ATT_SELFPOWER,
++	.bmAttributes	= USB_CONFIG_ATT_ONE,
++	.bMaxPower	= 250, /* 500mA */
+ };
+ 
+ /*-------------------------------------------------------------------------*/
+--- kernel-power-2.6.28.orig/drivers/usb/musb/isp1704.h
++++ kernel-power-2.6.28/drivers/usb/musb/isp1704.h
+@@ -39,21 +39,24 @@
+ #define ISP1704_PRODUCT_ID_HIGH		0x03
+ #define ISP1704_FUNC_CTRL		0x04
+ #define ISP1704_OTG_CTRL		0x0a
+-#define ISP1704_USB_INTRISE		0x0d
+-#define ISP1704_USB_INTFALL		0x10
++#define ISP1704_USB_INTRISE		0x0d /* interrupt enable rising register (ds p. 35 ff)*/
++#define ISP1704_USB_INTFALL		0x10 /* interrupt enable falling register */
++#define ISP1704_USB_INTSTAT		0x13 /* interrupt status register */
+ #define ISP1704_DEBUG			0x15
+ #define ISP1704_SCRATCH			0x16
+ #define ISP1704_PWR_CTRL		0x3d
+ 
+ /* Function control */
+-#define ISP1704_FUNC_CTRL_FULL_SPEED	(1 << 0)
+-#define ISP1704_FUNC_CTRL_XCVRSELECT	0x3
+-#define ISP1704_FUNC_CTRL_XCVRSELECT_SHIFT	(1 << 0)
+-#define ISP1704_FUNC_CTRL_TERMSELECT	(1 << 2)
+-#define ISP1704_FUNC_CTRL_OPMODE	(1 << 3)
+-#define ISP1704_FUNC_CTRL_OPMODE_SHIFT	3
+-#define ISP1704_FUNC_CTRL_RESET		(1 << 5)
+-#define ISP1704_FUNC_CTRL_SUSPENDM	(1 << 6)
++#define ISP1704_FUNC_CTRL_XCVRSELECT_SHIFT	0
++#define ISP1704_FUNC_CTRL_XCVRSELECT_MASK	(3 << 0)
++#define ISP1704_FUNC_CTRL_HIGH_SPEED		(0 << 0)
++#define ISP1704_FUNC_CTRL_FULL_SPEED		(1 << 0)
++#define ISP1704_FUNC_CTRL_LOW_SPEED		(2 << 0)
++#define ISP1704_FUNC_CTRL_TERMSELECT		(1 << 2)
++#define ISP1704_FUNC_CTRL_OPMODE		(1 << 3)
++#define ISP1704_FUNC_CTRL_OPMODE_SHIFT		3
++#define ISP1704_FUNC_CTRL_RESET			(1 << 5)
++#define ISP1704_FUNC_CTRL_SUSPENDM		(1 << 6)
+ 
+ /* OTG Control */
+ #define ISP1704_OTG_CTRL_IDPULLUP	(1 << 0)
+--- kernel-power-2.6.28.orig/drivers/usb/musb/musb_core.c
++++ kernel-power-2.6.28/drivers/usb/musb/musb_core.c
+@@ -142,6 +142,51 @@
+ MODULE_LICENSE("GPL");
+ MODULE_ALIAS("platform:" MUSB_DRIVER_NAME);
+ 
++
++void musb_force_term(void __iomem *addr, enum musb_term term)
++{
++	u8 r;
++
++	/* activate pulldown resistors on datalines */
++	r = musb_ulpi_readb(addr, ISP1704_OTG_CTRL);
++	r |= ISP1704_OTG_CTRL_DP_PULLDOWN | ISP1704_OTG_CTRL_DM_PULLDOWN;
++	musb_ulpi_writeb(addr, ISP1704_OTG_CTRL, r);
++
++	r = musb_ulpi_readb(addr, ISP1704_FUNC_CTRL);
++	/* clear speed-selection  bits */
++	r &= ~ISP1704_FUNC_CTRL_XCVRSELECT_MASK;
++	/* set new speed-selection bits */
++	switch(term) {
++
++	case MUSB_TERM_HOST_HIGHSPEED:
++		r |= ISP1704_FUNC_CTRL_HIGH_SPEED;
++		r &= ~ISP1704_FUNC_CTRL_TERMSELECT;
++		r &= ~ISP1704_FUNC_CTRL_OPMODE;
++		break;
++
++	case MUSB_TERM_HOST_FULLSPEED:
++		r |= ISP1704_FUNC_CTRL_FULL_SPEED;
++		r |= ISP1704_FUNC_CTRL_TERMSELECT;
++		r &= ~ISP1704_FUNC_CTRL_OPMODE;
++		break;
++
++	case MUSB_TERM_HOST_LOWSPEED:
++		r |= ISP1704_FUNC_CTRL_LOW_SPEED;
++		r |= ISP1704_FUNC_CTRL_TERMSELECT;
++		r &= ~ISP1704_FUNC_CTRL_OPMODE;
++		break;
++
++	default:
++		ERR("Unknown musb termination\n");
++		return;
++	}
++
++	musb_ulpi_writeb(addr, ISP1704_FUNC_CTRL, r);
++
++}
++
++
++
+ static inline int musb_verify_charger(void __iomem *addr)
+ {
+ 	u8 r, ret = 0;
+@@ -220,6 +265,8 @@
+ 
+ 	u8              vdat = 0;
+ 	u8              r;
++	u8 testmode;
++	testmode = musb_readb(musb->mregs,MUSB_TESTMODE);
+ 
+ 	msleep(5);
+ 
+@@ -297,7 +344,7 @@
+ 			break;
+ 	}
+ 
+-	if (vdat) {
++	if (vdat && !(testmode & MUSB_TEST_FORCE_HOST)) {
+ 		/* REVISIT: This code works only with dedicated chargers!
+ 		 * When support for HOST/HUB chargers is added, don't
+ 		 * forget this.
+@@ -349,7 +396,7 @@
+ 
+ 	prefetch((u8 *)src);
+ 
+-	DBG(4, "%cX ep%d fifo %p count %d buf %p\n",
++	DBG(6, "%cX ep%d fifo %p count %d buf %p\n",
+ 			'T', hw_ep->epnum, fifo, len, src);
+ 
+ 	/* we can't assume unaligned reads work */
+@@ -387,7 +434,7 @@
+ {
+ 	void __iomem *fifo = hw_ep->fifo;
+ 
+-	DBG(4, "%cX ep%d fifo %p count %d buf %p\n",
++	DBG(6, "%cX ep%d fifo %p count %d buf %p\n",
+ 			'R', hw_ep->epnum, fifo, len, dst);
+ 
+ 	/* we can't assume unaligned writes work */
+@@ -490,7 +537,6 @@
+ {
+ 	struct musb	*musb = (struct musb *)data;
+ 	unsigned long	flags;
+-
+ 	spin_lock_irqsave(&musb->lock, flags);
+ 	switch (musb->xceiv->state) {
+ 	case OTG_STATE_B_WAIT_ACON:
+@@ -572,10 +618,19 @@
+ static irqreturn_t musb_stage0_irq(struct musb *musb, u8 int_usb,
+ 				u8 devctl, u8 power)
+ {
++	u8 testmode;
+ 	irqreturn_t handled = IRQ_NONE;
+ 	void __iomem *mbase = musb->mregs;
+ 	u8 r;
+ 
++	testmode = musb_readb(mbase,MUSB_TESTMODE);
++  if(testmode & MUSB_TEST_FORCE_HOST) {
++		if(int_usb & MUSB_INTR_SESSREQ) {
++			DBG(1,"Piggybacking CONNECT on SESS REQ\n");
++			musb->int_usb |= MUSB_INTR_CONNECT;
++		} 
++	}
++
+ 	DBG(3, "<== Power=%02x, DevCtl=%02x, int_usb=0x%x\n", power, devctl,
+ 		int_usb);
+ 
+@@ -630,6 +685,8 @@
+ 		} else {
+ 			switch (musb->xceiv->state) {
+ #ifdef CONFIG_USB_MUSB_HDRC_HCD
++			case OTG_STATE_A_WAIT_BCON:
++			case OTG_STATE_A_HOST:
+ 			case OTG_STATE_A_SUSPEND:
+ 				/* possibly DISCONNECT is upcoming */
+ 				musb->xceiv->state = OTG_STATE_A_HOST;
+@@ -678,7 +735,7 @@
+ 		 * be discarded silently.
+ 		 */
+ 		if ((devctl & MUSB_DEVCTL_VBUS)
+-		    && !(devctl & MUSB_DEVCTL_BDEVICE)) {
++		    && host_mode(musb->mregs)) {
+ 			musb_writeb(mbase, MUSB_DEVCTL, MUSB_DEVCTL_SESSION);
+ 			musb->ep0_stage = MUSB_EP0_START;
+ 			musb->xceiv->state = OTG_STATE_A_IDLE;
+@@ -796,9 +853,15 @@
+ 					+ msecs_to_jiffies(musb->a_wait_bcon));
+ 			break;
+ 		case OTG_STATE_A_HOST:
++			if(testmode & MUSB_TEST_FORCE_HOST) {
++				//				musb->int_usb |= MUSB_INTR_RESUME;
++				break;
++			}
++
+ 			musb->xceiv->state = OTG_STATE_A_SUSPEND;
+ 			musb->is_active = is_otg_enabled(musb)
+ 					&& musb->xceiv->host->b_hnp_enable;
++
+ 			break;
+ 		case OTG_STATE_B_HOST:
+ 			/* Transition to B_PERIPHERAL, see 6.8.2.6 p 44 */
+@@ -818,6 +881,7 @@
+ 		musb->is_active = 1;
+ 		set_bit(HCD_FLAG_SAW_IRQ, &hcd->flags);
+ 
++
+ 		musb->ep0_stage = MUSB_EP0_START;
+ 
+ #ifdef CONFIG_USB_MUSB_OTG
+@@ -836,9 +900,65 @@
+ 		musb->port1_status |= USB_PORT_STAT_CONNECTION
+ 					|(USB_PORT_STAT_C_CONNECTION << 16);
+ 
+-		/* high vs full speed is just a guess until after reset */
+-		if (devctl & MUSB_DEVCTL_LSDEV)
+-			musb->port1_status |= USB_PORT_STAT_LOW_SPEED;
++		if (testmode & MUSB_TEST_FORCE_HOST) {
++			u8 r,reg;
++      void __iomem *mbase = musb->mregs;
++
++			musb_force_term(musb->mregs,MUSB_TERM_HOST_HIGHSPEED);
++
++			r = musb_ulpi_readb(mbase, ISP1704_DEBUG);
++			DBG(1,"Linestate %x\n",r);
++			switch(r) {
++			case 2:
++				musb->port1_status |= USB_PORT_STAT_LOW_SPEED;
++				reg = musb_readb(mbase, MUSB_TESTMODE);
++				reg &= ~MUSB_TEST_FORCE_FS;
++				reg &= ~MUSB_TEST_FORCE_HS;
++				musb_writeb(mbase, MUSB_TESTMODE, reg);
++
++				reg = musb_readb(mbase, MUSB_POWER);
++				reg &= ~MUSB_POWER_HSENAB;
++				musb_writeb(mbase, MUSB_POWER, reg);
++
++				musb_force_term(musb->mregs,MUSB_TERM_HOST_LOWSPEED);
++				break;
++			case 1:
++				/*High or full speed*/
++				reg = musb_readb(mbase, MUSB_TESTMODE);
++				if(reg &  MUSB_TEST_FORCE_HS) {
++					/*High speed*/
++					reg &= ~MUSB_TEST_FORCE_FS;
++					musb_writeb(mbase, MUSB_TESTMODE, reg);
++
++					reg = musb_readb(mbase, MUSB_POWER);
++					reg |= MUSB_POWER_HSENAB;
++					musb_writeb(mbase, MUSB_POWER, reg);
++				} else {
++					/*Full speed*/
++					reg |= MUSB_TEST_FORCE_FS;
++					musb_writeb(mbase, MUSB_TESTMODE, reg);
++
++					reg = musb_readb(mbase, MUSB_POWER);
++					reg &= ~MUSB_POWER_HSENAB;
++					musb_writeb(mbase, MUSB_POWER, reg);
++				}
++
++				musb_force_term(mbase,MUSB_TERM_HOST_FULLSPEED);
++
++				break;
++			case 0:
++			case 3:
++				/*invalid*/
++				WARNING("Invalid line state of %d\n",r);
++				break;
++				
++			}
++		} else {
++
++			/* high vs full speed is just a guess until after reset */
++			if (devctl & MUSB_DEVCTL_LSDEV)
++				musb->port1_status |= USB_PORT_STAT_LOW_SPEED;
++		}
+ 
+ 		if (hcd->status_urb)
+ 			usb_hcd_poll_rh_status(hcd);
+@@ -974,6 +1094,8 @@
+ 				musb->ignore_disconnect = 1;
+ 				musb_g_reset(musb);
+ 				/* FALLTHROUGH */
++			case OTG_STATE_A_HOST:
++				musb->xceiv->state = OTG_STATE_A_WAIT_BCON;
+ 			case OTG_STATE_A_WAIT_BCON:	/* OPT TD.4.7-900ms */
+ 				DBG(1, "HNP: Setting timer as %s\n",
+ 						otg_state_string(musb));
+@@ -2421,8 +2543,7 @@
+ 		DBG(1, "%s mode, status %d, devctl %02x %c\n",
+ 			"HOST", status,
+ 			musb_readb(musb->mregs, MUSB_DEVCTL),
+-			(musb_readb(musb->mregs, MUSB_DEVCTL)
+-					& MUSB_DEVCTL_BDEVICE
++				(!host_mode(musb->mregs)
+ 				? 'B' : 'A'));
+ 
+ 	} else /* peripheral is enabled */ {
+--- kernel-power-2.6.28.orig/drivers/usb/musb/musb_core.h
++++ kernel-power-2.6.28/drivers/usb/musb/musb_core.h
+@@ -85,6 +85,16 @@
+ #define	is_host_active(musb)		is_host_capable()
+ #endif
+ 
++static inline int host_mode(void __iomem *addr) 
++{
++	u8		devctl,testmode;
++	devctl = musb_readb(addr, MUSB_DEVCTL);
++	testmode = musb_readb(addr,MUSB_TESTMODE);
++
++	return (testmode & MUSB_TEST_FORCE_HOST) || !(devctl & MUSB_DEVCTL_BDEVICE);
++}
++
++
+ #if defined(CONFIG_USB_MUSB_OTG) || defined(CONFIG_USB_MUSB_PERIPHERAL)
+ /* for some reason, the "select USB_GADGET_MUSB_HDRC" doesn't always
+  * override that choice selection (often USB_GADGET_DUMMY_HCD).
+@@ -593,6 +603,14 @@
+ 
+ extern int musb_platform_set_mode(struct musb *musb, u8 musb_mode);
+ 
++enum musb_term {
++	MUSB_TERM_HOST_HIGHSPEED,
++	MUSB_TERM_HOST_FULLSPEED,
++	MUSB_TERM_HOST_LOWSPEED,
++};
++
++extern void musb_force_term(void __iomem *addr, enum musb_term term);
++
+ #if defined(CONFIG_USB_TUSB6010) || defined(CONFIG_BLACKFIN) || \
+ 	defined(CONFIG_ARCH_OMAP2430) || defined(CONFIG_ARCH_OMAP34XX)
+ extern void musb_platform_try_idle(struct musb *musb, unsigned long timeout);
+--- kernel-power-2.6.28.orig/drivers/usb/musb/musb_gadget.c
++++ kernel-power-2.6.28/drivers/usb/musb/musb_gadget.c
+@@ -1957,7 +1957,7 @@
+ 	u8		power;
+ 
+ 	DBG(3, "<== %s addr=%x driver '%s'\n",
+-			(devctl & MUSB_DEVCTL_BDEVICE)
++			!host_mode(musb->mregs)
+ 				? "B-Device" : "A-Device",
+ 			musb_readb(mbase, MUSB_FADDR),
+ 			musb->gadget_driver
+@@ -1994,7 +1994,7 @@
+ 	/* Normal reset, as B-Device;
+ 	 * or else after HNP, as A-Device
+ 	 */
+-	if (devctl & MUSB_DEVCTL_BDEVICE) {
++	if (!host_mode(musb->mregs)) {
+ 		musb->xceiv->state = OTG_STATE_B_PERIPHERAL;
+ 		musb->g.is_a_peripheral = 0;
+ 	} else if (is_otg_enabled(musb)) {
+--- kernel-power-2.6.28.orig/drivers/usb/musb/musb_host.c
++++ kernel-power-2.6.28/drivers/usb/musb/musb_host.c
+@@ -1863,8 +1863,10 @@
+ 	unsigned			interval;
+ 
+ 	/* host role must be active */
+-	if (!is_host_active(musb) || !musb->is_active)
++	if (!is_host_active(musb) || !musb->is_active) {
++		printk(KERN_ERR "musb is_host_active %d is_active %d\n",is_host_active(musb),musb->is_active);
+ 		return -ENODEV;
++	}
+ 
+ 	spin_lock_irqsave(&musb->lock, flags);
+ 	ret = usb_hcd_link_urb_to_ep(hcd, urb);
+@@ -2275,6 +2277,7 @@
+ 	return 0;
+ }
+ 
++
+ const struct hc_driver musb_hc_driver = {
+ 	.description		= "musb-hcd",
+ 	.product_desc		= "MUSB HDRC host driver",
+@@ -2298,6 +2301,5 @@
+ 	.hub_control		= musb_hub_control,
+ 	.bus_suspend		= musb_bus_suspend,
+ 	.bus_resume		= musb_bus_resume,
+-	/* .start_port_reset	= NULL, */
+ 	/* .hub_irq_enable	= NULL, */
+ };
+--- kernel-power-2.6.28.orig/drivers/usb/musb/musb_procfs.c
++++ kernel-power-2.6.28/drivers/usb/musb/musb_procfs.c
+@@ -37,6 +37,7 @@
+ #include <linux/seq_file.h>
+ #include <linux/uaccess.h>	/* FIXME remove procfs writes */
+ #include <mach/hardware.h>
++#include <asm/mach-types.h>
+ 
+ #include "musb_core.h"
+ 
+@@ -450,8 +451,8 @@
+ 		return 0;
+ 	buffer += count;
+ 
+-	code = sprintf(buffer, "OTG state: %s; %sactive\n",
+-			otg_state_string(musb),
++	code = sprintf(buffer, "OTG state: %s:%d; %sactive\n",
++								 otg_state_string(musb),musb->xceiv->state,
+ 			musb->is_active ? "" : "in");
+ 	if (code <= 0)
+ 		goto done;
+@@ -591,16 +592,33 @@
+  *
+  * C soft-connect
+  * c soft-disconnect
+- * I enable HS
+- * i disable HS
+- * s stop session
+- * F force session (OTG-unfriendly)
++ * D<num> set/query the debug level
+  * E rElinquish bus (OTG)
++ * e enumerate
++ * F force session (OTG-unfriendly)
+  * H request host mode
+  * h cancel host request
++ * I enable HS
++ * i disable HS
++ * J set HS test mode
++ * j clear HS test mode
++ * K set FS test mode
++ * k clear FS test mode
++ * M set host test mode
++ * m clear host test mode
++ * R reset peripheral
++ * r resume root hub
++ * s stop session
+  * T start sending TEST_PACKET
+- * D<num> set/query the debug level
++ * X term highspeed
++ * Y term fullspeed
++ * Z term lowspeed
++ * 
+  */
++
++extern	void musb_port_reset(struct musb *musb, bool do_reset);
++extern void musb_port_suspend(struct musb *musb, bool do_suspend);
++
+ static int musb_proc_write(struct file *file, const char __user *buffer,
+ 			unsigned long count, void *data)
+ {
+@@ -608,49 +626,63 @@
+ 	u8 reg;
+ 	struct musb *musb = (struct musb *)data;
+ 	void __iomem *mbase = musb->mregs;
++	unsigned long	flags;
++	struct usb_hcd *hcd = musb_to_hcd(musb);
++	struct usb_bus *bus = hcd_to_bus(hcd);
+ 
+ 	/* MOD_INC_USE_COUNT; */
+ 
+ 	if (unlikely(copy_from_user(&cmd, buffer, 1)))
+ 		return -EFAULT;
+ 
++
+ 	switch (cmd) {
+ 	case 'C':
+ 		if (mbase) {
+-			reg = musb_readb(mbase, MUSB_POWER)
+-					| MUSB_POWER_SOFTCONN;
++			reg = musb_readb(mbase, MUSB_POWER);
++			reg |= MUSB_POWER_SOFTCONN;
+ 			musb_writeb(mbase, MUSB_POWER, reg);
+ 		}
+ 		break;
+ 
+ 	case 'c':
+ 		if (mbase) {
+-			reg = musb_readb(mbase, MUSB_POWER)
+-					& ~MUSB_POWER_SOFTCONN;
++			reg = musb_readb(mbase, MUSB_POWER);
++			reg &= ~MUSB_POWER_SOFTCONN;
+ 			musb_writeb(mbase, MUSB_POWER, reg);
+ 		}
+ 		break;
+ 
+ 	case 'I':
+ 		if (mbase) {
+-			reg = musb_readb(mbase, MUSB_POWER)
+-					| MUSB_POWER_HSENAB;
++			reg = musb_readb(mbase, MUSB_POWER);
++			reg |= MUSB_POWER_HSENAB;
+ 			musb_writeb(mbase, MUSB_POWER, reg);
+ 		}
+ 		break;
+ 
+ 	case 'i':
+ 		if (mbase) {
+-			reg = musb_readb(mbase, MUSB_POWER)
+-					& ~MUSB_POWER_HSENAB;
++			reg = musb_readb(mbase, MUSB_POWER);
++			reg &= ~MUSB_POWER_HSENAB;
+ 			musb_writeb(mbase, MUSB_POWER, reg);
+ 		}
+ 		break;
+ 
+ 	case 'F':
+-		reg = musb_readb(mbase, MUSB_DEVCTL);
+-		reg |= MUSB_DEVCTL_SESSION;
+-		musb_writeb(mbase, MUSB_DEVCTL, reg);
++		if (mbase) {
++			reg = musb_readb(mbase, MUSB_DEVCTL);
++			reg |= MUSB_DEVCTL_SESSION;
++			musb_writeb(mbase, MUSB_DEVCTL, reg);
++		}
++		break;
++
++	case 's':
++		if (mbase) {
++			reg = musb_readb(mbase, MUSB_DEVCTL);
++			reg &= ~MUSB_DEVCTL_SESSION;
++			musb_writeb(mbase, MUSB_DEVCTL, reg);
++		}
+ 		break;
+ 
+ 	case 'H':
+@@ -679,6 +711,114 @@
+ 		}
+ 		break;
+ 
++	case 'M':
++		if (mbase) {
++			reg = musb_readb(mbase, MUSB_TESTMODE);
++			reg |= MUSB_TEST_FORCE_HOST;
++			musb_writeb(mbase, MUSB_TESTMODE, reg);
++		}
++		break;
++	
++	case 'm':
++		if (mbase) {
++			reg = musb_readb(mbase, MUSB_TESTMODE);
++			reg &= ~MUSB_TEST_FORCE_HOST;
++			musb_writeb(mbase, MUSB_TESTMODE, reg);
++			MUSB_DEV_MODE(musb);
++			musb->xceiv->state = OTG_STATE_B_IDLE;
++		}
++		break;
++
++  case 'L':
++			musb->xceiv->state = OTG_STATE_A_HOST;
++			MUSB_HST_MODE(musb);
++		break;
++
++  case 'l':
++			musb->xceiv->state = OTG_STATE_A_WAIT_BCON;
++			MUSB_HST_MODE(musb);
++		break;
++
++	case 'J':
++		if (mbase) {
++			reg = musb_readb(mbase, MUSB_TESTMODE);
++			reg |= MUSB_TEST_FORCE_HS;
++			musb_writeb(mbase, MUSB_TESTMODE, reg);
++		}
++		break;
++
++	case 'j':
++		if (mbase) {
++			reg = musb_readb(mbase, MUSB_TESTMODE);
++			reg &= ~MUSB_TEST_FORCE_HS;
++			musb_writeb(mbase, MUSB_TESTMODE, reg);
++		}
++		break;
++
++	case 'K':
++		if (mbase) {
++			reg = musb_readb(mbase, MUSB_TESTMODE);
++			reg |= MUSB_TEST_FORCE_FS;
++			musb_writeb(mbase, MUSB_TESTMODE, reg);
++		}
++		break;
++
++	case 'k':
++		if (mbase) {
++			reg = musb_readb(mbase, MUSB_TESTMODE);
++			reg &= ~MUSB_TEST_FORCE_FS;
++			musb_writeb(mbase, MUSB_TESTMODE, reg);
++		}
++		break;
++
++  case 'X':
++    if (mbase)
++			musb_force_term(mbase,MUSB_TERM_HOST_HIGHSPEED);
++		break;
++
++  case 'Y':
++    if (mbase)
++			musb_force_term(mbase,MUSB_TERM_HOST_FULLSPEED);
++		break;
++
++  case 'Z':
++    if (mbase)
++			musb_force_term(mbase,MUSB_TERM_HOST_LOWSPEED);
++		break;
++
++	case 'R':
++		musb_port_reset(musb, true);
++		while (time_before(jiffies, musb->rh_timer))
++			msleep(1);
++		musb_port_reset(musb, false);
++
++		break;
++		
++  case 'r':
++		usb_hcd_resume_root_hub(hcd);
++		break;
++
++  case 'e':
++		if(bus) 
++			usb_bus_start_enum(bus,bus->otg_port);
++		break;
++
++	case 'U':
++		/*Suspend*/
++		musb_port_suspend(musb, true);
++		break;
++
++	case 'u':
++		/*Resume*/
++		musb_port_suspend(musb, false);
++		/*How to end sanely? */
++		musb_port_reset(musb, true);
++		while (time_before(jiffies, musb->rh_timer))
++			msleep(1);
++		musb_port_reset(musb, false);
++
++	break;
++
+ 	case '?':
+ 		INFO("?: you are seeing it\n");
+ 		INFO("C/c: soft connect enable/disable\n");
+@@ -695,6 +835,7 @@
+ 
+ 	musb_platform_try_idle(musb, 0);
+ 
++
+ 	return count;
+ }
+ 
+@@ -709,6 +850,8 @@
+ 
+ 	count -= off;
+ 	count -= 1;		/* for NUL at end */
++	count -= 20; /* Padding */
++
+ 	if (count <= 0)
+ 		return -EINVAL;
+ 
+@@ -720,6 +863,9 @@
+ 		count -= code;
+ 	}
+ 
++	if (count < 0)
++		goto done;
++
+ 	/* generate the report for the end points */
+ 	/* REVISIT ... not unless something's connected! */
+ 	for (epnum = 0; count >= 0 && epnum < musb->nr_endpoints;
+@@ -728,14 +874,22 @@
+ 		if (code > 0) {
+ 			buffer += code;
+ 			count -= code;
++			if (count < 0)
++				goto done;
+ 		}
+ 	}
+ 
++
++ done:
++
+ 	musb_platform_try_idle(musb, 0);
+ 
+ 	spin_unlock_irqrestore(&musb->lock, flags);
+ 	*eof = 1;
+ 
++	if(count < 0)
++		return -EINVAL;
++
+ 	return buffer - page;
+ }
+ 
+--- kernel-power-2.6.28.orig/drivers/usb/musb/musb_virthub.c
++++ kernel-power-2.6.28/drivers/usb/musb/musb_virthub.c
+@@ -46,7 +46,7 @@
+ #include "musb_core.h"
+ 
+ 
+-static void musb_port_suspend(struct musb *musb, bool do_suspend)
++void musb_port_suspend(struct musb *musb, bool do_suspend)
+ {
+ 	u8		power;
+ 	void __iomem	*mbase = musb->mregs;
+@@ -106,11 +106,13 @@
+ 
+ 		/* later, GetPortStatus will stop RESUME signaling */
+ 		musb->port1_status |= MUSB_PORT_STAT_RESUME;
+-		musb->rh_timer = jiffies + msecs_to_jiffies(20);
++		/*OMAP documentation states range of 10-15 ms */
++		musb->rh_timer = jiffies + msecs_to_jiffies(13);
++		//		musb->rh_timer = jiffies + msecs_to_jiffies(20);
+ 	}
+ }
+ 
+-static void musb_port_reset(struct musb *musb, bool do_reset)
++void musb_port_reset(struct musb *musb, bool do_reset)
+ {
+ 	u8		power;
+ 	void __iomem	*mbase = musb->mregs;
+@@ -131,7 +133,7 @@
+ 	 */
+ 	power = musb_readb(mbase, MUSB_POWER);
+ 	if (do_reset) {
+-
++		DBG(4, "root port reset started\n");
+ 		/*
+ 		 * If RESUME is set, we must make sure it stays minimum 20 ms.
+ 		 * Then we must clear RESUME and wait a bit to let musb start
+--- kernel-power-2.6.28.orig/drivers/usb/musb/omap2430.c
++++ kernel-power-2.6.28/drivers/usb/musb/omap2430.c
+@@ -77,11 +77,14 @@
+ 
+ 	switch (musb->xceiv->state) {
+ 	case OTG_STATE_A_WAIT_BCON:
++		if(host_mode(musb->mregs))
++			break; /*Don't time out*/
++
+ 		devctl &= ~MUSB_DEVCTL_SESSION;
+ 		musb_writeb(musb->mregs, MUSB_DEVCTL, devctl);
+ 
+ 		devctl = musb_readb(musb->mregs, MUSB_DEVCTL);
+-		if (devctl & MUSB_DEVCTL_BDEVICE) {
++		if (!host_mode(musb->mregs)) {
+ 			musb->xceiv->state = OTG_STATE_B_IDLE;
+ 			MUSB_DEV_MODE(musb);
+ 		} else {
+@@ -109,11 +112,14 @@
+ #endif
+ #ifdef CONFIG_USB_MUSB_HDRC_HCD
+ 	case OTG_STATE_A_HOST:
++
++
+ 		devctl = musb_readb(musb->mregs, MUSB_DEVCTL);
+-		if (devctl &  MUSB_DEVCTL_BDEVICE)
++		if (!host_mode(musb->mregs))
+ 			musb->xceiv->state = OTG_STATE_B_IDLE;
+-		else
+-			musb->xceiv->state = OTG_STATE_A_WAIT_BCON;
++		/*Don't time out if host*/
++		//		else
++		//	musb->xceiv->state = OTG_STATE_A_WAIT_BCON;
+ #endif
+ 	default:
+ 		break;
+@@ -133,7 +139,7 @@
+ 	/* Never idle if active, or when VBUS timeout is not set as host */
+ 	if (musb->is_active || ((musb->a_wait_bcon == 0)
+ 			&& (musb->xceiv->state == OTG_STATE_A_WAIT_BCON))) {
+-		DBG(4, "%s active, deleting timer\n", otg_state_string(musb));
++		DBG(6, "%s active, deleting timer\n", otg_state_string(musb));
+ 		del_timer(&musb_idle_timer);
+ 		last_timer = jiffies;
+ 		return;
+@@ -143,13 +149,13 @@
+ 		if (!timer_pending(&musb_idle_timer))
+ 			last_timer = timeout;
+ 		else {
+-			DBG(4, "Longer idle timer already pending, ignoring\n");
++			DBG(6, "Longer idle timer already pending, ignoring\n");
+ 			return;
+ 		}
+ 	}
+ 	last_timer = timeout;
+ 
+-	DBG(4, "%s inactive, for idle timer for %lu ms\n",
++	DBG(6, "%s inactive, for idle timer for %lu ms\n",
+ 		otg_state_string(musb),
+ 		(unsigned long)jiffies_to_msecs(timeout - jiffies));
+ 	mod_timer(&musb_idle_timer, timeout);
+@@ -182,8 +188,14 @@
+ 		musb->xceiv->default_a = 1;
+ 		musb->xceiv->state = OTG_STATE_A_WAIT_VRISE;
+ 		devctl |= MUSB_DEVCTL_SESSION;
+-
+ 		MUSB_HST_MODE(musb);
++		
++		if ((devctl & MUSB_DEVCTL_VBUS) == MUSB_DEVCTL_VBUS) {
++			/*Power is already applied. Skip VRISE and go directly to BCON.*/
++			musb->xceiv->state = OTG_STATE_A_WAIT_BCON;
++		}
++
++
+ 	} else {
+ 		musb->is_active = 0;
+ 
+@@ -420,7 +432,7 @@
+ 	u8 r;
+ 	unsigned long	flags;
+ 
+-	DBG(3, "restoring register context\n");
++	DBG(3, "restoring register context for %s\n","musb_restore_ctx_and_resume");
+ 
+ 	if (musb->board && musb->board->xceiv_power)
+ 		musb->board->xceiv_power(1);
+@@ -431,13 +443,17 @@
+ 	else
+ 		clk_enable(musb->clock);
+ 
+-	/* Recover OTG control */
+-	r = musb_ulpi_readb(musb->mregs, ISP1704_OTG_CTRL);
+-	r |= ISP1704_OTG_CTRL_IDPULLUP | ISP1704_OTG_CTRL_DP_PULLDOWN;
+-	musb_ulpi_writeb(musb->mregs, ISP1704_OTG_CTRL, r);
+-
++	if(host_mode(musb->mregs)) {
++		musb_force_term(musb->mregs,MUSB_TERM_HOST_FULLSPEED);
++		r = musb_ulpi_readb(musb->mregs,ISP1704_FUNC_CTRL);
++	} else {
++		/* Recover OTG control */
++		r = musb_ulpi_readb(musb->mregs, ISP1704_OTG_CTRL);
++		r |= ISP1704_OTG_CTRL_IDPULLUP | ISP1704_OTG_CTRL_DP_PULLDOWN;
++		musb_ulpi_writeb(musb->mregs, ISP1704_OTG_CTRL, r);
++		r = ISP1704_FUNC_CTRL_FULL_SPEED;
++	}
+ 	/* Recover FUNC control */
+-	r = ISP1704_FUNC_CTRL_FULL_SPEED;
+ 	r |= ISP1704_FUNC_CTRL_SUSPENDM | ISP1704_FUNC_CTRL_RESET;
+ 	musb_ulpi_writeb(musb->mregs, ISP1704_FUNC_CTRL, r);
+ 
+--- kernel-power-2.6.28.orig/drivers/usb/otg/otg.c
++++ kernel-power-2.6.28/drivers/usb/otg/otg.c
+@@ -160,7 +160,8 @@
+ 
+ 	/* add other match criteria here ... */
+ 
+-
++	return 1;
++	
+ 	/* OTG MESSAGE: report errors here, customize to match your product */
+ 	dev_err(&dev->dev, "device v%04x p%04x is not supported\n",
+ 		le16_to_cpu(dev->descriptor.idVendor),
+--- kernel-power-2.6.28.orig/drivers/usb/otg/twl4030-usb.c
++++ kernel-power-2.6.28/drivers/usb/otg/twl4030-usb.c
+@@ -239,9 +239,9 @@
+ 
+ enum linkstat {
+ 	USB_LINK_UNKNOWN = 0,
+-	USB_LINK_NONE,
+-	USB_LINK_VBUS,
+-	USB_LINK_ID,
++	USB_LINK_NONE = 1,
++	USB_LINK_VBUS = 2,
++	USB_LINK_ID = 3,
+ };
+ 
+ struct twl4030_usb {
