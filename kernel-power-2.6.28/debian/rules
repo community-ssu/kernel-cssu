@@ -14,6 +14,7 @@ KERNEL_PACKAGE := $(PACKAGE)-power
 BOOTIMG_PACKAGE := $(PACKAGE)-power-bootimg
 MODULES_PACKAGE := $(PACKAGE)-power-modules
 HEADERS_PACKAGE := $(PACKAGE)-power-headers
+KBUILD_PACKAGE := $(PACKAGE)-power-kbuild
 LIBC_PACKAGE := linux-kernel-power-headers
 
 BUILDTMP := $(CURDIR)/debian/build
@@ -159,6 +160,7 @@ install-headers:
 #install kbuild
 	install -d $(CURDIR)/debian/$(HEADERS_PACKAGE)/usr/src/$(KBUILD_PACKAGE)
 	cp -a $(KSRC)/scripts $(CURDIR)/debian/$(HEADERS_PACKAGE)/usr/src/$(KBUILD_PACKAGE)
+	cp -a $(BUILDTMP)/scripts $(CURDIR)/debian/$(HEADERS_PACKAGE)/usr/src/$(KBUILD_PACKAGE)
 #kbuild fixes
 	cd $(CURDIR)/debian/$(HEADERS_PACKAGE)/usr/src/$(KBUILD_PACKAGE)/scripts && \
 		( rm -f $(RM_SCRIPTS); chmod a-x mkcompile_h )

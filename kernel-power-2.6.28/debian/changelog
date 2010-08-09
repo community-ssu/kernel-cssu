@@ -1,3 +1,9 @@
+kernel-power (2.6.28-maemo40) fremantle; urgency=low
+
+  * install build scripts properly in /usr/src/kernel-power-kbuild
+
+ -- Thomas Tanner <maemo@tannerlab.com>  Mon,  9 Aug 2010 23:17:47 +0200
+
 kernel-power (2.6.28-maemo39) fremantle; urgency=low
 
   * new kernel-power-bootimg package for the kernel zImage
