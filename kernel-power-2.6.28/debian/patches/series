@@ -33,3 +33,6 @@ overclock.diff
 #usbhostmode.diff
 armthumb.diff
 wl12xx_rohar.diff
+fmtx.unlock.diff
+radio-bcm2048.diff
+#usbhostmode.diff

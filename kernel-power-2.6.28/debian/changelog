@@ -1,3 +1,13 @@
+kernel-power (2.6.28-maemo42) fremantle; urgency=low
+
+  * remove fmtx power lock (Matan Ziv-Av)
+  * add RDS support to FMRX driver (Niels Faerber)
+  * remove 500Mhz lock when connected to charger (hint by Matan)
+  * control: provide kernel features: radiords, ioacct
+  * prepare USB hostmode patches
+
+ -- Thomas Tanner <maemo@tannerlab.com>  Tue,  09 Nov 2010 23:00:00 +0200
+
 kernel-power (2.6.28-maemo41) fremantle; urgency=low
 
   * integrate PR1.3 kernel patches
