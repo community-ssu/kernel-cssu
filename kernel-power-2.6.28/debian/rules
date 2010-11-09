@@ -164,6 +164,7 @@ install-headers:
 #kbuild fixes
 	cd $(CURDIR)/debian/$(HEADERS_PACKAGE)/usr/src/$(KBUILD_PACKAGE)/scripts && \
 		( rm -f $(RM_SCRIPTS); chmod a-x mkcompile_h )
+	find $(CURDIR)/debian/$(HEADERS_PACKAGE) -name ".gitignore" -exec rm {} \;
 
 install-libc-headers:
 	dh_testdir

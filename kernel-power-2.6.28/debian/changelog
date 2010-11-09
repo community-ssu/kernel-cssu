@@ -1,3 +1,12 @@
+kernel-power (2.6.28-maemo41) fremantle; urgency=low
+
+  * integrate PR1.3 kernel patches
+  * applied Pali Rohar's <pali.rohar@gmail.com> wl12xx patch for setting wifi mode
+  * enable more IPsec modules (by Tobias Brunner)
+  * enable process IO accounting
+
+ -- Thomas Tanner <maemo@tannerlab.com>  Tue,  09 Nov 2010 21:00:00 +0200
+
 kernel-power (2.6.28-maemo40) fremantle; urgency=low
 
   * install build scripts properly in /usr/src/kernel-power-kbuild
@@ -323,6 +332,132 @@ kernel (2.6.28-2010maemo1) fremantle; urgency=low
 
  -- Thomas Tanner <tanner@maemory.com>  Thu, 04 Feb 2010 00:00:00 +0100
 
+kernel (2.6.28-20103103+0m5) unstable; urgency=low
+
+  * This entry has been added by BIFH queue processor
+    version has been changed to 2.6.28-20103103+0m5
+
+ -- Lyubimkin Eugene <ext-lyubimkin.eugene@nokia.com>  Fri, 06 Aug 2010 11:40:19 +0300
+
+kernel (2.6.28-20103103) unstable; urgency=low
+
+  * Fixes: NB#181215 - Freezing in boot up animation screen during powering up
+
+ -- Eugene Lyubimkin <ext-lyubimkin.eugene@nokia.com>  Fri, 06 Aug 2010 08:56:00 +0300
+
+kernel (2.6.28-20103102) unstable; urgency=low
+
+  * Fixes: NB#182195 - Memory corruption while closing uncleanly
+
+ -- Eugene Lyubimkin <ext-lyubimkin.eugene@nokia.com>  Thu, 05 Aug 2010 13:13:35 +0300
+
+kernel (2.6.28-20103101) unstable; urgency=low
+
+  * Fixes: NB#164090 - Rover is violating SD card specification victimizing
+    few (Sandisk) SD cards
+
+ -- Eugene Lyubimkin <ext-lyubimkin.eugene@nokia.com>  Wed, 04 Aug 2010 16:09:28 +0300
+
+kernel (2.6.28-20103003) unstable; urgency=low
+
+  * Fixes: NB#176975 - kernel oops on activating heartbeat trigger
+
+ -- Eugene Lyubimkin <ext-lyubimkin.eugene@nokia.com>  Tue, 03 Aug 2010 11:44:01 +0300
+
+kernel (2.6.28-20103002) unstable; urgency=low
+
+  * Fixes: NB#180393 - dspbridge causes corruption on user-space
+
+ -- Eugene Lyubimkin <ext-lyubimkin.eugene@nokia.com>  Tue, 27 Jul 2010 13:35:20 +0300
+
+kernel (2.6.28-20103001) unstable; urgency=low
+
+  * Fixes: NB#181425 - Camera: always deliver streamoff events to user space
+  * debian/rules:
+    - Delete .gitignore files from kernel-headers package.
+
+ -- Eugene Lyubimkin <ext-lyubimkin.eugene@nokia.com>  Tue, 27 Jul 2010 09:42:28 +0300
+
+kernel (2.6.28-20102603) unstable; urgency=low
+
+  * Fixes: NB#155346 - FMTX power level setting & FMTX disabling settings to
+    be more robust
+
+ -- Eugene Lyubimkin <ext-lyubimkin.eugene@nokia.com>  Thu, 08 Jul 2010 16:36:21 +0300
+
+kernel (2.6.28-20102602) unstable; urgency=low
+
+  * Fixes: NB#176800 - applications suddenly goes to use 100% of CPU...
+
+ -- Eugene Lyubimkin <ext-lyubimkin.eugene@nokia.com>  Fri, 02 Jul 2010 10:40:40 +0300
+
+kernel (2.6.28-20102601) unstable; urgency=low
+
+  * Fixes: NB#159129 - Multitasking brakes the audio system wide
+
+ -- Eugene Lyubimkin <ext-lyubimkin.eugene@nokia.com>  Thu, 01 Jul 2010 09:16:10 +0300
+
+kernel (2.6.28-20102502) unstable; urgency=low
+
+  * Fixes: NB#159284 - Sometimes SCO is not disconnected when there
+    is no audio
+  * Fixes: NB#174823 - Security vulnerability when connecting to
+    BT DUN quickly after connection is refused
+
+ -- Mika Yrjola <ext-mika.2.yrjola@nokia.com>  Thu, 24 Jun 2010 12:54:30 +0300
+
+kernel (2.6.28-20102501) unstable; urgency=low
+
+  * Fixes: NB#155346 - FMTX power level setting & FMTX disabling
+    settings to be more robust
+  * Fixes: NB#166185 - swapping algorithm improvements & re-calibration
+
+ -- Mika Yrjola <ext-mika.2.yrjola@nokia.com>  Wed, 23 Jun 2010 11:13:52 +0300
+
+kernel (2.6.28-20102301) unstable; urgency=low
+
+  * Fixes: NB#147449 - Joikuspot slows device down
+
+ -- Eugene Lyubimkin <ext-lyubimkin.eugene@nokia.com>  Thu, 10 Jun 2010 09:25:57 +0300
+
+kernel (2.6.28-20102205) unstable; urgency=low
+
+  * Fixes: NB#120620 - Smartreflex is not enabled in releases
+
+ -- Eugene Lyubimkin <ext-lyubimkin.eugene@nokia.com>  Fri, 04 Jun 2010 11:33:59 +0300
+
+kernel (2.6.28-20102204) unstable; urgency=low
+
+  * Fixes: NB#170888 - Dual boot in kernel for enabling MeeGo 
+
+ -- Eugene Lyubimkin <ext-lyubimkin.eugene@nokia.com>  Thu, 03 Jun 2010 14:53:59 +0300
+
+kernel (2.6.28-20102203) unstable; urgency=low
+
+  * Fixes: NB#149752 - kernel oops after lots of IO 
+
+ -- Eugene Lyubimkin <ext-lyubimkin.eugene@nokia.com>  Wed, 02 Jun 2010 11:21:51 +0300
+
+kernel (2.6.28-20102202) unstable; urgency=low
+
+  * Fixes: NB#161191 - Rover does not differentiate charging downstream port
+    from dedicated charger 
+
+ -- Eugene Lyubimkin <ext-lyubimkin.eugene@nokia.com>  Tue, 01 Jun 2010 08:31:25 +0300
+
+kernel (2.6.28-20102201) unstable; urgency=low
+
+  * Fixes: NB#152523 - Accelerometer uncalibrated after reboot 
+
+ -- Eugene Lyubimkin <ext-lyubimkin.eugene@nokia.com>  Mon, 31 May 2010 09:14:32 +0300
+
+kernel (2.6.28-20102101) unstable; urgency=low
+
+  * Fixes: NB#163921 - Fallback eSCO to SCO on error 0x1a
+  * Fixes: NB#163920 - Enter active mode before SCO
+  * Fixes: NB#160073 - wl1251_cmd_data_path leaks small buffer on error path
+
+ -- Eugene Lyubimkin <ext-lyubimkin.eugene@nokia.com>  Fri, 28 May 2010 10:55:06 +0300
 kernel (2.6.28-20101501+0m5) unstable; urgency=low
 
   * This entry has been added by BIFH queue processor

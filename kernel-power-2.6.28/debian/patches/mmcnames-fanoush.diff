@@ -11,7 +11,7 @@
  	__set_bit(devidx, dev_use);
 --- kernel-power-2.6.28.orig/drivers/mmc/host/omap_hsmmc.c
 +++ kernel-power-2.6.28/drivers/mmc/host/omap_hsmmc.c
-@@ -1759,8 +1759,8 @@
+@@ -1804,8 +1804,8 @@
  	omap_hsmmc_protect_card(host);
  
  	mmc_add_host(mmc);

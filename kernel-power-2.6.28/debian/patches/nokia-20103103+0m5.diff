@@ -1,0 +1,1439 @@
+--- kernel-power-2.6.28.orig/arch/arm/include/asm/cacheflush.h
++++ kernel-power-2.6.28/arch/arm/include/asm/cacheflush.h
+@@ -138,16 +138,16 @@
+  *	Please note that the implementation of these, and the required
+  *	effects are cache-type (VIVT/VIPT/PIPT) specific.
+  *
+- *	flush_cache_kern_all()
++ *	flush_kern_all()
+  *
+  *		Unconditionally clean and invalidate the entire cache.
+  *
+- *	flush_cache_user_mm(mm)
++ *	flush_user_all()
+  *
+  *		Clean and invalidate all user space cache entries
+  *		before a change of page tables.
+  *
+- *	flush_cache_user_range(start, end, flags)
++ *	flush_user_range(start, end, flags)
+  *
+  *		Clean and invalidate a range of cache entries in the
+  *		specified address space before a change of page tables.
+@@ -163,6 +163,20 @@
+  *		- start  - virtual start address
+  *		- end    - virtual end address
+  *
++ *	coherent_user_range(start, end)
++ *
++ *		Ensure coherency between the Icache and the Dcache in the
++ *		region described by start, end.  If you have non-snooping
++ *		Harvard caches, you need to implement this function.
++ *		- start  - virtual start address
++ *		- end    - virtual end address
++ *
++ *	flush_kern_dcache_area(kaddr, size)
++ *
++ *		Ensure that the data held in page is written back.
++ *		- kaddr  - page address
++ *		- size   - region size
++ *
+  *	DMA Cache Coherency
+  *	===================
+  *
+@@ -375,7 +389,7 @@
+  * Harvard caches are synchronised for the user space address range.
+  * This is used for the ARM private sys_cacheflush system call.
+  */
+-#define flush_cache_user_range(vma,start,end) \
++#define flush_cache_user_range(start,end) \
+ 	__cpuc_coherent_user_range((start) & PAGE_MASK, PAGE_ALIGN(end))
+ 
+ /*
+--- kernel-power-2.6.28.orig/arch/arm/kernel/traps.c
++++ kernel-power-2.6.28/arch/arm/kernel/traps.c
+@@ -418,7 +418,9 @@
+ 		if (end > vma->vm_end)
+ 			end = vma->vm_end;
+ 
+-		flush_cache_user_range(vma, start, end);
++		up_read(&mm->mmap_sem);
++		flush_cache_user_range(start, end);
++		return;
+ 	}
+ 	up_read(&mm->mmap_sem);
+ }
+--- kernel-power-2.6.28.orig/arch/arm/mach-omap2/smartreflex.c
++++ kernel-power-2.6.28/arch/arm/mach-omap2/smartreflex.c
+@@ -890,7 +890,7 @@
+ 		return SR_FAIL;
+ 	}
+ 
+-	if (sr->is_autocomp_active) {
++	if (sr->is_autocomp_active && !sr->is_sr_reset) {
+ 		WARN(1, "SR: Must not transmit VCBYPASS command while SR is "
+ 		     "active");
+ 		return SR_FAIL;
+--- kernel-power-2.6.28.orig/arch/arm/mm/fault.c
++++ kernel-power-2.6.28/arch/arm/mm/fault.c
+@@ -387,6 +387,9 @@
+ 	if (addr < TASK_SIZE)
+ 		return do_page_fault(addr, fsr, regs);
+ 
++	if (user_mode(regs))
++		goto bad_area;
++
+ 	index = pgd_index(addr);
+ 
+ 	/*
+@@ -449,7 +452,12 @@
+ 	{ do_bad,		SIGILL,	 BUS_ADRALN,	"alignment exception"		   },
+ 	{ do_bad,		SIGKILL, 0,		"terminal exception"		   },
+ 	{ do_bad,		SIGILL,	 BUS_ADRALN,	"alignment exception"		   },
++/* Do we need runtime check ? */
++#if __LINUX_ARM_ARCH__ < 6
+ 	{ do_bad,		SIGBUS,	 0,		"external abort on linefetch"	   },
++#else
++	{ do_translation_fault,	SIGSEGV, SEGV_MAPERR,	"I-cache maintenance fault"	   },
++#endif
+ 	{ do_translation_fault,	SIGSEGV, SEGV_MAPERR,	"section translation fault"	   },
+ 	{ do_bad,		SIGBUS,	 0,		"external abort on linefetch"	   },
+ 	{ do_page_fault,	SIGSEGV, SEGV_MAPERR,	"page translation fault"	   },
+--- kernel-power-2.6.28.orig/arch/arm/mm/mmu.c
++++ kernel-power-2.6.28/arch/arm/mm/mmu.c
+@@ -953,4 +953,6 @@
+ 		pmd[1] = __pmd(pmdval + (1 << (PGDIR_SHIFT - 1)));
+ 		flush_pmd_entry(pmd);
+ 	}
++
++	local_flush_tlb_all();
+ }
+--- kernel-power-2.6.28.orig/arch/arm/mm/proc-v6.S
++++ kernel-power-2.6.28/arch/arm/mm/proc-v6.S
+@@ -56,8 +56,6 @@
+  *	to what would be the reset vector.
+  *
+  *	- loc   - location to jump to for soft reset
+- *
+- *	It is assumed that:
+  */
+ 	.align	5
+ ENTRY(cpu_v6_reset)
+--- kernel-power-2.6.28.orig/arch/arm/mm/proc-v7.S
++++ kernel-power-2.6.28/arch/arm/mm/proc-v7.S
+@@ -28,7 +28,14 @@
+ ENDPROC(cpu_v7_proc_init)
+ 
+ ENTRY(cpu_v7_proc_fin)
+-	mov	pc, lr
++	stmfd	sp!, {lr}
++	cpsid	if				@ disable interrupts
++	bl	v7_flush_kern_cache_all
++	mrc	p15, 0, r0, c1, c0, 0		@ ctrl register
++	bic	r0, r0, #0x1000			@ ...i............
++	bic	r0, r0, #0x0006			@ .............ca.
++	mcr	p15, 0, r0, c1, c0, 0		@ disable caches
++	ldmfd	sp!, {pc}
+ ENDPROC(cpu_v7_proc_fin)
+ 
+ /*
+@@ -39,8 +46,6 @@
+  *	to what would be the reset vector.
+  *
+  *	- loc   - location to jump to for soft reset
+- *
+- *	It is assumed that:
+  */
+ 	.align	5
+ ENTRY(cpu_v7_reset)
+--- kernel-power-2.6.28.orig/block/cfq-iosched.c
++++ kernel-power-2.6.28/block/cfq-iosched.c
+@@ -84,6 +84,11 @@
+ 	 */
+ 	struct cfq_rb_root service_tree;
+ 	unsigned int busy_queues;
++	/*
++	 * Used to track any pending rt requests so we can pre-empt current
++	 * non-RT cfqq in service when this value is non-zero.
++	 */
++	unsigned int busy_rt_queues;
+ 
+ 	int rq_in_driver;
+ 	int sync_flight;
+@@ -155,6 +160,7 @@
+ 
+ 	unsigned long slice_end;
+ 	long slice_resid;
++	unsigned int slice_dispatch;
+ 
+ 	/* pending metadata requests */
+ 	int meta_pending;
+@@ -171,13 +177,12 @@
+ enum cfqq_state_flags {
+ 	CFQ_CFQQ_FLAG_on_rr = 0,	/* on round-robin busy list */
+ 	CFQ_CFQQ_FLAG_wait_request,	/* waiting for a request */
++	CFQ_CFQQ_FLAG_must_dispatch,	/* must be allowed a dispatch */
+ 	CFQ_CFQQ_FLAG_must_alloc,	/* must be allowed rq alloc */
+ 	CFQ_CFQQ_FLAG_must_alloc_slice,	/* per-slice must_alloc flag */
+-	CFQ_CFQQ_FLAG_must_dispatch,	/* must dispatch, even if expired */
+ 	CFQ_CFQQ_FLAG_fifo_expire,	/* FIFO checked in this slice */
+ 	CFQ_CFQQ_FLAG_idle_window,	/* slice idling enabled */
+ 	CFQ_CFQQ_FLAG_prio_changed,	/* task priority has changed */
+-	CFQ_CFQQ_FLAG_queue_new,	/* queue never been serviced */
+ 	CFQ_CFQQ_FLAG_slice_new,	/* no requests dispatched in slice */
+ 	CFQ_CFQQ_FLAG_sync,		/* synchronous queue */
+ };
+@@ -198,13 +203,12 @@
+ 
+ CFQ_CFQQ_FNS(on_rr);
+ CFQ_CFQQ_FNS(wait_request);
++CFQ_CFQQ_FNS(must_dispatch);
+ CFQ_CFQQ_FNS(must_alloc);
+ CFQ_CFQQ_FNS(must_alloc_slice);
+-CFQ_CFQQ_FNS(must_dispatch);
+ CFQ_CFQQ_FNS(fifo_expire);
+ CFQ_CFQQ_FNS(idle_window);
+ CFQ_CFQQ_FNS(prio_changed);
+-CFQ_CFQQ_FNS(queue_new);
+ CFQ_CFQQ_FNS(slice_new);
+ CFQ_CFQQ_FNS(sync);
+ #undef CFQ_CFQQ_FNS
+@@ -562,6 +566,8 @@
+ 	BUG_ON(cfq_cfqq_on_rr(cfqq));
+ 	cfq_mark_cfqq_on_rr(cfqq);
+ 	cfqd->busy_queues++;
++	if (cfq_class_rt(cfqq))
++		cfqd->busy_rt_queues++;
+ 
+ 	cfq_resort_rr_list(cfqd, cfqq);
+ }
+@@ -581,6 +587,8 @@
+ 
+ 	BUG_ON(!cfqd->busy_queues);
+ 	cfqd->busy_queues--;
++	if (cfq_class_rt(cfqq))
++		cfqd->busy_rt_queues--;
+ }
+ 
+ /*
+@@ -765,10 +773,15 @@
+ 	if (cfqq) {
+ 		cfq_log_cfqq(cfqd, cfqq, "set_active");
+ 		cfqq->slice_end = 0;
++		cfqq->slice_dispatch = 0;
++
++		cfq_clear_cfqq_wait_request(cfqq);
++		cfq_clear_cfqq_must_dispatch(cfqq);
+ 		cfq_clear_cfqq_must_alloc_slice(cfqq);
+ 		cfq_clear_cfqq_fifo_expire(cfqq);
+ 		cfq_mark_cfqq_slice_new(cfqq);
+-		cfq_clear_cfqq_queue_new(cfqq);
++
++		del_timer(&cfqd->idle_slice_timer);
+ 	}
+ 
+ 	cfqd->active_queue = cfqq;
+@@ -786,7 +799,6 @@
+ 	if (cfq_cfqq_wait_request(cfqq))
+ 		del_timer(&cfqd->idle_slice_timer);
+ 
+-	cfq_clear_cfqq_must_dispatch(cfqq);
+ 	cfq_clear_cfqq_wait_request(cfqq);
+ 
+ 	/*
+@@ -915,7 +927,6 @@
+ 	    (sample_valid(cic->ttime_samples) && cic->ttime_mean > 2))
+ 		return;
+ 
+-	cfq_mark_cfqq_must_dispatch(cfqq);
+ 	cfq_mark_cfqq_wait_request(cfqq);
+ 
+ 	/*
+@@ -1001,10 +1012,24 @@
+ 	/*
+ 	 * The active queue has run out of time, expire it and select new.
+ 	 */
+-	if (cfq_slice_used(cfqq))
++	if (cfq_slice_used(cfqq) && !cfq_cfqq_must_dispatch(cfqq))
+ 		goto expire;
+ 
+ 	/*
++	 * If we have a RT cfqq waiting, then we pre-empt the current non-rt
++	 * cfqq.
++	 */
++	if (!cfq_class_rt(cfqq) && cfqd->busy_rt_queues) {
++		/*
++		 * We simulate this as cfqq timed out so that it gets to bank
++		 * the remaining of its time slice.
++		 */
++		cfq_log_cfqq(cfqd, cfqq, "preempt");
++		cfq_slice_expired(cfqd, 1);
++		goto new_queue;
++	}
++
++	/*
+ 	 * The active queue has requests and isn't expired, allow it to
+ 	 * dispatch.
+ 	 */
+@@ -1030,59 +1055,6 @@
+ 	return cfqq;
+ }
+ 
+-/*
+- * Dispatch some requests from cfqq, moving them to the request queue
+- * dispatch list.
+- */
+-static int
+-__cfq_dispatch_requests(struct cfq_data *cfqd, struct cfq_queue *cfqq,
+-			int max_dispatch)
+-{
+-	int dispatched = 0;
+-
+-	BUG_ON(RB_EMPTY_ROOT(&cfqq->sort_list));
+-
+-	do {
+-		struct request *rq;
+-
+-		/*
+-		 * follow expired path, else get first next available
+-		 */
+-		rq = cfq_check_fifo(cfqq);
+-		if (rq == NULL)
+-			rq = cfqq->next_rq;
+-
+-		/*
+-		 * finally, insert request into driver dispatch list
+-		 */
+-		cfq_dispatch_insert(cfqd->queue, rq);
+-
+-		dispatched++;
+-
+-		if (!cfqd->active_cic) {
+-			atomic_inc(&RQ_CIC(rq)->ioc->refcount);
+-			cfqd->active_cic = RQ_CIC(rq);
+-		}
+-
+-		if (RB_EMPTY_ROOT(&cfqq->sort_list))
+-			break;
+-
+-	} while (dispatched < max_dispatch);
+-
+-	/*
+-	 * expire an async queue immediately if it has used up its slice. idle
+-	 * queue always expire after 1 dispatch round.
+-	 */
+-	if (cfqd->busy_queues > 1 && ((!cfq_cfqq_sync(cfqq) &&
+-	    dispatched >= cfq_prio_to_maxrq(cfqd, cfqq)) ||
+-	    cfq_class_idle(cfqq))) {
+-		cfqq->slice_end = jiffies + 1;
+-		cfq_slice_expired(cfqd, 0);
+-	}
+-
+-	return dispatched;
+-}
+-
+ static int __cfq_forced_dispatch_cfqq(struct cfq_queue *cfqq)
+ {
+ 	int dispatched = 0;
+@@ -1116,11 +1088,45 @@
+ 	return dispatched;
+ }
+ 
++/*
++ * Dispatch a request from cfqq, moving them to the request queue
++ * dispatch list.
++ */
++static void cfq_dispatch_request(struct cfq_data *cfqd, struct cfq_queue *cfqq)
++{
++	struct request *rq;
++
++	BUG_ON(RB_EMPTY_ROOT(&cfqq->sort_list));
++
++	/*
++	 * follow expired path, else get first next available
++	 */
++	rq = cfq_check_fifo(cfqq);
++	if (!rq)
++		rq = cfqq->next_rq;
++
++	/*
++	 * insert request into driver dispatch list
++	 */
++	cfq_dispatch_insert(cfqd->queue, rq);
++
++	if (!cfqd->active_cic) {
++		struct cfq_io_context *cic = RQ_CIC(rq);
++
++		atomic_inc(&cic->ioc->refcount);
++		cfqd->active_cic = cic;
++	}
++}
++
++/*
++ * Find the cfqq that we need to service and move a request from that to the
++ * dispatch list
++ */
+ static int cfq_dispatch_requests(struct request_queue *q, int force)
+ {
+ 	struct cfq_data *cfqd = q->elevator->elevator_data;
+ 	struct cfq_queue *cfqq;
+-	int dispatched;
++	unsigned int max_dispatch;
+ 
+ 	if (!cfqd->busy_queues)
+ 		return 0;
+@@ -1128,33 +1134,63 @@
+ 	if (unlikely(force))
+ 		return cfq_forced_dispatch(cfqd);
+ 
+-	dispatched = 0;
+-	while ((cfqq = cfq_select_queue(cfqd)) != NULL) {
+-		int max_dispatch;
++	cfqq = cfq_select_queue(cfqd);
++	if (!cfqq)
++		return 0;
++
++	/*
++	 * If this is an async queue and we have sync IO in flight, let it wait
++	 */
++	if (cfqd->sync_flight && !cfq_cfqq_sync(cfqq))
++		return 0;
++
++	max_dispatch = cfqd->cfq_quantum;
++	if (cfq_class_idle(cfqq))
++		max_dispatch = 1;
+ 
+-		max_dispatch = cfqd->cfq_quantum;
++	/*
++	 * Does this cfqq already have too much IO in flight?
++	 */
++	if (cfqq->dispatched >= max_dispatch) {
++		/*
++		 * idle queue must always only have a single IO in flight
++		 */
+ 		if (cfq_class_idle(cfqq))
+-			max_dispatch = 1;
++			return 0;
+ 
+-		if (cfqq->dispatched >= max_dispatch) {
+-			if (cfqd->busy_queues > 1)
+-				break;
+-			if (cfqq->dispatched >= 4 * max_dispatch)
+-				break;
+-		}
++		/*
++		 * We have other queues, don't allow more IO from this one
++		 */
++		if (cfqd->busy_queues > 1)
++			return 0;
+ 
+-		if (cfqd->sync_flight && !cfq_cfqq_sync(cfqq))
+-			break;
++		/*
++		 * we are the only queue, allow up to 4 times of 'quantum'
++		 */
++		if (cfqq->dispatched >= 4 * max_dispatch)
++			return 0;
++	}
+ 
+-		cfq_clear_cfqq_must_dispatch(cfqq);
+-		cfq_clear_cfqq_wait_request(cfqq);
+-		del_timer(&cfqd->idle_slice_timer);
++	/*
++	 * Dispatch a request from this cfqq
++	 */
++	cfq_dispatch_request(cfqd, cfqq);
++	cfqq->slice_dispatch++;
++	cfq_clear_cfqq_must_dispatch(cfqq);
+ 
+-		dispatched += __cfq_dispatch_requests(cfqd, cfqq, max_dispatch);
++	/*
++	 * expire an async queue immediately if it has used up its slice. idle
++	 * queue always expire after 1 dispatch round.
++	 */
++	if (cfqd->busy_queues > 1 && ((!cfq_cfqq_sync(cfqq) &&
++	    cfqq->slice_dispatch >= cfq_prio_to_maxrq(cfqd, cfqq)) ||
++	    cfq_class_idle(cfqq))) {
++		cfqq->slice_end = jiffies + 1;
++		cfq_slice_expired(cfqd, 0);
+ 	}
+ 
+-	cfq_log(cfqd, "dispatched=%d", dispatched);
+-	return dispatched;
++	cfq_log(cfqd, "dispatched a request");
++	return 1;
+ }
+ 
+ /*
+@@ -1318,7 +1354,15 @@
+ 		unsigned long flags;
+ 
+ 		spin_lock_irqsave(q->queue_lock, flags);
+-		__cfq_exit_single_io_context(cfqd, cic);
++
++		/*
++		 * Ensure we get a fresh copy of the ->key to prevent
++		 * race between exiting task and queue
++		 */
++		smp_read_barrier_depends();
++		if (cic->key)
++			__cfq_exit_single_io_context(cfqd, cic);
++
+ 		spin_unlock_irqrestore(q->queue_lock, flags);
+ 	}
+ }
+@@ -1472,7 +1516,6 @@
+ 		cfqq->cfqd = cfqd;
+ 
+ 		cfq_mark_cfqq_prio_changed(cfqq);
+-		cfq_mark_cfqq_queue_new(cfqq);
+ 
+ 		cfq_init_prio_data(cfqq, ioc);
+ 
+@@ -1797,6 +1840,12 @@
+ 	if (rq_is_meta(rq) && !cfqq->meta_pending)
+ 		return 1;
+ 
++	/*
++	 * Allow an RT request to pre-empt an ongoing non-RT cfqq timeslice.
++	 */
++	if (cfq_class_rt(new_cfqq) && !cfq_class_rt(cfqq))
++		return 1;
++
+ 	if (!cfqd->active_cic || !cfq_cfqq_wait_request(cfqq))
+ 		return 0;
+ 
+@@ -1853,23 +1902,28 @@
+ 
+ 	if (cfqq == cfqd->active_queue) {
+ 		/*
+-		 * if we are waiting for a request for this queue, let it rip
+-		 * immediately and flag that we must not expire this queue
+-		 * just now
++		 * Remember that we saw a request from this process, but
++		 * don't start queuing just yet. Otherwise we risk seeing lots
++		 * of tiny requests, because we disrupt the normal plugging
++		 * and merging. If the request is already larger than a single
++		 * page, let it rip immediately. For that case we assume that
++		 * merging is already done.
+ 		 */
+ 		if (cfq_cfqq_wait_request(cfqq)) {
++			if (blk_rq_bytes(rq) > PAGE_CACHE_SIZE) {
++				del_timer(&cfqd->idle_slice_timer);
++				blk_start_queueing(cfqd->queue);
++			}
+ 			cfq_mark_cfqq_must_dispatch(cfqq);
+-			del_timer(&cfqd->idle_slice_timer);
+-			blk_start_queueing(cfqd->queue);
+ 		}
+ 	} else if (cfq_should_preempt(cfqd, cfqq, rq)) {
+ 		/*
+ 		 * not the active queue - expire current slice if it is
+ 		 * idle and has expired it's mean thinktime or this new queue
+-		 * has some old slice time left and is of higher priority
++		 * has some old slice time left and is of higher priority or
++		 * this new queue is RT and the current one is BE
+ 		 */
+ 		cfq_preempt_queue(cfqd, cfqq);
+-		cfq_mark_cfqq_must_dispatch(cfqq);
+ 		blk_start_queueing(cfqd->queue);
+ 	}
+ }
+@@ -2129,6 +2183,12 @@
+ 		timed_out = 0;
+ 
+ 		/*
++		 * We saw a request before the queue expired, let it through
++		 */
++		if (cfq_cfqq_must_dispatch(cfqq))
++			goto out_kick;
++
++		/*
+ 		 * expired
+ 		 */
+ 		if (cfq_slice_used(cfqq))
+@@ -2144,10 +2204,8 @@
+ 		/*
+ 		 * not expired and it has a request pending, let it dispatch
+ 		 */
+-		if (!RB_EMPTY_ROOT(&cfqq->sort_list)) {
+-			cfq_mark_cfqq_must_dispatch(cfqq);
++		if (!RB_EMPTY_ROOT(&cfqq->sort_list))
+ 			goto out_kick;
+-		}
+ 	}
+ expire:
+ 	cfq_slice_expired(cfqd, timed_out);
+--- kernel-power-2.6.28.orig/drivers/dsp/bridge/rmgr/drv.c
++++ kernel-power-2.6.28/drivers/dsp/bridge/rmgr/drv.c
+@@ -517,11 +517,12 @@
+ 		pDMMRes = pDMMList;
+ 		pDMMList = pDMMList->next;
+ 		if (pDMMRes->dmmAllocated) {
+-			status = PROC_UnMap(pDMMRes->hProcessor,
+-				 (void *)pDMMRes->ulDSPResAddr, pCtxt);
+-			status = PROC_UnReserveMemory(pDMMRes->hProcessor,
+-				 (void *)pDMMRes->ulDSPResAddr);
+-			pDMMRes->dmmAllocated = 0;
++			/* PROC_UnMap frees pDMMRes */
++			void *processor = pDMMRes->hProcessor;
++			void *map_addr = (void*)pDMMRes->ulDSPAddr;
++			void *rsv_addr = (void*)pDMMRes->ulDSPResAddr;
++			status = PROC_UnMap(processor, map_addr, pCtxt);
++			status = PROC_UnReserveMemory(processor, rsv_addr);
+ 		}
+ 	}
+ 	return status;
+--- kernel-power-2.6.28.orig/drivers/dsp/bridge/rmgr/proc.c
++++ kernel-power-2.6.28/drivers/dsp/bridge/rmgr/proc.c
+@@ -750,6 +750,7 @@
+ 			break;
+ 
+ 		start = vma->vm_end;
++		len -= size;
+ 	}
+ 
+ 	if (!vma)
+--- kernel-power-2.6.28.orig/drivers/i2c/chips/lis302dl.c
++++ kernel-power-2.6.28/drivers/i2c/chips/lis302dl.c
+@@ -44,6 +44,7 @@
+ #	define LIS302_CTRL1_Y		(1 << 1)
+ #	define LIS302_CTRL1_X		(1 << 0)
+ #define LIS302_CTRL_2			0x21
++#	define LIS302_CTRL2_BOOT	(1 << 6)
+ #define LIS302_CTRL_3			0x22
+ #	define	LIS302_CTRL3_GND	0x00
+ #	define	LIS302_CTRL3_FF_WU_1	0x01
+@@ -161,8 +162,13 @@
+ 	if (ret < 0)
+ 		goto out;
+ 
+-	/* REG 2 */
+-	/* Control High Pass filter selection. not used */
++	/* REG 2
++	 * Boot is used to refresh internal registers
++	 * Control High Pass filter selection. not used
++	 */
++	ret = lis302dl_write(c, LIS302_CTRL_2, LIS302_CTRL2_BOOT);
++	if (ret < 0)
++		goto out;
+ 
+ 	/* REG 3
+ 	 * Interrupt CTRL register. One interrupt pin is used for
+--- kernel-power-2.6.28.orig/drivers/leds/leds-lp5523.c
++++ kernel-power-2.6.28/drivers/leds/leds-lp5523.c
+@@ -32,6 +32,7 @@
+ #include <linux/wait.h>
+ #include <linux/leds.h>
+ #include <linux/leds-lp5523.h>
++#include <linux/workqueue.h>
+ 
+ #define LP5523_DRIVER_NAME		"lp5523"
+ #define LP5523_REG_ENABLE		0x00
+@@ -120,6 +121,8 @@
+ 	u8			led_nr;
+ 	u8			led_current;
+ 	struct led_classdev     cdev;
++	struct work_struct brightness_work;
++	u8			brightness;
+ };
+ 
+ struct lp5523_chip {
+@@ -161,6 +164,8 @@
+ static void lp5523_work(struct work_struct  *work);
+ static irqreturn_t lp5523_irq(int irq, void *_chip);
+ 
++static void lp5523_led_brightness_work(struct work_struct *work);
++
+ 
+ static int lp5523_write(struct i2c_client *client, u8 reg, u8 value)
+ {
+@@ -476,6 +481,16 @@
+ 			     enum led_brightness brightness)
+ {
+ 	struct lp5523_led *led = cdev_to_led(cdev);
++	led->brightness = (u8)brightness;
++
++	schedule_work(&led->brightness_work);
++}
++
++static void lp5523_led_brightness_work(struct work_struct *work)
++{
++	struct lp5523_led *led = container_of(work,
++					      struct lp5523_led,
++					      brightness_work);
+ 	struct lp5523_chip *chip = led_to_lp5523(led);
+ 	struct i2c_client *client = chip->client;
+ 
+@@ -483,7 +498,7 @@
+ 
+ 	lp5523_write(client,
+ 		     LP5523_REG_LED_PWM_BASE + led->led_nr,
+-		     (u8)brightness);
++		     led->brightness);
+ 
+ 	mutex_unlock(&chip->lock);
+ }
+@@ -907,6 +922,8 @@
+ 			dev_err(&client->dev, "error initializing leds\n");
+ 			goto fail2;
+ 		}
++		INIT_WORK(&(chip->leds[i].brightness_work),
++			  lp5523_led_brightness_work);
+ 	}
+ 
+ 	ret = lp5523_register_sysfs(client);
+@@ -916,8 +933,10 @@
+ 	}
+ 	return ret;
+ fail2:
+-	for (i = 0; i < pdata->num_leds; i++)
++	for (i = 0; i < pdata->num_leds; i++) {
+ 		led_classdev_unregister(&chip->leds[i].cdev);
++		cancel_work_sync(&chip->leds[i].brightness_work);
++		}
+ 
+ fail1:
+ 	kfree(chip);
+@@ -931,8 +950,10 @@
+ 
+ 	lp5523_unregister_sysfs(client);
+ 
+-	for (i = 0; i < chip->num_leds; i++)
++	for (i = 0; i < chip->num_leds; i++) {
+ 		led_classdev_unregister(&chip->leds[i].cdev);
++		cancel_work_sync(&chip->leds[i].brightness_work);
++		}
+ 
+ 	kfree(chip);
+ 
+--- kernel-power-2.6.28.orig/drivers/media/radio/radio-si4713.c
++++ kernel-power-2.6.28/drivers/media/radio/radio-si4713.c
+@@ -54,6 +54,25 @@
+ /* module parameters */
+ static int radio_nr = -1;	/* radio device minor (-1 ==> auto assign) */
+ 
++/* properties lock for write operations */
++static int config_locked;
++
++/* saved power levels */
++static unsigned int max_pl;
++static unsigned int min_pl;
++
++/* structure for pid registration */
++struct pid_list {
++	pid_t pid;
++	struct list_head plist;
++};
++
++#define APP_MAX_NUM	2
++
++static int pid_count;
++static LIST_HEAD(pid_list_head);
++static struct si4713_device *si4713_dev;
++
+ /*
+  * Sysfs properties
+  * Read and write functions
+@@ -167,6 +186,37 @@
+ 					si4713_##prop##_write);
+ 
+ /*
++ * Config lock property
++ */
++static ssize_t si4713_lock_write(struct device *dev,
++				struct device_attribute *attr,
++				const char *buf,
++				size_t count)
++{
++	int l;
++
++	if (config_locked)
++		return -EPERM;
++
++	sscanf(buf, "%d", &l);
++
++	if (l != 0)
++		config_locked = 1;
++
++	return count;
++}
++
++static ssize_t si4713_lock_read(struct device *dev,
++				struct device_attribute *attr,
++				char *buf)
++{
++	return sprintf(buf, "%d\n", config_locked);
++}
++
++static DEVICE_ATTR(lock, S_IRUGO | S_IWUSR, si4713_lock_read,
++			si4713_lock_write);
++
++/*
+  * Power level property
+  */
+ /* power_level (rw) 88 - 115 or 0 */
+@@ -179,6 +229,9 @@
+ 	unsigned int p;
+ 	int rval, pl;
+ 
++	if (config_locked)
++		return -EPERM;
++
+ 	if (!sdev) {
+ 		rval = -ENODEV;
+ 		goto exit;
+@@ -320,6 +373,7 @@
+ 			value > MAX_TONE_OFF_TIME)
+ 
+ static struct attribute *attrs[] = {
++	&dev_attr_lock.attr,
+ 	&dev_attr_power_level.attr,
+ 	&dev_attr_antenna_capacitor.attr,
+ 	&dev_attr_rds_pi.attr,
+@@ -366,13 +420,118 @@
+ 	return IRQ_HANDLED;
+ }
+ 
++static int register_pid(pid_t pid)
++{
++	struct pid_list *pitem;
++
++	list_for_each_entry(pitem, &pid_list_head, plist) {
++		if (pitem->pid == pid)
++			return -EINVAL;
++	}
++
++	pitem = kmalloc(sizeof(struct pid_list), GFP_KERNEL);
++
++	if (!pitem)
++		return -ENOMEM;
++
++	pitem->pid = pid;
++
++	list_add(&(pitem->plist), &pid_list_head);
++	pid_count++;
++
++	return 0;
++}
++
++static int unregister_pid(pid_t pid)
++{
++	struct pid_list *pitem, *n;
++
++	list_for_each_entry_safe(pitem, n, &pid_list_head, plist) {
++		if (pitem->pid == pid) {
++			list_del(&(pitem->plist));
++			pid_count--;
++
++			kfree(pitem);
++
++			return 0;
++		}
++	}
++	return -EINVAL;
++}
++
++static int si4713_priv_ioctl(struct inode *inode, struct file *file,
++		unsigned int cmd, unsigned long arg)
++{
++	unsigned int pow;
++	int pl, rval;
++
++	if (cmd != LOCK_LOW_POWER && cmd != RELEASE_LOW_POWER)
++		return video_ioctl2(inode, file, cmd, arg);
++
++	pl = si4713_get_power_level(si4713_dev);
++
++	if (pl < 0) {
++		rval = pl;
++		goto exit;
++	}
++
++	if (copy_from_user(&pow, (void __user *)arg, sizeof(pow))) {
++		rval = -EFAULT;
++		goto exit;
++	}
++
++	if (cmd == LOCK_LOW_POWER) {
++
++		if (pid_count == APP_MAX_NUM) {
++			rval = -EPERM;
++			goto exit;
++		}
++
++		if (pid_count == 0) {
++			if (pow > pl) {
++				rval = -EINVAL;
++				goto exit;
++			} else {
++				/* Set max possible power level */
++				max_pl = pl;
++				min_pl = pow;
++			}
++		}
++
++		rval = register_pid(current->pid);
++
++		if (rval)
++			goto exit;
++
++		/* Lower min power level if asked */
++		if (pow < min_pl)
++			min_pl = pow;
++		else
++			pow = min_pl;
++
++	} else { /* RELEASE_LOW_POWER */
++		rval = unregister_pid(current->pid);
++
++		if (rval)
++			goto exit;
++
++		if (pid_count == 0) {
++			if (pow > max_pl)
++				pow = max_pl;
++		}
++	}
++	rval = si4713_set_power_level(si4713_dev, pow);
++exit:
++	return rval;
++}
++
+ /*
+  * si4713_fops - file operations interface
+  */
+ static const struct file_operations si4713_fops = {
+ 	.owner		= THIS_MODULE,
+ 	.llseek		= no_llseek,
+-	.ioctl		= video_ioctl2,
++	.ioctl		= si4713_priv_ioctl,
+ 	.compat_ioctl	= v4l_compat_ioctl32,
+ };
+ 
+@@ -747,6 +906,9 @@
+ 		goto free_sysfs;
+ 	}
+ 
++	/* save to global pointer for it to be accesible from ioctl() call */
++	si4713_dev = sdev;
++
+ 	return 0;
+ 
+ free_sysfs:
+--- kernel-power-2.6.28.orig/drivers/media/radio/radio-si4713.h
++++ kernel-power-2.6.28/drivers/media/radio/radio-si4713.h
+@@ -21,6 +21,9 @@
+ #define SI4713_I2C_ADDR_BUSEN_HIGH	0x63
+ #define SI4713_I2C_ADDR_BUSEN_LOW	0x11
+ 
++#define LOCK_LOW_POWER		_IOW('v', BASE_VIDIOC_PRIVATE + 0, unsigned int)
++#define RELEASE_LOW_POWER	_IOW('v', BASE_VIDIOC_PRIVATE + 1, unsigned int)
++
+ /*
+  * Platform dependent definition
+  */
+--- kernel-power-2.6.28.orig/drivers/media/video/omap34xxcam.c
++++ kernel-power-2.6.28/drivers/media/video/omap34xxcam.c
+@@ -1833,6 +1833,7 @@
+ 	struct omap34xxcam_videodev *vdev = fh->vdev;
+ 	struct device *isp = vdev->cam->isp;
+ 	int i;
++	int streamoff = 0;
+ 
+ 	if (omap34xxcam_daemon_release(vdev, file))
+ 		goto daemon_out;
+@@ -1844,6 +1845,7 @@
+ 		omap34xxcam_slave_power_set(vdev, V4L2_POWER_STANDBY,
+ 					    OMAP34XXCAM_SLAVE_POWER_ALL);
+ 		vdev->streaming = NULL;
++		streamoff = 1;
+ 	}
+ 
+ 	if (atomic_dec_return(&vdev->users) == 0) {
+@@ -1853,6 +1855,10 @@
+ 	}
+ 	mutex_unlock(&vdev->mutex);
+ 
++	if (streamoff)
++		omap34xxcam_daemon_req_hw_reconfig(
++			vdev, OMAP34XXCAM_DAEMON_HW_RECONFIG_STREAMOFF);
++
+ daemon_out:
+ 	file->private_data = NULL;
+ 
+--- kernel-power-2.6.28.orig/drivers/mmc/host/omap_hsmmc.c
++++ kernel-power-2.6.28/drivers/mmc/host/omap_hsmmc.c
+@@ -115,6 +115,7 @@
+ /* Timeouts for entering power saving states on inactivity, msec */
+ #define OMAP_MMC_DISABLED_TIMEOUT	100
+ #define OMAP_MMC_SLEEP_TIMEOUT		1000
++#define OMAP_MMC_OFF_NOSLP_TIMEOUT	3000
+ #define OMAP_MMC_OFF_TIMEOUT		8000
+ 
+ /*
+@@ -1249,21 +1250,21 @@
+ 
+ /*
+  * Dynamic power saving handling, FSM:
+- *   ENABLED -> DISABLED -> CARDSLEEP / REGSLEEP -> OFF
+- *     ^___________|          |                      |
+- *     |______________________|______________________|
++ *   ENABLED -> DISABLED -> EXTDISABLED / CARDSLEEP / REGSLEEP -> OFF
++ *     ^___________|                        |                      |
++ *     |____________________________________|______________________|
+  *
+- * ENABLED:   mmc host is fully functional
+- * DISABLED:  fclk is off
+- * CARDSLEEP: fclk is off, card is asleep, voltage regulator is asleep
+- * REGSLEEP:  fclk is off, voltage regulator is asleep
+- * OFF:       fclk is off, voltage regulator is off
++ * ENABLED:       mmc host is fully functional
++ * (EXT)DISABLED: fclk is off
++ * CARDSLEEP:     fclk is off, card is asleep, voltage regulator is asleep
++ * REGSLEEP:      fclk is off, voltage regulator is asleep
++ * OFF:           fclk is off, voltage regulator is off
+  *
+  * Transition handlers return the timeout for the next state transition
+  * or negative error.
+  */
+ 
+-enum {ENABLED = 0, DISABLED, CARDSLEEP, REGSLEEP, OFF};
++enum {ENABLED = 0, DISABLED, EXTDISABLED, CARDSLEEP, REGSLEEP, OFF};
+ 
+ /* Handler for [ENABLED -> DISABLED] transition */
+ static int omap_hsmmc_enabled_to_disabled(struct omap_hsmmc_host *host)
+@@ -1300,7 +1301,21 @@
+ 	return 1;
+ }
+ 
+-/* Handler for [DISABLED -> REGSLEEP / CARDSLEEP] transition */
++/* Big SD cards (16GiB) are prohibited from
++   switching voltage regulator to asleep
++   because of high current consumption */
++static int omap_hsmmc_support_sleep(struct mmc_host *mmc)
++{
++	if (!(mmc->caps & MMC_CAP_NONREMOVABLE) &&
++	    ((u64)mmc->card->csd.capacity << mmc->card->csd.read_blkbits) >
++	    14ULL * 1024 * 1024 * 1024) {
++		return 0;
++	}
++
++	return 1;
++}
++
++/* Handler for [DISABLED -> EXTDISABLED / REGSLEEP / CARDSLEEP] transition */
+ static int omap_hsmmc_disabled_to_sleep(struct omap_hsmmc_host *host)
+ {
+ 	int err, new_state, sleep;
+@@ -1319,12 +1334,12 @@
+ 		}
+ 		new_state = CARDSLEEP;
+ 	} else {
+-		new_state = REGSLEEP;
++		new_state = omap_hsmmc_support_sleep(host->mmc) ? REGSLEEP : EXTDISABLED;
+ 	}
+ 
+ 	sleep = omap_hsmmc_full_sleep(host->mmc->card) &&
+ 		(new_state == CARDSLEEP);
+-	if (mmc_slot(host).set_sleep)
++	if (mmc_slot(host).set_sleep && new_state != EXTDISABLED)
+ 		mmc_slot(host).set_sleep(host->dev, host->slot_id, 1, 0,
+ 					sleep);
+ 	/* FIXME: turn off bus power and perhaps interrupts too */
+@@ -1334,18 +1349,20 @@
+ 	mmc_release_host(host->mmc);
+ 
+ 	dev_dbg(mmc_dev(host->mmc), "DISABLED -> %s\n",
+-		host->dpm_state == CARDSLEEP ? "CARDSLEEP" : "REGSLEEP");
++		host->dpm_state == CARDSLEEP ? "CARDSLEEP" :
++		host->dpm_state == REGSLEEP ?  "REGSLEEP" : "EXTDISABLED");
+ 
+ 	if ((host->mmc->caps & MMC_CAP_NONREMOVABLE) ||
+ 	    mmc_slot(host).card_detect ||
+ 	    (mmc_slot(host).get_cover_state &&
+ 	     mmc_slot(host).get_cover_state(host->dev, host->slot_id)))
+-		return msecs_to_jiffies(OMAP_MMC_OFF_TIMEOUT);
++		return msecs_to_jiffies(new_state == EXTDISABLED ?
++		       OMAP_MMC_OFF_NOSLP_TIMEOUT : OMAP_MMC_OFF_TIMEOUT);
+ 
+ 	return 0;
+ }
+ 
+-/* Handler for [REGSLEEP / CARDSLEEP -> OFF] transition */
++/* Handler for [EXTDISABLED / REGSLEEP / CARDSLEEP -> OFF] transition */
+ static int omap_hsmmc_sleep_to_off(struct omap_hsmmc_host *host)
+ {
+ 	if (!mmc_try_claim_host(host->mmc))
+@@ -1364,7 +1381,8 @@
+ 	host->power_mode = MMC_POWER_OFF;
+ 
+ 	dev_dbg(mmc_dev(host->mmc), "%s -> OFF\n",
+-		host->dpm_state == CARDSLEEP ? "CARDSLEEP" : "REGSLEEP");
++		host->dpm_state == CARDSLEEP ? "CARDSLEEP" :
++		host->dpm_state == REGSLEEP ?  "REGSLEEP" : "EXTDISABLED");
+ 
+ 	host->dpm_state = OFF;
+ 
+@@ -1405,14 +1423,15 @@
+ 	omap_hsmmc_context_restore(host);
+ 	asleep = omap_hsmmc_full_sleep(host->mmc->card) &&
+ 		(host->dpm_state == CARDSLEEP);
+-	if (mmc_slot(host).set_sleep)
++	if (mmc_slot(host).set_sleep && host->dpm_state != EXTDISABLED)
+ 		mmc_slot(host).set_sleep(host->dev, host->slot_id, 0,
+ 					host->vdd, asleep);
+ 	if (mmc_card_can_sleep(host->mmc))
+ 		mmc_card_awake(host->mmc);
+ 
+ 	dev_dbg(mmc_dev(host->mmc), "%s -> ENABLED\n",
+-		host->dpm_state == CARDSLEEP ? "CARDSLEEP" : "REGSLEEP");
++		host->dpm_state == CARDSLEEP ? "CARDSLEEP" :
++		host->dpm_state == REGSLEEP ?  "REGSLEEP" : "EXTDISABLED");
+ 
+ 	if (host->pdata->set_pm_constraints)
+ 		host->pdata->set_pm_constraints(host->dev, 1);
+@@ -1454,6 +1473,7 @@
+ 	switch (host->dpm_state) {
+ 	case DISABLED:
+ 		return omap_hsmmc_disabled_to_enabled(host);
++	case EXTDISABLED:
+ 	case CARDSLEEP:
+ 	case REGSLEEP:
+ 		return omap_hsmmc_sleep_to_enabled(host);
+@@ -1484,6 +1504,7 @@
+ 	}
+ 	case DISABLED:
+ 		return omap_hsmmc_disabled_to_sleep(host);
++	case EXTDISABLED:
+ 	case CARDSLEEP:
+ 	case REGSLEEP:
+ 		return omap_hsmmc_sleep_to_off(host);
+--- kernel-power-2.6.28.orig/drivers/net/wireless/wl12xx/wl1251_acx.c
++++ kernel-power-2.6.28/drivers/net/wireless/wl12xx/wl1251_acx.c
+@@ -910,7 +910,7 @@
+ 	}
+ 
+ 	*mactime = tsf_info->current_tsf_lsb |
+-		(tsf_info->current_tsf_msb << 31);
++		((unsigned long long) tsf_info->current_tsf_msb << 32);
+ 
+ out:
+ 	kfree(tsf_info);
+--- kernel-power-2.6.28.orig/drivers/net/wireless/wl12xx/wl1251_cmd.c
++++ kernel-power-2.6.28/drivers/net/wireless/wl12xx/wl1251_cmd.c
+@@ -242,7 +242,7 @@
+ 	if (ret < 0) {
+ 		wl1251_error("tx %s cmd for channel %d failed",
+ 			     enable ? "start" : "stop", channel);
+-		return ret;
++		goto out;
+ 	}
+ 
+ 	wl1251_debug(DEBUG_BOOT, "tx %s cmd channel %d",
+--- kernel-power-2.6.28.orig/drivers/usb/musb/musb_core.c
++++ kernel-power-2.6.28/drivers/usb/musb/musb_core.c
+@@ -297,28 +297,23 @@
+ 			break;
+ 	}
+ 
+-	if (vdat) {
+-		/* REVISIT: This code works only with dedicated chargers!
+-		 * When support for HOST/HUB chargers is added, don't
+-		 * forget this.
+-		 */
++	/* enable interrupts */
++	musb_writeb(musb->mregs, MUSB_INTRUSBE, ctx.intrusbe);
++
++	/* Make sure the communication starts normally */
++	r = musb_readb(musb->mregs, MUSB_POWER);
++	musb_writeb(musb->mregs, MUSB_POWER,
++			r | MUSB_POWER_RESUME);
++	msleep(10);
++	musb_writeb(musb->mregs, MUSB_POWER,
++			r & ~MUSB_POWER_RESUME);
++	if (vdat && musb->xceiv->state != OTG_STATE_B_IDLE) {
+ 		musb_stop(musb);
+ 		/* Regulators off */
+ 		otg_set_suspend(musb->xceiv, 1);
+-		musb->is_charger = 1;
+-	} else {
+-		/* enable interrupts */
+-		musb_writeb(musb->mregs, MUSB_INTRUSBE, ctx.intrusbe);
+-
+-		/* Make sure the communication starts normally */
+-		r = musb_readb(musb->mregs, MUSB_POWER);
+-		musb_writeb(musb->mregs, MUSB_POWER,
+-				r | MUSB_POWER_RESUME);
+-		msleep(10);
+-		musb_writeb(musb->mregs, MUSB_POWER,
+-				r & ~MUSB_POWER_RESUME);
+ 	}
+ 
++	musb->is_charger = vdat;
+ 	check_charger = 0;
+ 
+ 	return vdat;
+--- kernel-power-2.6.28.orig/include/linux/sched.h
++++ kernel-power-2.6.28/include/linux/sched.h
+@@ -1665,11 +1665,11 @@
+ static inline void wake_up_idle_cpu(int cpu) { }
+ #endif
+ 
++extern unsigned int sysctl_sched_child_runs_first;
+ #ifdef CONFIG_SCHED_DEBUG
+ extern unsigned int sysctl_sched_latency;
+ extern unsigned int sysctl_sched_min_granularity;
+ extern unsigned int sysctl_sched_wakeup_granularity;
+-extern unsigned int sysctl_sched_child_runs_first;
+ extern unsigned int sysctl_sched_features;
+ extern unsigned int sysctl_sched_migration_cost;
+ extern unsigned int sysctl_sched_nr_migrate;
+--- kernel-power-2.6.28.orig/include/linux/swap.h
++++ kernel-power-2.6.28/include/linux/swap.h
+@@ -130,6 +130,17 @@
+ #define SWAP_MAP_MAX	0x7fff
+ #define SWAP_MAP_BAD	0x8000
+ 
++#define SWAP_GAP_TREE_SIZE 10
++#define SWAP_GAP_RESCAN_TIMEO_MSEC 2000
++#define swap_gap_len(gap) ((gap)->end - (gap)->next)
++#define swap_gap_rb_entry(node) rb_entry(node, struct swap_gap_node, rb_node)
++/* Struct to store gaps info */
++struct swap_gap_node {
++	struct rb_node rb_node;
++	unsigned int next;
++	unsigned int end;
++};
++
+ /*
+  * The in-memory structure used to track swap areas.
+  */
+@@ -157,6 +168,9 @@
+ 	unsigned int gap_next;
+ 	unsigned int gap_end;
+ 	unsigned int gaps_exist;
++	struct rb_root gaps_tree;
++	struct swap_gap_node *gap_pool_arr;
++	unsigned long gap_last_scan;
+ 	unsigned int lowest_bit;
+ 	unsigned int highest_bit;
+ 	unsigned int cluster_next;
+--- kernel-power-2.6.28.orig/include/net/bluetooth/sco.h
++++ kernel-power-2.6.28/include/net/bluetooth/sco.h
+@@ -29,7 +29,7 @@
+ #define SCO_DEFAULT_MTU		500
+ #define SCO_DEFAULT_FLUSH_TO	0xFFFF
+ 
+-#define SCO_CONN_TIMEOUT	(HZ * 40)
++#define SCO_CONN_TIMEOUT	(HZ * 25)
+ #define SCO_DISCONN_TIMEOUT	(HZ * 2)
+ #define SCO_CONN_IDLE_TIMEOUT	(HZ * 60)
+ 
+--- kernel-power-2.6.28.orig/kernel/sched_fair.c
++++ kernel-power-2.6.28/kernel/sched_fair.c
+@@ -48,10 +48,10 @@
+ static unsigned int sched_nr_latency = 5;
+ 
+ /*
+- * After fork, child runs first. (default) If set to 0 then
++ * After fork, child runs first. If set to 0 then
+  * parent will (try to) run first.
+  */
+-const_debug unsigned int sysctl_sched_child_runs_first = 1;
++unsigned int sysctl_sched_child_runs_first __read_mostly;
+ 
+ /*
+  * sys_sched_yield() compat mode
+--- kernel-power-2.6.28.orig/kernel/sysctl.c
++++ kernel-power-2.6.28/kernel/sysctl.c
+@@ -235,6 +235,14 @@
+ #endif
+ 
+ static struct ctl_table kern_table[] = {
++	{
++		.ctl_name	= CTL_UNNUMBERED,
++		.procname	= "sched_child_runs_first",
++		.data		= &sysctl_sched_child_runs_first,
++		.maxlen		= sizeof(unsigned int),
++		.mode		= 0644,
++		.proc_handler	= &proc_dointvec,
++	},
+ #ifdef CONFIG_SCHED_DEBUG
+ 	{
+ 		.ctl_name	= CTL_UNNUMBERED,
+@@ -289,14 +297,6 @@
+ 	},
+ 	{
+ 		.ctl_name	= CTL_UNNUMBERED,
+-		.procname	= "sched_child_runs_first",
+-		.data		= &sysctl_sched_child_runs_first,
+-		.maxlen		= sizeof(unsigned int),
+-		.mode		= 0644,
+-		.proc_handler	= &proc_dointvec,
+-	},
+-	{
+-		.ctl_name	= CTL_UNNUMBERED,
+ 		.procname	= "sched_features",
+ 		.data		= &sysctl_sched_features,
+ 		.maxlen		= sizeof(unsigned int),
+--- kernel-power-2.6.28.orig/mm/swapfile.c
++++ kernel-power-2.6.28/mm/swapfile.c
+@@ -996,11 +996,55 @@
+ 	spin_unlock(&mmlist_lock);
+ }
+ 
++void gaps_rbtree_insert(struct swap_info_struct *sis,
++			struct swap_gap_node *node)
++{
++	struct rb_node **p = &sis->gaps_tree.rb_node;
++	struct rb_node *parent = NULL;
++	struct swap_gap_node *tmp;
++
++	while (*p) {
++		parent = *p;
++		tmp = rb_entry(parent, struct swap_gap_node, rb_node);
++		if (swap_gap_len(node) < swap_gap_len(tmp))
++			p = &(*p)->rb_left;
++		else
++			p = &(*p)->rb_right;
++	}
++	rb_link_node(&node->rb_node, parent, p);
++	rb_insert_color(&node->rb_node, &sis->gaps_tree);
++}
++
++void gaps_rbtree_add(struct swap_info_struct *sis,
++				unsigned int next, unsigned int end,
++				struct swap_gap_node **gap_min, int *pos)
++{
++	struct swap_gap_node *gap_node;
++	if (*pos < SWAP_GAP_TREE_SIZE) {
++		gap_node = &sis->gap_pool_arr[*pos];
++		*pos += 1;
++	} else if (swap_gap_len(*gap_min) > end - next) {
++		return;
++	} else {
++		gap_node = *gap_min;
++		rb_erase(&gap_node->rb_node, &sis->gaps_tree);
++		*gap_min = swap_gap_rb_entry(rb_first(&sis->gaps_tree));
++	}
++	gap_node->next = next;
++	gap_node->end = end;
++	if (gap_min && (*gap_min == NULL ||
++			swap_gap_len(*gap_min) > swap_gap_len(gap_node)))
++		*gap_min = gap_node;
++	gaps_rbtree_insert(sis, gap_node);
++}
++
+ /* Find the largest sequence of free pages */
+ int find_gap(struct swap_info_struct *sis)
+ {
+ 	unsigned i, uninitialized_var(start), uninitialized_var(gap_next);
+-	unsigned uninitialized_var(gap_end), gap_size = 0;
++	unsigned uninitialized_var(gap_end);
++	struct swap_gap_node *gap_max, *gap_min = NULL;
++	int pos = 0;
+ 	int in_gap = 0;
+ 
+ 	spin_unlock(&sis->remap_lock);
+@@ -1017,6 +1061,11 @@
+ 		mutex_unlock(&sis->remap_mutex);
+ 		return -1;
+ 	}
++	if (time_after(jiffies, sis->gap_last_scan +
++			msecs_to_jiffies(SWAP_GAP_RESCAN_TIMEO_MSEC)))
++		sis->gaps_tree = RB_ROOT;
++	if (!RB_EMPTY_ROOT(&sis->gaps_tree))
++		goto out;
+ 	spin_unlock(&sis->remap_lock);
+ 
+ 	/*
+@@ -1028,11 +1077,7 @@
+ 		if (in_gap) {
+ 			if (!(sis->swap_remap[i] & 0x80000000))
+ 				continue;
+-			if (i - start > gap_size) {
+-				gap_next = start;
+-				gap_end = i - 1;
+-				gap_size = i - start;
+-			}
++			gaps_rbtree_add(sis, start, i - 1, &gap_min, &pos);
+ 			in_gap = 0;
+ 		} else {
+ 			if (sis->swap_remap[i] & 0x80000000)
+@@ -1043,13 +1088,14 @@
+ 		cond_resched();
+ 	}
+ 	spin_lock(&sis->remap_lock);
+-	if (in_gap && i - start > gap_size) {
+-		sis->gap_next = start;
+-		sis->gap_end = i - 1;
+-	} else {
+-		sis->gap_next = gap_next;
+-		sis->gap_end = gap_end;
+-	}
++	if (in_gap)
++		gaps_rbtree_add(sis, start, i - 1, &gap_min, &pos);
++	sis->gap_last_scan = jiffies;
++out:
++	gap_max = swap_gap_rb_entry(rb_last(&sis->gaps_tree));
++	rb_erase(&gap_max->rb_node, &sis->gaps_tree);
++	sis->gap_next = gap_max->next;
++	sis->gap_end = gap_max->end;
+ 	mutex_unlock(&sis->remap_mutex);
+ 	return 0;
+ }
+@@ -1471,6 +1517,7 @@
+ 	p->flags = 0;
+ 	spin_unlock(&swap_lock);
+ 	mutex_unlock(&swapon_mutex);
++	kfree(p->gap_pool_arr);
+ 	vfree(p->swap_remap);
+ 	vfree(swap_map);
+ 	inode = mapping->host;
+@@ -1825,6 +1872,14 @@
+ 		goto bad_swap;
+ 	}
+ 
++	p->gap_pool_arr = kmalloc(sizeof(struct swap_gap_node)*
++				SWAP_GAP_TREE_SIZE, GFP_KERNEL);
++	if (!p->gap_pool_arr) {
++		error = -ENOMEM;
++		goto bad_swap;
++	}
++	p->gaps_tree = RB_ROOT;
++
+ 	mutex_lock(&swapon_mutex);
+ 	spin_lock(&swap_lock);
+ 	if (swap_flags & SWAP_FLAG_PREFER)
+--- kernel-power-2.6.28.orig/net/bluetooth/hci_conn.c
++++ kernel-power-2.6.28/net/bluetooth/hci_conn.c
+@@ -375,6 +375,9 @@
+ 
+ 	if (acl->state == BT_CONNECTED &&
+ 			(sco->state == BT_OPEN || sco->state == BT_CLOSED)) {
++		acl->power_save = 1;
++		hci_conn_enter_active_mode(acl);
++
+ 		if (lmp_esco_capable(hdev))
+ 			hci_setup_sync(sco, acl->handle);
+ 		else
+--- kernel-power-2.6.28.orig/net/bluetooth/hci_event.c
++++ kernel-power-2.6.28/net/bluetooth/hci_event.c
+@@ -1056,6 +1056,8 @@
+ 	if (conn) {
+ 		if (!ev->status)
+ 			conn->link_mode |= HCI_LM_AUTH;
++		else
++			conn->sec_level = BT_SECURITY_LOW;
+ 
+ 		clear_bit(HCI_CONN_AUTH_PEND, &conn->pend);
+ 
+@@ -1709,6 +1711,7 @@
+ 		break;
+ 
+ 	case 0x1c:	/* SCO interval rejected */
++	case 0x1a:	/* Unsupported Remote Feature */
+ 	case 0x1f:	/* Unspecified error */
+ 		if (conn->out && conn->attempt < 2) {
+ 			conn->pkt_type = (hdev->esco_type & SCO_ESCO_MASK) |
