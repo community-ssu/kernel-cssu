@@ -49,13 +49,16 @@ configure-stamp:
 	$(MAKE) clean
 	QUILT_PATCHES=debian/patches quilt push -a -q || test $$? = 2
 	cp debian/$(DEFCONFIG) arch/arm/configs/
-
+	uudecode debian/u-boot.bin.gz.b64 -o - | gunzip -dc > debian/u-boot.bin
+	dd if=debian/u-boot.bin of=debian/u-boot.pad bs=262144 count=1 conv=sync
 	cd $(KSRC) && $(MAKE) $(EXTRAVERSION) $(DEFCONFIG)
 	touch $@
 
 kernel-stamp: configure-stamp
 	echo "compile $(PRODUCT) kernel"
 	cd $(KSRC) && $(MAKE) $(NJOBS) $(EXTRAVERSION) zImage
+	mkimage  -A arm -O linux -T kernel -C none -a 80008000 -e 80008000 -n kernel-power -d $(BUILDTMP)/arch/arm/boot/zImage $(BUILDTMP)/arch/arm/boot/uImage
+	cat debian/u-boot.pad $(BUILDTMP)/arch/arm/boot/uImage > debian/uImage
 	touch $@
 
 modules-stamp: configure-stamp
@@ -74,7 +77,7 @@ modules-extra: configure-stamp
 
 headers: kernel-stamp modules-stamp
 
-clean:
+clean-gen:
 	dh_testdir
 	dh_testroot
 
@@ -87,10 +90,12 @@ clean:
 	rm -rf debian/tmp-*
 	rm -rf debian/build
 	rm -f *-stamp
+	-rm debian/u-boot.bin debian/u-boot.pad debian/uImage
+
+clean: clean-gen
 	QUILT_PATCHES=debian/patches quilt pop -a -q -R || test $$? = 2
 	-rm arch/arm/configs/$(DEFCONFIG)
 	-rm -rf .pc
-
 	dh_clean
 
 install-kernel:
@@ -100,7 +105,8 @@ install-kernel:
 
 	install -d -m 755 $(CURDIR)/debian/$(KERNEL_PACKAGE)/boot
 	fiasco-gen -o $(CURDIR)/debian/$(KERNEL_PACKAGE)/boot/zImage-$(RELEASE).fiasco -g \
-			-k $(BUILDTMP)/arch/arm/boot/zImage -v $(RELEASE)
+			-k debian/uImage -v $(RELEASE)
+	#		-k $(BUILDTMP)/arch/arm/boot/zImage -v $(RELEASE)
 	chmod 644 $(CURDIR)/debian/$(KERNEL_PACKAGE)/boot/zImage-$(RELEASE).fiasco
 
 install-bootimg:

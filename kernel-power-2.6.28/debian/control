@@ -3,7 +3,7 @@ Section: utils
 Priority: optional
 Maintainer: Thomas Tanner <maemo@tannerlab.com>
 XSBC-Bugtracker: https://garage.maemo.org/tracker/?group_id=1528
-Build-Depends: debhelper (>= 4.0.0), quilt, sdk-fiasco-gen, libncurses5-dev
+Build-Depends: debhelper (>= 4.0.0), quilt, sdk-fiasco-gen, libncurses5-dev, sharutils, uboot-mkimage
 Standards-Version: 3.8.0
 
 Package: kernel-power-flasher
@@ -18,7 +18,7 @@ Provides: kernel-feature-netfilter, kernel-feature-ipv6, kernel-feature-ext4, ke
   kernel-feature-unionfs, kernel-feature-crypto, kernel-feature-dmloop, kernel-feature-utf8, kernel-feature-mousejoy,
   kernel-feature-usbip, kernel-feature-ppp, kernel-feature-qos, kernel-feature-block2mtd, kernel-feature-kexec,
   kernel-feature-overclock, kernel-feature-joikuspot, kernel-feature-slip, kernel-feature-battery, kernel-feature-pptp,
-  kernel-feature-wlan-monitor, kernel-feature-radiords, kernel-feature-ioacct
+  kernel-feature-wlan-monitor, kernel-feature-radiords, kernel-feature-ioacct, kernel-feature-usbhost
 XB-Maemo-Display-Name: Enhanced Linux kernel for power users
 Description: Linux kernel updater for an enhanced Maemo 5 kernel 2.6.28.10
  This package will flash the kernel image upon installation.
@@ -36,9 +36,9 @@ Description: Linux kernel updater for an enhanced Maemo 5 kernel 2.6.28.10
  builtin ext3 for booting from other media, ext4, XFS, reiserfs,
  NTFS read support, ISO9660, UDF, CIFS, automounter, squashfs,
  unionfs, device mapper and dm-loop, cryptography, cryptoloop,
- EFI partitions, UTF8 codepages, mouse+joystick input, PPP, PPTP,
+ EFI partitions, UTF8 codepages, mouse+joystick input, PPP, PPTP, radio RDS,
  serial support, USB/IP and generic USB device drivers, battery info,
- WLAN monitoring, overclocking and kexec support.
+ WLAN monitoring, overclocking, kexec and experimental USB hostmode support.
  .
  Warning: Overclocking voids your warranty, may damage your device and is at your own risk!
  Overclocking is disabled by default and can be configured during runtime.

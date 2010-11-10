@@ -1,3 +1,12 @@
+kernel-power (2.6.28-maemo43) fremantle; urgency=low
+
+  * build u-boot kernel and add necessary build-depends
+  * compile some governors and ext3 as modules to reduce kernel size
+  * enable experimental (!) USB hostmode patches and extra modules
+  * control: provides: add usbhost and update descrption
+
+ -- Thomas Tanner <maemo@tannerlab.com>  Tue,  10 Nov 2010 13:00:00 +0200
+
 kernel-power (2.6.28-maemo42) fremantle; urgency=low
 
   * remove fmtx power lock (Matan Ziv-Av)
