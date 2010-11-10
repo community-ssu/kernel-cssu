@@ -3,7 +3,7 @@ Section: utils
 Priority: optional
 Maintainer: Thomas Tanner <maemo@tannerlab.com>
 XSBC-Bugtracker: https://garage.maemo.org/tracker/?group_id=1528
-Build-Depends: debhelper (>= 4.0.0), quilt, sdk-fiasco-gen, libncurses5-dev, sharutils, uboot-mkimage
+Build-Depends: debhelper (>= 4.0.0), quilt, sdk-fiasco-gen, libncurses5-dev, uboot-mkimage, u-boot-for-power-kernel
 Standards-Version: 3.8.0
 
 Package: kernel-power-flasher

@@ -49,8 +49,8 @@ configure-stamp:
 	$(MAKE) clean
 	QUILT_PATCHES=debian/patches quilt push -a -q || test $$? = 2
 	cp debian/$(DEFCONFIG) arch/arm/configs/
-	uudecode debian/u-boot.bin.gz.b64 -o - | gunzip -dc > debian/u-boot.bin
-	dd if=debian/u-boot.bin of=debian/u-boot.pad bs=262144 count=1 conv=sync
+	#uudecode debian/u-boot.bin.gz.b64 -o - | gunzip -dc > debian/u-boot.bin
+	#dd if=debian/u-boot.bin of=debian/u-boot.pad bs=262144 count=1 conv=sync
 	cd $(KSRC) && $(MAKE) $(EXTRAVERSION) $(DEFCONFIG)
 	touch $@
 
@@ -58,7 +58,7 @@ kernel-stamp: configure-stamp
 	echo "compile $(PRODUCT) kernel"
 	cd $(KSRC) && $(MAKE) $(NJOBS) $(EXTRAVERSION) zImage
 	mkimage  -A arm -O linux -T kernel -C none -a 80008000 -e 80008000 -n kernel-power -d $(BUILDTMP)/arch/arm/boot/zImage $(BUILDTMP)/arch/arm/boot/uImage
-	cat debian/u-boot.pad $(BUILDTMP)/arch/arm/boot/uImage > debian/uImage
+	cat /usr/lib/u-boot/u-boot.bin.0x38000/u-boot.bin.0x38000 $(BUILDTMP)/arch/arm/boot/uImage > debian/uImage
 	touch $@
 
 modules-stamp: configure-stamp
