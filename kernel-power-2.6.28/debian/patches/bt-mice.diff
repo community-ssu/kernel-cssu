@@ -1,0 +1,15 @@
+--- kernel-power-2.6.28.orig/net/bluetooth/hci_event.c
++++ kernel-power-2.6.28/net/bluetooth/hci_event.c
+@@ -1486,12 +1486,6 @@
+ 		conn->mode = ev->mode;
+ 		conn->interval = __le16_to_cpu(ev->interval);
+ 
+-		if (!test_and_clear_bit(HCI_CONN_MODE_CHANGE_PEND, &conn->pend)) {
+-			if (conn->mode == HCI_CM_ACTIVE)
+-				conn->power_save = 1;
+-			else
+-				conn->power_save = 0;
+-		}
+ 	}
+ 
+ 	hci_dev_unlock(hdev);

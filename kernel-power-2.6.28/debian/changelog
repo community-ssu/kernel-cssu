@@ -1,3 +1,10 @@
+kernel-power (2.6.28-maemo46) fremantle; urgency=low
+
+  * disable u-boot as causes too much trouble
+  * bluetooth patch to make mice work (by freemangordon)
+
+ -- Thomas Tanner <maemo@tannerlab.com>  Thu, 18 Nov 2010 14:40:58 +0100
+
 kernel-power (2.6.28-maemo45) fremantle; urgency=low
 
   * revert to old binary u-boot image for now
