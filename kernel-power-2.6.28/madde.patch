@@ -1,0 +1,92 @@
+--- kernel-power-2.6.28/debian/control	2011-04-16 06:23:23.000000000 +0200
++++ kernel-power-2.6.28/debian/control	2011-04-16 06:24:33.000000000 +0200
+@@ -3,7 +3,7 @@ Section: utils
+ Priority: optional
+ Maintainer: Thomas Tanner <maemo@tannerlab.com>
+ XSBC-Bugtracker: https://garage.maemo.org/tracker/?group_id=1528
+-Build-Depends: debhelper (>= 4.0.0), quilt, sdk-fiasco-gen, libncurses5-dev, sharutils
++Build-Depends: debhelper (>= 4.0.0), quilt, libncurses5-dev, sharutils
+ Standards-Version: 3.8.0
+ 
+ Package: kernel-power-flasher
+--- kernel-power-2.6.28/debian/rules	2011-04-16 03:24:39.000000000 +0200
++++ kernel-power-2.6.28/debian/rules	2011-04-16 03:34:38.000000000 +0200
+@@ -96,7 +96,9 @@ install-kernel:
+ 	dh_installdirs
+ 
+ 	install -d -m 755 $(CURDIR)/debian/$(KERNEL_PACKAGE)/boot
+-	fiasco-gen -o $(CURDIR)/debian/$(KERNEL_PACKAGE)/boot/zImage-$(RELEASE).fiasco -g \
++	test -f sdk-fiasco-gen_2.8.2.0.1+0m5_i386.deb || wget http://repository.maemo.org/pool/fremantle/non-free/s/sdk-fiasco-gen/sdk-fiasco-gen_2.8.2.0.1+0m5_i386.deb
++	test -f fiasco-gen || dpkg --fsys-tarfile sdk-fiasco-gen_2.8.2.0.1+0m5_i386.deb | tar -xv ./usr/bin/fiasco-gen -O > fiasco-gen; chmod 755 fiasco-gen
++	./fiasco-gen -o $(CURDIR)/debian/$(KERNEL_PACKAGE)/boot/zImage-$(RELEASE).fiasco -g \
+ 			-k $(BUILDTMP)/arch/arm/boot/zImage -v $(RELEASE)
+ 	chmod 644 $(CURDIR)/debian/$(KERNEL_PACKAGE)/boot/zImage-$(RELEASE).fiasco
+ 
+@@ -125,12 +127,12 @@ install-headers:
+ 	dh_installdirs
+ 
+ 	install -d -m755 $(CURDIR)/debian/$(HEADERS_PACKAGE)/usr/src/$(HEADERS_PACKAGE)/
+-	install -p -o root -g root -m 644 $(BUILDTMP)/.config  $(CURDIR)/debian/$(HEADERS_PACKAGE)/usr/src/$(HEADERS_PACKAGE)/
+-	install -p -o root -g root -m 644 $(KSRC)/Makefile $(CURDIR)/debian/$(HEADERS_PACKAGE)/usr/src/$(HEADERS_PACKAGE)/
+-	install -p -o root -g root -m 644 $(BUILDTMP)/Module.symvers $(CURDIR)/debian/$(HEADERS_PACKAGE)/usr/src/$(HEADERS_PACKAGE)/
+-	cd $(BUILDTMP) && install -p -o root -g root -m 644 -D include/config/auto.conf \
++	install -p -m 644 $(BUILDTMP)/.config  $(CURDIR)/debian/$(HEADERS_PACKAGE)/usr/src/$(HEADERS_PACKAGE)/
++	install -p -m 644 $(KSRC)/Makefile $(CURDIR)/debian/$(HEADERS_PACKAGE)/usr/src/$(HEADERS_PACKAGE)/
++	install -p -m 644 $(BUILDTMP)/Module.symvers $(CURDIR)/debian/$(HEADERS_PACKAGE)/usr/src/$(HEADERS_PACKAGE)/
++	cd $(BUILDTMP) && install -p -m 644 -D include/config/auto.conf \
+ 		$(CURDIR)/debian/$(HEADERS_PACKAGE)/usr/src/$(HEADERS_PACKAGE)/include/config/auto.conf
+-	cd $(BUILDTMP) && install -p -o root -g root -m 644 -D include/config/kernel.release \
++	cd $(BUILDTMP) && install -p -m 644 -D include/config/kernel.release \
+ 		$(CURDIR)/debian/$(HEADERS_PACKAGE)/usr/src/$(HEADERS_PACKAGE)/include/config/kernel.release
+ 	cd $(KSRC) && \
+ 		find arch/$(ARCH) $(foreach dir,$(INCLUDE_HEADERS),include/$(dir)) -name '*.h' \
+@@ -229,9 +231,6 @@ endif
+ 	dh_installchangelogs -s
+ 	dh_installdocs -s
+ 	dh_install -s
+-ifeq ($(ARCH),arm)
+-	dh_strip -p$(HEADERS_PACKAGE)
+-endif
+ 	dh_compress -s
+ 	dh_fixperms -s --exclude /usr/src/kernel-headers
+ 	dh_installdeb -s
+--- kernel-power-2.6.28/debian/patches/series	2011-04-16 06:19:32.000000000 +0200
++++ kernel-power-2.6.28/debian/patches/series	2011-04-16 06:19:41.000000000 +0200
+@@ -34,3 +34,4 @@ l2cap_parent.patch
+ wl12xx-rx-fix.diff
+ vanilla-2.6.28-anti-io-stalling.patch
+ joikuspot.diff
++madde.patch
+--- kernel-power-2.6.28/debian/patches/madde.patch	2011-04-15 15:30:29.223356000 +0200
++++ kernel-power-2.6.28/debian/patches/madde.patch	2011-04-16 06:19:19.000000000 +0200
+@@ -0,0 +1,30 @@
++--- kernel-power-2.6.28/Makefile	2011-01-23 14:06:07.000000000 +0100
+++++ kernel-power-2.6.28/Makefile	2011-01-23 14:06:53.000000000 +0100
++@@ -4,6 +4,8 @@ SUBLEVEL = 28
++ EXTRAVERSION = .10power
++ NAME = Erotic Pickled Herring
++ 
+++export PATH := /usr/bin:$(HOME)/.madde/0.6.72/toolchains/arm-2007q3-51sb6-gdb701-arm-none-linux-gnueabi_linux/bin:$(PATH)
+++
++ # *DOCUMENTATION*
++ # To see a list of typical targets execute "make help"
++ # More info can be located in ./README
++@@ -196,7 +198,7 @@ SUBARCH := arm
++ # Note: Some architectures assign CROSS_COMPILE in their arch/*/Makefile
++ export KBUILD_BUILDHOST := $(SUBARCH)
++ ARCH		?= $(SUBARCH)
++-CROSS_COMPILE	?= arm-linux-
+++CROSS_COMPILE	?= arm-none-linux-gnueabi-
++ 
++ # Architecture as present in compile.h
++ UTS_MACHINE 	:= $(ARCH)
++--- kernel-power-2.6.28/scripts/unifdef.c	2011-01-23 18:22:03.000000000 +0100
+++++ kernel-power-2.6.28/scripts/unifdef.c	2011-01-23 18:22:17.000000000 +0100
++@@ -206,6 +206,7 @@
++ static void             error(const char *);
++ static int              findsym(const char *);
++ static void             flushline(bool);
+++#define getline _getline
++ static Linetype         getline(void);
++ static Linetype         ifeval(const char **);
++ static void             ignoreoff(void);
