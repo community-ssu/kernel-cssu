@@ -53,7 +53,7 @@
  	dh_installdeb -s
 --- kernel-power-2.6.28/debian/patches/series	2011-04-16 06:19:32.000000000 +0200
 +++ kernel-power-2.6.28/debian/patches/series	2011-04-16 06:19:41.000000000 +0200
-@@ -34,3 +34,4 @@ l2cap_parent.patch
+@@ -35,3 +35,4 @@ l2cap_parent.patch
  wl12xx-rx-fix.diff
  vanilla-2.6.28-anti-io-stalling.patch
  joikuspot.diff
