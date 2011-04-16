@@ -31,3 +31,6 @@ usbhostmode.diff
 bt-mice.diff
 board-rx51-peripherals.patch
 bq27x00_battery.patch
+l2cap_parent.patch
+wl12xx-rx-fix.diff
+vanilla-2.6.28-anti-io-stalling.patch
