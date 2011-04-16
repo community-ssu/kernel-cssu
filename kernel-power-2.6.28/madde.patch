@@ -11,18 +11,19 @@
  Package: kernel-power-flasher
 --- kernel-power-2.6.28/debian/rules	2011-04-16 03:24:39.000000000 +0200
 +++ kernel-power-2.6.28/debian/rules	2011-04-16 03:34:38.000000000 +0200
-@@ -96,7 +96,9 @@ install-kernel:
+@@ -96,7 +96,10 @@ install-kernel:
  	dh_installdirs
  
  	install -d -m 755 $(CURDIR)/debian/$(KERNEL_PACKAGE)/boot
 -	fiasco-gen -o $(CURDIR)/debian/$(KERNEL_PACKAGE)/boot/zImage-$(RELEASE).fiasco -g \
 +	test -f sdk-fiasco-gen_2.8.2.0.1+0m5_i386.deb || wget http://repository.maemo.org/pool/fremantle/non-free/s/sdk-fiasco-gen/sdk-fiasco-gen_2.8.2.0.1+0m5_i386.deb
-+	test -f fiasco-gen || dpkg --fsys-tarfile sdk-fiasco-gen_2.8.2.0.1+0m5_i386.deb | tar -xv ./usr/bin/fiasco-gen -O > fiasco-gen; chmod 755 fiasco-gen
++	ar x sdk-fiasco-gen_2.8.2.0.1+0m5_i386.deb data.tar.gz
++	tar -xf data.tar.gz ./usr/bin/fiasco-gen -O > fiasco-gen; chmod +x fiasco-gen
 +	./fiasco-gen -o $(CURDIR)/debian/$(KERNEL_PACKAGE)/boot/zImage-$(RELEASE).fiasco -g \
  			-k $(BUILDTMP)/arch/arm/boot/zImage -v $(RELEASE)
  	chmod 644 $(CURDIR)/debian/$(KERNEL_PACKAGE)/boot/zImage-$(RELEASE).fiasco
  
-@@ -125,12 +127,12 @@ install-headers:
+@@ -125,12 +128,12 @@ install-headers:
  	dh_installdirs
  
  	install -d -m755 $(CURDIR)/debian/$(HEADERS_PACKAGE)/usr/src/$(HEADERS_PACKAGE)/
@@ -40,7 +41,7 @@
  		$(CURDIR)/debian/$(HEADERS_PACKAGE)/usr/src/$(HEADERS_PACKAGE)/include/config/kernel.release
  	cd $(KSRC) && \
  		find arch/$(ARCH) $(foreach dir,$(INCLUDE_HEADERS),include/$(dir)) -name '*.h' \
-@@ -229,9 +231,6 @@ endif
+@@ -229,9 +232,6 @@ endif
  	dh_installchangelogs -s
  	dh_installdocs -s
  	dh_install -s

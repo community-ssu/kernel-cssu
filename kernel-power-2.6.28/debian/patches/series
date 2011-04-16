@@ -21,12 +21,12 @@ mmcnames-fanoush.diff
 gethercharge.diff
 ondemand-avoid.diff
 overclock.diff
+arm-proc-v7.diff
 armthumb.diff
 wl12xx_rohar.diff
 fmtx.unlock.diff
 radio-bcm2048.diff
 i2c-battery.diff
-usbhostmode.diff
 bt-mice.diff
 board-rx51-peripherals.patch
 bq27x00_battery.patch

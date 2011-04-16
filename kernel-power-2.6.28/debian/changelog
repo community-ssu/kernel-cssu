@@ -1,3 +1,11 @@
+kernel-power (2.6.28-pali1) fremantle; urgency=low
+
+  * enabled additional kernel modules (for usb host mode)
+  * backported bq27x00_battery patch
+  * some patches from kernel-power bugtracker
+
+ -- Pali Rohár <pali.rohar@gmail.com>  Sat, 16 Apr 2011 08:21:47 +0200
+
 kernel-power (2.6.28-maemo46) fremantle; urgency=low
 
   * disable u-boot as causes too much trouble
