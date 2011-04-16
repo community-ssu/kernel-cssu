@@ -57,7 +57,6 @@ kernel-stamp: configure-stamp
 modules-stamp: configure-stamp
 	echo "compile $(PRODUCT) kernel modules"
 	cd $(KSRC) && $(MAKE) $(NJOBS) $(EXTRAVERSION) modules
-	$(MAKE) -C $(KSRC) M=debian/joikuspot $(EXTRAVERSION) modules
 	touch $@
 
 modules-extra: configure-stamp
