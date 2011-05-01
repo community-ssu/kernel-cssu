@@ -1,7 +1,7 @@
 Source: kernel-power
 Section: utils
 Priority: optional
-Maintainer: Thomas Tanner <maemo@tannerlab.com>
+Maintainer: Pali Rohár <pali.rohar@gmail.com>
 XSBC-Bugtracker: https://garage.maemo.org/tracker/?group_id=1528
 Build-Depends: debhelper (>= 4.0.0), quilt, sdk-fiasco-gen, libncurses5-dev, sharutils
 Standards-Version: 3.8.0
@@ -123,7 +123,7 @@ Package: kernel-power-bootimg
 Architecture: armel
 Description: Linux kernel boot image
  This package provides a bootable and flashable kernel image for kexec and
- flashing via USB cable in /boot.
+ flashing via USB cable in /boot. It contains item file for multiboot entry.
  This package is optional and only useful for multiboot or experts.
 
 Package: kernel-power-headers
