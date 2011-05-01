@@ -6,17 +6,17 @@ RELEASE := $(shell dpkg-parsechangelog | sed -ne 's/^Version: 1:\(.*\)/\1/p' | s
 REVISION := $(shell echo "$(RELEASE)" | sed 's/.*\./\./')
 EXTRAVERSION := EXTRAVERSION=$(REVISION)
 
-PACKAGE := kernel
-FLASHER_PACKAGE := kernel-power-flasher
-KERNEL_PACKAGE := $(PACKAGE)-power
-BOOTIMG_PACKAGE := $(PACKAGE)-power-bootimg
-MODULES_PACKAGE := $(PACKAGE)-power-modules
-HEADERS_PACKAGE := $(PACKAGE)-power-headers
-KBUILD_PACKAGE := $(PACKAGE)-power-kbuild
-LIBC_PACKAGE := linux-kernel-power-headers
+PACKAGE := kernel-power
+FLASHER_PACKAGE := $(PACKAGE)-flasher
+KERNEL_PACKAGE := $(PACKAGE)
+BOOTIMG_PACKAGE := $(PACKAGE)-bootimg
+MODULES_PACKAGE := $(PACKAGE)-modules
+HEADERS_PACKAGE := $(PACKAGE)-headers
+KBUILD_PACKAGE := $(PACKAGE)-kbuild
+LIBC_PACKAGE := linux-$(PACKAGE)-headers
 
 MULTIBOOTDIR := etc/multiboot.d
-MULTIBOOTFILE := $(MULTIBOOTFILE)/01-Maemo-kernel-power.item
+MULTIBOOTFILE := $(MULTIBOOTDIR)/01-Maemo-$(PACKAGE)-$(RELEASE).item
 
 BUILDTMP := $(CURDIR)/debian/build
 #KSRC := $(BUILDTMP)/$(PACKAGE)
@@ -116,7 +116,7 @@ install-bootimg:
 	chmod 644 $(CURDIR)/debian/$(BOOTIMG_PACKAGE)/boot/zImage-$(RELEASE)
 
 	mkdir -p $(CURDIR)/debian/$(BOOTIMG_PACKAGE)/$(MULTIBOOTDIR)
-	echo "ITEM_NAME=\"Maemo kernel-power $(RELEASE)\"" > $(CURDIR)/debian/$(BOOTIMG_PACKAGE)/$(MULTIBOOTFILE)
+	echo "ITEM_NAME=\"Maemo $(PACKAGE) $(RELEASE)\"" > $(CURDIR)/debian/$(BOOTIMG_PACKAGE)/$(MULTIBOOTFILE)
 	echo "ITEM_KERNEL=\"$(RELEASE)\"" >> $(CURDIR)/debian/$(BOOTIMG_PACKAGE)/$(MULTIBOOTFILE)
 	echo "ITEM_MODULES=\"ext3\"" >> $(CURDIR)/debian/$(BOOTIMG_PACKAGE)/$(MULTIBOOTFILE)
 
