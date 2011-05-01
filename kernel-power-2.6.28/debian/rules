@@ -2,7 +2,7 @@
 #
 
 WEEK := $(shell date +%Y%W)
-RELEASE := $(shell dpkg-parsechangelog | awk '/^Version: / { print $$2 }' | sed 's/-/\./;s/power/\-power/')
+RELEASE := $(shell dpkg-parsechangelog | sed -ne 's/^Version: 1:\(.*\)/\1/p' | sed 's/-10/.10-/')
 REVISION := $(shell echo "$(RELEASE)" | sed 's/.*\./\./')
 EXTRAVERSION := EXTRAVERSION=$(REVISION)
 

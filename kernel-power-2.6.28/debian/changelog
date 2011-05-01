@@ -1,4 +1,4 @@
-kernel-power (2.6.28-10power47) fremantle; urgency=low
+kernel-power (1:2.6.28-10power47) fremantle; urgency=low
 
   * enabled additional kernel modules (for usb host mode)
   * backported bq27x00_battery patch
