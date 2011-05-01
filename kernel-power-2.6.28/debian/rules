@@ -42,6 +42,9 @@ ifneq (,$(findstring parallel,$(DEB_BUILD_OPTIONS)))
     NJOBS := -j$(PARALLEL_JOBS)
 endif
 
+get-orig-source:
+	wget ftp://ftp.kernel.org/pub/linux/kernel/v2.6/linux-2.6.28.tar.gz
+
 configure-stamp:
 	dh_testdir
 	mkdir -p $(BUILDTMP)
