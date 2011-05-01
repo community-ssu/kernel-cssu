@@ -1,5 +1,5 @@
 diff --git kernel-power-2.6.28/debian/control kernel-power-2.6.28/debian/control
-index 9b9e930..578e377 100644
+index f178559..6ae60c1 100644
 --- kernel-power-2.6.28/debian/control
 +++ kernel-power-2.6.28/debian/control
 @@ -3,7 +3,7 @@ Section: utils
@@ -21,10 +21,10 @@ index 4ae2339..93a7c2d 100644
  joikuspot.diff
 +madde.patch
 diff --git kernel-power-2.6.28/debian/rules kernel-power-2.6.28/debian/rules
-index ec876fa..e6f0a1c 100755
+index 3f5cb4e..e0b7a44 100755
 --- kernel-power-2.6.28/debian/rules
 +++ kernel-power-2.6.28/debian/rules
-@@ -101,7 +101,10 @@ install-kernel:
+@@ -102,7 +102,10 @@ install-kernel:
  	dh_installdirs
  
  	install -d -m 755 $(CURDIR)/debian/$(KERNEL_PACKAGE)/boot
@@ -36,7 +36,7 @@ index ec876fa..e6f0a1c 100755
  			-k $(BUILDTMP)/arch/arm/boot/zImage -v $(RELEASE)
  	chmod 644 $(CURDIR)/debian/$(KERNEL_PACKAGE)/boot/zImage-$(RELEASE).fiasco
  
-@@ -134,12 +137,12 @@ install-headers:
+@@ -136,12 +139,12 @@ install-headers:
  	dh_installdirs
  
  	install -d -m755 $(CURDIR)/debian/$(HEADERS_PACKAGE)/usr/src/$(HEADERS_PACKAGE)/
@@ -54,7 +54,7 @@ index ec876fa..e6f0a1c 100755
  		$(CURDIR)/debian/$(HEADERS_PACKAGE)/usr/src/$(HEADERS_PACKAGE)/include/config/kernel.release
  	cd $(KSRC) && \
  		find arch/$(ARCH) $(foreach dir,$(INCLUDE_HEADERS),include/$(dir)) -name '*.h' \
-@@ -238,9 +241,6 @@ endif
+@@ -240,9 +243,6 @@ endif
  	dh_installchangelogs -s
  	dh_installdocs -s
  	dh_install -s
