@@ -23,7 +23,7 @@
  #include <linux/module.h>
  #include <linux/param.h>
  #include <linux/jiffies.h>
-@@ -24,144 +33,410 @@
+@@ -24,144 +33,407 @@
  #include <linux/power_supply.h>
  #include <linux/idr.h>
  #include <linux/i2c.h>
@@ -85,7 +85,6 @@
 +	int time_to_empty_avg;
 +	int time_to_full;
 +	int charge_full;
-+	int cycle_count;
 +	int capacity;
 +	int flags;
 +
@@ -130,7 +129,6 @@
 +	POWER_SUPPLY_PROP_CHARGE_FULL,
 +	POWER_SUPPLY_PROP_CHARGE_NOW,
 +	POWER_SUPPLY_PROP_CHARGE_FULL_DESIGN,
-+	POWER_SUPPLY_PROP_CYCLE_COUNT,
  };
  
 +static unsigned int poll_interval = 360;
@@ -319,7 +317,6 @@
 +		cache.time_to_empty_avg = bq27x00_battery_read_time(di, BQ27x00_REG_TTECP);
 +		cache.time_to_full = bq27x00_battery_read_time(di, BQ27x00_REG_TTF);
 +		cache.charge_full = bq27x00_battery_read_lmd(di);
-+		cache.cycle_count = bq27x00_battery_read_cyct(di);
 +
 +		if (!is_bq27500)
 +			cache.current_now = bq27x00_read(di, BQ27x00_REG_AI, false);
@@ -500,7 +497,7 @@
  }
  
  #define to_bq27x00_device_info(x) container_of((x), \
-@@ -171,89 +446,164 @@ static int bq27x00_battery_get_property(
+@@ -171,89 +443,161 @@ static int bq27x00_battery_get_property(
  					enum power_supply_property psp,
  					union power_supply_propval *val)
  {
@@ -562,9 +559,6 @@
 +		break;
 +	case POWER_SUPPLY_PROP_CHARGE_FULL_DESIGN:
 +		ret = bq27x00_simple_value(di->charge_design_full, val);
-+		break;
-+	case POWER_SUPPLY_PROP_CYCLE_COUNT:
-+		ret = bq27x00_simple_value(di->cache.cycle_count, val);
 +		break;
 +	case POWER_SUPPLY_PROP_ENERGY_NOW:
 +		ret = bq27x00_battery_energy(di, val);
@@ -707,7 +701,7 @@
  	int num;
  	int retval = 0;
  
-@@ -267,7 +617,7 @@ static int bq27200_battery_probe(struct 
+@@ -267,7 +611,7 @@ static int bq27200_battery_probe(struct 
  	if (retval < 0)
  		return retval;
  
@@ -716,7 +710,7 @@
  	if (!name) {
  		dev_err(&client->dev, "failed to allocate device name\n");
  		retval = -ENOMEM;
-@@ -280,37 +630,20 @@ static int bq27200_battery_probe(struct 
+@@ -280,37 +624,20 @@ static int bq27200_battery_probe(struct 
  		retval = -ENOMEM;
  		goto batt_failed_2;
  	}
@@ -760,7 +754,7 @@
  batt_failed_3:
  	kfree(di);
  batt_failed_2:
-@@ -323,11 +656,11 @@ batt_failed_1:
+@@ -323,11 +650,11 @@ batt_failed_1:
  	return retval;
  }
  
@@ -774,7 +768,7 @@
  
  	kfree(di->bat.name);
  
-@@ -340,31 +673,180 @@ static int bq27200_battery_remove(struct
+@@ -340,31 +667,180 @@ static int bq27200_battery_remove(struct
  	return 0;
  }
  
@@ -968,7 +962,7 @@
  
  	return ret;
  }
-@@ -372,7 +854,8 @@ module_init(bq27x00_battery_init);
+@@ -372,7 +848,8 @@ module_init(bq27x00_battery_init);
  
  static void __exit bq27x00_battery_exit(void)
  {
