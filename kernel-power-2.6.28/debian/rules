@@ -15,7 +15,8 @@ HEADERS_PACKAGE := $(PACKAGE)-power-headers
 KBUILD_PACKAGE := $(PACKAGE)-power-kbuild
 LIBC_PACKAGE := linux-kernel-power-headers
 
-MULTIBOOTFILE := etc/multiboot.d/01-Maemo-kernel-power.item
+MULTIBOOTDIR := etc/multiboot.d
+MULTIBOOTFILE := $(MULTIBOOTFILE)/01-Maemo-kernel-power.item
 
 BUILDTMP := $(CURDIR)/debian/build
 #KSRC := $(BUILDTMP)/$(PACKAGE)
@@ -114,6 +115,7 @@ install-bootimg:
 	install -c -m 644 $(BUILDTMP)/arch/arm/boot/zImage $(CURDIR)/debian/$(BOOTIMG_PACKAGE)/boot/zImage-$(RELEASE)
 	chmod 644 $(CURDIR)/debian/$(BOOTIMG_PACKAGE)/boot/zImage-$(RELEASE)
 
+	mkdir -p $(CURDIR)/debian/$(BOOTIMG_PACKAGE)/$(MULTIBOOTDIR)
 	echo "ITEM_NAME=\"Maemo kernel-power $(RELEASE)\"" > $(CURDIR)/debian/$(BOOTIMG_PACKAGE)/$(MULTIBOOTFILE)
 	echo "ITEM_KERNEL=\"$(RELEASE)\"" >> $(CURDIR)/debian/$(BOOTIMG_PACKAGE)/$(MULTIBOOTFILE)
 	echo "ITEM_MODULES=\"ext3\"" >> $(CURDIR)/debian/$(BOOTIMG_PACKAGE)/$(MULTIBOOTFILE)
