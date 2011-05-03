@@ -76,14 +76,6 @@ modules-stamp: configure-stamp
 	cd $(KSRC) && $(MAKE) $(NJOBS) $(EXTRAVERSION) modules
 	touch $@
 
-modules-extra: configure-stamp
-	echo "compile $(PRODUCT) kernel EXTRA modules"
-	cd $(KSRC) && \
-	patch -p1 < $(CURDIR)/debian/modules-extra_config.patch && \
-	$(MAKE) $(EXTRAVERSION) oldconfig modules && \
-	patch -p1 -R < $(CURDIR)/debian/modules-extra_config.patch && \
-	$(MAKE) $(EXTRAVERSION) oldconfig
-
 headers: kernel-stamp modules-stamp
 
 kernel-source-stamp: source-copy-stamp
@@ -224,26 +216,12 @@ install-libc-headers: source-stamp
 	$(MAKE) headers_check ARCH=$(ARCH) && \
 	$(MAKE) headers_install ARCH=$(ARCH) INSTALL_HDR_PATH=$(CURDIR)/debian/$(LIBC_PACKAGE)/usr
 
-
-install-modules-extra:
-	dh_testdir
-	dh_testroot
-
-	mkdir -p $(CURDIR)/debian/kernel-modules-extra/lib/modules/$(KVER)/extra
-	for f in $(MODULES_EXTRA); do \
-		install -c -m 644 $(KSRC)/$$f \
-			$(CURDIR)/debian/kernel-modules-extra/lib/modules/$(KVER)/extra/$$(basename $$f); \
-	done
-
 install-indep:
 	dh_testdir
 	dh_testroot
 
 	install -p -d -o root -g root -m 755 debian/$(SOURCE_PACKAGE)/usr/src
 	install -m 644 $(BUILDTMP)/$(SOURCE_PACKAGE).tar.bz2 debian/$(SOURCE_PACKAGE)/usr/src
-
-install-extra: install-modules-extra
-
 
 install-arch: build-arch install-kernel install-bootimg install-flasher install-modules install-debug install-modules-debug install-headers install-libc-headers
 
