@@ -82,7 +82,7 @@ kernel-source-stamp: source-copy-stamp
 	dh_testdir
 
 	cd $(BUILDTMP) && \
-	tar --bzip2 -cf $(SOURCE_PACKAGE).tar.bz2 $(SOURCE_PACKAGE)
+	tar --bzip2 -cf $(SOURCE_PACKAGE)-$(RELEASE).tar.bz2 $(SOURCE_PACKAGE)
 	touch $@
 
 clean:
@@ -221,7 +221,7 @@ install-indep:
 	dh_testroot
 
 	install -p -d -o root -g root -m 755 debian/$(SOURCE_PACKAGE)/usr/src
-	install -m 644 $(BUILDTMP)/$(SOURCE_PACKAGE).tar.bz2 debian/$(SOURCE_PACKAGE)/usr/src
+	install -m 644 $(BUILDTMP)/$(SOURCE_PACKAGE)-$(RELEASE).tar.bz2 debian/$(SOURCE_PACKAGE)/usr/src
 
 install-arch: build-arch install-kernel install-bootimg install-flasher install-modules install-debug install-modules-debug install-headers install-libc-headers
 
