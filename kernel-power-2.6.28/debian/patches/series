@@ -2,6 +2,7 @@ nokia-20094803.3+0m5.diff
 nokia-20100903+0m5.diff
 nokia-20101501+0m5.diff
 nokia-20103103+0m5.diff
+rx51_defconfig.diff
 maemo-build.diff
 unionfs-2.5.3.diff
 dm-loop.diff
@@ -29,9 +30,9 @@ radio-bcm2048.diff
 i2c-battery.diff
 usbhostmode.diff
 bt-mice.diff
-board-rx51-peripherals.patch
-bq27x00_battery.patch
-l2cap_parent.patch
+board-rx51-peripherals.diff
+bq27x00_battery.diff
+l2cap_parent.diff
 wl12xx-rx-fix.diff
-vanilla-2.6.28-anti-io-stalling.patch
+vanilla-2.6.28-anti-io-stalling.diff
 joikuspot.diff
