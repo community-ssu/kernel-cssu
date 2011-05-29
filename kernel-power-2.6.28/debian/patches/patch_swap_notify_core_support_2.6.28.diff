@@ -1,0 +1,220 @@
+diff -uprN linux-2.6.28/block/genhd.c linux-2.6.28.new/block/genhd.c
+--- linux-2.6.28/block/genhd.c	2011-03-13 15:15:43.815647000 +0100
++++ linux-2.6.28.new/block/genhd.c	2011-03-15 10:13:35.145764805 +0100
+@@ -1129,6 +1129,8 @@ struct gendisk *alloc_disk_node(int mino
+ 		disk->part_tbl->part[0] = &disk->part0;
+ 
+ 		disk->minors = minors;
++		disk->flags |= 
++			(GENHD_FL_REMAP_SWAPPED_PAGES | GENHD_FL_NOTIFY_REMAPPED_ONLY);
+ 		rand_initialize_disk(disk);
+ 		disk_to_dev(disk)->class = &block_class;
+ 		disk_to_dev(disk)->type = &disk_type;
+diff -uprN linux-2.6.28/include/linux/blkdev.h linux-2.6.28.new/include/linux/blkdev.h
+--- linux-2.6.28/include/linux/blkdev.h	2011-02-01 09:54:54.519982520 +0100
++++ linux-2.6.28.new/include/linux/blkdev.h	2011-02-01 10:15:39.369903561 +0100
+@@ -1068,6 +1068,8 @@ struct block_device_operations {
+ 	int (*media_changed) (struct gendisk *);
+ 	int (*revalidate_disk) (struct gendisk *);
+ 	int (*getgeo)(struct block_device *, struct hd_geometry *);
++	/* this callback is with swap_lock and sometimes page table lock held */
++	void (*swap_slot_free_notify) (struct block_device *, unsigned long);
+ 	struct module *owner;
+ };
+ 
+diff -uprN linux-2.6.28/include/linux/genhd.h linux-2.6.28.new/include/linux/genhd.h
+--- linux-2.6.28/include/linux/genhd.h	2011-03-13 15:23:58.275368057 +0100
++++ linux-2.6.28.new/include/linux/genhd.h	2011-03-15 10:14:01.575121499 +0100
+@@ -113,6 +113,8 @@ struct hd_struct {
+ #define GENHD_FL_UP				16
+ #define GENHD_FL_SUPPRESS_PARTITION_INFO	32
+ #define GENHD_FL_EXT_DEVT			64 /* allow extended devt */
++#define GENHD_FL_REMAP_SWAPPED_PAGES		128
++#define GENHD_FL_NOTIFY_REMAPPED_ONLY		256
+ 
+ #define BLK_SCSI_MAX_CMDS	(256)
+ #define BLK_SCSI_CMD_PER_LONG	(BLK_SCSI_MAX_CMDS / (sizeof(long) * 8))
+diff -uprN linux-2.6.28/mm/swapfile.c linux-2.6.28.new/mm/swapfile.c
+--- linux-2.6.28/mm/swapfile.c	2011-02-01 09:54:31.434289623 +0100
++++ linux-2.6.28.new/mm/swapfile.c	2011-03-15 10:14:50.998178343 +0100
+@@ -270,10 +270,23 @@ out:
+ 	return NULL;
+ }	
+ 
++static void swap_entry_update(struct swap_info_struct *p, unsigned long offset)
++{
++	if (offset < p->lowest_bit)
++		p->lowest_bit = offset;
++	if (offset > p->highest_bit)
++		p->highest_bit = offset;
++	if (p->prio > swap_info[swap_list.next].prio)
++		swap_list.next = p - swap_info;
++	nr_swap_pages++;
++	p->inuse_pages--;
++}
++
+ static int swap_entry_free(struct swap_info_struct *p, unsigned long offset)
+ {
+ 	int count = p->swap_map[offset];
+ 	unsigned old;
++	struct gendisk *disk;
+ 
+ 	if (count >= SWAP_MAP_MAX)
+ 		return count;
+@@ -283,28 +296,40 @@ static int swap_entry_free(struct swap_i
+ 	if (count)
+ 		return count;
+ 
+-	spin_lock(&p->remap_lock);
++	disk = p->bdev->bd_disk;
+ 
+-	if (offset < p->lowest_bit)
+-		p->lowest_bit = offset;
+-	if (offset > p->highest_bit)
+-		p->highest_bit = offset;
+-	if (p->prio > swap_info[swap_list.next].prio)
+-		swap_list.next = p - swap_info;
+-	nr_swap_pages++;
+-	p->inuse_pages--;
++	if (p->swap_remap) {
++		spin_lock(&p->remap_lock);
++		swap_entry_update(p, offset);
++	}
++	else {
++		swap_entry_update(p, offset);
++		if (disk->fops->swap_slot_free_notify)
++			disk->fops->swap_slot_free_notify(p->bdev, offset);
++		return 0;
++	}
+ 
+ 	/* Re-map the page number */
+ 	old = p->swap_remap[offset] & 0x7FFFFFFF;
+ 	/* Zero means it was not re-mapped */
+-	if (!old)
+-		goto out;
++	if (!old) {
++		/* Skip notify if flag is set or the page is used */
++		if ((disk->flags & GENHD_FL_NOTIFY_REMAPPED_ONLY) || 
++			(p->swap_remap[offset] & 0x80000000))
++			goto out;
++
++		old = offset;
++		goto notify;
++	}
+ 	/* Clear the re-mapping */
+ 	p->swap_remap[offset] &= 0x80000000;
+ 	/* Mark the re-mapped page as unused */
+ 	p->swap_remap[old] &= 0x7FFFFFFF;
+ 	/* Record how many free pages there are */
+ 	p->gaps_exist += 1;
++notify:
++	if (disk->fops->swap_slot_free_notify)
++		disk->fops->swap_slot_free_notify(p->bdev, old);
+ out:
+ 	spin_unlock(&p->remap_lock);
+ 	return 0;
+@@ -1110,6 +1135,8 @@ sector_t map_swap_page(struct swap_info_
+ 	struct swap_extent *start_se = se;
+ 	unsigned old;
+ 
++	if (!sis->swap_remap)
++		goto out;
+ 	/*
+ 	 * Instead of using the offset we are given, re-map it to the next
+ 	 * sequential position.
+@@ -1159,7 +1186,7 @@ sector_t map_swap_page(struct swap_info_
+ 			offset = old;
+ 	}
+ 	spin_unlock(&sis->remap_lock);
+-
++out:
+ 	for ( ; ; ) {
+ 		struct list_head *lh;
+ 
+@@ -1517,8 +1544,10 @@ SYSCALL_DEFINE1(swapoff, const char __us
+ 	p->flags = 0;
+ 	spin_unlock(&swap_lock);
+ 	mutex_unlock(&swapon_mutex);
+-	kfree(p->gap_pool_arr);
+-	vfree(p->swap_remap);
++	if (p->swap_remap) {
++		kfree(p->gap_pool_arr);
++		vfree(p->swap_remap);
++	}
+ 	vfree(swap_map);
+ 	inode = mapping->host;
+ 	if (S_ISBLK(inode->i_mode)) {
+@@ -1832,15 +1861,17 @@ SYSCALL_DEFINE2(swapon, const char __use
+ 			error = -ENOMEM;
+ 			goto bad_swap;
+ 		}
+-		swap_remap = vmalloc(maxpages * sizeof(unsigned));
+-		if (!swap_remap) {
+-			error = -ENOMEM;
+-			goto bad_swap;
++		if (p->bdev->bd_disk->flags & GENHD_FL_REMAP_SWAPPED_PAGES) {
++			swap_remap = vmalloc(maxpages * sizeof(unsigned));
++			if (!swap_remap) {
++				error = -ENOMEM;
++				goto bad_swap;
++			}
++			memset(swap_remap, 0, maxpages * sizeof(unsigned));
+ 		}
+ 
+ 		error = 0;
+ 		memset(swap_map, 0, maxpages * sizeof(short));
+-		memset(swap_remap, 0, maxpages * sizeof(unsigned));
+ 		for (i = 0; i < swap_header->info.nr_badpages; i++) {
+ 			int page_nr = swap_header->info.badpages[i];
+ 			if (page_nr <= 0 || page_nr >= swap_header->info.last_page)
+@@ -1872,13 +1903,15 @@ SYSCALL_DEFINE2(swapon, const char __use
+ 		goto bad_swap;
+ 	}
+ 
+-	p->gap_pool_arr = kmalloc(sizeof(struct swap_gap_node)*
+-				SWAP_GAP_TREE_SIZE, GFP_KERNEL);
+-	if (!p->gap_pool_arr) {
+-		error = -ENOMEM;
+-		goto bad_swap;
++	if (swap_remap) {
++		p->gap_pool_arr = kmalloc(sizeof(struct swap_gap_node)*
++					SWAP_GAP_TREE_SIZE, GFP_KERNEL);
++		if (!p->gap_pool_arr) {
++			error = -ENOMEM;
++			goto bad_swap;
++		}
++		p->gaps_tree = RB_ROOT;
+ 	}
+-	p->gaps_tree = RB_ROOT;
+ 
+ 	mutex_lock(&swapon_mutex);
+ 	spin_lock(&swap_lock);
+@@ -1889,11 +1922,13 @@ SYSCALL_DEFINE2(swapon, const char __use
+ 		p->prio = --least_priority;
+ 	p->swap_map = swap_map;
+ 	p->swap_remap = swap_remap;
+-	p->gap_next = 1;
+-	p->gap_end = p->max - 1;
+-	p->gaps_exist = p->max - 1;
+-	spin_lock_init(&p->remap_lock);
+-	mutex_init(&p->remap_mutex);
++	if (swap_remap) {
++		p->gap_next = 1;
++		p->gap_end = p->max - 1;
++		p->gaps_exist = p->max - 1;
++		spin_lock_init(&p->remap_lock);
++		mutex_init(&p->remap_mutex);
++	}
+ 	p->flags = SWP_ACTIVE;
+ 	nr_swap_pages += nr_good_pages;
+ 	total_swap_pages += nr_good_pages;
+@@ -1932,7 +1967,8 @@ bad_swap_2:
+ 	p->swap_file = NULL;
+ 	p->flags = 0;
+ 	spin_unlock(&swap_lock);
+-	vfree(swap_remap);
++	if (swap_remap)
++		vfree(swap_remap);
+ 	vfree(swap_map);
+ 	if (swap_file)
+ 		filp_close(swap_file, NULL);
