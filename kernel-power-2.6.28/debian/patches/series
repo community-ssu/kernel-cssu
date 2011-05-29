@@ -24,6 +24,7 @@ ondemand-avoid.diff
 overclock.diff
 arm-proc-v7.diff
 armthumb.diff
+minstrel-aziwoqpa_fixed.diff
 wl12xx_rohar.diff
 fmtx.unlock.diff
 radio-bcm2048.diff
