@@ -6684,9 +6684,9 @@ diff -rupN kernel-power-2.6.28.orig/arch/arm/plat-omap/include/dspbridge/wmdmsg.
  #ifndef WMDMSG_
  #define WMDMSG_
  
-diff -rupN kernel-power-2.6.28.orig/debian/rx51power_defconfig kernel-power-2.6.28/debian/rx51power_defconfig
---- kernel-power-2.6.28.orig/debian/rx51power_defconfig	2011-04-17 17:32:12.000000000 +0100
-+++ kernel-power-2.6.28/debian/rx51power_defconfig	2011-05-06 14:16:04.000000000 +0100
+diff -rupN kernel-power-2.6.28.orig/arch/arm/configs/rx51_defconfig kernel-power-2.6.28/arch/arm/configs/rx51_defconfig
+--- kernel-power-2.6.28.orig/arch/arm/configs/rx51_defconfig	2011-04-17 17:32:12.000000000 +0100
++++ kernel-power-2.6.28/arch/arm/configs/rx51_defconfig	2011-05-06 14:16:04.000000000 +0100
 @@ -1512,7 +1512,7 @@ CONFIG_FB_CFB_IMAGEBLIT=y
  CONFIG_FB_OMAP_BOOTLOADER_INIT=y
  CONFIG_FB_OMAP_CONSISTENT_DMA_SIZE=14
