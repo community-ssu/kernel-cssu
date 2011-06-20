@@ -1,3 +1,12 @@
+kernel-power (1:2.6.28-10power47) fremantle; urgency=low
+
+  * enabled additional kernel modules (for usb host mode)
+  * backported bq27x00_battery patch
+  * some patches from kernel-power bugtracker
+  * multiboot support in kernel-power-bootimg package
+
+ -- Pali Rohár <pali.rohar@gmail.com>  Sun, 01 May 2011 01:22:09 +0200
+
 kernel-power (2.6.28-maemo46) fremantle; urgency=low
 
   * disable u-boot as causes too much trouble
@@ -498,12 +507,6 @@ kernel (2.6.28-20102101) unstable; urgency=low
   * Fixes: NB#160073 - wl1251_cmd_data_path leaks small buffer on error path
 
  -- Eugene Lyubimkin <ext-lyubimkin.eugene@nokia.com>  Fri, 28 May 2010 10:55:06 +0300
-kernel (2.6.28-20101501+0m5) unstable; urgency=low
-
-  * This entry has been added by BIFH queue processor
-    version has been changed to 2.6.28-20101501+0m5
-
- -- Lyubimkin Eugene <ext-lyubimkin.eugene@nokia.com>  Thu, 15 Apr 2010 09:13:02 +0300
 
 kernel (2.6.28-20101501) unstable; urgency=low
 
@@ -539,13 +542,6 @@ kernel (2.6.28-20100904) unstable; urgency=low
   * Fixes: NB#158605 - omapdss DISPC error: VID1_FIFO_UNDERFLOW
 
  -- Eugene Lyubimkin <ext-lyubimkin.eugene@nokia.com>  Fri, 05 Mar 2010 12:11:31 +0200
-
-kernel (2.6.28-20100903+0m5) unstable; urgency=low
-
-  * This entry has been added by BIFH queue processor
-    version has been changed to 2.6.28-20100903+0m5
-
- -- Lyubimkin Eugene <ext-lyubimkin.eugene@nokia.com>  Wed, 03 Mar 2010 10:11:53 +0200
 
 kernel (2.6.28-20100903) unstable; urgency=low
 
@@ -720,37 +716,6 @@ kernel (2.6.28-20095001) intrepid; urgency=low
   * No changes in any certification category.
 
  -- Yauheni Kaliuta <yauheni.kaliuta@nokia.com>  Wed, 09 Dec 2009 09:50:07 +0200
-
-kernel (2.6.28-20094803.3+0m5) intrepid; urgency=low
-
-  * This entry has been added by BIFH queue processor
-    Suffix +0m5 added to package revision
-
- -- mika yrjola <ext-mika.2.yrjola@nokia.com>  Thu, 17 Dec 2009 09:23:47 +0200
-
-kernel (2.6.28-20094803.3) intrepid; urgency=low
-
-  * Fixes: NB#145487 - Some devices are rebooting when the device is idle
-  * No changes in any certification category.
-
- -- Yauheni Kaliuta <yauheni.kaliuta@nokia.com>  Wed, 16 Dec 2009 14:58:39 +0200
-
-kernel (2.6.28-20094803.2) intrepid; urgency=low
-
-  * fs+usb build
-  * fix enumeration problem
-  * Fixes: NB#150109 - Re-enumerate USB after rebooting the PC in
-    ACT_DEAD
-  * Fixes: NB#148525 - Free space disappears after PR1.0.1 to PR1.1 upgrade
-  * No changes in any certification category.
-
- -- Yauheni Kaliuta <yauheni.kaliuta@nokia.com>  Mon, 14 Dec 2009 10:00:53 +0200
-
-kernel (2.6.28-20094803.1) intrepid; urgency=low
-
-  * Fixes: NB#150262 - repeating kernel oopses in ieee80211_beacon_loss
-
- -- Yauheni Kaliuta <yauheni.kaliuta@nokia.com>  Fri, 11 Dec 2009 09:54:31 +0200
 
 kernel (2.6.28-20094803) intrepid; urgency=low
 

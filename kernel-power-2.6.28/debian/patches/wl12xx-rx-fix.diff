@@ -1,0 +1,14 @@
+diff -ru a/drivers/net/wireless/wl12xx/wl1251_rx.c b/drivers/net/wireless/wl12xx/wl1251_rx.c
+--- a/drivers/net/wireless/wl12xx/wl1251_rx.c	2011-01-22 17:33:06.966780985 +1100
++++ b/drivers/net/wireless/wl12xx/wl1251_rx.c	2011-01-22 17:17:36.992422987 +1100
+@@ -185,8 +185,8 @@
+ 	rx_buffer = skb_put(skb, length);
+ 	wl1251_spi_mem_read(wl, rx_packet_ring_addr, rx_buffer, length);
+ 
+-	/* The actual lenght doesn't include the target's alignment */
+-	skb->len = desc->length  - PLCP_HEADER_LENGTH;
++	/* The actual length doesn't include the target's alignment */
++	skb_trim(skb, desc->length - PLCP_HEADER_LENGTH);
+ 
+ 	fc = (u16 *)skb->data;
+ 

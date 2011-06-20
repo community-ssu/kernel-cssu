@@ -2,20 +2,21 @@
 #
 
 WEEK := $(shell date +%Y%W)
-RELEASE := $(shell dpkg-parsechangelog | awk '/^Version: / { print $$2 }')
-REVISION := $(shell echo "$(RELEASE)" | sed 's/\(.*\)-maemo\(.*\)/.10power\2/')
-#REVISION := $(shell echo "$(RELEASE)" | sed 's/\(.*\)-maemo\(.*\)/.10powerusb\2/')
+RELEASE := $(shell dpkg-parsechangelog | sed -ne 's/^Version: 1:\(.*\)/\1/p' | sed 's/-10/.10-/')
+REVISION := $(shell echo "$(RELEASE)" | sed 's/.*\./\./')
 EXTRAVERSION := EXTRAVERSION=$(REVISION)
 
-PACKAGE := kernel
-FLASHER_PACKAGE := kernel-power-flasher
-#SOURCE_PACKAGE := $(PACKAGE)-source
-KERNEL_PACKAGE := $(PACKAGE)-power
-BOOTIMG_PACKAGE := $(PACKAGE)-power-bootimg
-MODULES_PACKAGE := $(PACKAGE)-power-modules
-HEADERS_PACKAGE := $(PACKAGE)-power-headers
-KBUILD_PACKAGE := $(PACKAGE)-power-kbuild
-LIBC_PACKAGE := linux-kernel-power-headers
+PACKAGE := kernel-power
+FLASHER_PACKAGE := $(PACKAGE)-flasher
+KERNEL_PACKAGE := $(PACKAGE)
+BOOTIMG_PACKAGE := $(PACKAGE)-bootimg
+MODULES_PACKAGE := $(PACKAGE)-modules
+HEADERS_PACKAGE := $(PACKAGE)-headers
+KBUILD_PACKAGE := $(PACKAGE)-kbuild
+LIBC_PACKAGE := linux-$(PACKAGE)-headers
+
+MULTIBOOTDIR := etc/multiboot.d
+MULTIBOOTFILE := $(MULTIBOOTDIR)/01-Maemo-$(PACKAGE)-$(RELEASE).item
 
 BUILDTMP := $(CURDIR)/debian/build
 #KSRC := $(BUILDTMP)/$(PACKAGE)
@@ -42,30 +43,26 @@ ifneq (,$(findstring parallel,$(DEB_BUILD_OPTIONS)))
     NJOBS := -j$(PARALLEL_JOBS)
 endif
 
+get-orig-source:
+	wget ftp://ftp.kernel.org/pub/linux/kernel/v2.6/linux-2.6.28.tar.gz
+
 configure-stamp:
 	dh_testdir
-	#$(MAKE) mrproper KBUILD_OUTPUT=$(CURDIR)
 	mkdir -p $(BUILDTMP)
 	$(MAKE) clean
 	QUILT_PATCHES=debian/patches quilt push -a -q || test $$? = 2
 	cp debian/$(DEFCONFIG) arch/arm/configs/
-	#uudecode debian/u-boot.bin.gz.b64 -o - | gunzip -dc > debian/u-boot.bin
-	#dd if=debian/u-boot.bin of=debian/u-boot.pad bs=262144 count=1 conv=sync
 	cd $(KSRC) && $(MAKE) $(EXTRAVERSION) $(DEFCONFIG)
 	touch $@
 
 kernel-stamp: configure-stamp
 	echo "compile $(PRODUCT) kernel"
 	cd $(KSRC) && $(MAKE) $(NJOBS) $(EXTRAVERSION) zImage
-	#mkimage  -A arm -O linux -T kernel -C none -a 80008000 -e 80008000 -n kernel-power -d $(BUILDTMP)/arch/arm/boot/zImage $(BUILDTMP)/arch/arm/boot/uImage
-	#cat /usr/lib/u-boot/u-boot.bin.0x38000/u-boot.bin.0x38000 $(BUILDTMP)/arch/arm/boot/uImage > debian/uImage
-	#cat debian/u-boot.pad $(BUILDTMP)/arch/arm/boot/uImage > debian/uImage
 	touch $@
 
 modules-stamp: configure-stamp
 	echo "compile $(PRODUCT) kernel modules"
 	cd $(KSRC) && $(MAKE) $(NJOBS) $(EXTRAVERSION) modules
-	$(MAKE) -C $(KSRC) M=debian/joikuspot EXTRAVERSION=$(EXTRAVERSION) modules
 	touch $@
 
 modules-extra: configure-stamp
@@ -107,7 +104,6 @@ install-kernel:
 	install -d -m 755 $(CURDIR)/debian/$(KERNEL_PACKAGE)/boot
 	fiasco-gen -o $(CURDIR)/debian/$(KERNEL_PACKAGE)/boot/zImage-$(RELEASE).fiasco -g \
 			-k $(BUILDTMP)/arch/arm/boot/zImage -v $(RELEASE)
-			-k debian/uImage -v $(RELEASE)
 	chmod 644 $(CURDIR)/debian/$(KERNEL_PACKAGE)/boot/zImage-$(RELEASE).fiasco
 
 install-bootimg:
@@ -119,6 +115,11 @@ install-bootimg:
 	install -c -m 644 $(BUILDTMP)/arch/arm/boot/zImage $(CURDIR)/debian/$(BOOTIMG_PACKAGE)/boot/zImage-$(RELEASE)
 	chmod 644 $(CURDIR)/debian/$(BOOTIMG_PACKAGE)/boot/zImage-$(RELEASE)
 
+	mkdir -p $(CURDIR)/debian/$(BOOTIMG_PACKAGE)/$(MULTIBOOTDIR)
+	echo "ITEM_NAME=\"Maemo $(PACKAGE) $(RELEASE)\"" > $(CURDIR)/debian/$(BOOTIMG_PACKAGE)/$(MULTIBOOTFILE)
+	echo "ITEM_KERNEL=\"$(RELEASE)\"" >> $(CURDIR)/debian/$(BOOTIMG_PACKAGE)/$(MULTIBOOTFILE)
+	echo "ITEM_MODULES=\"ext3\"" >> $(CURDIR)/debian/$(BOOTIMG_PACKAGE)/$(MULTIBOOTFILE)
+
 install-modules:
 	dh_testdir
 	dh_testroot
@@ -128,7 +129,6 @@ install-modules:
 		install -c -m 644 $$f $(CURDIR)/debian/$(MODULES_PACKAGE)/lib/modules/$(KVER)/$$(basename $$f); \
 		strip --remove-section=.comment --remove-section=.note --strip-unneeded  $(CURDIR)/debian/$(MODULES_PACKAGE)/lib/modules/$(KVER)/$$(basename $$f); \
 	done
-	#ln -sf $(KVER) $(CURDIR)/debian/$(MODULES_PACKAGE)/lib/modules/current
 
 install-headers:
 	dh_testdir
@@ -141,6 +141,8 @@ install-headers:
 	install -p -o root -g root -m 644 $(BUILDTMP)/Module.symvers $(CURDIR)/debian/$(HEADERS_PACKAGE)/usr/src/$(HEADERS_PACKAGE)/
 	cd $(BUILDTMP) && install -p -o root -g root -m 644 -D include/config/auto.conf \
 		$(CURDIR)/debian/$(HEADERS_PACKAGE)/usr/src/$(HEADERS_PACKAGE)/include/config/auto.conf
+	cd $(BUILDTMP) && install -p -o root -g root -m 644 -D include/config/kernel.release \
+		$(CURDIR)/debian/$(HEADERS_PACKAGE)/usr/src/$(HEADERS_PACKAGE)/include/config/kernel.release
 	cd $(KSRC) && \
 		find arch/$(ARCH) $(foreach dir,$(INCLUDE_HEADERS),include/$(dir)) -name '*.h' \
 			-exec install -D -m644 {} $(CURDIR)/debian/$(HEADERS_PACKAGE)/usr/src/$(HEADERS_PACKAGE)/{} \;

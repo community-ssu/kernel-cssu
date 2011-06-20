@@ -1,0 +1,30 @@
+--- kernel-power-2.6.28/Makefile	2011-01-23 14:06:07.000000000 +0100
++++ kernel-power-2.6.28/Makefile	2011-01-23 14:06:53.000000000 +0100
+@@ -4,6 +4,8 @@ SUBLEVEL = 28
+ EXTRAVERSION = .10power
+ NAME = Erotic Pickled Herring
+ 
++export PATH := /usr/bin:$(HOME)/.madde/0.6.72/toolchains/arm-2007q3-51sb6-gdb701-arm-none-linux-gnueabi_linux/bin:$(PATH)
++
+ # *DOCUMENTATION*
+ # To see a list of typical targets execute "make help"
+ # More info can be located in ./README
+@@ -196,7 +198,7 @@ SUBARCH := arm
+ # Note: Some architectures assign CROSS_COMPILE in their arch/*/Makefile
+ export KBUILD_BUILDHOST := $(SUBARCH)
+ ARCH		?= $(SUBARCH)
+-CROSS_COMPILE	?= arm-linux-
++CROSS_COMPILE	?= arm-none-linux-gnueabi-
+ 
+ # Architecture as present in compile.h
+ UTS_MACHINE 	:= $(ARCH)
+--- kernel-power-2.6.28/scripts/unifdef.c	2011-01-23 18:22:03.000000000 +0100
++++ kernel-power-2.6.28/scripts/unifdef.c	2011-01-23 18:22:17.000000000 +0100
+@@ -206,6 +206,7 @@
+ static void             error(const char *);
+ static int              findsym(const char *);
+ static void             flushline(bool);
++#define getline _getline
+ static Linetype         getline(void);
+ static Linetype         ifeval(const char **);
+ static void             ignoreoff(void);
