@@ -1,7 +1,9 @@
+2.6.28-omap1.diff
 nokia-20094803.3+0m5.diff
 nokia-20100903+0m5.diff
 nokia-20101501+0m5.diff
 nokia-20103103+0m5.diff
+2.6.28.10.diff
 rx51_defconfig.diff
 maemo-build.diff
 unionfs-2.5.3.diff
@@ -10,7 +12,6 @@ usbip.diff
 #nilfs2-2.0.18.diff
 iphb-matan.diff
 ppp_async_matan.diff
-2.6.28.10.diff
 block2mtd-yoush.diff
 gentoo-fsfixes.diff
 trig-keyb.diff
