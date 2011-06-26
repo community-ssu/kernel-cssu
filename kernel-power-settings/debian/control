@@ -1,7 +1,7 @@
 Source: kernel-power-settings
 Section: utils
 Priority: optional
-Maintainer: Thomas Tanner <maemo@tannerlab.com>
+Maintainer: Pali Rohár <pali.rohar@gmail.com>
 XSBC-Bugtracker: https://garage.maemo.org/tracker/?group_id=1528
 Build-Depends: debhelper (>= 4.0.0)
 Standards-Version: 3.8.0
@@ -9,13 +9,11 @@ Standards-Version: 3.8.0
 Package: kernel-power-settings
 Section: user/system
 Architecture: armel
-Depends: kernel-power-flasher (>= 2.6.28-maemo25), sudo
-XB-Maemo-Display-Name: Enhanced Linux kernel for power users (settings)
-Description: Tools for the customization of kernel settings
- of the enhanced Maemo 5 kernel 2.6.28.10.
- .
- Installing this package will automatically also install the
- required power user kernel. By default, this package has no effect.
+Depends: kernel-feature-overclock, sudo
+XB-Maemo-Display-Name: Linux kernel for power user (settings and overclock)
+Description: Tools for the customization and overclock Linux kernel
+ Installing this package will automatically also install Linux kernel
+ with overclock support (e.g Linux kernel for power user).
  .
  The command /usr/sbin/kernel-config can be used to load, save and
  show CPU frequency, voltage and DSP settings.
@@ -24,7 +22,9 @@ Description: Tools for the customization of kernel settings
  .
  This package contains boot options to enable file system checks
  of /home before mounting or to start a SSH server with USB networking.
+ .
  Kernel modules specified in /etc/modules are loaded during boot.
+ .
  The boot scripts contain safety mechanisms to temporarily disable them
  after a crash for recovery.
  .
