@@ -3,17 +3,15 @@
 set -e
 
 cd /lib/modules
-
-rm -f /lib/modules/current
 ls -1d * | grep -v current | while read i; do
    /sbin/depmod $i || :
 done
+
+rm -f /lib/modules/current
 ln -s @KVER@ /lib/modules/current
 
 if grep -q "MODULE_PATH=/lib/modules/current" /sbin/preinit; then
-    sed 's%MODULE_PATH=/lib/modules/current%MODULE_PATH=/lib/modules/`uname -r` #fixed by kernel-power%' /sbin/preinit > /sbin/preinit.tmp && \
-    chmod +x /sbin/preinit.tmp && \
-    mv /sbin/preinit.tmp /sbin/preinit
+    sed 's%MODULE_PATH=/lib/modules/current%MODULE_PATH=/lib/modules/`uname -r` #fixed by kernel-power%' -i /sbin/preinit
 fi
 
 dpkg-divert --local --divert /lib/modules/2.6.28-omap1/JoikuSpot_Bouncer.ko --rename --add /usr/bin/JoikuSpot_Bouncer.ko || :
