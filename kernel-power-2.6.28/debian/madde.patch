@@ -1,30 +1,33 @@
-diff --git kernel-power-2.6.28/debian/control kernel-power-2.6.28/debian/control
-index f178559..6ae60c1 100644
---- kernel-power-2.6.28/debian/control
-+++ kernel-power-2.6.28/debian/control
+diff --git a/kernel-power-2.6.28/debian/control b/kernel-power-2.6.28/debian/control
+index ac43331..ec1431c 100644
+--- a/kernel-power-2.6.28/debian/control
++++ b/kernel-power-2.6.28/debian/control
 @@ -3,7 +3,7 @@ Section: utils
  Priority: optional
  Maintainer: Pali Rohár <pali.rohar@gmail.com>
  XSBC-Bugtracker: https://garage.maemo.org/tracker/?group_id=1528
 -Build-Depends: debhelper (>= 4.0.0), quilt, sdk-fiasco-gen, libncurses5-dev, sharutils
 +Build-Depends: debhelper (>= 4.0.0), quilt, libncurses5-dev, sharutils
+ Build-Depends-Indep: bzip2
  Standards-Version: 3.8.0
  
- Package: kernel-power-flasher
-diff --git kernel-power-2.6.28/debian/patches/series kernel-power-2.6.28/debian/patches/series
-index 4ae2339..93a7c2d 100644
---- kernel-power-2.6.28/debian/patches/series
-+++ kernel-power-2.6.28/debian/patches/series
-@@ -35,3 +35,4 @@ l2cap_parent.patch
- wl12xx-rx-fix.diff
- vanilla-2.6.28-anti-io-stalling.patch
- joikuspot.diff
-+madde.patch
-diff --git kernel-power-2.6.28/debian/rules kernel-power-2.6.28/debian/rules
-index 3f5cb4e..e0b7a44 100755
---- kernel-power-2.6.28/debian/rules
-+++ kernel-power-2.6.28/debian/rules
-@@ -102,7 +102,10 @@ install-kernel:
+diff --git a/kernel-power-2.6.28/debian/patches/series b/kernel-power-2.6.28/debian/patches/series
+index ae7e212..b7c7b20 100644
+--- a/kernel-power-2.6.28/debian/patches/series
++++ b/kernel-power-2.6.28/debian/patches/series
+@@ -6,6 +6,7 @@ nokia-20103103+0m5.diff
+ 2.6.28.10.diff
+ rx51_defconfig.diff
+ maemo-build.diff
++madde.diff
+ unionfs-2.5.3.diff
+ dm-loop.diff
+ usbip.diff
+diff --git a/kernel-power-2.6.28/debian/rules b/kernel-power-2.6.28/debian/rules
+index 37b6a9f..f046899 100755
+--- a/kernel-power-2.6.28/debian/rules
++++ b/kernel-power-2.6.28/debian/rules
+@@ -108,7 +108,10 @@ install-kernel:
  	dh_installdirs
  
  	install -d -m 755 $(CURDIR)/debian/$(KERNEL_PACKAGE)/boot
@@ -36,30 +39,39 @@ index 3f5cb4e..e0b7a44 100755
  			-k $(BUILDTMP)/arch/arm/boot/zImage -v $(RELEASE)
  	chmod 644 $(CURDIR)/debian/$(KERNEL_PACKAGE)/boot/zImage-$(RELEASE).fiasco
  
-@@ -136,12 +139,12 @@ install-headers:
+@@ -170,12 +173,12 @@ install-headers:
  	dh_installdirs
  
  	install -d -m755 $(CURDIR)/debian/$(HEADERS_PACKAGE)/usr/src/$(HEADERS_PACKAGE)/
--	install -p -o root -g root -m 644 $(BUILDTMP)/.config  $(CURDIR)/debian/$(HEADERS_PACKAGE)/usr/src/$(HEADERS_PACKAGE)/
+-	install -p -o root -g root -m 644 $(KSRC)/.config  $(CURDIR)/debian/$(HEADERS_PACKAGE)/usr/src/$(HEADERS_PACKAGE)/
 -	install -p -o root -g root -m 644 $(KSRC)/Makefile $(CURDIR)/debian/$(HEADERS_PACKAGE)/usr/src/$(HEADERS_PACKAGE)/
--	install -p -o root -g root -m 644 $(BUILDTMP)/Module.symvers $(CURDIR)/debian/$(HEADERS_PACKAGE)/usr/src/$(HEADERS_PACKAGE)/
--	cd $(BUILDTMP) && install -p -o root -g root -m 644 -D include/config/auto.conf \
-+	install -p -m 644 $(BUILDTMP)/.config  $(CURDIR)/debian/$(HEADERS_PACKAGE)/usr/src/$(HEADERS_PACKAGE)/
+-	install -p -o root -g root -m 644 $(KSRC)/Module.symvers $(CURDIR)/debian/$(HEADERS_PACKAGE)/usr/src/$(HEADERS_PACKAGE)/
+-	cd $(KSRC) && install -p -o root -g root -m 644 -D include/config/auto.conf \
++	install -p -m 644 $(KSRC)/.config  $(CURDIR)/debian/$(HEADERS_PACKAGE)/usr/src/$(HEADERS_PACKAGE)/
 +	install -p -m 644 $(KSRC)/Makefile $(CURDIR)/debian/$(HEADERS_PACKAGE)/usr/src/$(HEADERS_PACKAGE)/
-+	install -p -m 644 $(BUILDTMP)/Module.symvers $(CURDIR)/debian/$(HEADERS_PACKAGE)/usr/src/$(HEADERS_PACKAGE)/
-+	cd $(BUILDTMP) && install -p -m 644 -D include/config/auto.conf \
++	install -p -m 644 $(KSRC)/Module.symvers $(CURDIR)/debian/$(HEADERS_PACKAGE)/usr/src/$(HEADERS_PACKAGE)/
++	cd $(KSRC) && install -p -m 644 -D include/config/auto.conf \
  		$(CURDIR)/debian/$(HEADERS_PACKAGE)/usr/src/$(HEADERS_PACKAGE)/include/config/auto.conf
--	cd $(BUILDTMP) && install -p -o root -g root -m 644 -D include/config/kernel.release \
-+	cd $(BUILDTMP) && install -p -m 644 -D include/config/kernel.release \
+-	cd $(KSRC) && install -p -o root -g root -m 644 -D include/config/kernel.release \
++	cd $(KSRC) && install -p -m 644 -D include/config/kernel.release \
  		$(CURDIR)/debian/$(HEADERS_PACKAGE)/usr/src/$(HEADERS_PACKAGE)/include/config/kernel.release
  	cd $(KSRC) && \
  		find arch/$(ARCH) $(foreach dir,$(INCLUDE_HEADERS),include/$(dir)) -name '*.h' \
-@@ -240,9 +243,6 @@ endif
+@@ -220,7 +223,7 @@ install-indep:
+ 	dh_testdir
+ 	dh_testroot
+ 
+-	install -p -d -o root -g root -m 755 debian/$(SOURCE_PACKAGE)/usr/src
++	install -p -d -m 755 debian/$(SOURCE_PACKAGE)/usr/src
+ 	install -m 644 $(BUILDTMP)/$(SOURCE_PACKAGE)-$(RELEASE).tar.bz2 debian/$(SOURCE_PACKAGE)/usr/src
+ 
+ install-arch: build-arch install-kernel install-bootimg install-flasher install-modules install-debug install-modules-debug install-headers install-libc-headers
+@@ -267,9 +270,7 @@ endif
+ 	dh_testroot
  	dh_installchangelogs -s
  	dh_installdocs -s
- 	dh_install -s
 -ifeq ($(ARCH),arm)
--	dh_strip -p$(HEADERS_PACKAGE)
+ 	dh_strip -p$(HEADERS_PACKAGE)
 -endif
  	dh_compress -s
  	dh_fixperms -s --exclude /usr/src/kernel-headers
