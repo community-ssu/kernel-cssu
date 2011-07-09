@@ -1,3 +1,9 @@
+kernel-power-settings (0.12) fremantle; urgency=low
+
+  * updated debian files
+
+ -- Pali Rohár <pali.rohar@gmail.com>  Sat, 09 Jul 2011 17:15:56 +0200
+
 kernel-power-settings (0.11) fremantle; urgency=low
 
   * reupload (broken autobuilder)
