@@ -86,7 +86,7 @@ install-kernel:
 	dh_testdir
 	dh_testroot
 	mkdir -p $(CURDIR)/debian/$(KERNEL_PACKAGE)/boot
-	fiasco-gen -o $(CURDIR)/debian/$(KERNEL_PACKAGE)/boot/zImage-$(RELEASE).fiasco -g -k $(BUILDTMP)/arch/arm/boot/zImage -v $(RELEASE)
+	fiasco-gen -o $(CURDIR)/debian/$(KERNEL_PACKAGE)/boot/zImage-$(RELEASE).fiasco -g -k $(KSRC)/arch/arm/boot/zImage -v $(RELEASE)
 	chmod 644 $(CURDIR)/debian/$(KERNEL_PACKAGE)/boot/zImage-$(RELEASE).fiasco
 
 install-bootimg:
@@ -94,7 +94,7 @@ install-bootimg:
 	dh_testroot
 	mkdir -p $(CURDIR)/debian/$(BOOTIMG_PACKAGE)/boot
 	mkdir -p $(CURDIR)/debian/$(BOOTIMG_PACKAGE)/$(MULTIBOOTDIR)
-	install -m644 $(BUILDTMP)/arch/arm/boot/zImage $(CURDIR)/debian/$(BOOTIMG_PACKAGE)/boot/zImage-$(RELEASE)
+	install -m644 $(KSRC)/arch/arm/boot/zImage $(CURDIR)/debian/$(BOOTIMG_PACKAGE)/boot/zImage-$(RELEASE)
 	echo "ITEM_NAME=\"Maemo $(PACKAGE) $(RELEASE)\"" > $(CURDIR)/debian/$(BOOTIMG_PACKAGE)/$(MULTIBOOTFILE)
 	echo "ITEM_KERNEL=\"$(RELEASE)\"" >> $(CURDIR)/debian/$(BOOTIMG_PACKAGE)/$(MULTIBOOTFILE)
 	echo "ITEM_MODULES=\"ext3\"" >> $(CURDIR)/debian/$(BOOTIMG_PACKAGE)/$(MULTIBOOTFILE)

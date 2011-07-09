@@ -31,11 +31,11 @@ index 73ae638..6ff7473 100755
  	dh_testdir
  	dh_testroot
  	mkdir -p $(CURDIR)/debian/$(KERNEL_PACKAGE)/boot
--	fiasco-gen -o $(CURDIR)/debian/$(KERNEL_PACKAGE)/boot/zImage-$(RELEASE).fiasco -g -k $(BUILDTMP)/arch/arm/boot/zImage -v $(RELEASE)
+-	fiasco-gen -o $(CURDIR)/debian/$(KERNEL_PACKAGE)/boot/zImage-$(RELEASE).fiasco -g -k $(KSRC)/arch/arm/boot/zImage -v $(RELEASE)
 +	test -f sdk-fiasco-gen_2.8.2.0.1+0m5_i386.deb || wget http://repository.maemo.org/pool/fremantle/non-free/s/sdk-fiasco-gen/sdk-fiasco-gen_2.8.2.0.1+0m5_i386.deb
 +	ar x sdk-fiasco-gen_2.8.2.0.1+0m5_i386.deb data.tar.gz
 +	tar -xf data.tar.gz ./usr/bin/fiasco-gen -O > fiasco-gen && chmod +x fiasco-gen
-+	./fiasco-gen -o $(CURDIR)/debian/$(KERNEL_PACKAGE)/boot/zImage-$(RELEASE).fiasco -g -k $(BUILDTMP)/arch/arm/boot/zImage -v $(RELEASE)
++	./fiasco-gen -o $(CURDIR)/debian/$(KERNEL_PACKAGE)/boot/zImage-$(RELEASE).fiasco -g -k $(KSRC)/arch/arm/boot/zImage -v $(RELEASE)
  	chmod 644 $(CURDIR)/debian/$(KERNEL_PACKAGE)/boot/zImage-$(RELEASE).fiasco
  
  install-bootimg:
