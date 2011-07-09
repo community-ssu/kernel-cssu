@@ -12,7 +12,7 @@ index ac43331..ec1431c 100644
  Standards-Version: 3.8.0
  
 diff --git a/kernel-power-2.6.28/debian/patches/series b/kernel-power-2.6.28/debian/patches/series
-index 95e3961..c5daf0e 100644
+index 6f53deb..8917eb7 100644
 --- a/kernel-power-2.6.28/debian/patches/series
 +++ b/kernel-power-2.6.28/debian/patches/series
 @@ -4,6 +4,7 @@ nokia-20100903+0m5.diff
@@ -24,7 +24,7 @@ index 95e3961..c5daf0e 100644
  unionfs-2.5.3.diff
  dm-loop.diff
 diff --git a/kernel-power-2.6.28/debian/rules b/kernel-power-2.6.28/debian/rules
-index 73ae638..6ff7473 100755
+index 6510f9e..528c89b 100755
 --- a/kernel-power-2.6.28/debian/rules
 +++ b/kernel-power-2.6.28/debian/rules
 @@ -86,7 +86,10 @@ install-kernel:
@@ -39,3 +39,13 @@ index 73ae638..6ff7473 100755
  	chmod 644 $(CURDIR)/debian/$(KERNEL_PACKAGE)/boot/zImage-$(RELEASE).fiasco
  
  install-bootimg:
+@@ -227,9 +230,6 @@ endif
+ 	dh_testroot
+ 	dh_installchangelogs -s
+ 	dh_installdocs -s
+-ifeq ($(ARCH),arm)
+-	dh_strip -p$(HEADERS_PACKAGE)
+-endif
+ 	dh_compress -s
+ 	dh_fixperms -s --exclude /usr/src/kernel-headers
+ 	dh_installdeb -s
