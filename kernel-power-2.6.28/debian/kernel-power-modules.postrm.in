@@ -2,7 +2,7 @@
 
 set -e
 
-test -d /lib/modules/@KVER@ && rm -f /lib/modules/@KVER@/modules.*
+test -d /lib/modules/@RELEASE@ && rm -f /lib/modules/@RELEASE@/modules.*
 rm -f /lib/modules/current
 ln -s 2.6.28-omap1 /lib/modules/current
 

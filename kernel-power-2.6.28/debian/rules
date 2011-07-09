@@ -212,7 +212,6 @@ else
 binary-arch: install-libc-headers
 endif
 	sed \
-		-e 's,@VERSION@,$(RELEASE),g' \
 		-e 's,@RELEASE@,$(RELEASE),g' \
 		< $(CURDIR)/debian/$(FLASHER_PACKAGE).postinst.in \
 		> $(CURDIR)/debian/$(FLASHER_PACKAGE).postinst

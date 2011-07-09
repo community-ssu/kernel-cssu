@@ -2,7 +2,7 @@
 
 set -e
 
-KERNEL=/boot/zImage-@VERSION@.fiasco
+KERNEL=/boot/zImage-@RELEASE@.fiasco
 
 FLASHER=/sbin/fiasco-image-update
 
