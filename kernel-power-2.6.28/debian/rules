@@ -1,7 +1,6 @@
 #!/usr/bin/make -f
 #
 
-WEEK := $(shell date +%Y%W)
 RELEASE := $(shell dpkg-parsechangelog | sed -ne 's/^Version: 1:\(.*\)/\1/p' | sed 's/-10/.10-/')
 REVISION := $(shell echo "$(RELEASE)" | sed 's/.*\./\./')
 EXTRAVERSION := EXTRAVERSION=$(REVISION)
@@ -23,7 +22,6 @@ MULTIBOOTFILE := $(MULTIBOOTDIR)/01-Maemo-$(PACKAGE)-$(RELEASE).item
 
 BUILDTMP := $(CURDIR)/debian/build
 KSRC := $(BUILDTMP)/$(PACKAGE)
-export KBUILD_OUTPUT = $(BUILDTMP)
 
 DEFCONFIG := rx51_defconfig
 ARCH = $(shell dpkg-architecture -qDEB_HOST_ARCH_CPU)
@@ -31,7 +29,6 @@ INCLUDE_HEADERS_ARCH = asm-$(ARCH) config linux
 INCLUDE_HEADERS = asm-$(ARCH) linux acpi asm-generic crypto drm Kbuild keys math-emu media mtd net pcmcia rdma rxrpc scsi sound video xen
 RM_SCRIPTS = bloat-o-meter show_delta
 DEBUG_MODULES = oprofile.ko
-MAKE += $(MAKEFLAGS)
 
 ifneq (,$(findstring parallel,$(DEB_BUILD_OPTIONS)))
     PARALLEL_JOBS := $(shell echo $(DEB_BUILD_OPTIONS) | \
@@ -51,7 +48,7 @@ source-copy-stamp:
 	dh_testdir
 	mkdir -p $(BUILDTMP)/$(SOURCE_PACKAGE)
 	$(MAKE) clean
-	tar cf - `echo * | sed -e 's/ debian//g' -e 's/\.deb//g' ` | (cd $(BUILDTMP)/$(SOURCE_PACKAGE); umask 000; tar xspf -)
+	tar cf - `echo * | sed -e 's/ debian//g;s/\.deb//g'` 2>/dev/null | (cd $(BUILDTMP)/$(SOURCE_PACKAGE); umask 000; tar xspf -)
 	cd $(BUILDTMP)/$(SOURCE_PACKAGE) && ( QUILT_PATCHES=$(CURDIR)/debian/patches quilt push -a -q || test $$? = 2 )
 	touch $@
 
@@ -60,29 +57,29 @@ source-stamp: source-copy-stamp
 	touch $@
 
 configure-stamp: source-stamp
-	cd $(KSRC) && $(MAKE) $(EXTRAVERSION) $(DEFCONFIG)
+	$(MAKE) -C $(KSRC) $(NJOBS) $(EXTRAVERSION) $(DEFCONFIG)
 	touch $@
 
 kernel-stamp: configure-stamp
-	cd $(KSRC) && $(MAKE) $(NJOBS) $(EXTRAVERSION) zImage
+	$(MAKE) -C $(KSRC) $(NJOBS) $(EXTRAVERSION) zImage
 	touch $@
 
 modules-stamp: configure-stamp
-	cd $(KSRC) && $(MAKE) $(NJOBS) $(EXTRAVERSION) modules
+	$(MAKE) -C $(KSRC) $(NJOBS) $(EXTRAVERSION) modules
 	touch $@
-
-headers: kernel-stamp modules-stamp
 
 kernel-source-stamp: source-copy-stamp
 	cd $(BUILDTMP) && tar --bzip2 -cf $(SOURCE_PACKAGE)-$(RELEASE).tar.bz2 $(SOURCE_PACKAGE)
 	touch $@
 
+headers: kernel-stamp modules-stamp
+
 clean:
 	dh_testdir
 	dh_testroot
 	rm -rf $(BUILDTMP)
-	rm -f debian/files debian/tmp-* stamp-* *-stamp
-	rm -f debian/$(FLASHER_PACKAGE).postinst debian/$(MODULES_PACKAGE).postinst debian/$(MODULES_PACKAGE).postrm
+	rm -f debian/files debian/$(FLASHER_PACKAGE).postinst debian/$(MODULES_PACKAGE).postinst debian/$(MODULES_PACKAGE).postrm
+	rm -f source-copy-stamp source-stamp configure-stamp kernel-stamp modules-stamp kernel-source-stamp
 	dh_clean
 
 install-kernel:
@@ -178,8 +175,8 @@ install-headers:
 install-libc-headers: source-stamp
 	dh_testdir
 	dh_testroot
-	cd $(KSRC) && $(MAKE) headers_check ARCH=$(ARCH)
-	cd $(KSRC) && $(MAKE) headers_install ARCH=$(ARCH) INSTALL_HDR_PATH=$(CURDIR)/debian/$(LIBC_PACKAGE)/usr
+	$(MAKE) -C $(KSRC) headers_check ARCH=$(ARCH)
+	$(MAKE) -C $(KSRC) headers_install ARCH=$(ARCH) INSTALL_HDR_PATH=$(CURDIR)/debian/$(LIBC_PACKAGE)/usr
 
 install-indep:
 	dh_testdir

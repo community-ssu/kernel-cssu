@@ -5,7 +5,6 @@ nokia-20101501+0m5.diff
 nokia-20103103+0m5.diff
 2.6.28.10.diff
 rx51_defconfig.diff
-maemo-build.diff
 unionfs-2.5.3.diff
 dm-loop.diff
 usbip.diff
