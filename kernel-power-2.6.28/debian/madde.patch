@@ -12,67 +12,30 @@ index ac43331..ec1431c 100644
  Standards-Version: 3.8.0
  
 diff --git a/kernel-power-2.6.28/debian/patches/series b/kernel-power-2.6.28/debian/patches/series
-index ae7e212..b7c7b20 100644
+index 95e3961..c5daf0e 100644
 --- a/kernel-power-2.6.28/debian/patches/series
 +++ b/kernel-power-2.6.28/debian/patches/series
-@@ -6,6 +6,7 @@ nokia-20103103+0m5.diff
+@@ -4,6 +4,7 @@ nokia-20100903+0m5.diff
+ nokia-20101501+0m5.diff
+ nokia-20103103+0m5.diff
  2.6.28.10.diff
- rx51_defconfig.diff
- maemo-build.diff
 +madde.diff
+ rx51_defconfig.diff
  unionfs-2.5.3.diff
  dm-loop.diff
- usbip.diff
 diff --git a/kernel-power-2.6.28/debian/rules b/kernel-power-2.6.28/debian/rules
-index 37b6a9f..f046899 100755
+index 73ae638..6ff7473 100755
 --- a/kernel-power-2.6.28/debian/rules
 +++ b/kernel-power-2.6.28/debian/rules
-@@ -108,7 +108,10 @@ install-kernel:
- 	dh_installdirs
- 
- 	install -d -m 755 $(CURDIR)/debian/$(KERNEL_PACKAGE)/boot
--	fiasco-gen -o $(CURDIR)/debian/$(KERNEL_PACKAGE)/boot/zImage-$(RELEASE).fiasco -g \
-+	test -f sdk-fiasco-gen_2.8.2.0.1+0m5_i386.deb || wget http://repository.maemo.org/pool/fremantle/non-free/s/sdk-fiasco-gen/sdk-fiasco-gen_2.8.2.0.1+0m5_i386.deb
-+	ar x sdk-fiasco-gen_2.8.2.0.1+0m5_i386.deb data.tar.gz
-+	tar -xf data.tar.gz ./usr/bin/fiasco-gen -O > fiasco-gen; chmod +x fiasco-gen
-+	./fiasco-gen -o $(CURDIR)/debian/$(KERNEL_PACKAGE)/boot/zImage-$(RELEASE).fiasco -g \
- 			-k $(BUILDTMP)/arch/arm/boot/zImage -v $(RELEASE)
- 	chmod 644 $(CURDIR)/debian/$(KERNEL_PACKAGE)/boot/zImage-$(RELEASE).fiasco
- 
-@@ -170,12 +173,12 @@ install-headers:
- 	dh_installdirs
- 
- 	install -d -m755 $(CURDIR)/debian/$(HEADERS_PACKAGE)/usr/src/$(HEADERS_PACKAGE)/
--	install -p -o root -g root -m 644 $(KSRC)/.config  $(CURDIR)/debian/$(HEADERS_PACKAGE)/usr/src/$(HEADERS_PACKAGE)/
--	install -p -o root -g root -m 644 $(KSRC)/Makefile $(CURDIR)/debian/$(HEADERS_PACKAGE)/usr/src/$(HEADERS_PACKAGE)/
--	install -p -o root -g root -m 644 $(KSRC)/Module.symvers $(CURDIR)/debian/$(HEADERS_PACKAGE)/usr/src/$(HEADERS_PACKAGE)/
--	cd $(KSRC) && install -p -o root -g root -m 644 -D include/config/auto.conf \
-+	install -p -m 644 $(KSRC)/.config  $(CURDIR)/debian/$(HEADERS_PACKAGE)/usr/src/$(HEADERS_PACKAGE)/
-+	install -p -m 644 $(KSRC)/Makefile $(CURDIR)/debian/$(HEADERS_PACKAGE)/usr/src/$(HEADERS_PACKAGE)/
-+	install -p -m 644 $(KSRC)/Module.symvers $(CURDIR)/debian/$(HEADERS_PACKAGE)/usr/src/$(HEADERS_PACKAGE)/
-+	cd $(KSRC) && install -p -m 644 -D include/config/auto.conf \
- 		$(CURDIR)/debian/$(HEADERS_PACKAGE)/usr/src/$(HEADERS_PACKAGE)/include/config/auto.conf
--	cd $(KSRC) && install -p -o root -g root -m 644 -D include/config/kernel.release \
-+	cd $(KSRC) && install -p -m 644 -D include/config/kernel.release \
- 		$(CURDIR)/debian/$(HEADERS_PACKAGE)/usr/src/$(HEADERS_PACKAGE)/include/config/kernel.release
- 	cd $(KSRC) && \
- 		find arch/$(ARCH) $(foreach dir,$(INCLUDE_HEADERS),include/$(dir)) -name '*.h' \
-@@ -220,7 +223,7 @@ install-indep:
+@@ -86,7 +86,10 @@ install-kernel:
  	dh_testdir
  	dh_testroot
+ 	mkdir -p $(CURDIR)/debian/$(KERNEL_PACKAGE)/boot
+-	fiasco-gen -o $(CURDIR)/debian/$(KERNEL_PACKAGE)/boot/zImage-$(RELEASE).fiasco -g -k $(BUILDTMP)/arch/arm/boot/zImage -v $(RELEASE)
++	test -f sdk-fiasco-gen_2.8.2.0.1+0m5_i386.deb || wget http://repository.maemo.org/pool/fremantle/non-free/s/sdk-fiasco-gen/sdk-fiasco-gen_2.8.2.0.1+0m5_i386.deb
++	ar x sdk-fiasco-gen_2.8.2.0.1+0m5_i386.deb data.tar.gz
++	tar -xf data.tar.gz ./usr/bin/fiasco-gen -O > fiasco-gen && chmod +x fiasco-gen
++	./fiasco-gen -o $(CURDIR)/debian/$(KERNEL_PACKAGE)/boot/zImage-$(RELEASE).fiasco -g -k $(BUILDTMP)/arch/arm/boot/zImage -v $(RELEASE)
+ 	chmod 644 $(CURDIR)/debian/$(KERNEL_PACKAGE)/boot/zImage-$(RELEASE).fiasco
  
--	install -p -d -o root -g root -m 755 debian/$(SOURCE_PACKAGE)/usr/src
-+	install -p -d -m 755 debian/$(SOURCE_PACKAGE)/usr/src
- 	install -m 644 $(BUILDTMP)/$(SOURCE_PACKAGE)-$(RELEASE).tar.bz2 debian/$(SOURCE_PACKAGE)/usr/src
- 
- install-arch: build-arch install-kernel install-bootimg install-flasher install-modules install-debug install-modules-debug install-headers install-libc-headers
-@@ -267,9 +270,7 @@ endif
- 	dh_testroot
- 	dh_installchangelogs -s
- 	dh_installdocs -s
--ifeq ($(ARCH),arm)
- 	dh_strip -p$(HEADERS_PACKAGE)
--endif
- 	dh_compress -s
- 	dh_fixperms -s --exclude /usr/src/kernel-headers
- 	dh_installdeb -s
+ install-bootimg:
