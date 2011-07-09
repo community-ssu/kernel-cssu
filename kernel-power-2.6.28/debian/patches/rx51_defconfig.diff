@@ -1,14 +1,6 @@
---- kernel-power-2.6.28/arch/arm/configs/rx51_defconfig	2011-05-03 20:21:15.000000000 +0200
-+++ kernel-power-2.6.28/arch/arm/configs/rx51_defconfig	2011-04-16 11:34:24.000000000 +0200
-@@ -36,17 +36,21 @@
- CONFIG_LOCK_KERNEL=y
- CONFIG_INIT_ENV_ARG_LIMIT=32
- CONFIG_LOCALVERSION=""
--CONFIG_LOCALVERSION_AUTO=y
-+#CONFIG_LOCALVERSION_AUTO is not set
- CONFIG_SWAP=y
- CONFIG_SYSVIPC=y
- CONFIG_SYSVIPC_SYSCTL=y
+--- kernel-power-2.6.28/arch/arm/configs/rx51_defconfig	2011-07-09 17:41:04.766024488 +0200
++++ kernel-power-2.6.28/arch/arm/configs/rx51_defconfig	2011-07-09 17:42:32.056024524 +0200
+@@ -43,10 +43,14 @@
  CONFIG_POSIX_MQUEUE=y
  CONFIG_BSD_PROCESS_ACCT=y
  # CONFIG_BSD_PROCESS_ACCT_V3 is not set
@@ -901,7 +893,13 @@
  
  #
  # Block modes
-@@ -1963,7 +2279,7 @@
+@@ -1958,12 +2274,12 @@
+ CONFIG_CRYPTO_ECB=y
+ # CONFIG_CRYPTO_LRW is not set
+ CONFIG_CRYPTO_PCBC=m
+-# CONFIG_CRYPTO_XTS is not set
++CONFIG_CRYPTO_XTS=m
+ 
  #
  # Hash modes
  #
