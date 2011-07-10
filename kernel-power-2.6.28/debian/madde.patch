@@ -24,14 +24,14 @@ index 6f53deb..8917eb7 100644
  unionfs-2.5.3.diff
  dm-loop.diff
 diff --git a/kernel-power-2.6.28/debian/rules b/kernel-power-2.6.28/debian/rules
-index 6510f9e..bb97100 100755
+index 6510f9e..51515ac 100755
 --- a/kernel-power-2.6.28/debian/rules
 +++ b/kernel-power-2.6.28/debian/rules
 @@ -1,6 +1,8 @@
  #!/usr/bin/make -f
  #
  
-+export PATH := /usr/bin:$(HOME)/.madde/0.7.48/toolchains/arm-2007q3-51sb6-gdb71-arm-none-linux-gnueabi_linux_x86_64/bin:$(PATH)
++export PATH := $(HOME)/.madde/0.7.48/toolchains/arm-2007q3-51sb6-gdb71-arm-none-linux-gnueabi_linux_x86_64/bin:$(PATH)
 +
  RELEASE := $(shell dpkg-parsechangelog | sed -ne 's/^Version: 1:\(.*\)/\1/p' | sed 's/-10/.10-/')
  REVISION := $(shell echo "$(RELEASE)" | sed 's/.*\./\./')
@@ -48,6 +48,28 @@ index 6510f9e..bb97100 100755
  	chmod 644 $(CURDIR)/debian/$(KERNEL_PACKAGE)/boot/zImage-$(RELEASE).fiasco
  
  install-bootimg:
+@@ -115,9 +120,9 @@ install-debug: install-modules
+ 	mkdir -p $(CURDIR)/debian/$(DEBUG_PACKAGE)/lib/modules/$(RELEASE)
+ 	install -m644 $(KSRC)/vmlinux $(CURDIR)/debian/$(DEBUG_PACKAGE)/usr/lib/debug/vmlinux-$(RELEASE)
+ 	for f in $$(find $(CURDIR)/debian/$(MODULES_PACKAGE) -name "*.ko"); do \
+-		objcopy --only-keep-debug $$f $(CURDIR)/debian/$(DEBUG_PACKAGE)/usr/lib/debug/lib/modules/$(RELEASE)/$$(basename $$f); \
+-		strip --remove-section=.comment --remove-section=.note --strip-unneeded  $(CURDIR)/debian/$(MODULES_PACKAGE)/lib/modules/$(RELEASE)/$$(basename $$f); \
+-		objcopy --add-gnu-debuglink $(CURDIR)/debian/$(DEBUG_PACKAGE)/usr/lib/debug/lib/modules/$(RELEASE)/$$(basename $$f) $(CURDIR)/debian/$(MODULES_PACKAGE)/lib/modules/$(RELEASE)/$$(basename $$f); \
++		arm-none-linux-gnueabi-objcopy --only-keep-debug $$f $(CURDIR)/debian/$(DEBUG_PACKAGE)/usr/lib/debug/lib/modules/$(RELEASE)/$$(basename $$f); \
++		arm-none-linux-gnueabi-strip --remove-section=.comment --remove-section=.note --strip-unneeded  $(CURDIR)/debian/$(MODULES_PACKAGE)/lib/modules/$(RELEASE)/$$(basename $$f); \
++		arm-none-linux-gnueabi-objcopy --add-gnu-debuglink $(CURDIR)/debian/$(DEBUG_PACKAGE)/usr/lib/debug/lib/modules/$(RELEASE)/$$(basename $$f) $(CURDIR)/debian/$(MODULES_PACKAGE)/lib/modules/$(RELEASE)/$$(basename $$f); \
+ 	done
+ 
+ install-modules-debug: install-debug
+@@ -134,7 +139,7 @@ install-modules:
+ 	mkdir -p $(CURDIR)/debian/$(MODULES_PACKAGE)/etc/modprobe.d
+ 	for f in $$(find $(KSRC) -name "*.ko"); do \
+ 		install -c -m644 $$f $(CURDIR)/debian/$(MODULES_PACKAGE)/lib/modules/$(RELEASE)/$$(basename $$f); \
+-		strip --remove-section=.comment --remove-section=.note --strip-unneeded  $(CURDIR)/debian/$(MODULES_PACKAGE)/lib/modules/$(RELEASE)/$$(basename $$f); \
++		arm-none-linux-gnueabi-strip --remove-section=.comment --remove-section=.note --strip-unneeded  $(CURDIR)/debian/$(MODULES_PACKAGE)/lib/modules/$(RELEASE)/$$(basename $$f); \
+ 	done
+ 	install -m644 $(CURDIR)/debian/blacklist $(CURDIR)/debian/$(MODULES_PACKAGE)/etc/modprobe.d
+ 
 @@ -227,9 +232,6 @@ endif
  	dh_testroot
  	dh_installchangelogs -s
