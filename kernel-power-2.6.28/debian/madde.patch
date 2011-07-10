@@ -24,10 +24,19 @@ index 6f53deb..8917eb7 100644
  unionfs-2.5.3.diff
  dm-loop.diff
 diff --git a/kernel-power-2.6.28/debian/rules b/kernel-power-2.6.28/debian/rules
-index 6510f9e..528c89b 100755
+index 6510f9e..bb97100 100755
 --- a/kernel-power-2.6.28/debian/rules
 +++ b/kernel-power-2.6.28/debian/rules
-@@ -86,7 +86,10 @@ install-kernel:
+@@ -1,6 +1,8 @@
+ #!/usr/bin/make -f
+ #
+ 
++export PATH := /usr/bin:$(HOME)/.madde/0.7.48/toolchains/arm-2007q3-51sb6-gdb71-arm-none-linux-gnueabi_linux_x86_64/bin:$(PATH)
++
+ RELEASE := $(shell dpkg-parsechangelog | sed -ne 's/^Version: 1:\(.*\)/\1/p' | sed 's/-10/.10-/')
+ REVISION := $(shell echo "$(RELEASE)" | sed 's/.*\./\./')
+ EXTRAVERSION := EXTRAVERSION=$(REVISION)
+@@ -86,7 +88,10 @@ install-kernel:
  	dh_testdir
  	dh_testroot
  	mkdir -p $(CURDIR)/debian/$(KERNEL_PACKAGE)/boot
@@ -39,7 +48,7 @@ index 6510f9e..528c89b 100755
  	chmod 644 $(CURDIR)/debian/$(KERNEL_PACKAGE)/boot/zImage-$(RELEASE).fiasco
  
  install-bootimg:
-@@ -227,9 +230,6 @@ endif
+@@ -227,9 +232,6 @@ endif
  	dh_testroot
  	dh_installchangelogs -s
  	dh_installdocs -s
