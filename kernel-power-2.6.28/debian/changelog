@@ -13,6 +13,7 @@ kernel-power (1:2.6.28-10power48) fremantle; urgency=low
   * enabled usbnet dm9601 kernel module
   * enabled nilfs2 kernel module
   * enabled xts kernel module
+  * fixed class 10 microSD card
 
  -- Pali Rohár <pali.rohar@gmail.com>  Sat, 09 Jul 2011 16:03:55 +0200
 
