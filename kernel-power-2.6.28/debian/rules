@@ -48,7 +48,7 @@ source-copy-stamp:
 	dh_testdir
 	mkdir -p $(BUILDTMP)/$(SOURCE_PACKAGE)
 	$(MAKE) clean
-	tar cf - `echo * | sed -e 's/ debian//g;s/\.deb//g'` 2>/dev/null | (cd $(BUILDTMP)/$(SOURCE_PACKAGE); umask 000; tar xspf -)
+	tar cf - `echo * | sed -e 's/ debian//g;s/\.deb//g;s/\.gz//g;s/fiasco//g'` 2>/dev/null | ( cd $(BUILDTMP)/$(SOURCE_PACKAGE); umask 000; tar xspf - )
 	cd $(BUILDTMP)/$(SOURCE_PACKAGE) && ( QUILT_PATCHES=$(CURDIR)/debian/patches quilt push -a -q || test $$? = 2 )
 	touch $@
 
