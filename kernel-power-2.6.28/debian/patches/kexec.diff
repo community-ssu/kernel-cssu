@@ -1,0 +1,163 @@
+diff --git a/arch/arm/boot/compressed/head.S b/arch/arm/boot/compressed/head.S
+index 7b1f312..4a9a275 100644
+--- a/arch/arm/boot/compressed/head.S
++++ b/arch/arm/boot/compressed/head.S
+@@ -27,6 +27,14 @@
+ 		.macro	writeb, ch, rb
+ 		mcr	p14, 0, \ch, c0, c5, 0
+ 		.endm
++elif defined(CONFIG_CPU_V7)
++		.macro	loadsp, rb
++		.endm
++		.macro  writeb, ch, rb
++wait:		mrc	p14, 0, pc, c0, c1, 0
++		bcs	wait
++		mcr	p14, 0, \ch, c0, c5, 0
++		.endm
+ #else
+ 		.macro	loadsp, rb
+ 		.endm
+diff --git a/arch/arm/boot/compressed/misc.c b/arch/arm/boot/compressed/misc.c
+index 65ce8ff..c74fc24 100644
+--- a/arch/arm/boot/compressed/misc.c
++++ b/arch/arm/boot/compressed/misc.c
+@@ -47,6 +47,17 @@ static void icedcc_putc(int ch)
+ 	asm("mcr p14, 0, %0, c0, c5, 0" : : "r" (ch));
+ }
+ 
++#elif defined(CONFIG_CPU_V7)
++
++static void icedcc_putc(int ch)
++{
++	asm(
++	"wait:	mrc	p14, 0, pc, c0, c1, 0			\n\
++		bcs	wait					\n\
++		mcr	p14, 0, %0, c0, c5, 0			"
++	: : "r" (ch));
++}
++
+ #else
+ 
+ static void icedcc_putc(int ch)
+diff --git a/arch/arm/kernel/debug.S b/arch/arm/kernel/debug.S
+index f53c582..e1866bf 100644
+--- a/arch/arm/kernel/debug.S
++++ b/arch/arm/kernel/debug.S
+@@ -49,6 +49,26 @@
+ 1002:
+ 		.endm
+ 
++#elif defined(CONFIG_CPU_V7)
++
++		.macro	addruart, rx
++		.endm
++
++		.macro	senduart, rd, rx
++		mcr	p14, 0, \rd, c0, c5, 0
++		.endm
++
++		.macro  busyuart, rd, rx
++busy:		mrc	p14, 0, pc, c0, c1, 0
++		bcs	busy
++		.endm
++
++		.macro	waituart, rd, rx
++wait:		mrc	p14, 0, pc, c0, c1, 0
++		bcs	wait
++
++		.endm
++
+ #else
+ 
+ 		.macro	addruart, rx
+diff --git a/arch/arm/include/asm/setup.h b/arch/arm/include/asm/setup.h
+index 5ccce0a..3ca36bb 100644
+--- a/arch/arm/include/asm/setup.h
++++ b/arch/arm/include/asm/setup.h
+@@ -21,6 +21,11 @@
+ /* The list ends with an ATAG_NONE node. */
+ #define ATAG_NONE	0x00000000
+ 
++/* Some sanity checks are needed */
++#define ATAG_MAX_SZ	PAGE_SIZE
++#define atag_valid(tag)							\
++	((tag)->hdr.size && ((tag)->hdr.size <= ATAG_MAX_SZ))
++
+ struct tag_header {
+ 	__u32 size;
+ 	__u32 tag;
+@@ -173,9 +178,10 @@ struct tagtable {
+ 	int (*parse)(const struct tag *);
+ };
+ 
+-#define tag_member_present(tag,member)				\
+-	((unsigned long)(&((struct tag *)0L)->member + 1)	\
+-		<= (tag)->hdr.size * 4)
++#define tag_member_present(tag,member)					\
++	(atag_valid(tag) &&						\
++		(((unsigned long)(&((struct tag *)0L)->member + 1)	\
++			<= (tag)->hdr.size * 4))
+ 
+ #define tag_next(t)	((struct tag *)((__u32 *)(t) + (t)->hdr.size))
+ #define tag_size(type)	((sizeof(struct tag_header) + sizeof(struct type)) >> 2)
+diff --git a/arch/arm/kernel/atags.c b/arch/arm/kernel/atags.c
+index 42a1a14..14d0993 100644
+--- a/arch/arm/kernel/atags.c
++++ b/arch/arm/kernel/atags.c
+@@ -51,7 +51,7 @@ static int __init init_atags_procfs(void)
+ 		return -EINVAL;
+ 	}
+ 
+-	for (; tag->hdr.size; tag = tag_next(tag))
++	for (; atag_valid(tag); tag = tag_next(tag))
+ 		;
+ 
+ 	/* include the terminating ATAG_NONE */
+diff --git a/arch/arm/kernel/compat.c b/arch/arm/kernel/compat.c
+index 0a13854..3e63ee1 100644
+--- a/arch/arm/kernel/compat.c
++++ b/arch/arm/kernel/compat.c
+@@ -220,7 +220,7 @@ void __init convert_to_tag_list(struct tag *tags)
+ 
+ void __init squash_mem_tags(struct tag *tag)
+ {
+-	for (; tag->hdr.size; tag = tag_next(tag))
++	for (; atag_valid(tag); tag = tag_next(tag))
+ 		if (tag->hdr.tag == ATAG_MEM)
+ 			tag->hdr.tag = ATAG_NONE;
+ }
+diff --git a/arch/arm/kernel/setup.c b/arch/arm/kernel/setup.c
+index c6c57b6..53d7181 100644
+--- a/arch/arm/kernel/setup.c
++++ b/arch/arm/kernel/setup.c
+@@ -556,7 +556,7 @@ request_standard_resources(struct meminfo *mi, struct machine_desc *mdesc)
+  */
+ static int __init parse_tag_core(const struct tag *tag)
+ {
+-	if (tag->hdr.size > 2) {
++	if ((atag_valid(tag) && (tag->hdr.size > 2))) {
+ 		if ((tag->u.core.flags & 1) == 0)
+ 			root_mountflags &= ~MS_RDONLY;
+ 		ROOT_DEV = old_decode_dev(tag->u.core.rootdev);
+@@ -660,7 +660,7 @@ static int __init parse_tag(const struct tag *tag)
+  */
+ static void __init parse_tags(const struct tag *t)
+ {
+-	for (; t->hdr.size; t = tag_next(t))
++	for (; atag_valid(t); t = tag_next(t))
+ 		if (!parse_tag(t))
+ 			printk(KERN_WARNING
+ 				"Ignoring unrecognised tag 0x%08x\n",
+diff --git a/arch/arm/mach-orion5x/common.c b/arch/arm/mach-orion5x/common.c
+index f87fa12..8afee34 100644
+--- a/arch/arm/mach-orion5x/common.c
++++ b/arch/arm/mach-orion5x/common.c
+@@ -717,7 +717,7 @@ void __init orion5x_init(void)
+ void __init tag_fixup_mem32(struct machine_desc *mdesc, struct tag *t,
+ 			    char **from, struct meminfo *meminfo)
+ {
+-	for (; t->hdr.size; t = tag_next(t))
++	for (; atag_valid(t); t = tag_next(t))
+ 		if (t->hdr.tag == ATAG_MEM &&
+ 		    (!t->u.mem.size || t->u.mem.size & ~PAGE_MASK ||
+ 		     t->u.mem.start & ~PAGE_MASK)) {
