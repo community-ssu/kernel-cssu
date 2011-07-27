@@ -1,5 +1,7 @@
 #!/bin/sh
 
+set -e
+
 # move old upstart scripts out of the way
 cd /etc/event.d
 test -f kernel && mv kernel /root/kernel.upstart.old
@@ -10,7 +12,7 @@ test -f lastreboot && rm lastreboot
 
 # install premount hook
 if ! grep -q "# KERNEL-POWER-HOOK" /etc/default/mount-opts; then
-	echo "test -x /etc/kernel-power/pre-mount && /etc/kernel-power/pre-mount # KERNEL-POWER-HOOK" >> /etc/default/mount-opts
+	echo "sh /etc/kernel-power/pre-mount || true # KERNEL-POWER-HOOK" >> /etc/default/mount-opts
 fi
 
 bootcfg=/etc/default/kernel-boot
