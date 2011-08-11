@@ -1,0 +1,25 @@
+#!/bin/sh
+
+set -e
+
+# move old upstart scripts out of the way
+cd /etc/event.d
+test -f kernel && mv kernel /root/kernel.upstart.old
+test -f kernel-maemo && mv kernel-maemo /root/kernel-maemo.upstart.old
+cd /etc
+test -f lastboot && rm lastboot
+test -f lastreboot && rm lastreboot
+
+# install premount hook
+if ! grep -q "# KERNEL-POWER-HOOK" /etc/default/mount-opts; then
+	echo "sh /etc/kernel-power/pre-mount || true # KERNEL-POWER-HOOK" >> /etc/default/mount-opts
+fi
+
+bootcfg=/etc/default/kernel-boot
+test -f $bootcfg || cp /usr/share/kernel-power-settings/boot $bootcfg
+
+update-sudoers
+
+#DEBHELPER#
+
+exit 0

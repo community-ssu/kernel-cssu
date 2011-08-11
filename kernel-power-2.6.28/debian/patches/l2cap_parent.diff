@@ -1,0 +1,33 @@
+From 62c3e306f2d9466f539679dd7357676b19fd5600 Mon Sep 17 00:00:00 2001
+From: David Fries <david@fries.net>
+Date: Sun, 6 Feb 2011 14:34:49 -0600
+Subject: [PATCH] work around for l2cap NULL dereference in l2cap_conn_start
+
+---
+ net/bluetooth/l2cap.c |   10 ++++++++++
+ 1 files changed, 10 insertions(+), 0 deletions(-)
+
+diff --git a/net/bluetooth/l2cap.c b/net/bluetooth/l2cap.c
+index ed83c1f..607ae21 100644
+--- a/net/bluetooth/l2cap.c
++++ b/net/bluetooth/l2cap.c
+@@ -408,6 +408,16 @@ static void l2cap_conn_start(struct l2cap_conn *conn)
+ 					struct sock *parent = bt_sk(sk)->parent;
+ 					rsp.result = cpu_to_le16(L2CAP_CR_PEND);
+ 					rsp.status = cpu_to_le16(L2CAP_CS_AUTHOR_PEND);
++					if(!parent)
++					{
++						printk(KERN_DEBUG "avoided "
++							"crash in %s parent %p "
++							"result %d status %d\n",
++							__func__, parent,
++							rsp.result, rsp.status);
++						bh_unlock_sock(sk);
++						continue;
++					}
+ 					parent->sk_data_ready(parent, 0);
+ 
+ 				} else {
+-- 
+1.7.2.3
+

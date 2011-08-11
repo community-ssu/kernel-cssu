@@ -1,15 +1,13 @@
 #!/bin/sh
 
-#set -e
+set -e
 
-test -d /lib/modules/@KVER@ && rm -f /lib/modules/@KVER@/modules.*
+test -d /lib/modules/@RELEASE@ && rm -f /lib/modules/@RELEASE@/modules.*
 rm -f /lib/modules/current
 ln -s 2.6.28-omap1 /lib/modules/current
 
 if test "$1" != upgrade && grep -q 'MODULE_PATH=/lib/modules/`uname -r`' /sbin/preinit; then
-    sed 's%MODULE_PATH=/lib/modules/`uname -r` #fixed by kernel-power%MODULE_PATH=/lib/modules/current%' /sbin/preinit > /sbin/preinit.tmp && \
-    chmod +x /sbin/preinit.tmp && \
-    mv /sbin/preinit.tmp /sbin/preinit
+    sed 's%MODULE_PATH=/lib/modules/`uname -r` #fixed by kernel-power%MODULE_PATH=/lib/modules/current%' -i /sbin/preinit
 fi
 
 #DEBHELPER#

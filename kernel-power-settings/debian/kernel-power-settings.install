@@ -1,9 +1,0 @@
-kernel-load /usr/sbin
-kernel-config /usr/sbin
-pre-mount /etc/kernel-power
-kernel-modules /etc/event.d
-kernel-power /etc/event.d
-kernel-power-shutdown /etc/event.d
-kernel-power.sudoers /etc/sudoers.d
-kernel-power.conf /etc/osso-backup/applications
-config/* /usr/share/kernel-power-settings

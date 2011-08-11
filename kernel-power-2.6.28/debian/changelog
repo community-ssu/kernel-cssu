@@ -1,3 +1,22 @@
+kernel-power (1:2.6.28-10power48) fremantle; urgency=low
+
+  * cleaned and rewritten debian/rules
+  * cleaned patches (splitted nokia and omap patches)
+  * revert back -source and -debug package
+  * updated info about kernel-power for HAM
+  * possible to install only -bootimg package (same features)
+  * fixed kernel-power uninstall script
+  * 720p DSP patch by freemangordon
+  * ext4 data corruption patch by Tigerite
+  * minstrel-aziwoqpa patch from garage tracker
+  * compcache/zram patch from kernel-bfs
+  * enabled usbnet dm9601 kernel module
+  * enabled nilfs2 kernel module
+  * enabled xts kernel module
+  * fixed class 10 microSD card
+
+ -- Pali Rohár <pali.rohar@gmail.com>  Sat, 09 Jul 2011 16:03:55 +0200
+
 kernel-power (1:2.6.28-10power47) fremantle; urgency=low
 
   * enabled additional kernel modules (for usb host mode)

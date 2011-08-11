@@ -1,7 +1,0 @@
-[Desktop Entry]
-Version=0.1
-Type=Application
-Name=Deinstall Kernel-Power
-Exec=sudo /usr/sbin/kernel-power-deinstall
-X-Osso-Type=application/x-executable
-Terminal=false
