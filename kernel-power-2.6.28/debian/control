@@ -236,7 +236,7 @@ Description: Linux kernel modules for debugging (kernel power 2.6.28.10)
 
 Package: kernel-power-debug
 Architecture: armel
-Description: Linux kernel debug symblos for kernel power 2.6.28.10
+Description: Linux kernel debug symblos (kernel power 2.6.28.10)
  This packages provides vmlinux file for the kernel and
  kernel modules related to debugging.
 

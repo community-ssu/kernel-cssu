@@ -42,18 +42,14 @@ ifneq (,$(findstring parallel,$(DEB_BUILD_OPTIONS)))
 endif
 
 get-orig-source:
-	wget ftp://ftp.kernel.org/pub/linux/kernel/v2.6/linux-2.6.28.tar.gz
+	wget http://repository.maemo.org/pool/maemo5.0/free/k/kernel/kernel_2.6.28.orig.tar.gz -O kernel-power_2.6.28.orig.tar.gz
 
-source-copy-stamp:
+source-stamp:
 	dh_testdir
-	mkdir -p $(BUILDTMP)/$(SOURCE_PACKAGE)
-	$(MAKE) clean
-	tar cf - `echo * | sed -e 's/ debian//g;s/\.deb//g;s/\.gz//g;s/fiasco//g'` 2>/dev/null | ( cd $(BUILDTMP)/$(SOURCE_PACKAGE); umask 000; tar xspf - )
-	cd $(BUILDTMP)/$(SOURCE_PACKAGE) && ( QUILT_PATCHES=$(CURDIR)/debian/patches quilt push -a -q || test $$? = 2 )
-	touch $@
-
-source-stamp: source-copy-stamp
-	cd $(BUILDTMP) && cp -a $(SOURCE_PACKAGE) $(KSRC)
+	mkdir -p $(KSRC)
+	tar cf - `echo * | sed -e 's/ debian//g;s/\.deb//g;s/\.gz//g;s/fiasco//g'` 2>/dev/null | ( cd $(KSRC); umask 000; tar xspf - )
+	cd $(KSRC) && ( QUILT_PATCHES=$(CURDIR)/debian/patches quilt push -a -q || test $$? = 2 )
+	cd $(BUILDTMP) && tar --exclude=".pc" --bzip2 -cf $(SOURCE_PACKAGE)-$(RELEASE).tar.bz2 $(PACKAGE)
 	touch $@
 
 configure-stamp: source-stamp
@@ -68,10 +64,6 @@ modules-stamp: configure-stamp
 	$(MAKE) -C $(KSRC) $(NJOBS) $(EXTRAVERSION) modules
 	touch $@
 
-kernel-source-stamp: source-copy-stamp
-	cd $(BUILDTMP) && tar --bzip2 -cf $(SOURCE_PACKAGE)-$(RELEASE).tar.bz2 $(SOURCE_PACKAGE)
-	touch $@
-
 headers: kernel-stamp modules-stamp
 
 clean:
@@ -79,7 +71,7 @@ clean:
 	dh_testroot
 	rm -rf $(BUILDTMP)
 	rm -f debian/files debian/$(FLASHER_PACKAGE).postinst debian/$(MODULES_PACKAGE).postinst debian/$(MODULES_PACKAGE).postrm
-	rm -f source-copy-stamp source-stamp configure-stamp kernel-stamp modules-stamp kernel-source-stamp
+	rm -f source-stamp configure-stamp kernel-stamp modules-stamp
 	dh_clean
 
 install-kernel:
@@ -170,7 +162,7 @@ install-headers:
 	cp -a $(KSRC)/scripts $(CURDIR)/debian/$(HEADERS_PACKAGE)/usr/src/$(KBUILD_PACKAGE)
 #kbuild fixes
 	cd $(CURDIR)/debian/$(HEADERS_PACKAGE)/usr/src/$(KBUILD_PACKAGE)/scripts && rm -f $(RM_SCRIPTS) && chmod a-x mkcompile_h
-	find $(CURDIR)/debian/$(HEADERS_PACKAGE) -name ".gitignore" -delete
+	#find $(CURDIR)/debian/$(HEADERS_PACKAGE) -name ".gitignore" -delete
 
 install-libc-headers: source-stamp
 	dh_testdir
@@ -192,7 +184,7 @@ else
 build-arch:
 endif
 
-build-indep: kernel-source-stamp
+build-indep: source-stamp
 
 build: build-arch build-indep
 

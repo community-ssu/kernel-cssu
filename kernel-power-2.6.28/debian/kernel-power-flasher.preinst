@@ -1,6 +1,7 @@
 #!/bin/sh
 
 test "$1" = install || exit 0 # upgrades are fine
+echo "Confirm information text on screen"
 f=/tmp/kernel-power-msg
 cat > $f <<EOF
 This will install Linux kernel for power user,

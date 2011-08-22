@@ -12,12 +12,12 @@ index ac43331..ec1431c 100644
  Standards-Version: 3.8.0
  
 diff --git a/kernel-power-2.6.28/debian/patches/series b/kernel-power-2.6.28/debian/patches/series
-index 6f53deb..8917eb7 100644
+index f4f3d98..74a1598 100644
 --- a/kernel-power-2.6.28/debian/patches/series
 +++ b/kernel-power-2.6.28/debian/patches/series
-@@ -4,6 +4,7 @@ nokia-20100903+0m5.diff
- nokia-20101501+0m5.diff
+@@ -6,6 +6,7 @@ nokia-20101501+0m5.diff
  nokia-20103103+0m5.diff
+ #nokia-20103103+0m5_usb.diff
  2.6.28.10.diff
 +madde.diff
  rx51_defconfig.diff
@@ -36,7 +36,7 @@ index 6510f9e..51515ac 100755
  RELEASE := $(shell dpkg-parsechangelog | sed -ne 's/^Version: 1:\(.*\)/\1/p' | sed 's/-10/.10-/')
  REVISION := $(shell echo "$(RELEASE)" | sed 's/.*\./\./')
  EXTRAVERSION := EXTRAVERSION=$(REVISION)
-@@ -86,7 +88,10 @@ install-kernel:
+@@ -78,7 +80,10 @@ install-kernel:
  	dh_testdir
  	dh_testroot
  	mkdir -p $(CURDIR)/debian/$(KERNEL_PACKAGE)/boot
@@ -48,7 +48,7 @@ index 6510f9e..51515ac 100755
  	chmod 644 $(CURDIR)/debian/$(KERNEL_PACKAGE)/boot/zImage-$(RELEASE).fiasco
  
  install-bootimg:
-@@ -115,9 +120,9 @@ install-debug: install-modules
+@@ -107,9 +112,9 @@ install-debug: install-modules
  	mkdir -p $(CURDIR)/debian/$(DEBUG_PACKAGE)/lib/modules/$(RELEASE)
  	install -m644 $(KSRC)/vmlinux $(CURDIR)/debian/$(DEBUG_PACKAGE)/usr/lib/debug/vmlinux-$(RELEASE)
  	for f in $$(find $(CURDIR)/debian/$(MODULES_PACKAGE) -name "*.ko"); do \
@@ -61,7 +61,7 @@ index 6510f9e..51515ac 100755
  	done
  
  install-modules-debug: install-debug
-@@ -134,7 +139,7 @@ install-modules:
+@@ -126,7 +131,7 @@ install-modules:
  	mkdir -p $(CURDIR)/debian/$(MODULES_PACKAGE)/etc/modprobe.d
  	for f in $$(find $(KSRC) -name "*.ko"); do \
  		install -c -m644 $$f $(CURDIR)/debian/$(MODULES_PACKAGE)/lib/modules/$(RELEASE)/$$(basename $$f); \
@@ -70,7 +70,7 @@ index 6510f9e..51515ac 100755
  	done
  	install -m644 $(CURDIR)/debian/blacklist $(CURDIR)/debian/$(MODULES_PACKAGE)/etc/modprobe.d
  
-@@ -227,9 +232,6 @@ endif
+@@ -219,9 +224,6 @@ endif
  	dh_testroot
  	dh_installchangelogs -s
  	dh_installdocs -s
