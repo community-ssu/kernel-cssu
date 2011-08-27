@@ -1,5 +1,5 @@
---- kernel-power-2.6.28/arch/arm/configs/rx51_defconfig	2011-07-09 17:41:04.766024488 +0200
-+++ kernel-power-2.6.28/arch/arm/configs/rx51_defconfig	2011-07-09 17:42:32.056024524 +0200
+--- kernel-power-2.6.28/arch/arm/configs/rx51_defconfig	2011-08-27 22:14:23.349783126 +0200
++++ kernel-power-2.6.28/arch/arm/configs/rx51_defconfig	2011-08-27 22:15:00.909782691 +0200
 @@ -36,17 +36,21 @@
  CONFIG_LOCK_KERNEL=y
  CONFIG_INIT_ENV_ARG_LIMIT=32
@@ -523,6 +523,15 @@
 +CONFIG_INPUT_JOYDEV=m
  CONFIG_INPUT_EVDEV=y
  # CONFIG_INPUT_EVBUG is not set
+ 
+@@ -872,7 +1070,7 @@
+ CONFIG_CONSOLE_TRANSLATIONS=y
+ CONFIG_VT_CONSOLE=y
+ CONFIG_HW_CONSOLE=y
+-# CONFIG_VT_HW_CONSOLE_BINDING is not set
++CONFIG_VT_HW_CONSOLE_BINDING=y
+ CONFIG_DEVKMEM=y
+ # CONFIG_SERIAL_NONSTANDARD is not set
  
 @@ -998,7 +1196,12 @@
  # CONFIG_GPIO_MAX7301 is not set
