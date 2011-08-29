@@ -128,7 +128,7 @@ install-modules:
 		install -c -m644 $$f $(CURDIR)/debian/$(MODULES_PACKAGE)/lib/modules/$(RELEASE)/$$(basename $$f); \
 		strip --remove-section=.comment --remove-section=.note --strip-unneeded  $(CURDIR)/debian/$(MODULES_PACKAGE)/lib/modules/$(RELEASE)/$$(basename $$f); \
 	done
-	install -m644 $(CURDIR)/debian/blacklist $(CURDIR)/debian/$(MODULES_PACKAGE)/etc/modprobe.d
+	install -m644 $(CURDIR)/debian/kernel-power.blacklist $(CURDIR)/debian/$(MODULES_PACKAGE)/etc/modprobe.d
 
 install-headers:
 	dh_testdir

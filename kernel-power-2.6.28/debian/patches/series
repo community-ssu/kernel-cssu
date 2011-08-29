@@ -34,7 +34,7 @@ radio-bcm2048.diff
 #i2c-battery.diff
 usbhostmode.diff
 bt-mice.diff
-#board-rx51-peripherals.diff
+board-rx51-peripherals.diff
 bq27x00_battery.diff
 l2cap_parent.diff
 wl12xx-rx-fix.diff
