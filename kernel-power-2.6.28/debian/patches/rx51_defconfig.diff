@@ -1,5 +1,5 @@
---- kernel-power-2.6.28/arch/arm/configs/rx51_defconfig	2011-08-27 22:14:23.349783126 +0200
-+++ kernel-power-2.6.28/arch/arm/configs/rx51_defconfig	2011-08-27 22:15:00.909782691 +0200
+--- kernel-power-2.6.28/arch/arm/configs/rx51_defconfig	2011-09-22 10:32:29.950344915 +0200
++++ kernel-power-2.6.28/arch/arm/configs/rx51_defconfig	2011-09-22 10:34:00.320344016 +0200
 @@ -36,17 +36,21 @@
  CONFIG_LOCK_KERNEL=y
  CONFIG_INIT_ENV_ARG_LIMIT=32
@@ -609,7 +609,21 @@
  # CONFIG_LOGO is not set
  CONFIG_SOUND=y
  # CONFIG_SOUND_OSS_CORE is not set
-@@ -1402,8 +1634,8 @@
+@@ -1347,7 +1579,12 @@
+ # CONFIG_SND_MPU401 is not set
+ CONFIG_SND_ARM=y
+ CONFIG_SND_SPI=y
+-# CONFIG_SND_USB is not set
++CONFIG_SND_USB=y
++CONFIG_SND_USB_AUDIO=m
++CONFIG_SND_USB_USX2Y=m
++CONFIG_SND_USB_CAIAQ=m
++CONFIG_SND_USB_CAIAQ_INPUT=y
++CONFIG_SND_USB_US122L=m
+ CONFIG_SND_SOC=y
+ CONFIG_SND_OMAP_SOC=y
+ CONFIG_SND_OMAP_SOC_MCBSP=y
+@@ -1402,8 +1639,8 @@
  CONFIG_USB_ARCH_HAS_OHCI=y
  CONFIG_USB_ARCH_HAS_EHCI=y
  CONFIG_USB=y
@@ -620,7 +634,7 @@
  
  #
  # Miscellaneous USB options
-@@ -1413,8 +1645,8 @@
+@@ -1413,8 +1650,8 @@
  CONFIG_USB_DYNAMIC_MINORS=y
  CONFIG_USB_SUSPEND=y
  CONFIG_USB_OTG=y
@@ -631,7 +645,7 @@
  CONFIG_USB_MON=y
  # CONFIG_USB_WUSB is not set
  # CONFIG_USB_WUSB_CBAF is not set
-@@ -1449,10 +1681,10 @@
+@@ -1449,10 +1686,10 @@
  #
  # USB Device Class drivers
  #
@@ -646,7 +660,7 @@
  
  #
  # NOTE: USB_STORAGE depends on SCSI but BLK_DEV_SD may also be needed;
-@@ -1486,7 +1718,49 @@
+@@ -1486,7 +1723,49 @@
  #
  # USB port drivers
  #
@@ -697,7 +711,7 @@
  
  #
  # USB Miscellaneous drivers
-@@ -1534,14 +1808,15 @@
+@@ -1534,14 +1813,15 @@
  # CONFIG_USB_GADGET_DUMMY_HCD is not set
  CONFIG_USB_GADGET_DUALSPEED=y
  CONFIG_USB_ZERO=m
@@ -717,7 +731,7 @@
  # CONFIG_USB_CDC_COMPOSITE is not set
  CONFIG_USB_G_NOKIA=m
  CONFIG_USB_G_SOFTUPD=m
-@@ -1550,9 +1825,12 @@
+@@ -1550,9 +1830,12 @@
  # OTG and related infrastructure
  #
  CONFIG_USB_OTG_UTILS=y
@@ -731,7 +745,7 @@
  CONFIG_MMC=m
  # CONFIG_MMC_DEBUG is not set
  CONFIG_MMC_UNSAFE_RESUME=y
-@@ -1595,6 +1873,7 @@
+@@ -1595,6 +1878,7 @@
  CONFIG_LEDS_TRIGGER_HEARTBEAT=y
  # CONFIG_LEDS_TRIGGER_BACKLIGHT is not set
  # CONFIG_LEDS_TRIGGER_DEFAULT_ON is not set
@@ -739,7 +753,7 @@
  CONFIG_RTC_LIB=y
  CONFIG_RTC_CLASS=m
  
-@@ -1680,14 +1959,28 @@
+@@ -1680,14 +1964,28 @@
  # CONFIG_EXT2_FS_XIP is not set
  CONFIG_EXT3_FS=m
  # CONFIG_EXT3_FS_XATTR is not set
@@ -771,7 +785,7 @@
  # CONFIG_OCFS2_FS is not set
  CONFIG_DNOTIFY=y
  CONFIG_INOTIFY=y
-@@ -1699,14 +1992,17 @@
+@@ -1699,14 +1997,17 @@
  CONFIG_QFMT_V2=y
  CONFIG_QUOTACTL=y
  # CONFIG_AUTOFS_FS is not set
@@ -792,7 +806,7 @@
  
  #
  # DOS/FAT/NT Filesystems
-@@ -1716,7 +2012,9 @@
+@@ -1716,7 +2017,9 @@
  CONFIG_VFAT_FS=m
  CONFIG_FAT_DEFAULT_CODEPAGE=437
  CONFIG_FAT_DEFAULT_IOCHARSET="iso8859-1"
@@ -803,7 +817,7 @@
  
  #
  # Pseudo filesystems
-@@ -1731,12 +2029,19 @@
+@@ -1731,12 +2034,19 @@
  # CONFIG_CONFIGFS_FS is not set
  
  #
@@ -824,7 +838,7 @@
  # CONFIG_BEFS_FS is not set
  # CONFIG_BFS_FS is not set
  # CONFIG_EFS_FS is not set
-@@ -1748,6 +2053,9 @@
+@@ -1748,6 +2058,9 @@
  CONFIG_UBIFS_FS_ZLIB=y
  # CONFIG_UBIFS_FS_DEBUG is not set
  CONFIG_CRAMFS=y
@@ -834,7 +848,7 @@
  # CONFIG_VXFS_FS is not set
  # CONFIG_MINIX_FS is not set
  # CONFIG_OMFS_FS is not set
-@@ -1771,7 +2079,12 @@
+@@ -1771,7 +2084,12 @@
  CONFIG_RPCSEC_GSS_KRB5=m
  # CONFIG_RPCSEC_GSS_SPKM3 is not set
  # CONFIG_SMB_FS is not set
@@ -848,7 +862,7 @@
  # CONFIG_NCP_FS is not set
  # CONFIG_CODA_FS is not set
  # CONFIG_AFS_FS is not set
-@@ -1795,14 +2108,14 @@
+@@ -1795,14 +2113,14 @@
  # CONFIG_ULTRIX_PARTITION is not set
  # CONFIG_SUN_PARTITION is not set
  # CONFIG_KARMA_PARTITION is not set
@@ -865,7 +879,7 @@
  # CONFIG_NLS_CODEPAGE_852 is not set
  # CONFIG_NLS_CODEPAGE_855 is not set
  # CONFIG_NLS_CODEPAGE_857 is not set
-@@ -1833,10 +2146,10 @@
+@@ -1833,10 +2151,10 @@
  # CONFIG_NLS_ISO8859_9 is not set
  # CONFIG_NLS_ISO8859_13 is not set
  # CONFIG_NLS_ISO8859_14 is not set
@@ -878,7 +892,7 @@
  # CONFIG_DLM is not set
  
  #
-@@ -1929,17 +2242,20 @@
+@@ -1929,17 +2247,20 @@
  # CONFIG_CRYPTO_FIPS is not set
  CONFIG_CRYPTO_ALGAPI=y
  CONFIG_CRYPTO_ALGAPI2=y
@@ -901,7 +915,7 @@
  # CONFIG_CRYPTO_TEST is not set
  
  #
-@@ -1947,7 +2263,7 @@
+@@ -1947,7 +2268,7 @@
  #
  # CONFIG_CRYPTO_CCM is not set
  # CONFIG_CRYPTO_GCM is not set
@@ -910,7 +924,7 @@
  
  #
  # Block modes
-@@ -1958,12 +2274,12 @@
+@@ -1958,12 +2279,12 @@
  CONFIG_CRYPTO_ECB=y
  # CONFIG_CRYPTO_LRW is not set
  CONFIG_CRYPTO_PCBC=m
@@ -925,7 +939,7 @@
  # CONFIG_CRYPTO_XCBC is not set
  
  #
-@@ -1977,9 +2293,9 @@
+@@ -1977,9 +2298,9 @@
  # CONFIG_CRYPTO_RMD160 is not set
  # CONFIG_CRYPTO_RMD256 is not set
  # CONFIG_CRYPTO_RMD320 is not set
@@ -938,7 +952,7 @@
  # CONFIG_CRYPTO_TGR192 is not set
  # CONFIG_CRYPTO_WP512 is not set
  
-@@ -1989,7 +2305,7 @@
+@@ -1989,7 +2310,7 @@
  CONFIG_CRYPTO_AES=y
  # CONFIG_CRYPTO_ANUBIS is not set
  CONFIG_CRYPTO_ARC4=y
@@ -947,7 +961,7 @@
  # CONFIG_CRYPTO_CAMELLIA is not set
  # CONFIG_CRYPTO_CAST5 is not set
  # CONFIG_CRYPTO_CAST6 is not set
-@@ -2000,7 +2316,8 @@
+@@ -2000,7 +2321,8 @@
  # CONFIG_CRYPTO_SEED is not set
  # CONFIG_CRYPTO_SERPENT is not set
  # CONFIG_CRYPTO_TEA is not set
@@ -957,7 +971,7 @@
  
  #
  # Compression
-@@ -2021,7 +2338,7 @@
+@@ -2021,7 +2343,7 @@
  CONFIG_CRC_CCITT=y
  CONFIG_CRC16=y
  # CONFIG_CRC_T10DIF is not set
