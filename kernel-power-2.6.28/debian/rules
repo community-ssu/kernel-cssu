@@ -47,7 +47,7 @@ get-orig-source:
 source-stamp:
 	dh_testdir
 	mkdir -p $(KSRC)
-	tar cf - `echo * | sed -e 's/ debian//g;s/\.deb//g;s/\.gz//g;s/fiasco//g'` 2>/dev/null | ( cd $(KSRC); umask 000; tar xspf - )
+	tar cf - `echo * | sed -e 's/ debian / /g;s/ [^ ]*\.deb / /g;s/ [^ ]*\.gz / /g;s/ [^ ]*fiasco[^ ]* / /g'` 2>/dev/null | ( cd $(KSRC); umask 000; tar xspf - )
 	cd $(KSRC) && ( QUILT_PATCHES=$(CURDIR)/debian/patches quilt push -a -q || test $$? = 2 )
 	cd $(BUILDTMP) && tar --exclude=".pc" --bzip2 -cf $(SOURCE_PACKAGE)-$(RELEASE).tar.bz2 $(PACKAGE)
 	touch $@
