@@ -1,0 +1,26 @@
+--- kernel-power-2.6.28/drivers/dsp/bridge/Makefile	2011-09-26 21:52:59.000000000 +0100
++++ kernel-power-2.6.28.new/drivers/dsp/bridge/Makefile	2011-09-24 16:39:00.000000000 +0100
+@@ -25,6 +25,11 @@
+ ccflags-y += -DGT_TRACE
+ endif
+ 
++#New API
++ifeq ($(CONFIG_BRIDGE_NEW_API),y)
++ccflags-y += -DCONFIG_BRIDGE_NEW_API
++endif
++
+ #Machine dependent
+ ccflags-y += -D_TI_ -D_DB_TIOMAP -DTMS32060 \
+ 		-DTICFG_PROC_VER -DTICFG_EVM_TYPE -DCHNL_SMCLASS \
+--- kernel-power-2.6.28/drivers/dsp/bridge/Kconfig	2011-09-26 21:48:34.000000000 +0100
++++ kernel-power-2.6.28.new/drivers/dsp/bridge/Kconfig	2011-09-24 17:03:05.000000000 +0100
+@@ -45,3 +45,9 @@
+ 	  Enable notifications to registered clients on the event of power errror
+ 	  trying to suspend bridge driver. Say Y, to signal this event as a fatal
+ 	  error, this will require a bridge restart to recover.
++
++config BRIDGE_NEW_API
++	bool "DSP Bridge new API"
++	depends on MPU_BRIDGE
++	help
++	  Say Y to enable Bridge new API(ioctl codes)

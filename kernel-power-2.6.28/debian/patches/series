@@ -47,12 +47,13 @@ wl12xx-rx-fix.diff
 anti-io-stalling.diff
 joikuspot.diff
 dspbridge.diff
+dspbridge_ioctl_buffer_overrun.diff
+dspbridge_new_api.diff
 phys_to_page.diff
 ext4-data-corruption.diff
 patch_swap_notify_core_support_2.6.28.diff
 class10sd_dto14_fix.diff
 adding-ramzswap-driver.diff
-dspbridge_ioctl_buffer_overrun.diff
 patch_swap_notify_core_support_2_2.6.28.diff
 update_mmu_cache_arm.diff
 radio-si4713.diff
