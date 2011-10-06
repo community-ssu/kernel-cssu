@@ -14,7 +14,7 @@ kernel-power (1:2.6.28-10power49) fremantle; urgency=low
   *   DSS video memory is increased from 6 to 8 megabytes, allowing DSS scaler to rescale HD videos (including 1280x720)
   *   add support for for CONFIG_BRIDGE_NEW_API
   *   fix DSP cache when is incoherent with main memory, which leads to memory errors
-  *   add FLUSHALL DSP ioctl code
+  *   backport fixes from omapzoom kernel-omap3
   * added new patches:
   *   adding-ramzswap-driver.diff
   *   patch_swap_notify_core_support_2_2.6.28.diff
