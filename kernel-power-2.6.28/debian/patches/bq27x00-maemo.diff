@@ -1,8 +1,8 @@
---- kernel-power-2.6.28/drivers/power/bq27x00_battery.c	2011-09-21 13:16:45.007978008 +0200
-+++ kernel-power-2.6.28/drivers/power/bq27x00_battery.c	2011-09-21 13:49:06.207956191 +0200
-@@ -36,7 +36,12 @@
- #include <linux/slab.h>
+--- kernel-power-2.6.28/drivers/power/bq27x00_battery.c	2011-10-09 17:23:49.655669727 +0200
++++ kernel-power-2.6.28/drivers/power/bq27x00_battery.c	2011-10-09 17:24:58.823667413 +0200
+@@ -39,7 +39,20 @@
  #include <asm/unaligned.h>
+ #include <asm/uaccess.h>
  
 -#include <linux/power/bq27x00_battery.h>
 +#define CONFIG_BATTERY_BQ27X00_I2C
@@ -11,10 +11,18 @@
 +	const char *name;
 +	int (*read)(struct device *dev, unsigned int);
 +};
++
++#define BQ27X00_READ_REG _IO(MISC_MAJOR, 0)
++
++struct bq27x00_reg_parms {
++	int reg;
++	int single;
++	int ret;
++};
  
  #define DRIVER_VERSION			"1.2.0"
  
-@@ -113,7 +118,9 @@ static enum power_supply_property bq27x0
+@@ -123,7 +136,9 @@ static enum power_supply_property bq27x0
  	POWER_SUPPLY_PROP_VOLTAGE_NOW,
  	POWER_SUPPLY_PROP_CURRENT_NOW,
  	POWER_SUPPLY_PROP_CAPACITY,
@@ -24,7 +32,7 @@
  	POWER_SUPPLY_PROP_TEMP,
  	POWER_SUPPLY_PROP_TIME_TO_EMPTY_NOW,
  	POWER_SUPPLY_PROP_TIME_TO_EMPTY_AVG,
-@@ -122,8 +129,10 @@ static enum power_supply_property bq27x0
+@@ -132,8 +147,10 @@ static enum power_supply_property bq27x0
  	POWER_SUPPLY_PROP_CHARGE_FULL,
  	POWER_SUPPLY_PROP_CHARGE_NOW,
  	POWER_SUPPLY_PROP_CHARGE_FULL_DESIGN,
@@ -35,7 +43,7 @@
  };
  
  static unsigned int poll_interval = 360;
-@@ -353,7 +362,9 @@ static void bq27x00_battery_poll(struct
+@@ -370,7 +387,9 @@ static void bq27x00_battery_poll(struct
  
  	if (poll_interval > 0) {
  		/* The timer does not have to be accurate. */
@@ -45,7 +53,7 @@
  		schedule_delayed_work(&di->work, poll_interval * HZ);
  	}
  }
-@@ -423,6 +434,7 @@ static int bq27x00_battery_status(struct
+@@ -440,6 +459,7 @@ static int bq27x00_battery_status(struct
  	return 0;
  }
  
@@ -53,7 +61,7 @@
  static int bq27x00_battery_capacity_level(struct bq27x00_device_info *di,
  	union power_supply_propval *val)
  {
-@@ -452,6 +464,7 @@ static int bq27x00_battery_capacity_leve
+@@ -469,6 +489,7 @@ static int bq27x00_battery_capacity_leve
  
  	return 0;
  }
@@ -61,7 +69,7 @@
  
  /*
   * Return the battery Voltage in milivolts
-@@ -520,9 +533,11 @@ static int bq27x00_battery_get_property(
+@@ -537,9 +558,11 @@ static int bq27x00_battery_get_property(
  	case POWER_SUPPLY_PROP_CAPACITY:
  		ret = bq27x00_simple_value(di->cache.capacity, val);
  		break;
@@ -73,7 +81,7 @@
  	case POWER_SUPPLY_PROP_TEMP:
  		ret = bq27x00_simple_value(di->cache.temperature, val);
  		break;
-@@ -547,12 +562,14 @@ static int bq27x00_battery_get_property(
+@@ -564,12 +587,14 @@ static int bq27x00_battery_get_property(
  	case POWER_SUPPLY_PROP_CHARGE_FULL_DESIGN:
  		ret = bq27x00_simple_value(di->charge_design_full, val);
  		break;
