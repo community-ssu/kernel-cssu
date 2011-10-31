@@ -1,3 +1,13 @@
+kernel-power-settings (0.13) fremantle; urgency=low
+
+  * changes by Ivaylo Dimitrov <freemangordon@abv.bg>:
+  * added 720MHz, removed 700MHz and 750MHz
+  * SmartReflex enabled in default profile
+  * kernel-config updated to reflect new frequencies set
+  * added new profile (dsp) for DSP overclock
+
+ -- Pali Rohár <pali.rohar@gmail.com>  Sun, 30 Oct 2011 11:15:56 +0200
+
 kernel-power-settings (0.12) fremantle; urgency=low
 
   * updated debian files

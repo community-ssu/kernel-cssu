@@ -75,7 +75,7 @@ show|save|savedef)
     avoid=
     test $gov = ondemand && avoid=`cat $cfd/avoid_frequencies`
     freqs=
-    for f in 0 $allfreq; do
+    for f in $allfreq; do
         popvsel $vsel
         poprate $rate
         case " $avoid " in *" $f "*) ;;
@@ -191,7 +191,7 @@ load|loaddef)
         test -z "$volt" && test -z "$dsp" && continue
         tvsel=
         trate=
-        for fr in 0 $allfreq; do
+        for fr in $allfreq; do
             if test $fr = $freq; then
                 popvsel $vsel
                 poprate $rate
