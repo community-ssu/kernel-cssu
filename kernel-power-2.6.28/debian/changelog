@@ -6,19 +6,23 @@ kernel-power (1:2.6.28-10power49) fremantle; urgency=low
   *   removed nokia code and special ioctl which disabled changing power_level
   *   ability to lock and unlock power_level via sysfs
   * update bq27x00 battery driver:
-  *   backport chanhes from upstream
+  *   backport changes from upstream
   *   add support for accessing bq27200 battery registers using ioctl
   *   fixed rx51 board info and module now working again (but bme must be stopped)
-  * update dspbridge driver:
+  *   fixed rebooting device after battery module was unloaded
+  * update dspbridge driver (by freemangordon):
   *   fix ioctl buffer overrun
   *   DSS video memory is increased from 6 to 8 megabytes, allowing DSS scaler to rescale HD videos (including 1280x720)
   *   add support for for CONFIG_BRIDGE_NEW_API
   *   fix DSP cache when is incoherent with main memory, which leads to memory errors
   *   backport fixes from omapzoom kernel-omap3
+  *   backport harmattan patches
+  *   support both new and old ictl
   * added new patches:
   *   adding-ramzswap-driver.diff
   *   patch_swap_notify_core_support_2_2.6.28.diff
   *   update_mmu_cache_arm.diff
+  *   overclock_smartreflex_805.diff
 
  -- Pali Rohár <pali.rohar@gmail.com>  Sat, 01 Oct 2011 23:08:58 +0200
 
