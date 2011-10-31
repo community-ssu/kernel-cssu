@@ -45,11 +45,6 @@ l2cap_parent.diff
 wl12xx-rx-fix.diff
 anti-io-stalling.diff
 joikuspot.diff
-dspbridge.diff
-dspbridge_ioctl_buffer_overrun.diff
-dspbridge_new_api.diff
-#dspbridge_flushall.diff
-dspbridge_omap3.diff
 phys_to_page.diff
 ext4-data-corruption.diff
 patch_swap_notify_core_support_2.6.28.diff
@@ -58,3 +53,5 @@ adding-ramzswap-driver.diff
 patch_swap_notify_core_support_2_2.6.28.diff
 update_mmu_cache_arm.diff
 radio-si4713.diff
+overclock_smartreflex_805.diff
+dspbridge.diff

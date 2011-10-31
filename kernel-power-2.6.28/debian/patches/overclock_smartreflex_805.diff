@@ -1,0 +1,236 @@
+diff -urN kernel-power-2.6.28/arch/arm/mach-omap2/omap3-opp.h kernel-power-2.6.28.SR/arch/arm/mach-omap2/omap3-opp.h
+--- kernel-power-2.6.28/arch/arm/mach-omap2/omap3-opp.h	2011-10-11 13:51:21.441301622 +0100
++++ kernel-power-2.6.28.SR/arch/arm/mach-omap2/omap3-opp.h	2011-10-22 16:31:45.291911000 +0100
+@@ -11,8 +11,7 @@
+ #define S900M   900000000
+ #define S850M   850000000
+ #define S805M   805000000
+-#define S750M   750000000
+-#define S700M   700000000
++#define S720M   720000000
+ #define S600M   600000000
+ #define S550M   550000000
+ #define S500M   500000000
+diff -urN kernel-power-2.6.28/arch/arm/mach-omap2/pm.c kernel-power-2.6.28.SR/arch/arm/mach-omap2/pm.c
+--- kernel-power-2.6.28/arch/arm/mach-omap2/pm.c	2011-10-11 13:51:21.444897248 +0100
++++ kernel-power-2.6.28.SR/arch/arm/mach-omap2/pm.c	2011-10-30 07:29:47.355582000 +0000
+@@ -44,25 +44,23 @@
+ 
+ struct omap_opp omap3_mpu_rate_table[] = {
+ 	{0, 0, 0},
+-	{0, 1, 0x1E},
+-	/*underclocking*/
+-	{S125M, 2, 0x1E},
+ 	/*default*/
+-	{S250M, 3, 0x26},
+-	{S500M, 4, 0x30},
+-	{S550M, 5, 0x36},
+-	{S600M, 6, 0x3C},
++	{S125M, VDD1_OPP1,  0x1E},
++	{S250M, VDD1_OPP2,  0x26},
++	{S500M, VDD1_OPP3,  0x30},
++	{S550M, VDD1_OPP4,  0x36},
++	{S600M, VDD1_OPP5,  0x3C},
+ 	/*overclocking*/
+-	{S700M, 7, 0x3C},
+-	{S750M, 8, 0x3C},
+-	{S805M, 9, 0x3C},
+-	{S850M, 10, 0x3C},
+-	{S900M, 11, 0x3C},
+-	{S950M, 12, 0x3C},
+-	{S1000M, 13, 0x3C},
+-	{S1100M, 14, 0x48},
+-	{S1150M, 15, 0x48},
++	{S720M, VDD1_OPP6,  0x3C},
++	{S805M, VDD1_OPP7,  0x3C},
++	{S850M, VDD1_OPP8,  0x3C},
++	{S900M, VDD1_OPP9,  0x3C},
++	{S950M, VDD1_OPP10, 0x3C},
++	{S1000M,VDD1_OPP11, 0x3C},
++	{S1100M,VDD1_OPP12, 0x48},
++	{S1150M,VDD1_OPP13, 0x48},
+ };
++EXPORT_SYMBOL(omap3_mpu_rate_table);
+ 
+ struct omap_opp omap3_l3_rate_table[] = {
+ 	{0, 0, 0},
+@@ -76,25 +74,23 @@
+ 
+ struct omap_opp omap3_dsp_rate_table[] = {
+ 	{0, 0, 0},
+-	/*underclocking*/
+-	{S90M,  1, 0x1E},
+ 	/*default*/
+-	{S90M,  2, 0x1E},
+-	{S180M, 3, 0x26},
+-	{S360M, 4, 0x30},
+-	{S400M, 5, 0x36},
+-	{S430M, 6, 0x3C},
++	{S90M,  VDD1_OPP1,  0x1E},
++	{S180M, VDD1_OPP2,  0x26},
++	{S360M, VDD1_OPP3,  0x30},
++	{S400M, VDD1_OPP4,  0x36},
++	{S430M, VDD1_OPP5,  0x3C},
+ 	/*overclocking*/
+-	{S430M, 7, 0x3C},
+-	{S430M, 8, 0x3C},
+-	{S430M, 9, 0x3C},/*800MHz*/
+-	{S500M, 10, 0x3C},
+-	{S500M, 11, 0x3C},
+-	{S500M, 12, 0x3C},
+-	{S500M, 13, 0x3C},
+-	{S520M, 14, 0x48},
+-	{S520M, 15, 0x48},
++	{S520M, VDD1_OPP6,  0x3C},
++	{S520M, VDD1_OPP7,  0x3C},
++	{S520M, VDD1_OPP8,  0x3C},
++	{S520M, VDD1_OPP9,  0x3C},
++	{S520M, VDD1_OPP10, 0x3C},
++	{S520M, VDD1_OPP11, 0x3C},
++	{S520M, VDD1_OPP12, 0x48},
++	{S520M, VDD1_OPP13, 0x48},
+ };
++EXPORT_SYMBOL(omap3_dsp_rate_table);
+ 
+ unsigned short enable_dyn_sleep;
+ unsigned short clocks_off_while_idle;
+@@ -342,13 +338,13 @@
+ 	}
+ 
+ 	if (attr == &vdd1_opp_attr) {
+-		if (value < 1 || value > 5) {
++		if (value < MIN_VDD1_OPP || value > MAX_VDD1_OPP) {
+ 			printk(KERN_ERR "vdd_opp_store: Invalid value\n");
+ 			return -EINVAL;
+ 		}
+ 		resource_set_opp_level(PRCM_VDD1, value, flags);
+ 	} else if (attr == &vdd2_opp_attr) {
+-		if (value < 1 || value > 3) {
++		if (value < MIN_VDD2_OPP || value > MAX_VDD2_OPP) {
+ 			printk(KERN_ERR "vdd_opp_store: Invalid value\n");
+ 			return -EINVAL;
+ 		}
+diff -urN kernel-power-2.6.28/arch/arm/mach-omap2/smartreflex.c kernel-power-2.6.28.SR/arch/arm/mach-omap2/smartreflex.c
+--- kernel-power-2.6.28/arch/arm/mach-omap2/smartreflex.c	2011-10-11 13:51:21.441301622 +0100
++++ kernel-power-2.6.28.SR/arch/arm/mach-omap2/smartreflex.c	2011-10-22 14:15:45.469275000 +0100
+@@ -81,7 +81,8 @@
+ 	u32		clk_length;
+ 	u32		req_opp_no;
+ 	u32		opp1_nvalue, opp2_nvalue, opp3_nvalue, opp4_nvalue;
+-	u32		opp5_nvalue;
++	u32		opp5_nvalue;
++	u32		opp6_nvalue, opp7_nvalue;
+ 	u32		senp_mod, senn_mod;
+ 	void __iomem	*srbase_addr;
+ 	void __iomem	*vpbase_addr;
+@@ -164,6 +165,29 @@
+ 		}
+ 	}
+ }
++void sr_calculate_rg(u32 rfuse, u32 gain_fuse, u32 delta_nt,
++	u32 *rnsen, u32 *sengain)
++{
++	u32 nadj;
++	nadj = ((1 << (gain_fuse + 8)) / rfuse) + delta_nt;
++	cal_reciprocal(nadj, sengain, rnsen);
++}
++
++static u32 calculate_opp_nvalue(u32 opp5_nvalue, u32 delta_p, u32 delta_n)
++{
++	u32 sen_pgain_fuse, sen_ngain_fuse, sen_prn_fuse, sen_nrn_fuse;
++	u32 sen_nrn, sen_ngain, sen_prn, sen_pgain;
++	sen_pgain_fuse = (opp5_nvalue & 0x00F0000) >> 0x14;
++	sen_ngain_fuse = (opp5_nvalue & 0x000F0000) >> 0x10;
++	sen_prn_fuse = (opp5_nvalue & 0x0000FF00) >> 0x08;
++	sen_nrn_fuse = (opp5_nvalue & 0x000000FF);
++	sr_calculate_rg(sen_nrn_fuse, sen_ngain_fuse, delta_n, &sen_nrn,
++	&sen_ngain);
++	sr_calculate_rg(sen_prn_fuse, sen_pgain_fuse, delta_p, &sen_prn,
++	&sen_pgain);
++	return (sen_pgain << 0x14) | (sen_ngain << 0x10)
++	| (sen_prn << 0x08) | (sen_nrn);
++}
+ 
+ static u32 cal_test_nvalue(u32 sennval, u32 senpval)
+ {
+@@ -231,6 +255,10 @@
+ 					OMAP343X_CONTROL_FUSE_OPP2_VDD1);
+ 		sr->opp1_nvalue = omap_ctrl_readl(
+ 					OMAP343X_CONTROL_FUSE_OPP1_VDD1);
++		if (sr->opp5_nvalue) {
++			sr->opp6_nvalue = calculate_opp_nvalue(sr->opp5_nvalue, 227, 379);
++			sr->opp7_nvalue = calculate_opp_nvalue(sr->opp5_nvalue, 434, 730);
++		}
+ 	} else if (sr->srid == SR2) {
+ 		sr->senn_mod = (omap_ctrl_readl(OMAP343X_CONTROL_FUSE_SR) &
+ 					OMAP343X_SR2_SENNENABLE_MASK) >>
+@@ -262,6 +290,10 @@
+ 		sr->opp3_nvalue = cal_test_nvalue(0x85b + 0x200, 0x655 + 0x200);
+ 		sr->opp2_nvalue = cal_test_nvalue(0x506 + 0x1a0, 0x3be + 0x1a0);
+ 		sr->opp1_nvalue = cal_test_nvalue(0x373 + 0x100, 0x28c + 0x100);
++		if (sr->opp5_nvalue) {
++			sr->opp6_nvalue = calculate_opp_nvalue(sr->opp5_nvalue, 227, 379);
++			sr->opp7_nvalue = calculate_opp_nvalue(sr->opp5_nvalue, 434, 730);
++		}
+ 	} else if (sr->srid == SR2) {
+ 		sr->senp_mod = 0x03;
+ 		sr->senn_mod = 0x03;
+@@ -513,7 +545,13 @@
+ 	sr->req_opp_no = target_opp_no;
+ 
+ 	if (sr->srid == SR1) {
+-		switch (min(target_opp_no-1,5)) {
++		switch (min(target_opp_no-1,7)) {
++		case 7:
++			nvalue_reciprocal = sr->opp7_nvalue;
++			break;
++		case 6:
++			nvalue_reciprocal = sr->opp6_nvalue;
++			break;
+ 		case 5:
+ 			nvalue_reciprocal = sr->opp5_nvalue;
+ 			break;
+diff -urN kernel-power-2.6.28/arch/arm/mach-omap2/smartreflex.h kernel-power-2.6.28.SR/arch/arm/mach-omap2/smartreflex.h
+--- kernel-power-2.6.28/arch/arm/mach-omap2/smartreflex.h	2011-10-11 13:51:21.441301622 +0100
++++ kernel-power-2.6.28.SR/arch/arm/mach-omap2/smartreflex.h	2011-10-22 13:52:40.850113000 +0100
+@@ -240,7 +240,11 @@
+ 					ID_VDD(PRCM_VDD1) | ID_OPP_NO(0x4))
+ #define PRCM_VDD1_OPP5		(OMAP(AT_3430_ES2) | OTHER_ID_TYPE(ID_OPP) | \
+ 					ID_VDD(PRCM_VDD1) | ID_OPP_NO(0x5))
+-#define PRCM_NO_VDD1_OPPS	5
++#define PRCM_VDD1_OPP6		(OMAP(AT_3430_ES2) | OTHER_ID_TYPE(ID_OPP) | \
++					ID_VDD(PRCM_VDD1) | ID_OPP_NO(0x6))
++#define PRCM_VDD1_OPP7		(OMAP(AT_3430_ES2) | OTHER_ID_TYPE(ID_OPP) | \
++					ID_VDD(PRCM_VDD1) | ID_OPP_NO(0x7))
++#define PRCM_NO_VDD1_OPPS	7
+ 
+ 
+ /* VDD2 OPPs */
+diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/mach/omap34xx.h kernel-power-2.6.28.SR/arch/arm/plat-omap/include/mach/omap34xx.h
+--- kernel-power-2.6.28/arch/arm/plat-omap/include/mach/omap34xx.h	2011-10-11 13:51:21.441301622 +0100
++++ kernel-power-2.6.28.SR/arch/arm/plat-omap/include/mach/omap34xx.h	2011-10-22 15:52:18.063235000 +0100
+@@ -107,6 +107,14 @@
+ #define VDD1_OPP3	0x3
+ #define VDD1_OPP4	0x4
+ #define VDD1_OPP5	0x5
++#define VDD1_OPP6	0x6
++#define VDD1_OPP7	0x7
++#define VDD1_OPP8	0x8
++#define VDD1_OPP9	0x9
++#define VDD1_OPP10	0xA
++#define VDD1_OPP11	0xB
++#define VDD1_OPP12	0xC
++#define VDD1_OPP13	0xD
+ 
+ /* VDD2 OPPS */
+ #define VDD2_OPP1	0x1
+@@ -114,8 +122,7 @@
+ #define VDD2_OPP3	0x3
+ 
+ #define MIN_VDD1_OPP	VDD1_OPP1
+-/*#define MAX_VDD1_OPP	VDD1_OPP5*/
+-#define MAX_VDD1_OPP	15
++#define MAX_VDD1_OPP	VDD1_OPP13
+ #define MIN_VDD2_OPP	VDD2_OPP1
+ #define MAX_VDD2_OPP	VDD2_OPP3
+ 
