@@ -1,5 +1,5 @@
 --- kernel-power-2.6.28/drivers/power/bq27x00_battery.c	2011-10-09 17:10:05.891697314 +0200
-+++ kernel-power-2.6.28/drivers/power/bq27x00_battery.c	2011-10-09 17:03:40.571710219 +0200
++++ kernel-power-2.6.28/drivers/power/bq27x00_battery.c	2011-10-31 22:08:03.185443335 +0100
 @@ -3,6 +3,8 @@
   *
   * Copyright (C) 2008 Rodolfo Giometti <giometti@linux.it>
@@ -562,7 +562,7 @@
  }
  
  #define to_bq27x00_device_info(x) container_of((x), \
-@@ -171,89 +508,274 @@ static int bq27x00_battery_get_property(
+@@ -171,89 +508,278 @@ static int bq27x00_battery_get_property(
  					enum power_supply_property psp,
  					union power_supply_propval *val)
  {
@@ -791,17 +791,21 @@
 - */
 +static void bq27x00_powersupply_unregister(struct bq27x00_device_info *di)
 +{
++	/* power_supply_unregister call bq27x00_battery_get_property which call bq27x00_battery_poll */
++	/* make sure that bq27x00_battery_poll will not call schedule_delayed_work again after unregister (which cause OOPS) */
++	poll_interval = 0;
++
 +	cancel_delayed_work_sync(&di->work);
 +
 +	bq27x00_battery_reg_exit(di);
-+
+ 
+-static int bq27200_read(u8 reg, int *rt_value, int b_single,
+-			struct bq27x00_device_info *di)
 +	power_supply_unregister(&di->bat);
 +
 +	mutex_destroy(&di->lock);
 +}
- 
--static int bq27200_read(u8 reg, int *rt_value, int b_single,
--			struct bq27x00_device_info *di)
++
 +
 +/* i2c specific code */
 +#ifdef CONFIG_BATTERY_BQ27X00_I2C
@@ -843,6 +847,12 @@
 +		msg[1].len = 1;
 +	else
 +		msg[1].len = 2;
++
++	mutex_lock(&battery_mutex);
++	ret = i2c_transfer(client->adapter, msg, ARRAY_SIZE(msg));
++	mutex_unlock(&battery_mutex);
++	if (ret < 0)
++		return ret;
  
 -		msg->flags = I2C_M_RD;
 -		err = i2c_transfer(client->adapter, msg, 1);
@@ -851,21 +861,15 @@
 -				*rt_value = get_unaligned_be16(data);
 -			else
 -				*rt_value = data[0];
-+	mutex_lock(&battery_mutex);
-+	ret = i2c_transfer(client->adapter, msg, ARRAY_SIZE(msg));
-+	mutex_unlock(&battery_mutex);
-+	if (ret < 0)
-+		return ret;
++	if (!single)
++		ret = get_unaligned_le16(data);
++	else
++		ret = data[0];
  
 -			return 0;
 -		}
 -	}
 -	return err;
-+	if (!single)
-+		ret = get_unaligned_le16(data);
-+	else
-+		ret = data[0];
-+
 +	return ret;
  }
  
@@ -879,7 +883,7 @@
  	int num;
  	int retval = 0;
  
-@@ -267,7 +789,7 @@ static int bq27200_battery_probe(struct
+@@ -267,7 +793,7 @@ static int bq27200_battery_probe(struct
  	if (retval < 0)
  		return retval;
  
@@ -888,7 +892,7 @@
  	if (!name) {
  		dev_err(&client->dev, "failed to allocate device name\n");
  		retval = -ENOMEM;
-@@ -280,37 +802,20 @@ static int bq27200_battery_probe(struct
+@@ -280,37 +806,20 @@ static int bq27200_battery_probe(struct
  		retval = -ENOMEM;
  		goto batt_failed_2;
  	}
@@ -910,10 +914,10 @@
 -	bus->read = &bq27200_read;
 -	di->bus = bus;
 -	di->client = client;
--
--	bq27x00_powersupply_init(di);
 +	di->bus.read = &bq27x00_read_i2c;
  
+-	bq27x00_powersupply_init(di);
+-
 -	retval = power_supply_register(&client->dev, &di->bat);
 -	if (retval) {
 -		dev_err(&client->dev, "failed to register battery\n");
@@ -932,7 +936,7 @@
  batt_failed_3:
  	kfree(di);
  batt_failed_2:
-@@ -323,11 +828,11 @@ batt_failed_1:
+@@ -323,11 +832,11 @@ batt_failed_1:
  	return retval;
  }
  
@@ -946,7 +950,7 @@
  
  	kfree(di->bat.name);
  
-@@ -340,31 +845,180 @@ static int bq27200_battery_remove(struct
+@@ -340,31 +849,180 @@ static int bq27200_battery_remove(struct
  	return 0;
  }
  
@@ -962,21 +966,16 @@
  	{},
  };
 +MODULE_DEVICE_TABLE(i2c, bq27x00_id);
- 
--static struct i2c_driver bq27200_battery_driver = {
++
 +static struct i2c_driver bq27x00_battery_driver = {
- 	.driver = {
--		.name = "bq27200-battery",
++	.driver = {
 +		.name = "bq27x00-battery",
- 	},
--	.probe = bq27200_battery_probe,
--	.remove = bq27200_battery_remove,
--	.id_table = bq27200_id,
++	},
 +	.probe = bq27x00_battery_probe,
 +	.remove = bq27x00_battery_remove,
 +	.id_table = bq27x00_id,
- };
- 
++};
++
 +static inline int bq27x00_battery_i2c_init(void)
 +{
 +	int ret = i2c_add_driver(&bq27x00_battery_driver);
@@ -1050,7 +1049,8 @@
 +		dev_err(&pdev->dev, "no hdq read callback supplied\n");
 +		return -EINVAL;
 +	}
-+
+ 
+-static struct i2c_driver bq27200_battery_driver = {
 +	di = kzalloc(sizeof(*di), GFP_KERNEL);
 +	if (!di) {
 +		dev_err(&pdev->dev, "failed to allocate device info data\n");
@@ -1093,12 +1093,16 @@
 +static struct platform_driver bq27000_battery_driver = {
 +	.probe	= bq27000_battery_probe,
 +	.remove = __devexit_p(bq27000_battery_remove),
-+	.driver = {
+ 	.driver = {
+-		.name = "bq27200-battery",
 +		.name = "bq27000-battery",
 +		.owner = THIS_MODULE,
-+	},
-+};
-+
+ 	},
+-	.probe = bq27200_battery_probe,
+-	.remove = bq27200_battery_remove,
+-	.id_table = bq27200_id,
+ };
+ 
 +static inline int bq27x00_battery_platform_init(void)
 +{
 +	int ret = platform_driver_register(&bq27000_battery_driver);
@@ -1140,7 +1144,7 @@
  
  	return ret;
  }
-@@ -372,7 +1026,8 @@ module_init(bq27x00_battery_init);
+@@ -372,7 +1030,8 @@ module_init(bq27x00_battery_init);
  
  static void __exit bq27x00_battery_exit(void)
  {
