@@ -9,7 +9,7 @@ Standards-Version: 3.8.0
 Package: kernel-power-settings
 Section: user/system
 Architecture: armel
-Depends: kernel-feature-overclock, sudo
+Depends: kernel-power-flasher (>= 1:2.6.28-10power49) | kernel-power-bootimg (>= 1:2.6.28-10power49), sudo
 XB-Maemo-Display-Name: Linux kernel for power user (settings and overclock)
 Description: Tools for the customization and overclock Linux kernel
  Installing this package will automatically also install Linux kernel

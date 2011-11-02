@@ -5,6 +5,7 @@ kernel-power-settings (0.13) fremantle; urgency=low
   * SmartReflex enabled in default profile
   * kernel-config updated to reflect new frequencies set
   * added new profile (dsp) for DSP overclock
+  * depends on kernel-power-flasher or kernel-power-bootimg at least v49
 
  -- Pali Rohár <pali.rohar@gmail.com>  Sun, 30 Oct 2011 11:15:56 +0200
 

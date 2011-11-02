@@ -2,6 +2,7 @@ kernel-power (1:2.6.28-10power49) fremantle; urgency=low
 
   * support for binding and unbinding framebuffer console
   * split nokia patch nokia-20093908+0m5.diff into more
+  * smartreflex - added calibration values for 720MHz and 805 MHz (SW calculated according to TI docs)
   * update radio-si4713 fm transmitter:
   *   removed nokia code and special ioctl which disabled changing power_level
   *   ability to lock and unlock power_level via sysfs
@@ -22,9 +23,8 @@ kernel-power (1:2.6.28-10power49) fremantle; urgency=low
   *   adding-ramzswap-driver.diff
   *   patch_swap_notify_core_support_2_2.6.28.diff
   *   update_mmu_cache_arm.diff
-  *   overclock_smartreflex_805.diff
 
- -- Pali Rohár <pali.rohar@gmail.com>  Sat, 01 Oct 2011 23:08:58 +0200
+ -- Pali Rohár <pali.rohar@gmail.com>  Sat, 31 Oct 2011 23:08:58 +0200
 
 kernel-power (1:2.6.28-10power48) fremantle; urgency=low
 
