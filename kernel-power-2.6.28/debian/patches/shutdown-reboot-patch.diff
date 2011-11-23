@@ -1,0 +1,38 @@
+--- kernel-power-2.6.28.orig/arch/arm/mach-omap2/pm.c	2011-11-23 11:17:07.555970502 +0000
++++ kernel-power-2.6.28/arch/arm/mach-omap2/pm.c	2011-11-23 11:10:32.626825000 +0000
+@@ -322,6 +322,8 @@
+ 			resource_lock_opp(PRCM_VDD1);
+ 			vdd1_locked = 1;
+ 		}
++		else
++			return n;
+ 	} else if (attr == &vdd2_lock_attr) {
+ 		flags = OPP_IGNORE_LOCK;
+ 		attr = &vdd2_opp_attr;
+@@ -335,6 +337,8 @@
+ 			resource_lock_opp(PRCM_VDD2);
+ 			vdd2_locked = 1;
+ 		}
++		else
++			return n;
+ 	}
+ 
+ 	if (attr == &vdd1_opp_attr) {
+--- kernel-power-2.6.28.orig/drivers/usb/musb/omap2430.c	2011-11-23 11:17:06.856287549 +0000
++++ kernel-power-2.6.28/drivers/usb/musb/omap2430.c	2011-11-22 19:17:27.367424000 +0000
+@@ -212,6 +212,7 @@
+ }
+ 
+ static int musb_platform_resume(struct musb *musb);
++static int musb_platform_suspend(struct musb *musb);
+ 
+ int musb_platform_set_mode(struct musb *musb, u8 musb_mode, u8 hostspeed)
+ {
+@@ -254,6 +255,7 @@
+                         musb_writeb(musb->mregs, MUSB_DEVCTL, devctl);
+  
+                         musb_writeb(musb->mregs, MUSB_TESTMODE, 0);
++			musb_platform_suspend(musb);
+                 }
+  
+ 		otg_set_peripheral(musb->xceiv, &musb->g);

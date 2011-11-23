@@ -55,3 +55,4 @@ update_mmu_cache_arm.diff
 radio-si4713.diff
 overclock_smartreflex_900.diff
 dspbridge.diff
+shutdown-reboot-patch.diff
