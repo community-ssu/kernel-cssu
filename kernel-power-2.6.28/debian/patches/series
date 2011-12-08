@@ -56,3 +56,4 @@ radio-si4713.diff
 overclock_smartreflex_900.diff
 dspbridge.diff
 shutdown-reboot-patch.diff
+option_disable_indicator_led.diff

@@ -1,0 +1,91 @@
+--- a/include/media/adp1653.h	2011-10-03 18:06:48.000000000 +0200
++++ b/include/media/adp1653.h	2011-10-08 21:22:27.348047579 +0200
+@@ -27,6 +27,7 @@
+ 
+ #include <linux/videodev2.h>
+ #include <linux/i2c.h>
++#include <linux/device.h>
+ #include <media/v4l2-int-device.h>
+ #include <media/smiaregs.h>
+ 
+@@ -75,6 +76,7 @@ struct adp1653_flash {
+ 	u32 flash_intensity;
+ 	u32 torch_intensity;
+ 	u32 indicator_intensity;
++	u32 indicator_disabled;
+ 
+ 	struct v4l2_int_device *v4l2_int_device;
+ 
+--- a/drivers/media/video/adp1653.c	2011-10-09 01:11:26.601046961 +0200
++++ b/drivers/media/video/adp1653.c	2011-10-09 00:49:42.339046573 +0200
+@@ -56,7 +56,8 @@ static int adp1653_update_hw(struct v4l2
+ 	if (flash->power != V4L2_POWER_ON)
+ 		return 0;
+ 
+-	out_sel |= flash->indicator_intensity << ADP1653_REG_OUT_SEL_ILED_SHIFT;
++	if (! flash->indicator_disabled)
++		out_sel |= flash->indicator_intensity << ADP1653_REG_OUT_SEL_ILED_SHIFT;
+ 	/* Set torch intensity to zero--prevents false triggering of SC Fault */
+ 	rval = i2c_smbus_write_byte_data(flash->i2c_client,
+ 					 ADP1653_REG_OUT_SEL, out_sel);
+@@ -490,6 +491,37 @@ static int adp1653_resume(struct i2c_cli
+ 
+ #endif /* CONFIG_PM */
+ 
++static ssize_t disable_indicator_led_show(struct device *dev, 
++			 struct device_attribute *attr, char *buf)
++{
++	struct adp1653_flash *flash = dev_get_drvdata(dev);
++
++	return sprintf(buf, "%u\n", flash->indicator_disabled);
++}
++
++static ssize_t disable_indicator_led_store(struct device *dev,
++			 struct device_attribute *attr,
++			 const char *buf, size_t count)
++{
++	struct adp1653_flash *flash = dev_get_drvdata(dev);
++	unsigned long res;
++	int i;
++
++	if (strict_strtoul(buf, 10, &res) < 0)
++		return -EINVAL;
++	i = res ? 1 : 0;
++
++	if (i == flash->indicator_disabled)
++		goto out;
++
++	flash->indicator_disabled = i;
++	adp1653_update_hw(flash->v4l2_int_device);
++out:
++	return count;
++}
++
++static DEVICE_ATTR(disable_indicator_led, S_IRUGO|S_IWUSR, disable_indicator_led_show, disable_indicator_led_store);
++
+ static int adp1653_probe(struct i2c_client *client,
+ 			 const struct i2c_device_id *devid)
+ {
+@@ -507,7 +539,13 @@ static int adp1653_probe(struct i2c_clie
+ 	flash->v4l2_int_device = &adp1653_int_device;
+ 
+ 	flash->i2c_client = client;
+-	i2c_set_clientdata(client, flash);
++	i2c_set_clientdata(client, flash); /* => dev_set_drvdata(&client->dev, flash) */
++
++	flash->indicator_disabled = 0;
++	rval = device_create_file(&client->dev, &dev_attr_disable_indicator_led);
++	if (rval < 0)
++		dev_warn(&client->dev, "can't create sysfs file for %s: %d\n",
++			 dev_attr_disable_indicator_led.attr.name, rval);
+ 
+ 	rval = v4l2_int_device_register(flash->v4l2_int_device);
+ 	if (rval)
+@@ -523,6 +561,7 @@ static int __exit adp1653_remove(struct
+ 	if (!client->adapter)
+ 		return -ENODEV;	/* our client isn't attached */
+ 
++	device_remove_file(&client->dev, &dev_attr_disable_indicator_led);
+ 	v4l2_int_device_unregister(flash->v4l2_int_device);
+ 	i2c_set_clientdata(client, NULL);
+ 
