@@ -1,0 +1,85 @@
+--- a/drivers/media/video/videobuf-dma-sg.c	2011-11-15 06:09:03.031835263 -0500
++++ b/drivers/media/video/videobuf-dma-sg.c	2011-12-28 07:50:34.514877000 -0500
+@@ -137,6 +137,7 @@
+ {
+ 	unsigned long first,last;
+ 	int err, rw = 0;
++	struct vm_area_struct *vma;
+ 
+ 	dma->direction = direction;
+ 	switch (dma->direction) {
+@@ -154,6 +155,23 @@
+ 	last  = ((data+size-1) & PAGE_MASK) >> PAGE_SHIFT;
+ 	dma->offset   = data & ~PAGE_MASK;
+ 	dma->nr_pages = last-first+1;
++
++	/* In case the buffer is user-allocated and is actually an IO buffer for
++	   some other hardware, we cannot map pages for it.  It in fact behaves
++	   the same as an overlay. */
++	vma = find_vma (current->mm, data);
++	if (vma && (vma->vm_flags & VM_IO)) {
++		/* Only a single contiguous buffer is supported. */
++		if (vma->vm_end < data + size) {
++			dprintk(1, "init user: non-contiguous IO buffer.\n");
++			return -EFAULT; /* same error that get_user_pages() would give */
++		}
++		dma->bus_addr = (vma->vm_pgoff << PAGE_SHIFT) +	(data - vma->vm_start);
++		dprintk(1,"init user IO [0x%lx+0x%lx => %d pages at 0x%x]\n",
++			data, size, dma->nr_pages, dma->bus_addr);
++		return 0;
++	}
++
+ 	dma->pages = kmalloc(dma->nr_pages * sizeof(struct page*),
+ 			     GFP_KERNEL);
+ 	if (NULL == dma->pages)
+@@ -231,12 +249,27 @@
+ 						(dma->vmalloc,dma->nr_pages);
+ 	}
+ 	if (dma->bus_addr) {
+-		dma->sglist = vmalloc(sizeof(*dma->sglist));
++		unsigned long physp=dma->bus_addr;
++		int i,len;
++
++		len=dma->nr_pages;
++		dma->sglist = vmalloc(len*sizeof(*dma->sglist));
++		sg_init_table(dma->sglist, len);
+ 		if (NULL != dma->sglist) {
+-			dma->sglen  = 1;
+-			sg_dma_address(&dma->sglist[0]) = dma->bus_addr & PAGE_MASK;
+-			dma->sglist[0].offset           = dma->bus_addr & ~PAGE_MASK;
+-			sg_dma_len(&dma->sglist[0])     = dma->nr_pages * PAGE_SIZE;
++			dma->sglist[0].offset		= dma->bus_addr & ~PAGE_MASK;
++			sg_dma_len(&dma->sglist[0])	= PAGE_SIZE - dma->offset;
++			sg_dma_address(&dma->sglist[0])	= (dma_addr_t)physp & PAGE_MASK;
++			physp += sg_dma_len(&dma->sglist[0]);
++			/*
++			 * Iterate in a loop for the number of pages
++			 */
++			for (i = 1; i < len; i++) {
++				dma->sglist[i].offset		= 0;
++				sg_dma_len(&dma->sglist[i])	= PAGE_SIZE;
++				sg_dma_address(&dma->sglist[i])	= (dma_addr_t)physp;
++				physp += PAGE_SIZE;
++			}
++			dma->sglen = len;
+ 		}
+ 	}
+ 	if (NULL == dma->sglist) {
+@@ -263,7 +296,7 @@
+ 	MAGIC_CHECK(dma->magic, MAGIC_DMABUF);
+ 	BUG_ON(!dma->sglen);
+ 
+-	dma_sync_sg_for_cpu(q->dev, dma->sglist, dma->nr_pages, dma->direction);
++	dma_sync_sg_for_cpu(q->dev, dma->sglist, dma->sglen, dma->direction);
+ 	return 0;
+ }
+ 
+@@ -273,7 +306,7 @@
+ 	if (!dma->sglen)
+ 		return 0;
+ 
+-	dma_unmap_sg(q->dev, dma->sglist, dma->nr_pages, dma->direction);
++	dma_unmap_sg(q->dev, dma->sglist, dma->sglen, dma->direction);
+ 
+ 	vfree(dma->sglist);
+ 	dma->sglist = NULL;

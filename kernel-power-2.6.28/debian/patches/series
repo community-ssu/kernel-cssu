@@ -64,3 +64,5 @@ USB-g_serial-don-t-set-low_latency-flag.diff
 0001-mtd-fix-a-huge-latency-problem-in-the-MTD-CFI-flash-.diff
 0002-mtd-change-struct-flchip_shared-spinlock-locking-int.diff
 Support-for-tlv320aic3x-codec-highpass-filter-needed.diff
+support-non-page-aligned-buffers-in-iommu_vmap.diff
+videobuf-dma-sg-support-non-pagable-user-memory.diff

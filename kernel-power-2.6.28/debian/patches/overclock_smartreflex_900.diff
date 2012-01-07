@@ -1,6 +1,6 @@
-diff -urN kernel-power-2.6.28/arch/arm/mach-omap2/omap3-opp.h kernel-power-2.6.28.SR/arch/arm/mach-omap2/omap3-opp.h
---- kernel-power-2.6.28/arch/arm/mach-omap2/omap3-opp.h	2011-10-11 13:51:21.441301622 +0100
-+++ kernel-power-2.6.28.SR/arch/arm/mach-omap2/omap3-opp.h	2011-10-22 16:31:45.291911000 +0100
+diff -urN kernel-power-2.6.28/arch/arm/mach-omap2/omap3-opp.h kernel-power-2.6.28.new/arch/arm/mach-omap2/omap3-opp.h
+--- kernel-power-2.6.28/arch/arm/mach-omap2/omap3-opp.h	2012-01-07 13:49:16.551071653 +0000
++++ kernel-power-2.6.28.new/arch/arm/mach-omap2/omap3-opp.h	2011-12-31 12:54:23.719318887 +0000
 @@ -11,8 +11,7 @@
  #define S900M   900000000
  #define S850M   850000000
@@ -11,9 +11,9 @@ diff -urN kernel-power-2.6.28/arch/arm/mach-omap2/omap3-opp.h kernel-power-2.6.2
  #define S600M   600000000
  #define S550M   550000000
  #define S500M   500000000
-diff -urN kernel-power-2.6.28/arch/arm/mach-omap2/pm34xx.c kernel-power-2.6.28.SR/arch/arm/mach-omap2/pm34xx.c
---- kernel-power-2.6.28/arch/arm/mach-omap2/pm34xx.c	2011-10-11 13:51:19.475662264 +0100
-+++ kernel-power-2.6.28.SR/arch/arm/mach-omap2/pm34xx.c	2011-11-14 17:06:15.733128000 +0000
+diff -urN kernel-power-2.6.28/arch/arm/mach-omap2/pm34xx.c kernel-power-2.6.28.new/arch/arm/mach-omap2/pm34xx.c
+--- kernel-power-2.6.28/arch/arm/mach-omap2/pm34xx.c	2012-01-07 13:49:16.515051220 +0000
++++ kernel-power-2.6.28.new/arch/arm/mach-omap2/pm34xx.c	2011-12-31 12:54:23.735963309 +0000
 @@ -629,9 +629,9 @@
  	 * Only needed if we are going to enter retention.
  	 */
@@ -26,9 +26,9 @@ diff -urN kernel-power-2.6.28/arch/arm/mach-omap2/pm34xx.c kernel-power-2.6.28.S
  
  	/* CORE */
  	if (core_next_state < PWRDM_POWER_ON) {
-diff -urN kernel-power-2.6.28/arch/arm/mach-omap2/pm.c kernel-power-2.6.28.SR/arch/arm/mach-omap2/pm.c
---- kernel-power-2.6.28/arch/arm/mach-omap2/pm.c	2011-10-11 13:51:21.444897248 +0100
-+++ kernel-power-2.6.28.SR/arch/arm/mach-omap2/pm.c	2011-11-12 13:33:08.600565000 +0000
+diff -urN kernel-power-2.6.28/arch/arm/mach-omap2/pm.c kernel-power-2.6.28.new/arch/arm/mach-omap2/pm.c
+--- kernel-power-2.6.28/arch/arm/mach-omap2/pm.c	2012-01-07 13:49:16.567287927 +0000
++++ kernel-power-2.6.28.new/arch/arm/mach-omap2/pm.c	2011-12-31 12:54:23.772101815 +0000
 @@ -44,25 +44,23 @@
  
  struct omap_opp omap3_mpu_rate_table[] = {
@@ -125,9 +125,9 @@ diff -urN kernel-power-2.6.28/arch/arm/mach-omap2/pm.c kernel-power-2.6.28.SR/ar
  			printk(KERN_ERR "vdd_opp_store: Invalid value\n");
  			return -EINVAL;
  		}
-diff -urN kernel-power-2.6.28/arch/arm/mach-omap2/resource34xx.c kernel-power-2.6.28.SR/arch/arm/mach-omap2/resource34xx.c
---- kernel-power-2.6.28/arch/arm/mach-omap2/resource34xx.c	2011-10-11 13:50:56.787174344 +0100
-+++ kernel-power-2.6.28.SR/arch/arm/mach-omap2/resource34xx.c	2011-11-15 10:50:41.556771000 +0000
+diff -urN kernel-power-2.6.28/arch/arm/mach-omap2/resource34xx.c kernel-power-2.6.28.new/arch/arm/mach-omap2/resource34xx.c
+--- kernel-power-2.6.28/arch/arm/mach-omap2/resource34xx.c	2012-01-07 13:49:16.527031015 +0000
++++ kernel-power-2.6.28.new/arch/arm/mach-omap2/resource34xx.c	2011-12-31 12:54:23.772101815 +0000
 @@ -279,7 +279,7 @@
  
  #ifdef CONFIG_OMAP_SMARTREFLEX
@@ -137,9 +137,9 @@ diff -urN kernel-power-2.6.28/arch/arm/mach-omap2/resource34xx.c kernel-power-2.
  #endif
  	for (i = 0; i < 2; i++) {
  		if (i == raise)
-diff -urN kernel-power-2.6.28/arch/arm/mach-omap2/smartreflex.c kernel-power-2.6.28.SR/arch/arm/mach-omap2/smartreflex.c
---- kernel-power-2.6.28/arch/arm/mach-omap2/smartreflex.c	2011-10-11 13:51:21.441301622 +0100
-+++ kernel-power-2.6.28.SR/arch/arm/mach-omap2/smartreflex.c	2011-11-15 10:54:13.761220000 +0000
+diff -urN kernel-power-2.6.28/arch/arm/mach-omap2/smartreflex.c kernel-power-2.6.28.new/arch/arm/mach-omap2/smartreflex.c
+--- kernel-power-2.6.28/arch/arm/mach-omap2/smartreflex.c	2012-01-07 13:49:16.583042210 +0000
++++ kernel-power-2.6.28.new/arch/arm/mach-omap2/smartreflex.c	2012-01-06 20:56:55.000000000 +0000
 @@ -37,6 +37,7 @@
  #include "prm.h"
  #include "smartreflex.h"
@@ -148,20 +148,31 @@ diff -urN kernel-power-2.6.28/arch/arm/mach-omap2/smartreflex.c kernel-power-2.6
  
  /*
   * VP_TRANXDONE_TIMEOUT: maximum microseconds to wait for the VP to
-@@ -73,6 +74,12 @@
+@@ -73,6 +74,23 @@
   */
  #define SR_DISABLE_MAX_ATTEMPTS 4
  
 +#define ACCURACY		100
 +#define NDELTA_3430		(3.0 * ACCURACY)
 +#define PDELTA_3430		(2.6 * ACCURACY)
-+#define SR_NVALUE_ADJUST -150000
-+#define SR_NVALUE_DSP_ADJUST 12500
++
++/* Since factory calibrated Efuse values lead to very high SR calculated voltages
++ * adjust them with a constant
++ */
++#define SR_NVALUE_ADJUST_LOWOPP   -150000 /* For 125 and 250 MHz */
++#define SR_NVALUE_ADJUST_HIGHOPP  -125000 /* For 500+ MHz */
++
++/* Boost voltage with the bellow value(in uV) when DSP frequency is >430 MHz and 
++ * twice that value when DSP frequency is > 520 Mhz
++ */
++#define SR_NVALUE_DSP_MAX_ADJUST 100000
++
++static atomic_t sr_vdd1_dsp_boost_coeff;
 +
  struct omap_sr {
  	int		srid;
  	int		is_sr_reset;
-@@ -82,6 +89,7 @@
+@@ -82,6 +100,7 @@
  	u32		req_opp_no;
  	u32		opp1_nvalue, opp2_nvalue, opp3_nvalue, opp4_nvalue;
  	u32		opp5_nvalue;
@@ -169,7 +180,7 @@ diff -urN kernel-power-2.6.28/arch/arm/mach-omap2/smartreflex.c kernel-power-2.6
  	u32		senp_mod, senn_mod;
  	void __iomem	*srbase_addr;
  	void __iomem	*vpbase_addr;
-@@ -101,6 +109,7 @@
+@@ -101,6 +120,7 @@
  
  	reg_val = __raw_readl(SR_REGADDR(offset));
  	reg_val &= ~mask;
@@ -177,7 +188,7 @@ diff -urN kernel-power-2.6.28/arch/arm/mach-omap2/smartreflex.c kernel-power-2.6
  	reg_val |= value;
  
  	__raw_writel(reg_val, SR_REGADDR(offset));
-@@ -211,6 +220,147 @@
+@@ -211,26 +231,173 @@
  	}
  }
  
@@ -219,17 +230,6 @@ diff -urN kernel-power-2.6.28/arch/arm/mach-omap2/smartreflex.c kernel-power-2.6
 +	u32 n_slope_b=1000*(nadj_1-n_slope_a*250/1000);
 +
 +	return (u32)(n_slope_a*freq+n_slope_b)/1000;
-+}
-+
-+static u32 calculate_freq_efuse_value(u32 opp0fuse,u32 opp1fuse,u32 freq)
-+{
-+	u32 sen_nrn, sen_ngain, sen_prn, sen_pgain;
-+	u32 padj,nadj;
-+	cal_reciprocal(padj=get_padj_for_freq(opp0fuse,opp1fuse,freq), &sen_pgain, &sen_prn);
-+	cal_reciprocal(nadj=get_nadj_for_freq(opp0fuse,opp1fuse,freq), &sen_ngain, &sen_nrn);
-+
-+	return (sen_pgain << 0x14) | (sen_ngain << 0x10)
-+		| (sen_prn << 0x08) | (sen_nrn);
 +}
 +
 +/**
@@ -322,10 +322,30 @@ diff -urN kernel-power-2.6.28/arch/arm/mach-omap2/smartreflex.c kernel-power-2.6
 +			(temp_senp_reciprocal << 8) | temp_senn_reciprocal;
 +
 +}
++
++static u32 calculate_freq_efuse_value(u32 opp0efuse,u32 opp1efuse,u32 freq)
++{
++	u32 sen_nrn, sen_ngain, sen_prn, sen_pgain;
++	u32 opp0efuse_adj = sr_ntarget_add_margin(opp0efuse,freq>S250M?SR_NVALUE_ADJUST_HIGHOPP:SR_NVALUE_ADJUST_LOWOPP);
++	u32 opp1efuse_adj = sr_ntarget_add_margin(opp1efuse,freq>S250M?SR_NVALUE_ADJUST_HIGHOPP:SR_NVALUE_ADJUST_LOWOPP);
++
++	freq/=1000000;
++	cal_reciprocal(get_padj_for_freq(opp0efuse_adj,opp1efuse_adj,freq), &sen_pgain, &sen_prn);
++	cal_reciprocal(get_nadj_for_freq(opp0efuse_adj,opp1efuse_adj,freq), &sen_ngain, &sen_nrn);
++
++	return (sen_pgain << 0x14) | (sen_ngain << 0x10)
++	| (sen_prn << 0x08) | (sen_nrn);
++}
++
  static void sr_set_efuse_nvalues(struct omap_sr *sr)
  {
  	if (sr->srid == SR1) {
-@@ -220,17 +370,24 @@
++		u32 opp0efuse = omap_ctrl_readl(OMAP343X_CONTROL_FUSE_OPP1_VDD1);
++		u32 opp1efuse = omap_ctrl_readl(OMAP343X_CONTROL_FUSE_OPP2_VDD1);
++		
+ 		sr->senn_mod = (omap_ctrl_readl(OMAP343X_CONTROL_FUSE_SR) &
+ 					OMAP343X_SR1_SENNENABLE_MASK) >>
+ 					OMAP343X_SR1_SENNENABLE_SHIFT;
  		sr->senp_mod = (omap_ctrl_readl(OMAP343X_CONTROL_FUSE_SR) &
  					OMAP343X_SR1_SENPENABLE_MASK) >>
  					OMAP343X_SR1_SENPENABLE_SHIFT;
@@ -340,28 +360,20 @@ diff -urN kernel-power-2.6.28/arch/arm/mach-omap2/smartreflex.c kernel-power-2.6
 -					OMAP343X_CONTROL_FUSE_OPP2_VDD1);
 -		sr->opp1_nvalue = omap_ctrl_readl(
 -					OMAP343X_CONTROL_FUSE_OPP1_VDD1);
-+		sr->opp1_nvalue = sr_ntarget_add_margin(omap_ctrl_readl(
-+					OMAP343X_CONTROL_FUSE_OPP1_VDD1),SR_NVALUE_ADJUST);
-+		sr->opp2_nvalue = sr_ntarget_add_margin(omap_ctrl_readl(
-+					OMAP343X_CONTROL_FUSE_OPP2_VDD1),SR_NVALUE_ADJUST);
-+		/* 500 */
-+		sr->opp3_nvalue = sr_ntarget_add_margin(sr->opp2_nvalue,212500);
-+		/* 550 */
-+		sr->opp4_nvalue = sr_ntarget_add_margin(sr->opp3_nvalue,50000);
-+		/* 600 */
-+		sr->opp5_nvalue = sr_ntarget_add_margin(sr->opp4_nvalue,50000);
-+		/* 720 */
-+		sr->opp6_nvalue = sr_ntarget_add_margin(sr->opp5_nvalue,100000);
-+		/* 805 */
-+		sr->opp7_nvalue = sr_ntarget_add_margin(sr->opp6_nvalue,75000);
-+		/* 850 */
-+		sr->opp8_nvalue = sr_ntarget_add_margin(sr->opp7_nvalue,50000);
-+		/* 900 */
-+		sr->opp9_nvalue = sr_ntarget_add_margin(sr->opp8_nvalue,55000);
++		
++		sr->opp1_nvalue = calculate_freq_efuse_value(opp0efuse,opp1efuse,S125M);
++		sr->opp2_nvalue = calculate_freq_efuse_value(opp0efuse,opp1efuse,S250M);
++		sr->opp3_nvalue = calculate_freq_efuse_value(opp0efuse,opp1efuse,S500M);
++		sr->opp4_nvalue = calculate_freq_efuse_value(opp0efuse,opp1efuse,S550M);
++		sr->opp5_nvalue = calculate_freq_efuse_value(opp0efuse,opp1efuse,S600M);
++		sr->opp6_nvalue = calculate_freq_efuse_value(opp0efuse,opp1efuse,S720M);
++		sr->opp7_nvalue = calculate_freq_efuse_value(opp0efuse,opp1efuse,S805M);
++		sr->opp8_nvalue = calculate_freq_efuse_value(opp0efuse,opp1efuse,S850M);
++		sr->opp9_nvalue = calculate_freq_efuse_value(opp0efuse,opp1efuse,S900M);
  	} else if (sr->srid == SR2) {
  		sr->senn_mod = (omap_ctrl_readl(OMAP343X_CONTROL_FUSE_SR) &
  					OMAP343X_SR2_SENNENABLE_MASK) >>
-@@ -262,6 +419,14 @@
+@@ -262,6 +429,14 @@
  		sr->opp3_nvalue = cal_test_nvalue(0x85b + 0x200, 0x655 + 0x200);
  		sr->opp2_nvalue = cal_test_nvalue(0x506 + 0x1a0, 0x3be + 0x1a0);
  		sr->opp1_nvalue = cal_test_nvalue(0x373 + 0x100, 0x28c + 0x100);
@@ -376,7 +388,7 @@ diff -urN kernel-power-2.6.28/arch/arm/mach-omap2/smartreflex.c kernel-power-2.6
  	} else if (sr->srid == SR2) {
  		sr->senp_mod = 0x03;
  		sr->senn_mod = 0x03;
-@@ -426,7 +591,7 @@
+@@ -426,7 +601,7 @@
  	sr->is_sr_reset = 0;
  }
  
@@ -385,7 +397,7 @@ diff -urN kernel-power-2.6.28/arch/arm/mach-omap2/smartreflex.c kernel-power-2.6
  {
  	u32 target_opp_no, vsel = 0;
  	u32 reg_addr = 0;
-@@ -443,6 +608,14 @@
+@@ -443,6 +618,14 @@
  		reg_addr = R_VDD1_SR_CONTROL;
  		prm_vp1_voltage = prm_read_mod_reg(OMAP3430_GR_MOD,
  						OMAP3_PRM_VP1_VOLTAGE_OFFSET);
@@ -400,7 +412,14 @@ diff -urN kernel-power-2.6.28/arch/arm/mach-omap2/smartreflex.c kernel-power-2.6
  		t2_smps_steps = abs(vsel - prm_vp1_voltage);
  		errorgain = (target_opp_no > SR_MAX_LOW_OPP) ?
  			PRM_VP1_CONFIG_ERRORGAIN_HIGHOPP :
-@@ -513,7 +686,19 @@
+@@ -507,13 +690,24 @@
+ {
+ 	u32 nvalue_reciprocal, v;
+ 	u8 errminlimit;
+-
+ 	BUG_ON(!(mpu_opps && l3_opps));
+-
++	
  	sr->req_opp_no = target_opp_no;
  
  	if (sr->srid == SR1) {
@@ -421,19 +440,33 @@ diff -urN kernel-power-2.6.28/arch/arm/mach-omap2/smartreflex.c kernel-power-2.6
  		case 5:
  			nvalue_reciprocal = sr->opp5_nvalue;
  			break;
-@@ -534,6 +719,11 @@
- 			nvalue_reciprocal = sr->opp3_nvalue;
+@@ -531,9 +725,24 @@
+ 			nvalue_reciprocal = sr->opp1_nvalue;
+ 			break;
+ 		default:
+-			nvalue_reciprocal = sr->opp3_nvalue;
++			nvalue_reciprocal = sr->opp9_nvalue;
  			break;
  		}
-+		/* give a little more just when DSP is overclocked */
-+		if(dsp_opps[target_opp_no].rate > S430M)
-+			nvalue_reciprocal = sr_ntarget_add_margin(nvalue_reciprocal,SR_NVALUE_DSP_ADJUST);
-+		if(dsp_opps[target_opp_no].rate > S520M)
-+			nvalue_reciprocal = sr_ntarget_add_margin(nvalue_reciprocal,SR_NVALUE_DSP_ADJUST);
++		/* give more juice when DSP is active and overclocked */
++		if(omap_pm_dsp_get_min_opp() > VDD1_OPP1 && dsp_opps[target_opp_no].rate > S430M)
++		{
++			/* DSP is active and overclocked, boost voltage based on overclocking percent
++			   and target OPP
++			 */
++			u32 dsp_volt_boost = ((dsp_opps[target_opp_no].rate-S430M)/1000000) *
++					      atomic_read(&sr_vdd1_dsp_boost_coeff) *
++					      (VDD1_OPP9-target_opp_no);
++			dsp_volt_boost = dsp_volt_boost > SR_NVALUE_DSP_MAX_ADJUST?SR_NVALUE_DSP_MAX_ADJUST:dsp_volt_boost;
++			nvalue_reciprocal = sr_ntarget_add_margin(
++								  nvalue_reciprocal,
++								  dsp_volt_boost
++								  );
++		}
  	} else {
  		switch (target_opp_no) {
  		case 3:
-@@ -556,7 +746,6 @@
+@@ -556,7 +765,6 @@
  								target_opp_no);
  		return SR_FALSE;
  	}
@@ -441,7 +474,7 @@ diff -urN kernel-power-2.6.28/arch/arm/mach-omap2/smartreflex.c kernel-power-2.6
  	sr_write_reg(sr, NVALUERECIPROCAL, nvalue_reciprocal);
  
  	/* Enable the interrupt */
-@@ -772,7 +961,7 @@
+@@ -772,7 +980,7 @@
  }
  EXPORT_SYMBOL(sr_start_vddautocomap);
  
@@ -450,7 +483,7 @@ diff -urN kernel-power-2.6.28/arch/arm/mach-omap2/smartreflex.c kernel-power-2.6
  {
  	struct omap_sr *sr = NULL;
  
-@@ -789,7 +978,7 @@
+@@ -789,7 +997,7 @@
  		sr_clk_disable(sr);
  		sr->is_autocomp_active = 0;
  		/* Reset the volatage for current OPP */
@@ -459,7 +492,7 @@ diff -urN kernel-power-2.6.28/arch/arm/mach-omap2/smartreflex.c kernel-power-2.6
  		return SR_TRUE;
  	} else
  		return SR_FALSE;
-@@ -823,7 +1012,7 @@
+@@ -823,7 +1031,7 @@
  	}
  }
  
@@ -468,7 +501,7 @@ diff -urN kernel-power-2.6.28/arch/arm/mach-omap2/smartreflex.c kernel-power-2.6
  {
  	struct omap_sr *sr = NULL;
  
-@@ -843,7 +1032,7 @@
+@@ -843,7 +1051,7 @@
  			/* Disable SR clk */
  			sr_clk_disable(sr);
  			/* Reset the volatage for current OPP */
@@ -477,7 +510,7 @@ diff -urN kernel-power-2.6.28/arch/arm/mach-omap2/smartreflex.c kernel-power-2.6
  		}
  	}
  }
-@@ -953,22 +1142,22 @@
+@@ -953,22 +1161,22 @@
  					const char *buf, size_t n)
  {
  	unsigned short value;
@@ -507,7 +540,7 @@ diff -urN kernel-power-2.6.28/arch/arm/mach-omap2/smartreflex.c kernel-power-2.6
  		sr_start_vddautocomap(SR1, current_vdd1opp_no);
  	}
  
-@@ -1008,9 +1197,13 @@
+@@ -1008,9 +1216,13 @@
  	mutex_lock(&dvfs_mutex);
  
  	current_vdd2opp_no = resource_get_level("vdd2_opp");
@@ -522,7 +555,7 @@ diff -urN kernel-power-2.6.28/arch/arm/mach-omap2/smartreflex.c kernel-power-2.6
  	else
  		sr_start_vddautocomap(SR2, current_vdd2opp_no);
  
-@@ -1028,23 +1221,87 @@
+@@ -1028,30 +1240,128 @@
  	.store = omap_sr_vdd2_autocomp_store,
  };
  
@@ -544,13 +577,16 @@ diff -urN kernel-power-2.6.28/arch/arm/mach-omap2/smartreflex.c kernel-power-2.6
 +							sr1.opp8_nvalue,
 +							sr1.opp9_nvalue
 +		       );
-+}
-+
+ }
+ 
+-static struct kobj_attribute sr_efuse = {
 +static struct kobj_attribute sr_efuse_vdd1 = {
-+	.attr = {
+ 	.attr = {
+-	.name = "Efuse",
 +	.name = "efuse_vdd1",
-+	.mode = 0444,
-+	},
+ 	.mode = 0444,
+ 	},
+-	.show = omap_sr_opp1_efuse_show,
 +	.show = omap_sr_efuse_vdd1_show,
 +};
 +
@@ -602,30 +638,68 @@ diff -urN kernel-power-2.6.28/arch/arm/mach-omap2/smartreflex.c kernel-power-2.6
 +					   OMAP3_PRM_VP2_VOLTAGE_OFFSET);
 +	mutex_unlock(&dvfs_mutex);
 +	return sprintf(buf,"%u\n",prm_vp2_voltage);
- }
- 
--static struct kobj_attribute sr_efuse = {
++}
++
 +static struct kobj_attribute sr_vdd2_voltage = {
- 	.attr = {
--	.name = "Efuse",
++	.attr = {
 +	.name = "sr_vdd2_voltage",
- 	.mode = 0444,
- 	},
--	.show = omap_sr_opp1_efuse_show,
++	.mode = 0444,
++	},
 +	.show = omap_sr_vdd2_voltage_show,
++};
++
++static ssize_t omap_sr_vdd1_dsp_boost_show(struct kobject *kobj,
++					struct kobj_attribute *attr,
++					char *buf)
++{
++	return sprintf(buf,"%u\n",atomic_read(&sr_vdd1_dsp_boost_coeff));
++}
++
++static ssize_t omap_sr_vdd1_dsp_boost_store(struct kobject *kobj,
++					struct kobj_attribute *attr,
++					const char *buf, size_t n)
++{
++	u32 value;
++	
++	if (sscanf(buf, "%u", &value) != 1 || (value > 250)) {
++		printk(KERN_ERR "sr_vdd1_dsp_boost: Invalid value\n");
++		return -EINVAL;
++	}
++	atomic_set(&sr_vdd1_dsp_boost_coeff,value);
++	
++	return n;
++}
++
++static struct kobj_attribute sr_vdd1_dsp_boost = {
++	.attr = {
++	.name = __stringify(sr_vdd1_dsp_boost),
++	.mode = 0644,
++	},
++	.show = omap_sr_vdd1_dsp_boost_show,
++	.store = omap_sr_vdd1_dsp_boost_store,
  };
  
  static int __init omap3_sr_init(void)
-@@ -1084,10 +1341,21 @@
+ {
+ 	int ret = 0;
+ 	u8 RdReg;
+-
++	
++	/* Set default dsp boost value */
++	atomic_set(&sr_vdd1_dsp_boost_coeff,125);
++	
+ 	/* Enable SR on T2 */
+ 	ret = twl4030_i2c_read_u8(TWL4030_MODULE_PM_RECEIVER, &RdReg,
+ 					R_DCDC_GLOBAL_CFG);
+@@ -1084,9 +1394,25 @@
  	if (ret)
  		printk(KERN_ERR "sysfs_create_file failed: %d\n", ret);
  
 -	ret = sysfs_create_file(power_kobj, &sr_efuse.attr);
 +	ret = sysfs_create_file(power_kobj, &sr_efuse_vdd1.attr);
- 	if (ret)
--		printk(KERN_ERR "sysfs_create_file failed for OPP data: %d\n", ret);
++	if (ret)
 +		printk(KERN_ERR "sysfs_create_file failed for VDD1 efuse data: %d\n", ret);
- 
++
 +	ret = sysfs_create_file(power_kobj, &sr_vdd1_voltage.attr);
 +	if (ret)
 +		printk(KERN_ERR "sysfs_create_file failed for VDD1 voltage data: %d\n", ret);
@@ -637,12 +711,17 @@ diff -urN kernel-power-2.6.28/arch/arm/mach-omap2/smartreflex.c kernel-power-2.6
 +	ret = sysfs_create_file(power_kobj, &sr_vdd2_voltage.attr);
 +	if (ret)
 +		printk(KERN_ERR "sysfs_create_file failed for VDD2 voltage data: %d\n", ret);
++
++	ret = sysfs_create_file(power_kobj, &sr_vdd1_dsp_boost.attr);
+ 	if (ret)
+-		printk(KERN_ERR "sysfs_create_file failed for OPP data: %d\n", ret);
++		printk(KERN_ERR "sysfs_create_file failed: %d\n", ret);
+ 
  	return 0;
  }
- 
-diff -urN kernel-power-2.6.28/arch/arm/mach-omap2/smartreflex.h kernel-power-2.6.28.SR/arch/arm/mach-omap2/smartreflex.h
---- kernel-power-2.6.28/arch/arm/mach-omap2/smartreflex.h	2011-10-11 13:51:21.441301622 +0100
-+++ kernel-power-2.6.28.SR/arch/arm/mach-omap2/smartreflex.h	2011-11-14 21:08:28.136636000 +0000
+diff -urN kernel-power-2.6.28/arch/arm/mach-omap2/smartreflex.h kernel-power-2.6.28.new/arch/arm/mach-omap2/smartreflex.h
+--- kernel-power-2.6.28/arch/arm/mach-omap2/smartreflex.h	2012-01-07 13:49:16.543132598 +0000
++++ kernel-power-2.6.28.new/arch/arm/mach-omap2/smartreflex.h	2011-12-31 12:54:23.820044299 +0000
 @@ -63,7 +63,7 @@
  
  /* PRM_VP1_VSTEPMAX */
@@ -691,9 +770,9 @@ diff -urN kernel-power-2.6.28/arch/arm/mach-omap2/smartreflex.h kernel-power-2.6
  #else
  static inline void enable_smartreflex(int srid) {}
  static inline void disable_smartreflex(int srid) {}
-diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/mach/omap34xx.h kernel-power-2.6.28.SR/arch/arm/plat-omap/include/mach/omap34xx.h
---- kernel-power-2.6.28/arch/arm/plat-omap/include/mach/omap34xx.h	2011-10-11 13:51:21.441301622 +0100
-+++ kernel-power-2.6.28.SR/arch/arm/plat-omap/include/mach/omap34xx.h	2011-10-22 15:52:18.063235000 +0100
+diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/mach/omap34xx.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/mach/omap34xx.h
+--- kernel-power-2.6.28/arch/arm/plat-omap/include/mach/omap34xx.h	2012-01-07 13:49:16.503856035 +0000
++++ kernel-power-2.6.28.new/arch/arm/plat-omap/include/mach/omap34xx.h	2011-12-31 12:54:23.820044299 +0000
 @@ -107,6 +107,14 @@
  #define VDD1_OPP3	0x3
  #define VDD1_OPP4	0x4
@@ -718,4 +797,102 @@ diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/mach/omap34xx.h kernel-
 +#define MAX_VDD1_OPP	VDD1_OPP13
  #define MIN_VDD2_OPP	VDD2_OPP1
  #define MAX_VDD2_OPP	VDD2_OPP3
+ 
+diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/mach/omap-pm.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/mach/omap-pm.h
+--- kernel-power-2.6.28/arch/arm/plat-omap/include/mach/omap-pm.h	2012-01-07 13:49:16.487184834 +0000
++++ kernel-power-2.6.28.new/arch/arm/plat-omap/include/mach/omap-pm.h	2012-01-06 07:35:45.000000000 +0000
+@@ -280,6 +280,17 @@
+ #else
+ void omap_pm_dsp_set_min_opp(u8 opp_id);
+ #endif
++
++/**
++ * omap_pm_dsp_get_min_opp - return desired minimum OPP ID from DSP Bridge
++ *
++ * Get a minimum OPP ID for the DSP.  
++ */
++#ifdef CONFIG_OMAP_PM_NONE
++static inline u8 omap_pm_dsp_get_min_opp(void) { }
++#else
++u8 omap_pm_dsp_get_min_opp(void);
++#endif
+ 
+ /**
+  * omap_pm_dsp_get_opp - report the current DSP OPP ID
+diff -urN kernel-power-2.6.28/arch/arm/plat-omap/omap-pm-srf.c kernel-power-2.6.28.new/arch/arm/plat-omap/omap-pm-srf.c
+--- kernel-power-2.6.28/arch/arm/plat-omap/omap-pm-srf.c	2012-01-07 13:49:16.470963471 +0000
++++ kernel-power-2.6.28.new/arch/arm/plat-omap/omap-pm-srf.c	2012-01-07 13:45:44.000000000 +0000
+@@ -36,6 +36,20 @@
+ #define LAT_RES_POSTAMBLE "_latency"
+ #define MAX_LATENCY_RES_NAME 30
+ 
++atomic_t dsp_min_opp;
++/*
++ * Smartreflex module enable/disable interface.
++ * NOTE: if smartreflex is not enabled from sysfs, these functions will not
++ * do anything.
++ */
++#ifdef CONFIG_OMAP_SMARTREFLEX
++void sr_start_vddautocomap(int srid, u32 target_opp_no);
++int sr_stop_vddautocomap(int srid,u32 cur_opp_no);
++/* SR Modules */
++#define SR1		1
++#define SR2		2
++#endif
++
+ /**
+  * get_lat_res_name - gets the latency resource name given a power domain name
+  * @pwrdm_name: Name of the power domain.
+@@ -205,13 +219,29 @@
+ 
+ void omap_pm_dsp_set_min_opp(u8 opp_id)
+ {
++	u8 curr_dsp_min_opp;
++	pr_debug("OMAP PM: DSP requests minimum VDD1 OPP to be %d\n", opp_id);
+ 	if (opp_id == 0) {
+ 		WARN_ON(1);
+ 		return;
+ 	}
+ 
+-	pr_debug("OMAP PM: DSP requests minimum VDD1 OPP to be %d\n", opp_id);
+-
++	curr_dsp_min_opp = omap_pm_dsp_get_min_opp();
++	atomic_set(&dsp_min_opp,opp_id);
++#ifdef CONFIG_OMAP_SMARTREFLEX
++	if(curr_dsp_min_opp == VDD1_OPP1 || opp_id == VDD1_OPP1)
++	{
++		/* DSP is about to be enabled/disabled, restart SR, 
++		 * so DSP voltage boost to be applied or removed.
++		 * This is needed in case current OPP has DSP overclocking frequency
++		 */
++		u8 curr_opp = omap_pm_dsp_get_opp();
++		
++		sr_stop_vddautocomap(SR1 , curr_opp);
++		sr_start_vddautocomap(SR1 , curr_opp);
++		
++	}
++#endif
+ 	/*
+ 	 * For now pass a dummy_dev struct for SRF to identify the caller.
+ 	 * Maybe its good to have DSP pass this as an argument
+@@ -221,6 +251,12 @@
+ }
+ EXPORT_SYMBOL(omap_pm_dsp_set_min_opp);
+ 
++u8 omap_pm_dsp_get_min_opp(void)
++{
++	return atomic_read(&dsp_min_opp);
++}
++EXPORT_SYMBOL(omap_pm_dsp_get_min_opp);
++
+ u8 omap_pm_dsp_get_opp(void)
+ {
+ 	pr_debug("OMAP PM: DSP requests current DSP OPP ID\n");
+@@ -341,6 +377,7 @@
+ 	mpu_opps = mpu_opp_table;
+ 	dsp_opps = dsp_opp_table;
+ 	l3_opps = l3_opp_table;
++	atomic_set(&dsp_min_opp,VDD1_OPP1);
+ 	return 0;
+ }
  
