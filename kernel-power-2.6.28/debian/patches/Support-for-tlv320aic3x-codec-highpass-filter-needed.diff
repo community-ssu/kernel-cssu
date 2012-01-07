@@ -1,0 +1,823 @@
+From 4c4fb7d671cd645caf7b7490535815d876dc4864 Mon Sep 17 00:00:00 2001
+From: mnzaki <mnzaki@gmail.com>
+Date: Fri, 17 Sep 2010 01:15:25 +0300
+Subject: [PATCH] Support for tlv320aic3x codec highpass filter needed to avoid destroying Nokia N900 speakers
+
+Patchset combined and cleaned up by Luke-Jr <luke-jr+git@utopios.org>
+
+- All page 1 registers added as a u16 array of coefficients with routines
+  to read/write the coefficients (aic3x_read_coeff_cache and
+  aic3x_write_coeff respectively)
+- Added syncing coeff_cache with hardware after a suspend/resume cycle
+- Added ALSA controls for the 3-D depth simulation filter
+- DAC Filter controls
+- hwdep device called "IIR Filter" added, documentation on how to use it
+  also added in: Documentation/sound/alsa/soc/codecs/tlv320aic3x.txt
+- Added de-emphasis filter functions and speaker protection.
+- Added functions to manipulate the filter's coeffs and enable/disable it,
+  and example code.
+- Also changed the machine layer (rx51.c) to set up the filter as a highpass
+  and turn it on when on speaker output for speaker protection.
+
+TODO: Change filter coeffs if sample rate is changed. Right now it's fit
+      for 48kHz (and possibly fine with 44.1kHz).
+
+Filter designed using scilab:
+
+fc = [0.015 0.010884354 0.01]
+hz = iir(1, 'hp', 'ellip', [fc(3) 0], [0.1 0.1])
+[hzm,fr]=frmag(hz,256);
+plot2d(fr',hzm')
+xtitle('Discrete IIR filter band pass  0.15<fr<0.25 ',' ',' ');
+q=poly(0,'q');     //to express the result in terms of the ...
+hzd=horner(hz,1/q) //delay operator q=z^-1
+---
+ Documentation/sound/alsa/soc/tlv320aic3x.txt |   76 +++++
+ sound/soc/codecs/Kconfig                     |    1 +
+ sound/soc/codecs/tlv320aic3x.c               |  381 ++++++++++++++++++++++++--
+ sound/soc/codecs/tlv320aic3x.h               |   81 ++++++-
+ sound/soc/omap/rx51.c                        |   14 +
+ 5 files changed, 527 insertions(+), 26 deletions(-)
+ create mode 100644 Documentation/sound/alsa/soc/tlv320aic3x.txt
+
+diff --git a/Documentation/sound/alsa/soc/tlv320aic3x.txt b/Documentation/sound/alsa/soc/tlv320aic3x.txt
+new file mode 100644
+index 0000000..c0cc4cf
+--- /dev/null
++++ b/Documentation/sound/alsa/soc/tlv320aic3x.txt
+@@ -0,0 +1,76 @@
++The TLV320AIC3X is a powerful four channel low power audio codec family.
++More information is available at:
++    http://focus.ti.com/docs/prod/folders/print/tlv320aic34.html
++Datasheet:
++    http://www.ti.com/lit/gpn/tlv320aic34
++
++The codec driver leverages the codecs effects through alsa controls and a
++hwdep device for controlling the hardware fourth-order IIR filter block.
++
++There's an alsa control, "3D Control - Depth" for depth simulation.
++The rest of the controls are for the IIR filter:
++
++1- A control for setting the bass/treble gain, which sets the filter's
++   coefficients to certain precalculated values.
++2- A control for 'off' / 'Bass/Treble' / 'Custom'. 'Bass/Treble' means
++   the bass/treble gain controls are used, while 'custom' means the
++   coefficients have been set through the hwdep device (see below).
++Note: bass/treble controls are not yet implemented
++
++Filters
++--------
++Note: Setting a filter's coeffs automatically turns it off, it needs to
++be turned on explicitly.
++
++The De-emphasis filter can only be controlled on the machine driver level.
++For example for the n900 (rx51.c) it is used as highpass filter for
++speaker protection. See tlv320aic3x.h, aic3x_deemph_set_* for details.
++
++The IIR Filter consists of 2 cascaded biquads. The formula is:
++ /                                \  /                                \
++|    (N0 + 2*N1*z^-1 + N2*z^-2)    ||    (N3 + 2*N4*z^-1 + N5*z^-2)    |
++|  ------------------------------  ||  ------------------------------  |
++|  (32768 - 2*D1*z^-1 - D2*z^-2)   ||   (32768 - 2*D4*z^-1 - D5*z^-2)  |
++ \                                /  \                                /
++
++The filter can be controlled through an alsa hwdep device, via
++libasound. A short example follows, note that the data struct must be
++passed *EXACTLY* as shown. Remember to link against libasound:
++gcc myapp.c -lasound -o myapp
++
++-------------------------------EXAMPLE----------------------------------
++#include <stdint.h>
++#include <fcntl.h>
++#include <alsa/asoundlib.h>
++#include <alsa/hwdep.h>
++#include <stdio.h>
++
++struct iir_coeffs {
++	int16_t N0, N1, N2, D1, D2;
++	int16_t N3, N4, N5, D4, D5;
++};
++
++int main(){
++	struct iir_coeffs coeffs = {
++		.N0 = 32767, .N1 = 4265, .N2 = -10472, .D1 = -6269, .D2 = 0,
++		.N3 = 32027, .N4 = -31187, .N5 = 30352, .D4 = 31187, .D5 = -29613
++	};
++
++	snd_hwdep_t *hwdep;
++	int ret; int arg;
++
++	ret = snd_hwdep_open(&hwdep, "hw:0,0", SND_HWDEP_OPEN_DUPLEX);
++	printf("open: %i\n", ret);
++	if(ret) return 1;
++
++	ret = snd_hwdep_write(hwdep, (void*)&coeffs, sizeof(coeffs));
++	printf("write: %i\n", ret);
++
++	/* Set state to 2, which is 'Custom'. This writes coeffs to hardware
++	* and enables filter */
++	arg = 2;
++	ret = snd_hwdep_ioctl(hwdep, 1, &arg);
++	printf("ioctl: %i\n", ret);
++	return 0;
++}
++------------------------------------------------------------------------
+diff --git a/sound/soc/codecs/Kconfig b/sound/soc/codecs/Kconfig
+index 5df7402..022e37a 100644
+--- a/sound/soc/codecs/Kconfig
++++ b/sound/soc/codecs/Kconfig
+@@ -74,6 +74,7 @@ config SND_SOC_TLV320AIC26
+ 
+ config SND_SOC_TLV320AIC3X
+ 	tristate
++	select SND_HWDEP
+ 	depends on I2C
+ 
+ config SND_SOC_TWL4030
+diff --git a/sound/soc/codecs/tlv320aic3x.c b/sound/soc/codecs/tlv320aic3x.c
+index 4f70822e..4d15440 100644
+--- a/sound/soc/codecs/tlv320aic3x.c
++++ b/sound/soc/codecs/tlv320aic3x.c
+@@ -46,6 +46,7 @@
+ #include <sound/soc-dapm.h>
+ #include <sound/initval.h>
+ #include <sound/tlv.h>
++#include <sound/hwdep.h>
+ 
+ #include "tlv320aic3x.h"
+ 
+@@ -54,11 +55,24 @@
+ static int hp_dac_lim = 9;
+ module_param(hp_dac_lim, int, 0);
+ 
++struct aic3x_dacfilter_t {
++	struct aic3x_iir_coeffs coeffs;
++	int state;
++} aic3x_dacfilter = {
++	.coeffs = {
++		.N0 = 27619, .N1 = -27034, .N2 = 26461, .D1 = 32131, .D2 = -31506,
++		.N3 = 27619, .N4 = -27034, .N5 = 26461, .D4 = 32131, .D5 = -31506,
++	},
++	.state = 0,
++};
++
+ /* codec private data */
+ struct aic3x_priv {
+ 	unsigned int sysclk;
+ 	int master;
+ 	int prepare_reset;
++	struct snd_hwdep *hwdep;
++	struct aic3x_dacfilter_t dacfilter;
+ };
+ 
+ /*
+@@ -93,7 +107,33 @@ static const u8 aic3x_reg[AIC3X_CACHEREGNUM] = {
+ 	0x00, 0x00, 0x00, 0x00,	/* 88 */
+ 	0x00, 0x00, 0x00, 0x00,	/* 92 */
+ 	0x00, 0x00, 0x00, 0x00,	/* 96 */
+-	0x00, 0x00, 0x02,	/* 100 */
++	0x00, 0x00, 0x02, 0x00, /* 100 */
++	0x00, 0x00, 0x00, 0x00, /* 104 */
++	0x00, 0x00, 0x00, 0x00, /* 108 */
++	0x00, 0x00, 0x00, 0x00, /* 112 */
++	0x00, 0x00, 0x00, 0x00, /* 116 */
++	0x00, 0x00, 0x00, 0x00, /* 120 */
++	0x00, 0x00, 0x00, 0x00, /* 124 */
++	0x01, 0x6b, 0xe3, 0x96, /* 128 */
++	0x66, 0x67, 0x5d, 0x6b, /* 132 */
++	0xe3, 0x96, 0x66, 0x67, /* 136 */
++	0x5d, 0x7d, 0x83, 0x84, /* 140 */
++	0xee, 0x7d, 0x83, 0x84, /* 144 */
++	0xee, 0x39, 0x55, 0xf3, /* 148 */
++	0x2d, 0x53, 0x7e, 0x6b, /* 152 */
++	0xe3, 0x96, 0x66, 0x67, /* 156 */
++	0x5d, 0x6b, 0xe3, 0x96, /* 160 */
++	0x66, 0x67, 0x5d, 0x7d, /* 164 */
++	0x83, 0x84, 0xee, 0x7d, /* 168 */
++	0x83, 0x84, 0xee, 0x39, /* 172 */
++	0x55, 0xf3, 0x2d, 0x53, /* 176 */
++	0x7e, 0x7f, 0xff, 0x00, /* 180 */
++	0x00, 0x00, 0x00, 0x00, /* 184 */
++	0x00, 0x00, 0x00, 0x00, /* 188 */
++	0x00, 0x39, 0x55, 0xf3, /* 192 */
++	0x2d, 0x53, 0x7e, 0x39, /* 196 */
++	0x55, 0xf3, 0x2d, 0x53, /* 200 */
++	0x7e,                   /* 204 */
+ };
+ 
+ /*
+@@ -108,6 +148,17 @@ static inline unsigned int aic3x_read_reg_cache(struct snd_soc_codec *codec,
+ 	return cache[reg];
+ }
+ 
++static inline int aic3x_read_coeff_reg_cache(struct snd_soc_codec *codec,
++					     unsigned int msbreg)
++{
++	int val;
++	val = aic3x_read_reg_cache(codec, msbreg) << 8;
++	val |= aic3x_read_reg_cache(codec, msbreg+1);
++	if (val > 32767)
++		val -= 65536;
++	return val;
++}
++
+ /*
+  * write aic3x register cache
+  */
+@@ -126,22 +177,61 @@ static inline void aic3x_write_reg_cache(struct snd_soc_codec *codec,
+ static int aic3x_write(struct snd_soc_codec *codec, unsigned int reg,
+ 		       unsigned int value)
+ {
+-	u8 data[2];
++	static char curpage = -1;
++	u8 data[2], page = 0;
++
++	if (reg > 127){
++		reg -= 128;
++		page = 1;
++	}
++	if (reg && curpage != page) {
++		data[0] = 0;
++		data[1] = page;
++		if (codec->hw_write(codec->control_data, data, 2) != 2)
++			return -EIO;
++		else
++			curpage = page;
++	}
++
+ 
+ 	/* data is
+ 	 *   D15..D8 aic3x register offset
+ 	 *   D7...D0 register data
+ 	 */
+-	data[0] = reg & 0xff;
+-	data[1] = value & 0xff;
++	data[0] = reg;
++	data[1] = value;
+ 
+-	aic3x_write_reg_cache(codec, data[0], data[1]);
+ 	if (codec->hw_write(codec->control_data, data, 2) == 2)
++	{
++		aic3x_write_reg_cache(codec, data[0] + page * 128, data[1]);
++		if(!reg)
++			curpage = value; /* for reg = 0, ie, page setting */
+ 		return 0;
++	}
+ 	else
+ 		return -EIO;
++
++	return -EIO;
++}
++
++/* Convert a value to 2s compliment and write to registers */
++static int aic3x_write_coeff(struct snd_soc_codec *codec,
++			     u8 msbreg, int value)
++{
++	u16 outp;
++
++	if (value < 0)
++		outp = 65536 + value;
++	else
++		outp = value;
++
++	aic3x_write(codec, msbreg, outp >> 8);
++	aic3x_write(codec, msbreg + 1, outp);
++
++	return 0;
+ }
+ 
++
+ /*
+  * read from the aic3x register space
+  */
+@@ -160,23 +250,37 @@ static int aic3x_read(struct snd_soc_codec *codec, unsigned int reg,
+ 	return 0;
+ }
+ 
+-/*
+- * Reset for getting low power consumption after bypass paths
+- */
+-static void aic3x_reset(struct snd_soc_codec *codec)
++static int aic3x_sync_hw(struct snd_soc_codec *codec)
+ {
+ 	u8 *cache = codec->reg_cache;
+ 	u8 data[2];
+ 	int i;
+ 
+-	aic3x_write(codec, AIC3X_RESET, SOFT_RESET);
++	aic3x_write(codec, AIC3X_PAGE_SELECT, 1);
++	for (i = 1; i < AIC3X_PAGE1REGNUM; ++i) {
++		data[0] = i;
++		data[1] = cache[i + 128];
++		codec->hw_write(codec->control_data, data, 2);
++	}
+ 
+ 	/* We do not rewrite page select nor reset again */
+-	for (i = AIC3X_SAMPLE_RATE_SEL_REG; i < ARRAY_SIZE(aic3x_reg); i++) {
++	aic3x_write(codec, AIC3X_PAGE_SELECT, 0);
++	for (i = 2; i < AIC3X_PAGE0REGNUM; ++i) {
+ 		data[0] = i;
+ 		data[1] = cache[i];
+ 		codec->hw_write(codec->control_data, data, 2);
+ 	}
++
++	return 0;
++}
++
++/*
++ * Reset for getting low power consumption after bypass paths
++ */
++static void aic3x_reset(struct snd_soc_codec *codec)
++{
++	aic3x_write(codec, AIC3X_RESET, SOFT_RESET);
++	aic3x_sync_hw(codec);
+ }
+ 
+ #define SOC_DAPM_SINGLE_AIC3X(xname, reg, shift, mask, invert) \
+@@ -255,6 +359,8 @@ static const char *aic3x_right_hpcom_mux[] =
+ static const char *aic3x_linein_mode_mux[] = { "single-ended", "differential" };
+ static const char *aic3x_adc_hpf[] =
+     { "Disabled", "0.0045xFs", "0.0125xFs", "0.025xFs" };
++static const char *aic3x_dac_filt[] =
++    { "Off", "Bass/Treble", "Custom" };
+ 
+ #define LDAC_ENUM	0
+ #define RDAC_ENUM	1
+@@ -265,6 +371,7 @@ static const char *aic3x_adc_hpf[] =
+ #define LINE2L_ENUM	6
+ #define LINE2R_ENUM	7
+ #define ADC_HPF_ENUM	8
++#define DAC_FILT_ENUM	9
+ 
+ static const struct soc_enum aic3x_enum[] = {
+ 	SOC_ENUM_SINGLE(DAC_LINE_MUX, 6, 3, aic3x_left_dac_mux),
+@@ -276,6 +383,7 @@ static const struct soc_enum aic3x_enum[] = {
+ 	SOC_ENUM_SINGLE(LINE2L_2_LADC_CTRL, 7, 2, aic3x_linein_mode_mux),
+ 	SOC_ENUM_SINGLE(LINE2R_2_RADC_CTRL, 7, 2, aic3x_linein_mode_mux),
+ 	SOC_ENUM_DOUBLE(AIC3X_CODEC_DFILT_CTRL, 6, 4, 4, aic3x_adc_hpf),
++	SOC_ENUM_DOUBLE(AIC3X_CODEC_DFILT_CTRL, 1, 3, 3, aic3x_dac_filt),
+ };
+ 
+ /*
+@@ -331,6 +439,211 @@ static int tlv320alc3x_info_volsw(struct snd_kcontrol *kcontrol,
+ 	return 0;
+ }
+ 
++/* DAC and De-emphasis Filter Functions */
++int aic3x_deemph_set_coeffs(struct snd_soc_codec *codec, int N0, int N1,
++			    int D1)
++{
++	printk("MNZ: setting deemph coeffs\n");
++	snd_soc_update_bits(codec, AIC3X_CODEC_DFILT_CTRL, DEEMPH_ON, 0);
++
++	aic3x_write_coeff(codec, DEEMPH_LEFT_N0, N0);
++	aic3x_write_coeff(codec, DEEMPH_LEFT_N1, N1);
++	aic3x_write_coeff(codec, DEEMPH_LEFT_D1, D1);
++	aic3x_write_coeff(codec, DEEMPH_RIGHT_N0, N0);
++	aic3x_write_coeff(codec, DEEMPH_RIGHT_N1, N1);
++	aic3x_write_coeff(codec, DEEMPH_RIGHT_D1, D1);
++
++	return 0;
++}
++EXPORT_SYMBOL_GPL(aic3x_deemph_set_coeffs);
++
++int aic3x_deemph_set_state(struct snd_soc_codec *codec, int state)
++{
++	printk("MNZ: Setting De-Emph filter: %i\n", state);
++	if(state)
++		state = DEEMPH_ON;
++	else
++		state = 0;
++	return snd_soc_update_bits(codec, AIC3X_CODEC_DFILT_CTRL, DEEMPH_ON,
++				   state);
++}
++EXPORT_SYMBOL_GPL(aic3x_deemph_set_state);
++
++static int aic3x_dacfilter_write_coeffs(struct snd_soc_codec *codec,
++					struct aic3x_iir_coeffs *coeffs)
++{
++	printk("MNZ: dacfilter_write_coeffs\n");
++	aic3x_write_coeff(codec, EFFECTS_LEFT_N0, coeffs->N0);
++	aic3x_write_coeff(codec, EFFECTS_LEFT_N1, coeffs->N1);
++	aic3x_write_coeff(codec, EFFECTS_LEFT_N2, coeffs->N2);
++	aic3x_write_coeff(codec, EFFECTS_LEFT_D1, coeffs->D1);
++	aic3x_write_coeff(codec, EFFECTS_LEFT_D2, coeffs->D2);
++	aic3x_write_coeff(codec, EFFECTS_LEFT_N3, coeffs->N3);
++	aic3x_write_coeff(codec, EFFECTS_LEFT_N4, coeffs->N4);
++	aic3x_write_coeff(codec, EFFECTS_LEFT_N5, coeffs->N5);
++	aic3x_write_coeff(codec, EFFECTS_LEFT_D4, coeffs->D4);
++	aic3x_write_coeff(codec, EFFECTS_LEFT_D5, coeffs->D5);
++
++	aic3x_write_coeff(codec, EFFECTS_RIGHT_N0, coeffs->N0);
++	aic3x_write_coeff(codec, EFFECTS_RIGHT_N1, coeffs->N1);
++	aic3x_write_coeff(codec, EFFECTS_RIGHT_N2, coeffs->N2);
++	aic3x_write_coeff(codec, EFFECTS_RIGHT_D1, coeffs->D1);
++	aic3x_write_coeff(codec, EFFECTS_RIGHT_D2, coeffs->D2);
++	aic3x_write_coeff(codec, EFFECTS_RIGHT_N3, coeffs->N3);
++	aic3x_write_coeff(codec, EFFECTS_RIGHT_N4, coeffs->N4);
++	aic3x_write_coeff(codec, EFFECTS_RIGHT_N5, coeffs->N5);
++	aic3x_write_coeff(codec, EFFECTS_RIGHT_D4, coeffs->D4);
++	aic3x_write_coeff(codec, EFFECTS_RIGHT_D5, coeffs->D5);
++
++	return 1;
++}
++
++int aic3x_dacfilter_set_coeffs(struct snd_soc_codec *codec,
++			       struct aic3x_iir_coeffs *coeffs)
++{
++	struct aic3x_priv *aic3x = codec->private_data;
++	memcpy((void*)&aic3x->dacfilter.coeffs, (void*)coeffs,
++		   sizeof(struct aic3x_iir_coeffs));
++	if(aic3x->dacfilter.state == 2)
++		aic3x_dacfilter_set_state(codec, 0);
++	return 0;
++}
++EXPORT_SYMBOL_GPL(aic3x_dacfilter_set_coeffs);
++
++int aic3x_dacfilter_set_state(struct snd_soc_codec *codec, int state)
++{
++	printk("MNZ: dacfilter_set_state to %i\n", state);
++	struct aic3x_priv *aic3x = codec->private_data;
++	int ret = 0;
++	if (aic3x->dacfilter.state == state)
++		return 0;
++
++	snd_soc_update_bits(codec, AIC3X_CODEC_DFILT_CTRL, EFFECTS_ON, 0);
++
++	if(state == 0)
++		ret = 1;
++	else if(state == 1)
++		ret = 1;
++		/* FIXME MNZ. Set preset from current chosen preset */
++	else if (state == 2) {
++		ret = aic3x_dacfilter_write_coeffs(codec,
++						   &aic3x->dacfilter.coeffs);
++		if (ret)
++			snd_soc_update_bits(codec, AIC3X_CODEC_DFILT_CTRL,
++					    EFFECTS_ON, EFFECTS_ON);
++	}
++	else
++		ret = 0;
++
++	if (ret)
++		aic3x->dacfilter.state = state;
++	return ret;
++}
++
++EXPORT_SYMBOL_GPL(aic3x_dacfilter_set_state);
++
++/* DAC Filter hwdep device callbacks */
++
++static int snd_hwdep_dacfilter_open_aic3x(struct snd_hwdep *hw,
++					  struct file *file)
++{
++	return 0;
++}
++
++static int snd_hwdep_dacfilter_ioctl_aic3x(struct snd_hwdep *hw,
++					   struct file *file,
++					   unsigned int cmd,
++					   unsigned long arg)
++{
++	/* Only IOCTL command is for enabling/disabling filter, cmd = 1
++	 * arg = 0 to disable, 1 to enable and set to bass/treble,
++	 *       2 to enable and set to custom coeffs
++	 */
++	struct snd_soc_codec *codec = hw->private_data;
++	if (cmd != 1)
++		return -EINVAL;
++	printk("MNZ: IOCTL: cmd = %i, arg = %i\n", cmd, *((int*)arg));
++	return aic3x_dacfilter_set_state(codec, *((int*)arg));
++}
++
++static long snd_hwdep_dacfilter_read_aic3x(struct snd_hwdep *hw,
++					   char __user *buf, long count,
++					   loff_t *offset)
++{
++	struct aic3x_priv *aic3x =
++		((struct snd_soc_codec*)hw->private_data)->private_data;
++	if (count != sizeof(struct aic3x_iir_coeffs))
++		return -EINVAL;
++	memcpy((void*)buf, (void*)&aic3x->dacfilter.coeffs, count);
++	return 0;
++}
++
++static long snd_hwdep_dacfilter_write_aic3x(struct snd_hwdep *hw,
++					    const char __user *buf,
++					    long count, loff_t *offset)
++{
++	struct snd_soc_codec *codec = hw->private_data;
++	if (count != sizeof(struct aic3x_iir_coeffs))
++		return -EINVAL;
++
++	((struct aic3x_priv*)codec->private_data)->dacfilter.state = 2;
++
++	return aic3x_dacfilter_set_coeffs(codec, (struct aic3x_iir_coeffs*)buf);
++}
++
++/* DAC filter and 3D depth ALSA controls callbacks */
++
++static int snd_soc_get_dacfilter_aic3x(struct snd_kcontrol *kcontrol,
++				       struct snd_ctl_elem_value *ucontrol)
++{
++	struct snd_soc_codec *codec = snd_kcontrol_chip(kcontrol);
++	ucontrol->value.enumerated.item[0] =
++		((struct aic3x_priv*)codec->private_data)->dacfilter.state;
++	return 0;
++}
++
++static int snd_soc_put_dacfilter_aic3x(struct snd_kcontrol *kcontrol,
++				       struct snd_ctl_elem_value *ucontrol)
++{
++	struct snd_soc_codec *codec = snd_kcontrol_chip(kcontrol);
++	if (ucontrol->value.enumerated.item[0] > 2)
++		return -EINVAL;
++	aic3x_dacfilter_set_state(codec, ucontrol->value.enumerated.item[0]);
++	return 1;
++}
++
++static int snd_soc_get_3d_attenuation_aic3x(struct snd_kcontrol *kcontrol,
++					struct snd_ctl_elem_value *ucontrol)
++{
++	int val = aic3x_read_coeff_reg_cache(snd_kcontrol_chip(kcontrol),
++					     EFFECTS_3DATTEN);
++	val = ((val * 100) / 65530) + 50;
++	ucontrol->value.integer.value[0] = val;
++	return 0;
++}
++
++static int snd_soc_put_3d_attenuation_aic3x(struct snd_kcontrol *kcontrol,
++					struct snd_ctl_elem_value *ucontrol)
++{
++	struct snd_soc_codec *codec = snd_kcontrol_chip(kcontrol);
++	int val = ucontrol->value.integer.value[0];
++	if (val > 100 || val < 0)
++		return -EINVAL;
++
++	if (val) {
++		snd_soc_update_bits(codec, AIC3X_ASD_INTF_CTRLA, EFFECTS_3D_ON,
++				    EFFECTS_3D_ON);
++		val = ((val - 50) * 65535) / 100;
++	} else {
++		snd_soc_update_bits(codec, AIC3X_ASD_INTF_CTRLA, EFFECTS_3D_ON, 0);
++		val = -32768;
++	}
++
++	aic3x_write_coeff(codec, EFFECTS_3DATTEN, val);
++
++	return 1;
++}
++
+ static const struct snd_kcontrol_new aic3x_snd_controls[] = {
+ 	/* Output */
+ 	SOC_DOUBLE_R_TLV("PCM Playback Volume",
+@@ -399,6 +712,13 @@ static const struct snd_kcontrol_new aic3x_snd_controls[] = {
+ 	SOC_DOUBLE_R("PGA Capture Switch", LADC_VOL, RADC_VOL, 7, 0x01, 1),
+ 
+ 	SOC_ENUM("ADC HPF Cut-off", aic3x_enum[ADC_HPF_ENUM]),
++
++	SOC_ENUM_EXT("Hardware EQ", aic3x_enum[DAC_FILT_ENUM],
++		     snd_soc_get_dacfilter_aic3x, snd_soc_put_dacfilter_aic3x),
++
++	SOC_SINGLE_EXT("3D Control - Depth", EFFECTS_3DATTEN, 0, 100, 0,
++		       snd_soc_get_3d_attenuation_aic3x,
++		       snd_soc_put_3d_attenuation_aic3x),
+ };
+ 
+ /* add non dapm controls */
+@@ -1212,23 +1532,13 @@ static int aic3x_suspend(struct platform_device *pdev, pm_message_t state)
+ static int aic3x_resume(struct platform_device *pdev)
+ {
+ 	struct snd_soc_device *socdev = platform_get_drvdata(pdev);
+-	struct snd_soc_codec *codec = socdev->codec;
+-	int i;
+-	u8 data[2];
+-	u8 *cache = codec->reg_cache;
+-
+-	/* Sync reg_cache with the hardware */
+-	for (i = 0; i < ARRAY_SIZE(aic3x_reg); i++) {
+-		data[0] = i;
+-		data[1] = cache[i];
+-		codec->hw_write(codec->control_data, data, 2);
+-	}
+-
+-	aic3x_set_bias_level(codec, codec->suspend_bias_level);
+-
++	aic3x_sync_hw(socdev->codec);
++	aic3x_set_bias_level(socdev->codec,
++			socdev->codec->suspend_bias_level);
+ 	return 0;
+ }
+ 
++
+ /*
+  * initialise the AIC3X driver
+  * register the mixer and dsp interfaces with the kernel
+@@ -1237,8 +1547,11 @@ static int aic3x_init(struct snd_soc_device *socdev)
+ {
+ 	struct snd_soc_codec *codec = socdev->codec;
+ 	struct aic3x_setup_data *setup = socdev->codec_data;
++	struct snd_hwdep *hwdep;
++	char hwdepid[] = "IIR Filter";
+ 	int reg, ret = 0;
+ 
++	printk("MNZ: BEGIN aic3x_init\n");
+ 	codec->name = "tlv320aic3x";
+ 	codec->owner = THIS_MODULE;
+ 	codec->read = aic3x_read_reg_cache;
+@@ -1333,12 +1646,28 @@ static int aic3x_init(struct snd_soc_device *socdev)
+ 
+ 	aic3x_add_controls(codec);
+ 	aic3x_add_widgets(codec);
++
++	if(snd_hwdep_new(codec->card, hwdepid, 0, &hwdep) == 0){
++		hwdep->private_data = codec;
++		sprintf(hwdep->name, hwdepid);
++		hwdep->ops.open = snd_hwdep_dacfilter_open_aic3x;
++		hwdep->ops.ioctl = snd_hwdep_dacfilter_ioctl_aic3x;
++		hwdep->ops.read = snd_hwdep_dacfilter_read_aic3x;
++		hwdep->ops.write = snd_hwdep_dacfilter_write_aic3x;
++		((struct aic3x_priv*)codec->private_data)->hwdep = hwdep;
++	}
++
+ 	ret = snd_soc_register_card(socdev);
++
+ 	if (ret < 0) {
+ 		printk(KERN_ERR "aic3x: failed to register card\n");
+ 		goto card_err;
+ 	}
+ 
++	/* Set some defaults for coefficients */
++	aic3x_write_coeff(codec, EFFECTS_3DATTEN, -32768);
++	printk("MNZ: END aic3x_init\n");
++
+ 	return ret;
+ 
+ card_err:
+@@ -1464,6 +1793,8 @@ static int aic3x_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
+ 
+ 	aic3x = kzalloc(sizeof(struct aic3x_priv), GFP_KERNEL);
++	memcpy(&aic3x->dacfilter, &aic3x_dacfilter, sizeof(aic3x_dacfilter));
++
+ 	if (aic3x == NULL) {
+ 		kfree(codec);
+ 		return -ENOMEM;
+diff --git a/sound/soc/codecs/tlv320aic3x.h b/sound/soc/codecs/tlv320aic3x.h
+index 15a98aa..9927887 100644
+--- a/sound/soc/codecs/tlv320aic3x.h
++++ b/sound/soc/codecs/tlv320aic3x.h
+@@ -13,7 +13,12 @@
+ #define _AIC3X_H
+ 
+ /* AIC3X register space */
+-#define AIC3X_CACHEREGNUM		103
++#define AIC3X_CACHEREGNUM		205
++#define AIC3X_PAGE0REGNUM		103
++#define AIC3X_PAGE1REGNUM		77
++
++#define AIC3X_COEFF_CACHE_SIZE	52
++#define COEFF_OFFSET(msbreg)	((msbreg + 1) / 2)
+ 
+ /* Page select register */
+ #define AIC3X_PAGE_SELECT		0
+@@ -123,6 +128,62 @@
+ /* Clock generation control register */
+ #define AIC3X_CLKGEN_CTRL_REG		102
+ 
++/* Page 1 registers for setting coefficients for filters */
++/* DAC Audio Effects for Left Channel */
++#define EFFECTS_LEFT_N0 129
++#define EFFECTS_LEFT_N1 131
++#define EFFECTS_LEFT_N2 133
++#define EFFECTS_LEFT_N3 135
++#define EFFECTS_LEFT_N4 137
++#define EFFECTS_LEFT_N5 139
++
++#define EFFECTS_LEFT_D1 141
++#define EFFECTS_LEFT_D2 143
++#define EFFECTS_LEFT_D4 145
++#define EFFECTS_LEFT_D5 147
++
++/* DAC De-Emphasis for Left Channel */
++
++#define DEEMPH_LEFT_N0 149
++#define DEEMPH_LEFT_N1 151
++#define DEEMPH_LEFT_D1 153
++
++/* DAC Audio Effects for Right Channel */
++
++#define EFFECTS_RIGHT_N0 155
++#define EFFECTS_RIGHT_N1 157
++#define EFFECTS_RIGHT_N2 159
++#define EFFECTS_RIGHT_N3 161
++#define EFFECTS_RIGHT_N4 163
++#define EFFECTS_RIGHT_N5 165
++
++#define EFFECTS_RIGHT_D1 167
++#define EFFECTS_RIGHT_D2 169
++#define EFFECTS_RIGHT_D4 171
++#define EFFECTS_RIGHT_D5 173
++
++/* DAC De-Emphasis for Right Channel */
++
++#define DEEMPH_RIGHT_N0 175
++#define DEEMPH_RIGHT_N1 177
++#define DEEMPH_RIGHT_D1 179
++
++/* DAC 3D Attenuation */
++
++#define EFFECTS_3DATTEN 181
++
++/* ADC High-Pass Filter for Left Channel */
++
++#define HIGHPASS_LEFT_NO 193
++#define HIGHPASS_LEFT_N1 195
++#define HIGHPASS_LEFT_D1 197
++
++/* ADC High-Pass Filter for Right Channel */
++
++#define HIGHPASS_RIGHT_NO 199
++#define HIGHPASS_RIGHT_N1 201
++#define HIGHPASS_RIGHT_D1 203
++
+ /* Page select register bits */
+ #define PAGE0_SELECT		0
+ #define PAGE1_SELECT		1
+@@ -186,6 +247,11 @@
+ /* Default input volume */
+ #define DEFAULT_GAIN    0x20
+ 
++/* Filter bits */
++#define EFFECTS_3D_ON		0x04
++#define EFFECTS_ON		0x0a
++#define DEEMPH_ON		0x05
++
+ /* GPIO API */
+ enum {
+ 	AIC3X_GPIO1_FUNC_DISABLED		= 0,
+@@ -222,6 +288,19 @@ enum {
+ 	AIC3X_GPIO2_FUNC_BUTTON_PRESS_IRQ	= 15
+ };
+ 
++/* Data for reading/writing to the IIR Filter hwdep */
++struct aic3x_iir_coeffs {
++	short N0, N1, N2, D1, D2;
++	short N3, N4, N5, D4, D5;
++};
++
++int aic3x_deemph_set_coeffs(struct snd_soc_codec *codec, int N0, int N1,
++			    int D1);
++int aic3x_deemph_set_state(struct snd_soc_codec *codec, int state);
++int aic3x_dacfilter_set_coeffs(struct snd_soc_codec *codec,
++			       struct aic3x_iir_coeffs *coeffs);
++int aic3x_dacfilter_set_state(struct snd_soc_codec *codec, int state);
++
+ void aic3x_set_gpio(struct snd_soc_codec *codec, int gpio, int state);
+ int aic3x_get_gpio(struct snd_soc_codec *codec, int gpio);
+ int aic3x_headset_detected(struct snd_soc_codec *codec);
+diff --git a/sound/soc/omap/rx51.c b/sound/soc/omap/rx51.c
+index 19cb292..eefda0d 100644
+--- a/sound/soc/omap/rx51.c
++++ b/sound/soc/omap/rx51.c
+@@ -327,9 +327,17 @@ static int rx51_spk_event(struct snd_soc_dapm_widget *w,
+ 			  struct snd_kcontrol *k, int event)
+ {
+ 	if (SND_SOC_DAPM_EVENT_ON(event))
++	{
++		aic3x_deemph_set_state(w->codec, 1);
+ 		gpio_set_value(RX51_SPEAKER_AMP_TWL_GPIO, 1);
++		printk("MNZ: Speaker Amp on!\n");
++	}
+ 	else
++	{
++		aic3x_deemph_set_state(w->codec, 0);
+ 		gpio_set_value(RX51_SPEAKER_AMP_TWL_GPIO, 0);
++		printk("MNZ: Speaker Amp off!\n");
++	}
+ 
+ 	return 0;
+ }
+@@ -792,6 +800,7 @@ static int rx51_aic34_init(struct snd_soc_codec *codec)
+ {
+ 	int i, err;
+ 
++	printk("MNZ: BEGIN rx51_aic3x_init\n");
+ 	/* set up NC codec pins */
+ 	snd_soc_dapm_nc_pin(codec, "MIC3L");
+ 	snd_soc_dapm_nc_pin(codec, "MIC3R");
+@@ -822,6 +831,11 @@ static int rx51_aic34_init(struct snd_soc_codec *codec)
+ 
+ 	snd_soc_dapm_sync(codec);
+ 
++	/* Default De-emphasis filter coefficients to use as a highpass for
++	 * cheap speaker protection */
++	aic3x_deemph_set_coeffs(codec, 32276, -32276, 31785);
++
++	printk("MNZ: END rx51_aic3x_init\n");
+ 	return 0;
+ }
+ 
+-- 
+1.7.3.4
+
