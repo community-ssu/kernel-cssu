@@ -1,0 +1,84 @@
+commit 59615b5f9d1323898ca94e88e595b5b04115076a
+Author: Andrey Yurovsky <andrey@cozybit.com>
+Date:   Thu Jun 25 16:07:42 2009 -0700
+
+    mac80211: fix allocation in mesh_queue_preq
+    
+    We allocate a PREQ queue node in mesh_queue_preq, however the allocation
+    may cause us to sleep.  Use GFP_ATOMIC to prevent this.
+    
+    [ 1869.126498] BUG: scheduling while atomic: ping/1859/0x10000100
+    [ 1869.127164] Modules linked in: ath5k mac80211 ath
+    [ 1869.128310] Pid: 1859, comm: ping Not tainted 2.6.30-wl #1
+    [ 1869.128754] Call Trace:
+    [ 1869.129293]  [<c1023a2b>] __schedule_bug+0x48/0x4d
+    [ 1869.129866]  [<c13b5533>] __schedule+0x77/0x67a
+    [ 1869.130544]  [<c1026f2e>] ? release_console_sem+0x17d/0x185
+    [ 1869.131568]  [<c807cf47>] ? mesh_queue_preq+0x2b/0x165 [mac80211]
+    [ 1869.132318]  [<c13b5b3e>] schedule+0x8/0x1f
+    [ 1869.132807]  [<c1023c12>] __cond_resched+0x16/0x2f
+    [ 1869.133478]  [<c13b5bf0>] _cond_resched+0x27/0x32
+    [ 1869.134191]  [<c108a370>] kmem_cache_alloc+0x1c/0xcf
+    [ 1869.134714]  [<c10273ae>] ? printk+0x15/0x17
+    [ 1869.135670]  [<c807cf47>] mesh_queue_preq+0x2b/0x165 [mac80211]
+    [ 1869.136731]  [<c807d1f8>] mesh_nexthop_lookup+0xee/0x12d [mac80211]
+    [ 1869.138130]  [<c807417e>] ieee80211_xmit+0xe6/0x2b2 [mac80211]
+    [ 1869.138935]  [<c80be46d>] ? ath5k_hw_setup_rx_desc+0x0/0x66 [ath5k]
+    [ 1869.139831]  [<c80c97bc>] ? ath5k_tasklet_rx+0xba/0x506 [ath5k]
+    [ 1869.140863]  [<c8075191>] ieee80211_subif_start_xmit+0x6c9/0x6e4
+    [mac80211]
+    [ 1869.141665]  [<c105cf1c>] ? handle_level_irq+0x78/0x9d
+    [ 1869.142390]  [<c12e3f93>] dev_hard_start_xmit+0x168/0x1c7
+    [ 1869.143092]  [<c12f1f17>] __qdisc_run+0xe1/0x1b7
+    [ 1869.143612]  [<c12e25ff>] qdisc_run+0x18/0x1a
+    [ 1869.144248]  [<c12e62f4>] dev_queue_xmit+0x16a/0x25a
+    [ 1869.144785]  [<c13b6dcc>] ? _read_unlock_bh+0xe/0x10
+    [ 1869.145465]  [<c12eacdb>] neigh_resolve_output+0x19c/0x1c7
+    [ 1869.146182]  [<c130e2da>] ? ip_finish_output+0x0/0x51
+    [ 1869.146697]  [<c130e2a0>] ip_finish_output2+0x182/0x1bc
+    [ 1869.147358]  [<c130e327>] ip_finish_output+0x4d/0x51
+    [ 1869.147863]  [<c130e9d5>] ip_output+0x80/0x85
+    [ 1869.148515]  [<c130cc49>] dst_output+0x9/0xb
+    [ 1869.149141]  [<c130dec6>] ip_local_out+0x17/0x1a
+    [ 1869.149632]  [<c130e0bc>] ip_push_pending_frames+0x1f3/0x255
+    [ 1869.150343]  [<c13247ff>] raw_sendmsg+0x5e6/0x667
+    [ 1869.150883]  [<c1033c55>] ? insert_work+0x6a/0x73
+    [ 1869.151834]  [<c8071e00>] ?
+    ieee80211_invoke_rx_handlers+0x17da/0x1ae8 [mac80211]
+    [ 1869.152630]  [<c132bd68>] inet_sendmsg+0x3b/0x48
+    [ 1869.153232]  [<c12d7deb>] __sock_sendmsg+0x45/0x4e
+    [ 1869.153740]  [<c12d8537>] sock_sendmsg+0xb8/0xce
+    [ 1869.154519]  [<c80be46d>] ? ath5k_hw_setup_rx_desc+0x0/0x66 [ath5k]
+    [ 1869.155289]  [<c1036b25>] ? autoremove_wake_function+0x0/0x30
+    [ 1869.155859]  [<c115992b>] ? __copy_from_user_ll+0x11/0xce
+    [ 1869.156573]  [<c1159d99>] ? copy_from_user+0x31/0x54
+    [ 1869.157235]  [<c12df646>] ? verify_iovec+0x40/0x6e
+    [ 1869.157778]  [<c12d869a>] sys_sendmsg+0x14d/0x1a5
+    [ 1869.158714]  [<c8072c40>] ? __ieee80211_rx+0x49e/0x4ee [mac80211]
+    [ 1869.159641]  [<c80c83fe>] ? ath5k_rxbuf_setup+0x6d/0x8d [ath5k]
+    [ 1869.160543]  [<c80be46d>] ? ath5k_hw_setup_rx_desc+0x0/0x66 [ath5k]
+    [ 1869.161434]  [<c80beba4>] ? ath5k_hw_get_rxdp+0xe/0x10 [ath5k]
+    [ 1869.162319]  [<c80c97bc>] ? ath5k_tasklet_rx+0xba/0x506 [ath5k]
+    [ 1869.163063]  [<c1005627>] ? enable_8259A_irq+0x40/0x43
+    [ 1869.163594]  [<c101edb8>] ? __dequeue_entity+0x23/0x27
+    [ 1869.164793]  [<c100187a>] ? __switch_to+0x2b/0x105
+    [ 1869.165442]  [<c1021d5f>] ? finish_task_switch+0x5b/0x74
+    [ 1869.166129]  [<c12d963a>] sys_socketcall+0x14b/0x17b
+    [ 1869.166612]  [<c1002b95>] syscall_call+0x7/0xb
+    
+    Signed-off-by: Andrey Yurovsky <andrey@cozybit.com>
+    Signed-off-by: John W. Linville <linville@tuxdriver.com>
+
+diff --git a/net/mac80211/mesh_hwmp.c b/net/mac80211/mesh_hwmp.c
+index 003cb47..f49ef28 100644
+--- a/net/mac80211/mesh_hwmp.c
++++ b/net/mac80211/mesh_hwmp.c
+@@ -637,7 +637,7 @@ static void mesh_queue_preq(struct mesh_path *mpath, u8 flags)
+ 	struct ieee80211_if_mesh *ifmsh = &sdata->u.mesh;
+ 	struct mesh_preq_queue *preq_node;
+ 
+-	preq_node = kmalloc(sizeof(struct mesh_preq_queue), GFP_KERNEL);
++	preq_node = kmalloc(sizeof(struct mesh_preq_queue), GFP_ATOMIC);
+ 	if (!preq_node) {
+ 		printk(KERN_DEBUG "Mesh HWMP: could not allocate PREQ node\n");
+ 		return;

@@ -57,3 +57,9 @@ overclock_smartreflex_900.diff
 dspbridge.diff
 shutdown-reboot-patch.diff
 option_disable_indicator_led.diff
+ARM_6066_1_Fix_BUG_scheduling_while_atomic_swapper_0_0x00000002.diff
+bluetooth_scheduling_while_atomic_bug_fix.diff
+mac80211_fix_allocation_in_mesh_queue_preq.diff
+USB-g_serial-don-t-set-low_latency-flag.diff
+0001-mtd-fix-a-huge-latency-problem-in-the-MTD-CFI-flash-.diff
+0002-mtd-change-struct-flchip_shared-spinlock-locking-int.diff
