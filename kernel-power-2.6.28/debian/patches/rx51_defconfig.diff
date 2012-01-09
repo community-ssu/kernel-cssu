@@ -445,6 +445,17 @@
  # CONFIG_BLK_DEV_UB is not set
  CONFIG_BLK_DEV_RAM=y
  CONFIG_BLK_DEV_RAM_COUNT=16
+@@ -865,8 +865,8 @@
+ CONFIG_BLK_DEV_SD=m
+ # CONFIG_CHR_DEV_ST is not set
+ # CONFIG_CHR_DEV_OSST is not set
+-# CONFIG_BLK_DEV_SR is not set
+-# CONFIG_CHR_DEV_SG is not set
++CONFIG_BLK_DEV_SR=m
++CONFIG_CHR_DEV_SG=m
+ # CONFIG_CHR_DEV_SCH is not set
+ 
+ #
 @@ -736,8 +889,20 @@
  # CONFIG_SCSI_DEBUG is not set
  # CONFIG_SCSI_DH is not set
