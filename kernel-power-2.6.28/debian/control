@@ -217,7 +217,7 @@ Package: linux-kernel-power-headers
 Architecture: any
 Depends: ${shlibs:Depends}
 Conflicts: linux-kernel-headers-maemo, linux-kernel-headers
-Description: Linux Kernel Headers for development (kernel power 2.6.28.10)
+Description: Linux Kernel headers for development (kernel power 2.6.28.10)
  This package provides headers from the Linux kernel. These headers
  are used by the installed headers for GNU glibc and other system libraries.
 
@@ -225,7 +225,7 @@ Package: kernel-power-modules
 Architecture: armel
 Conflicts: kernel-modules-maemo
 Depends: module-init-tools (>= 3.3), kernel-power (= ${binary:Version}) | kernel-power-bootimg (= ${binary:Version})
-Description: Linux kernel modules for kernel power 2.6.28.10
+Description: Linux kernel modules (kernel power 2.6.28.10)
  This package provides kernel modules.
 
 Package: kernel-power-modules-debug
