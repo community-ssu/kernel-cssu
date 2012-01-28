@@ -367,7 +367,7 @@ index 4f70822e..4d15440 100644
 +int aic3x_deemph_set_coeffs(struct snd_soc_codec *codec, int N0, int N1,
 +			    int D1)
 +{
-+	printk("MNZ: setting deemph coeffs\n");
++	/*printk("MNZ: setting deemph coeffs\n");*/
 +	snd_soc_update_bits(codec, AIC3X_CODEC_DFILT_CTRL, DEEMPH_ON, 0);
 +
 +	aic3x_write_coeff(codec, DEEMPH_LEFT_N0, N0);
@@ -383,7 +383,7 @@ index 4f70822e..4d15440 100644
 +
 +int aic3x_deemph_set_state(struct snd_soc_codec *codec, int state)
 +{
-+	printk("MNZ: Setting De-Emph filter: %i\n", state);
++	/*printk("MNZ: Setting De-Emph filter: %i\n", state);*/
 +	if(state)
 +		state = DEEMPH_ON;
 +	else
@@ -396,7 +396,7 @@ index 4f70822e..4d15440 100644
 +static int aic3x_dacfilter_write_coeffs(struct snd_soc_codec *codec,
 +					struct aic3x_iir_coeffs *coeffs)
 +{
-+	printk("MNZ: dacfilter_write_coeffs\n");
++	/*printk("MNZ: dacfilter_write_coeffs\n");*/
 +	aic3x_write_coeff(codec, EFFECTS_LEFT_N0, coeffs->N0);
 +	aic3x_write_coeff(codec, EFFECTS_LEFT_N1, coeffs->N1);
 +	aic3x_write_coeff(codec, EFFECTS_LEFT_N2, coeffs->N2);
@@ -436,7 +436,7 @@ index 4f70822e..4d15440 100644
 +
 +int aic3x_dacfilter_set_state(struct snd_soc_codec *codec, int state)
 +{
-+	printk("MNZ: dacfilter_set_state to %i\n", state);
++	/*printk("MNZ: dacfilter_set_state to %i\n", state);*/
 +	struct aic3x_priv *aic3x = codec->private_data;
 +	int ret = 0;
 +	if (aic3x->dacfilter.state == state)
@@ -486,7 +486,7 @@ index 4f70822e..4d15440 100644
 +	struct snd_soc_codec *codec = hw->private_data;
 +	if (cmd != 1)
 +		return -EINVAL;
-+	printk("MNZ: IOCTL: cmd = %i, arg = %i\n", cmd, *((int*)arg));
++	/*printk("MNZ: IOCTL: cmd = %i, arg = %i\n", cmd, *((int*)arg));*/
 +	return aic3x_dacfilter_set_state(codec, *((int*)arg));
 +}
 +
@@ -621,7 +621,7 @@ index 4f70822e..4d15440 100644
 +	char hwdepid[] = "IIR Filter";
  	int reg, ret = 0;
  
-+	printk("MNZ: BEGIN aic3x_init\n");
++	/*printk("MNZ: BEGIN aic3x_init\n");*/
  	codec->name = "tlv320aic3x";
  	codec->owner = THIS_MODULE;
  	codec->read = aic3x_read_reg_cache;
@@ -649,7 +649,7 @@ index 4f70822e..4d15440 100644
  
 +	/* Set some defaults for coefficients */
 +	aic3x_write_coeff(codec, EFFECTS_3DATTEN, -32768);
-+	printk("MNZ: END aic3x_init\n");
++	/*printk("MNZ: END aic3x_init\n");*/
 +
  	return ret;
  
@@ -787,13 +787,13 @@ index 19cb292..eefda0d 100644
 +	{
 +		aic3x_deemph_set_state(w->codec, 1);
  		gpio_set_value(RX51_SPEAKER_AMP_TWL_GPIO, 1);
-+		printk("MNZ: Speaker Amp on!\n");
++		/*printk("MNZ: Speaker Amp on!\n");*/
 +	}
  	else
 +	{
 +		aic3x_deemph_set_state(w->codec, 0);
  		gpio_set_value(RX51_SPEAKER_AMP_TWL_GPIO, 0);
-+		printk("MNZ: Speaker Amp off!\n");
++		/*printk("MNZ: Speaker Amp off!\n");*/
 +	}
  
  	return 0;
@@ -802,7 +802,7 @@ index 19cb292..eefda0d 100644
  {
  	int i, err;
  
-+	printk("MNZ: BEGIN rx51_aic3x_init\n");
++	/*printk("MNZ: BEGIN rx51_aic3x_init\n");*/
  	/* set up NC codec pins */
  	snd_soc_dapm_nc_pin(codec, "MIC3L");
  	snd_soc_dapm_nc_pin(codec, "MIC3R");
@@ -814,7 +814,7 @@ index 19cb292..eefda0d 100644
 +	 * cheap speaker protection */
 +	aic3x_deemph_set_coeffs(codec, 32276, -32276, 31785);
 +
-+	printk("MNZ: END rx51_aic3x_init\n");
++	/*printk("MNZ: END rx51_aic3x_init\n");*/
  	return 0;
  }
  
