@@ -1,3 +1,18 @@
+kernel-power (1:2.6.28-10power49+pre50) fremantle; urgency=low
+
+   * Fixed reboot problem
+   * Added option (sysfs entry) to disable indicator led
+   * Enabled module xt_owner
+   * Fixed scheduling while atomic bugs
+   * Added patch to add highpass filter (so speakers don't blow up)
+   * efuse calibrations are re-calculated - using linear approximation instead of hard-coded increments
+   * Fixed camera driver to use framebuffer memory for video-capture buffer (DMA to framebuffer)
+   * Enabled cdrom drivers
+   * Disabled verbose power_supply messages
+   * Notify about changed musb mode
+
+ -- Pali Rohár <pali.rohar@gmail.com>  Sun, 29 Jan 2012 00:38:39 +0100
+
 kernel-power (1:2.6.28-10power49) fremantle; urgency=low
 
   * support for binding and unbinding framebuffer console
