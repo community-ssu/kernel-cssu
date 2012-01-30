@@ -1,0 +1,117 @@
+diff -urN kernel-power-2.6.28/net/bluetooth/l2cap.c kernel-power-2.6.28.new/net/bluetooth/l2cap.c
+--- kernel-power-2.6.28/net/bluetooth/l2cap.c	2012-01-30 11:38:54.900397583 -0500
++++ kernel-power-2.6.28.new/net/bluetooth/l2cap.c	2012-01-30 11:41:31.304278952 -0500
+@@ -2709,16 +2709,24 @@
+ 	struct sock *sk;
+ 	struct hlist_node *node;
+ 	char *str = buf;
++	int size = PAGE_SIZE;
+ 
+ 	read_lock_bh(&l2cap_sk_list.lock);
+ 
+ 	sk_for_each(sk, node, &l2cap_sk_list.head) {
+ 		struct l2cap_pinfo *pi = l2cap_pi(sk);
++		int len;
+ 
+-		str += sprintf(str, "%s %s %d %d 0x%4.4x 0x%4.4x %d %d %d\n",
++		len = snprintf(str, size, "%s %s %d %d 0x%4.4x 0x%4.4x %d %d %d\n",
+ 				batostr(&bt_sk(sk)->src), batostr(&bt_sk(sk)->dst),
+ 				sk->sk_state, btohs(pi->psm), pi->scid, pi->dcid,
+ 				pi->imtu, pi->omtu, pi->sec_level);
++		
++		size -= len;
++		if (size <= 0)
++			break;
++
++		str += len;
+ 	}
+ 
+ 	read_unlock_bh(&l2cap_sk_list.lock);
+diff -urN kernel-power-2.6.28/net/bluetooth/rfcomm/core.c kernel-power-2.6.28.new/net/bluetooth/rfcomm/core.c
+--- kernel-power-2.6.28/net/bluetooth/rfcomm/core.c	2012-01-30 11:38:45.788742559 -0500
++++ kernel-power-2.6.28.new/net/bluetooth/rfcomm/core.c	2012-01-30 11:41:31.304278952 -0500
+@@ -2097,6 +2097,7 @@
+ 	struct rfcomm_session *s;
+ 	struct list_head *pp, *p;
+ 	char *str = buf;
++	int size = PAGE_SIZE;
+ 
+ 	rfcomm_lock();
+ 
+@@ -2105,11 +2106,21 @@
+ 		list_for_each(pp, &s->dlcs) {
+ 			struct sock *sk = s->sock->sk;
+ 			struct rfcomm_dlc *d = list_entry(pp, struct rfcomm_dlc, list);
++			int len;
+ 
+-			str += sprintf(str, "%s %s %ld %d %d %d %d\n",
++			len = snprintf(str, size, "%s %s %ld %d %d %d %d\n",
+ 					batostr(&bt_sk(sk)->src), batostr(&bt_sk(sk)->dst),
+ 					d->state, d->dlci, d->mtu, d->rx_credits, d->tx_credits);
++
++			size -= len;
++			if (size <= 0)
++				break;
++
++			str += len;
+ 		}
++
++		if (size <= 0)
++			break;
+ 	}
+ 
+ 	rfcomm_unlock();
+diff -urN kernel-power-2.6.28/net/bluetooth/rfcomm/sock.c kernel-power-2.6.28.new/net/bluetooth/rfcomm/sock.c
+--- kernel-power-2.6.28/net/bluetooth/rfcomm/sock.c	2012-01-30 11:38:44.387786122 -0500
++++ kernel-power-2.6.28.new/net/bluetooth/rfcomm/sock.c	2012-01-30 11:41:31.304278952 -0500
+@@ -1065,13 +1065,22 @@
+ 	struct sock *sk;
+ 	struct hlist_node *node;
+ 	char *str = buf;
++	int size = PAGE_SIZE;
+ 
+ 	read_lock_bh(&rfcomm_sk_list.lock);
+ 
+ 	sk_for_each(sk, node, &rfcomm_sk_list.head) {
+-		str += sprintf(str, "%s %s %d %d\n",
++		int len;
++
++		len = snprintf(str, size, "%s %s %d %d\n",
+ 				batostr(&bt_sk(sk)->src), batostr(&bt_sk(sk)->dst),
+ 				sk->sk_state, rfcomm_pi(sk)->channel);
++
++		size -= len;
++		if (size <= 0)
++			break;
++
++		str += len;
+ 	}
+ 
+ 	read_unlock_bh(&rfcomm_sk_list.lock);
+diff -urN kernel-power-2.6.28/net/bluetooth/sco.c kernel-power-2.6.28.new/net/bluetooth/sco.c
+--- kernel-power-2.6.28/net/bluetooth/sco.c	2012-01-30 11:38:44.391847398 -0500
++++ kernel-power-2.6.28.new/net/bluetooth/sco.c	2012-01-30 11:41:31.304278952 -0500
+@@ -957,13 +957,22 @@
+ 	struct sock *sk;
+ 	struct hlist_node *node;
+ 	char *str = buf;
++	int size = PAGE_SIZE;
+ 
+ 	read_lock_bh(&sco_sk_list.lock);
+ 
+ 	sk_for_each(sk, node, &sco_sk_list.head) {
+-		str += sprintf(str, "%s %s %d\n",
++		int len;
++
++		len = snprintf(str, size, "%s %s %d\n",
+ 				batostr(&bt_sk(sk)->src), batostr(&bt_sk(sk)->dst),
+ 				sk->sk_state);
++
++		size -= len;
++		if (size <= 0)
++			break;
++
++		str += len;
+ 	}
+ 
+ 	read_unlock_bh(&sco_sk_list.lock);

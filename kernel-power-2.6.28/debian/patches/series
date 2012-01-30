@@ -68,3 +68,4 @@ USB-g_serial-don-t-set-low_latency-flag.diff
 Support-for-tlv320aic3x-codec-highpass-filter-needed.diff
 support-non-page-aligned-buffers-in-iommu_vmap.diff
 videobuf-dma-sg-support-non-pagable-user-memory.diff
+bluetooth-fix-potential-bad-memory-access-with-sysfs-files.diff
