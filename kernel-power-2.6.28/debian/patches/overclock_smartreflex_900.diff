@@ -401,14 +401,14 @@ diff -urN kernel-power-2.6.28/arch/arm/mach-omap2/smartreflex.c kernel-power-2.6
  		reg_addr = R_VDD1_SR_CONTROL;
  		prm_vp1_voltage = prm_read_mod_reg(OMAP3430_GR_MOD,
  						OMAP3_PRM_VP1_VOLTAGE_OFFSET);
-+		/* Store current calibrated voltage to be used next time preventing 
++		/* Store current calibrated voltage to be used next time preventing
 +		 * overvoltage when calibration cycle  starts. if cur_opp_no is 0 don't
 +		 * store current voltage, we've been called from sram_idle().
-+		 * Just in case add 1 to it, so we can start a little higher next time 
++		 * Just in case add 2 to it, so we can start a little higher next time
 +		 */
 +		if(curr_opp_no)
 +			mpu_opps[curr_opp_no].vsel = min((u32)mpu_opps[curr_opp_no].vsel,
-+							  prm_vp1_voltage+1);
++							  prm_vp1_voltage+2);
  		t2_smps_steps = abs(vsel - prm_vp1_voltage);
  		errorgain = (target_opp_no > SR_MAX_LOW_OPP) ?
  			PRM_VP1_CONFIG_ERRORGAIN_HIGHOPP :
@@ -419,7 +419,7 @@ diff -urN kernel-power-2.6.28/arch/arm/mach-omap2/smartreflex.c kernel-power-2.6
 -
  	BUG_ON(!(mpu_opps && l3_opps));
 -
-+	
++
  	sr->req_opp_no = target_opp_no;
  
  	if (sr->srid == SR1) {
@@ -457,11 +457,11 @@ diff -urN kernel-power-2.6.28/arch/arm/mach-omap2/smartreflex.c kernel-power-2.6
 +			u32 dsp_volt_boost = ((dsp_opps[target_opp_no].rate-S430M)/1000000) *
 +					      atomic_read(&sr_vdd1_dsp_boost_coeff) *
 +					      (VDD1_OPP9-target_opp_no);
-+			dsp_volt_boost = dsp_volt_boost > SR_NVALUE_DSP_MAX_ADJUST?SR_NVALUE_DSP_MAX_ADJUST:dsp_volt_boost;
-+			nvalue_reciprocal = sr_ntarget_add_margin(
-+								  nvalue_reciprocal,
-+								  dsp_volt_boost
-+								  );
++			dsp_volt_boost = dsp_volt_boost > SR_NVALUE_DSP_MAX_ADJUST ? SR_NVALUE_DSP_MAX_ADJUST : dsp_volt_boost;
++			nvalue_reciprocal = sr_ntarget_add_margin(nvalue_reciprocal,dsp_volt_boost);
++			mpu_opps[target_opp_no].vsel += (dsp_volt_boost/12500);
++			mpu_opps[target_opp_no].vsel = mpu_opps[target_opp_no].vsel > (PRM_VP1_VLIMITTO_VDDMAX >> 24) ?
++				PRM_VP1_VLIMITTO_VDDMAX >> 24 : mpu_opps[target_opp_no].vsel;
 +		}
  	} else {
  		switch (target_opp_no) {
@@ -515,7 +515,7 @@ diff -urN kernel-power-2.6.28/arch/arm/mach-omap2/smartreflex.c kernel-power-2.6
  {
  	unsigned short value;
 -
-+	u32 current_vdd1opp_no; 
++	u32 current_vdd1opp_no;
  	if (sscanf(buf, "%hu", &value) != 1 || (value > 1)) {
  		printk(KERN_ERR "sr_vdd1_autocomp: Invalid value\n");
  		return -EINVAL;
@@ -565,7 +565,7 @@ diff -urN kernel-power-2.6.28/arch/arm/mach-omap2/smartreflex.c kernel-power-2.6
  					char *buf)
  {
 -	return sprintf(buf, "%08x\n%08x\n%08x\n%08x\n%08x\n", sr1.opp1_nvalue,
-+	return sprintf(buf, "%08x\n%08x\n%08x\n%08x\n%08x\n%08x\n%08x\n%08x\n%08x\n", 
++	return sprintf(buf, "%08x\n%08x\n%08x\n%08x\n%08x\n%08x\n%08x\n%08x\n%08x\n",
 +							sr1.opp1_nvalue,
  							sr1.opp2_nvalue,
  							sr1.opp3_nvalue,
@@ -660,13 +660,13 @@ diff -urN kernel-power-2.6.28/arch/arm/mach-omap2/smartreflex.c kernel-power-2.6
 +					const char *buf, size_t n)
 +{
 +	u32 value;
-+	
++
 +	if (sscanf(buf, "%u", &value) != 1 || (value > 250)) {
 +		printk(KERN_ERR "sr_vdd1_dsp_boost: Invalid value\n");
 +		return -EINVAL;
 +	}
 +	atomic_set(&sr_vdd1_dsp_boost_coeff,value);
-+	
++
 +	return n;
 +}
 +
@@ -684,10 +684,10 @@ diff -urN kernel-power-2.6.28/arch/arm/mach-omap2/smartreflex.c kernel-power-2.6
  	int ret = 0;
  	u8 RdReg;
 -
-+	
++
 +	/* Set default dsp boost value */
 +	atomic_set(&sr_vdd1_dsp_boost_coeff,125);
-+	
++
  	/* Enable SR on T2 */
  	ret = twl4030_i2c_read_u8(TWL4030_MODULE_PM_RECEIVER, &RdReg,
  					R_DCDC_GLOBAL_CFG);
@@ -809,7 +809,7 @@ diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/mach/omap-pm.h kernel-p
 +/**
 + * omap_pm_dsp_get_min_opp - return desired minimum OPP ID from DSP Bridge
 + *
-+ * Get a minimum OPP ID for the DSP.  
++ * Get a minimum OPP ID for the DSP.
 + */
 +#ifdef CONFIG_OMAP_PM_NONE
 +static inline u8 omap_pm_dsp_get_min_opp(void) { }
@@ -861,15 +861,15 @@ diff -urN kernel-power-2.6.28/arch/arm/plat-omap/omap-pm-srf.c kernel-power-2.6.
 +#ifdef CONFIG_OMAP_SMARTREFLEX
 +	if(curr_dsp_min_opp == VDD1_OPP1 || opp_id == VDD1_OPP1)
 +	{
-+		/* DSP is about to be enabled/disabled, restart SR, 
++		/* DSP is about to be enabled/disabled, restart SR,
 +		 * so DSP voltage boost to be applied or removed.
 +		 * This is needed in case current OPP has DSP overclocking frequency
 +		 */
 +		u8 curr_opp = omap_pm_dsp_get_opp();
-+		
-+		sr_stop_vddautocomap(SR1 , curr_opp);
-+		sr_start_vddautocomap(SR1 , curr_opp);
-+		
++
++		if(sr_stop_vddautocomap(SR1 , curr_opp))
++			sr_start_vddautocomap(SR1 , curr_opp);
++
 +	}
 +#endif
  	/*
