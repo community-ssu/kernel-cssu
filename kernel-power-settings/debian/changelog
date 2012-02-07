@@ -1,3 +1,9 @@
+kernel-power-settings (0.14) fremantle; urgency=low
+
+  * Increase version due to repository bug
+
+ -- Pali Rohár <pali.rohar@gmail.com>  Tue, 07 Feb 2012 11:43:00 +0100
+
 kernel-power-settings (0.13) fremantle; urgency=low
 
   * changes by Ivaylo Dimitrov <freemangordon@abv.bg>:
