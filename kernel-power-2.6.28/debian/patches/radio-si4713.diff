@@ -1,5 +1,5 @@
---- kernel-power-2.6.28/drivers/media/radio/radio-si4713.c	2011-09-14 23:56:12.320096297 +0200
-+++ kernel-power-2.6.28/drivers/media/radio/radio-si4713.c	2011-09-15 00:19:37.030080507 +0200
+--- kernel-power-2.6.28/drivers/media/radio/radio-si4713.c	2012-02-17 20:44:03.508286080 +0100
++++ kernel-power-2.6.28/drivers/media/radio/radio-si4713.c	2012-02-17 20:45:13.976284020 +0100
 @@ -55,23 +55,10 @@
  static int radio_nr = -1;	/* radio device minor (-1 ==> auto assign) */
  
@@ -27,7 +27,7 @@
  
  /*
   * Sysfs properties
-@@ -193,16 +180,6 @@ static ssize_t si4713_lock_write(struct
+@@ -193,17 +180,7 @@ static ssize_t si4713_lock_write(struct
  				const char *buf,
  				size_t count)
  {
@@ -45,7 +45,8 @@
 +	return sscanf(buf, "%d", &config_locked);
  }
  
-@@ -219,7 +197,7 @@ static DEVICE_ATTR(lock, S_IRUGO | S_IWU
+ static ssize_t si4713_lock_read(struct device *dev,
+@@ -219,7 +196,7 @@ static DEVICE_ATTR(lock, S_IRUGO | S_IWU
  /*
   * Power level property
   */
@@ -54,7 +55,16 @@
  static ssize_t si4713_power_level_write(struct device *dev,
  					struct device_attribute *attr,
  					const char *buf,
-@@ -420,109 +398,13 @@ static irqreturn_t si4713_handler(int ir
+@@ -230,7 +207,7 @@ static ssize_t si4713_power_level_write(
+ 	int rval, pl;
+ 
+ 	if (config_locked)
+-		return -EPERM;
++		return count;
+ 
+ 	if (!sdev) {
+ 		rval = -ENODEV;
+@@ -420,109 +397,13 @@ static irqreturn_t si4713_handler(int ir
  	return IRQ_HANDLED;
  }
  
@@ -166,7 +176,7 @@
  }
  
  /*
-@@ -906,8 +788,11 @@ static int si4713_i2c_driver_probe(struc
+@@ -906,8 +787,11 @@ static int si4713_i2c_driver_probe(struc
  		goto free_sysfs;
  	}
  
@@ -180,7 +190,7 @@
  
  	return 0;
  
-@@ -1013,6 +898,12 @@ module_param(radio_nr, int, 0);
+@@ -1013,6 +897,12 @@ module_param(radio_nr, int, 0);
  MODULE_PARM_DESC(radio_nr,
  		 "Minor number for radio device (-1 ==> auto assign)");
  
