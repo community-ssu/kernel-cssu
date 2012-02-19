@@ -1,0 +1,19 @@
+--- kernel-power-2.6.28/drivers/usb/gadget/rndis.c	2008-12-24 18:26:37.000000000 -0500
++++ kernel-power-2.6.28.new/drivers/usb/gadget/rndis.c	2012-02-18 10:05:20.715877000 -0500
+@@ -294,9 +294,13 @@
+ 	/* mandatory */
+ 	case OID_GEN_VENDOR_DESCRIPTION:
+ 		pr_debug("%s: OID_GEN_VENDOR_DESCRIPTION\n", __func__);
+-		length = strlen (rndis_per_dev_params [configNr].vendorDescr);
+-		memcpy (outbuf,
+-			rndis_per_dev_params [configNr].vendorDescr, length);
++		if ( rndis_per_dev_params [configNr].vendorDescr ) {
++			length = strlen (rndis_per_dev_params [configNr].vendorDescr);
++			memcpy (outbuf,
++				rndis_per_dev_params [configNr].vendorDescr, length);
++		} else {
++			outbuf[0] = 0;
++		}
+ 		retval = 0;
+ 		break;
+ 
