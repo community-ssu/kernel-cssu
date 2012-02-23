@@ -29,7 +29,11 @@ Provides: kernel-feature-netfilter, kernel-feature-ipv6, kernel-feature-ext4, ke
   kernel-feature-wlan-monitor, kernel-feature-radiords, kernel-feature-ioacct, kernel-feature-usbhost, kernel-feature-framebuffer
 XB-Maemo-Display-Name: Linux kernel for power user (boot image for multiboot)
 Description: Linux kernel boot image (kernel power 2.6.28.10)
- This package provides a bootable kernel image and config file for multiboot.
+ This package provides a bootable kernel image and config files
+ for U-Boot Bootmenu and Multiboot.
+ .
+ This package does not flash kernel image. Instead it install
+ config files for proper Bootmenu entry in U-Boot and Multiboot
 XB-Maemo-Icon-26:
  iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAABmJLR0QAAAAA
  AAD5Q7t/AAAACXBIWXMAAABIAAAASABGyWs+AAAACXZwQWcAAAAwAAAAMADO
@@ -126,7 +130,7 @@ Description: Linux kernel updater (kernel power 2.6.28.10)
  the Application Manager is not possible.
  .
  This custom kernel contains additional modules for IPv6, packet filtering,
- QoS, NAT, tunneling, kernel configuration, Wifi mesh networking,
+ QoS, NAT, tunneling, kernel configuration, updated DSP driver,
  builtin ext3 for booting from other media, ext4, XFS, reiserfs,
  NTFS read support, ISO9660, UDF, CIFS, automounter, squashfs,
  unionfs, device mapper and dm-loop, cryptography, cryptoloop,
