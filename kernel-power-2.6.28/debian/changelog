@@ -1,17 +1,23 @@
-kernel-power (1:2.6.28-10power49+pre50) fremantle; urgency=low
+kernel-power (1:2.6.28-10power50) fremantle; urgency=low
 
    * Fixed reboot problem
    * Added option (sysfs entry) to disable indicator led
    * Enabled module xt_owner
    * Fixed scheduling while atomic bugs
-   * Added patch to add highpass filter (so speakers don't blow up)
    * efuse calibrations are re-calculated - using linear approximation instead of hard-coded increments
    * Fixed camera driver to use framebuffer memory for video-capture buffer (DMA to framebuffer)
    * Enabled cdrom drivers
    * Disabled verbose power_supply messages
    * Notify about changed musb mode
+   * Disabled mesh network (kernel sometimes crashed)
+   * Fixed the famous BT headset disconnecting issue
+   * Upstream patch: Bluetooth: Fix potential bad memory access with sysfs files
+   * Disabled errata 430973
+   * If FM transmitter is locked do not show error message when trying to change power level
+   * Fixed oops in g_ether with windows
+   * kernel-power-bootimg package now working with U-Boot Bootmenu too
 
- -- Pali Rohár <pali.rohar@gmail.com>  Sun, 29 Jan 2012 00:38:39 +0100
+ -- Pali Rohár <pali.rohar@gmail.com>  Wed, 14 Mar 2012 19:43:04 +0100
 
 kernel-power (1:2.6.28-10power49) fremantle; urgency=low
 
