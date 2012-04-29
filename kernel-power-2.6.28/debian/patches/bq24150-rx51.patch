@@ -1,0 +1,249 @@
+--- kernel-power/drivers/usb/otg/twl4030-usb.c.orig	2012-04-29 17:15:00.195894587 +0200
++++ kernel-power/drivers/usb/otg/twl4030-usb.c	2012-04-29 17:18:06.815889128 +0200
+@@ -37,6 +37,8 @@
+ #include <linux/regulator/consumer.h>
+ #include <linux/err.h>
+ 
++#include <asm/mach-types.h>
++#include <mach/board-rx51.h>
+ 
+ /* Register defines */
+ 
+@@ -265,6 +265,9 @@ struct twl4030_usb {
+ 	u8			linkstat;
+ 	u8			asleep;
+ 	bool			irq_enabled;
++
++	struct delayed_work	work;
++	int			work_inited;
+ };
+ 
+ /* internal define on top of container_of */
+@@ -365,6 +367,14 @@ static enum linkstat twl4030_usb_linksta
+ 	dev_dbg(twl->dev, "HW_CONDITIONS 0x%02x/%d; link %d\n",
+ 			status, status, linkstat);
+ 
++	if (machine_is_nokia_rx51() && rx51_with_charger_detection()) {
++		rx51_set_charger(linkstat == USB_LINK_VBUS);
++		if (twl->work_inited && linkstat == USB_LINK_VBUS) {
++			printk("rx51 - schedule delayed work in 2 seconds - rx51_detect_wallcharger\n");
++			schedule_delayed_work(&twl->work, 2 * HZ); /* 2 seconds should be enought */
++		}
++	}
++
+ 	/* REVISIT this assumes host and peripheral controllers
+ 	 * are registered, and that both are active...
+ 	 */
+@@ -771,6 +773,11 @@ static int __init twl4030_usb_probe(stru
+ 	 */
+ 	twl4030_usb_irq(twl->irq, twl);
+ 
++	if (machine_is_nokia_rx51()) {
++		INIT_DELAYED_WORK(&twl->work, rx51_detect_wallcharger);
++		twl->work_inited = 1;
++	}
++
+ 	dev_info(&pdev->dev, "Initialized TWL4030 USB module\n");
+ 	return 0;
+ }
+--- kernel-power/drivers/usb/musb/omap2430.c.orig	2012-04-29 16:34:10.123966221 +0200
++++ kernel-power/drivers/usb/musb/omap2430.c	2012-04-29 16:50:48.611937027 +0200
+@@ -38,6 +38,8 @@
+ #include <mach/hardware.h>
+ #include <mach/mux.h>
+ 
++#include <mach/board-rx51.h>
++
+ #include <linux/i2c/twl4030.h>
+ 
+ #include "musb_core.h"
+@@ -230,6 +232,7 @@ int musb_platform_set_mode(struct musb *
+  
+                 if (machine_is_nokia_rx51()) {
+                         u8 testmode;
++                        rx51_enable_charger_detection(0);
+  
+                         musb_platform_resume(musb);
+  
+@@ -255,6 +259,7 @@ int musb_platform_set_mode(struct musb *
+  
+                         musb_writeb(musb->mregs, MUSB_TESTMODE, 0);
+ 			musb_platform_suspend(musb);
++                        rx51_enable_charger_detection(1);
+                 }
+  
+ 		otg_set_peripheral(musb->xceiv, &musb->g);
+@@ -434,6 +438,9 @@ void musb_save_ctx_and_suspend(struct us
+ 
+ 	musb->is_charger = 0;
+ 
++	if (machine_is_nokia_rx51() && rx51_with_charger_detection())
++		rx51_set_wallcharger(0);
++
+ 	/* clear constraints */
+ 	if (musb->board && musb->board->set_pm_limits)
+ 		musb->board->set_pm_limits(musb->controller, 0);
+--- kernel-power/drivers/usb/musb/musb_core.c.orig	2012-04-29 16:57:27.407925369 +0200
++++ kernel-power/drivers/usb/musb/musb_core.c	2012-04-29 17:13:39.083896956 +0200
+@@ -105,6 +105,8 @@
+ #include <asm/mach-types.h>
+ #endif
+ 
++#include <mach/board-rx51.h>
++
+ #include "musb_core.h"
+ 
+ 
+@@ -223,6 +224,10 @@ static int musb_charger_detect(struct mu
+ 	u8              vdat = 0;
+ 	u8              r;
+ 
++	printk("musb_charger_detect (enabled = %d)\n", rx51_with_charger_detection());
++	if (machine_is_nokia_rx51() && !rx51_with_charger_detection())
++		return 0;
++
+ 	msleep(5);
+ 
+ 	/* Using ulpi with musb is quite tricky. The following code
+@@ -308,6 +315,8 @@ static int musb_charger_detect(struct mu
+ 		/* Regulators off */
+ 		otg_set_suspend(musb->xceiv, 1);
+ 		musb->is_charger = 1;
++		if (machine_is_nokia_rx51() && rx51_with_charger_detection())
++			rx51_set_wallcharger(1);
+ 	} else {
+ 		/* enable interrupts */
+ 		musb_writeb(musb->mregs, MUSB_INTRUSBE, ctx.intrusbe);
+@@ -330,6 +330,14 @@ static int musb_charger_detect(struct mu
+ 	return vdat;
+ }
+ 
++void rx51_detect_wallcharger(void *work)
++{
++	printk("rx51_detect_wallcharger (the_musb = %p)\n", the_musb);
++	if (the_musb)
++		musb_charger_detect(the_musb);
++}
++EXPORT_SYMBOL(rx51_detect_wallcharger);
++
+ /*-------------------------------------------------------------------------*/
+ 
+ static inline struct musb *dev_to_musb(struct device *dev)
+--- kernel-power/arch/arm/plat-omap/include/mach/board-rx51.h.orig	2012-04-29 16:39:03.927957628 +0200
++++ kernel-power/arch/arm/plat-omap/include/mach/board-rx51.h	2012-04-29 17:14:50.923894858 +0200
+@@ -39,6 +39,12 @@ extern void rx51_usb_init(void);
+ static inline void rx51_usb_init(void) { }
+ #endif
+ 
++extern void rx51_set_charger(int connected);
++extern void rx51_set_wallcharger(int connected);
++extern void rx51_enable_charger_detection(int enable);
++extern void rx51_detect_wallcharger(void *work);
++extern int rx51_with_charger_detection(void);
++
+ extern void omap_bt_init(struct omap_bluetooth_config *bt_config);
+ 
+ struct omap_sdrc_params *rx51_get_sdram_timings(void);
+--- kernel-power/arch/arm/mach-omap2/board-rx51-peripherals.c.orig	2012-04-29 17:18:56.995887664 +0200
++++ kernel-power/arch/arm/mach-omap2/board-rx51-peripherals.c	2012-04-29 17:46:57.487838528 +0200
+@@ -38,6 +38,8 @@
+ #include <mach/omap-pm.h>
+ 
+ #include "../../../drivers/input/lirc/lirc_rx51.h"
++#include <mach/board-rx51.h>
++#include <linux/power/bq2415x_charger.h>
+ 
+ #define RX51_DEBUG_BASE			0x08000000  /* debug board */
+ #define RX51_ETHR_START			RX51_DEBUG_BASE
+@@ -563,6 +565,80 @@ static struct i2c_board_info __initdata
+ 	},
+ };
+ 
++static int rx51_charger_type;
++static int rx51_charger_connected;
++static int rx51_wallcharger_connected;
++static int rx51_charger_detection = 1;
++
++static void *rx51_charger_hook_data;
++static void (*rx51_charger_hook)(int type, void *data);
++
++static int rx51_charger_set_hook(void (*hook)(int type, void *data), void *data)
++{
++	rx51_charger_hook = hook;
++	rx51_charger_hook_data = data;
++	return 1;
++}
++
++static void rx51_update_charger_type(void)
++{
++	int type;
++	if (rx51_charger_connected && rx51_wallcharger_connected)
++		type = 2; /* wallcharger */
++	else if (rx51_charger_connected)
++		type = 1; /* usb charger */
++	else
++		type = 0; /* no charger */
++
++	if (rx51_charger_type == type)
++		return;
++
++	printk("rx51_update_charger_type (type = %d)\n", type);
++	rx51_charger_type = type;
++
++	if (rx51_charger_hook)
++		rx51_charger_hook(rx51_charger_type, rx51_charger_hook_data);
++}
++
++void rx51_set_charger(int connected)
++{
++	printk("rx51_set_charger (connected = %d)\n", connected);
++	rx51_charger_connected = connected;
++	rx51_update_charger_type();
++}
++EXPORT_SYMBOL(rx51_set_charger);
++
++void rx51_set_wallcharger(int connected)
++{
++	printk("rx51_set_wallcharger (connected = %d)\n", connected);
++	rx51_wallcharger_connected = connected;
++	rx51_update_charger_type();
++}
++EXPORT_SYMBOL(rx51_set_wallcharger);
++
++void rx51_enable_charger_detection(int enable)
++{
++	printk("rx51_enable_charger_detection (enable = %d)\n", enable);
++	rx51_charger_detection = enable;
++}
++EXPORT_SYMBOL(rx51_enable_charger_detection);
++
++int rx51_with_charger_detection(void)
++{
++	return rx51_charger_detection;
++}
++EXPORT_SYMBOL(rx51_with_charger_detection);
++
++static struct bq2415x_platform_data rx51_bq24150_platform_data = {
++	.current_limit = 100,			/* mA */
++	.weak_battery_voltage = 3400,		/* mV */
++	.battery_regulation_voltage = 4200,	/* mV */
++	.charge_current = 950, /*1200*/		/* mA */
++	.termination_current = 150, /*400*/	/* mA */
++	.resistor_sense = 68,			/* m ohm */
++	.set_charger_type_hook = &rx51_charger_set_hook,
++};
++
+ static struct i2c_board_info __initdata rx51_peripherals_i2c_board_info_2[] = {
+ 	{
+ 		I2C_BOARD_INFO("lp5523", 0x32),
+@@ -575,6 +636,10 @@ static struct i2c_board_info __initdata
+ 	{
+ 		I2C_BOARD_INFO("bq27200", 0x55),
+ 	},
++	{
++		I2C_BOARD_INFO("bq24150", 0x6b),
++		.platform_data = &rx51_bq24150_platform_data,
++	},
+ };
+ 
+ static struct i2c_board_info __initdata rx51_peripherals_i2c_board_info_3[] = {
