@@ -10,7 +10,7 @@ Standards-Version: 3.8.0
 Package: kernel-cssu
 Architecture: armel
 Conflicts: kernel-maemo
-Description: Flashable Linux kernel (kernel power 2.6.28.10)
+Description: Flashable Linux kernel (kernel cssu 2.6.28.10)
  This package provides a flashable kernel image.
  .
  Install package kernel-cssu-flasher to automatically flash it.
@@ -20,15 +20,15 @@ Section: user/system
 Architecture: armel
 Depends: kernel-cssu-modules (= ${binary:Version})
 Conflicts: multiboot-kernel-cssu
-Recommends: multiboot, kernel-cssu-flasher, kernel-power-settings, usbip, iptables, mtd-utils, kexec-tools
+Recommends: multiboot, kernel-cssu-flasher, kernel-cssu-settings, usbip, iptables, mtd-utils, kexec-tools
 Provides: kernel-feature-netfilter, kernel-feature-ipv6, kernel-feature-ext4, kernel-feature-xfs, kernel-feature-reiserfs,
   kernel-feature-ntfs-read, kernel-feature-udf, kernel-feature-cifs, kernel-feature-automounter, kernel-feature-squashfs, 
   kernel-feature-unionfs, kernel-feature-crypto, kernel-feature-dmloop, kernel-feature-utf8, kernel-feature-mousejoy,
   kernel-feature-usbip, kernel-feature-ppp, kernel-feature-qos, kernel-feature-block2mtd, kernel-feature-kexec,
   kernel-feature-overclock, kernel-feature-joikuspot, kernel-feature-slip, kernel-feature-battery, kernel-feature-pptp,
   kernel-feature-wlan-monitor, kernel-feature-radiords, kernel-feature-ioacct, kernel-feature-usbhost, kernel-feature-framebuffer
-XB-Maemo-Display-Name: Linux kernel for power user (boot image for multiboot)
-Description: Linux kernel boot image (kernel power 2.6.28.10)
+XB-Maemo-Display-Name: Linux kernel for Community SSU (boot image for u-boot and multiboot)
+Description: Linux kernel boot image (kernel cssu 2.6.28.10)
  This package provides a bootable kernel image and config files
  for U-Boot Bootmenu and Multiboot.
  .
@@ -106,7 +106,7 @@ XB-Maemo-Icon-26:
 Package: kernel-cssu-flasher
 Section: user/system
 Architecture: armel
-Pre-Depends: kernel-cssu (= ${binary:Version}), kernel-power-modules (= ${binary:Version}), softupd (>= 0.4.0), maemo-installer-utils
+Pre-Depends: kernel-cssu (= ${binary:Version}), kernel-cssu-modules (= ${binary:Version}), softupd (>= 0.4.0), maemo-installer-utils
 Depends: sudo
 Conflicts: kernel-flasher-maemo (<= 2.6.28-maemo22), kernel-maemo, kernel-modules-maemo, kernel-headers-maemo, linux-kernel-headers-maemo
 Recommends: kernel-cssu-settings, usbip, iptables, mtd-utils, kexec-tools
@@ -116,8 +116,8 @@ Provides: kernel-feature-netfilter, kernel-feature-ipv6, kernel-feature-ext4, ke
   kernel-feature-usbip, kernel-feature-ppp, kernel-feature-qos, kernel-feature-block2mtd, kernel-feature-kexec,
   kernel-feature-overclock, kernel-feature-joikuspot, kernel-feature-slip, kernel-feature-battery, kernel-feature-pptp,
   kernel-feature-wlan-monitor, kernel-feature-radiords, kernel-feature-ioacct, kernel-feature-usbhost, kernel-feature-framebuffer
-XB-Maemo-Display-Name: Linux kernel for power user
-Description: Linux kernel updater (kernel power 2.6.28.10)
+XB-Maemo-Display-Name: Linux kernel for Community SSU
+Description: Linux kernel updater (kernel cssu 2.6.28.10)
  This package will flash the kernel image upon installation.
  .
  After the installation, you need to unplug the USB cable,
@@ -214,33 +214,33 @@ Package: kernel-cssu-headers
 Architecture: armel
 Depends: ${shlibs:Depends}
 Conflicts: kernel-headers-maemo
-Description: Linux kernel headers (kernel power 2.6.28.10)
+Description: Linux kernel headers (kernel cssu 2.6.28.10)
  This package provides kernel headers.
 
 Package: linux-kernel-cssu-headers
 Architecture: any
 Depends: ${shlibs:Depends}
 Conflicts: linux-kernel-headers-maemo, linux-kernel-headers
-Description: Linux Kernel headers for development (kernel power 2.6.28.10)
+Description: Linux Kernel headers for development (kernel cssu 2.6.28.10)
  This package provides headers from the Linux kernel. These headers
  are used by the installed headers for GNU glibc and other system libraries.
 
 Package: kernel-cssu-modules
 Architecture: armel
 Conflicts: kernel-modules-maemo
-Depends: module-init-tools (>= 3.3), kernel-cssu (= ${binary:Version}) | kernel-power-bootimg (= ${binary:Version})
-Description: Linux kernel modules (kernel power 2.6.28.10)
+Depends: module-init-tools (>= 3.3), kernel-cssu (= ${binary:Version}) | kernel-cssu-bootimg (= ${binary:Version})
+Description: Linux kernel modules (kernel cssu 2.6.28.10)
  This package provides kernel modules.
 
 Package: kernel-cssu-modules-debug
 Architecture: armel
 Depends: module-init-tools (>= 3.3), kernel-cssu-modules
-Description: Linux kernel modules for debugging (kernel power 2.6.28.10)
+Description: Linux kernel modules for debugging (kernel cssu 2.6.28.10)
  This package provides kernel modules needed for debugging and profiling.
 
 Package: kernel-cssu-debug
 Architecture: armel
-Description: Linux kernel debug symblos (kernel power 2.6.28.10)
+Description: Linux kernel debug symblos (kernel cssu 2.6.28.10)
  This packages provides vmlinux file for the kernel and
  kernel modules related to debugging.
 
@@ -250,5 +250,5 @@ Section: devel
 Priority: optional
 Provides: kernel-source-2.6
 Recommends: libc6-dev | libc-dev, gcc, make, binutils, bzip2
-Description: Linux kernel sources for rx-51 product (kernel power 2.6.28.10)
+Description: Linux kernel sources for rx-51 product (kernel cssu 2.6.28.10)
  This package provides the source code for the Linux kernel.
