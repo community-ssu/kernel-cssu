@@ -2,10 +2,10 @@
  arch/arm/mm/fault-armv.c |    9 +++------
  1 files changed, 3 insertions(+), 6 deletions(-)
 
-Index: kernel-power-2.6.28/arch/arm/mm/fault-armv.c
+Index: kernel-cssu-2.6.28/arch/arm/mm/fault-armv.c
 ===================================================================
---- kernel-power-2.6.28.orig/arch/arm/mm/fault-armv.c
-+++ kernel-power-2.6.28/arch/arm/mm/fault-armv.c
+--- kernel-cssu-2.6.28.orig/arch/arm/mm/fault-armv.c
++++ kernel-cssu-2.6.28/arch/arm/mm/fault-armv.c
 @@ -150,14 +150,11 @@
  
  	page = pfn_to_page(pfn);

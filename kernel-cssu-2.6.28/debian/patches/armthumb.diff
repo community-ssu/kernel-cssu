@@ -1,5 +1,5 @@
---- kernel-power-2.6.28.orig/arch/arm/Kconfig
-+++ kernel-power-2.6.28/arch/arm/Kconfig
+--- kernel-cssu-2.6.28.orig/arch/arm/Kconfig
++++ kernel-cssu-2.6.28/arch/arm/Kconfig
 @@ -722,6 +722,22 @@
  
  source "drivers/pcmcia/Kconfig"
@@ -23,8 +23,8 @@
  endmenu
  
  menu "Kernel Features"
---- kernel-power-2.6.28.orig/arch/arm/mm/proc-v7.S
-+++ kernel-power-2.6.28/arch/arm/mm/proc-v7.S
+--- kernel-cssu-2.6.28.orig/arch/arm/mm/proc-v7.S
++++ kernel-cssu-2.6.28/arch/arm/mm/proc-v7.S
 @@ -90,7 +90,10 @@
  #ifdef CONFIG_MMU
  	mov	r2, #0

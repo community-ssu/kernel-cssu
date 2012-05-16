@@ -2,6 +2,6 @@
 Version=0.1
 Type=Application
 Name=Nokia Kernel
-Exec=sudo /usr/sbin/kernel-power-uninstall
+Exec=sudo /usr/sbin/kernel-cssu-uninstall
 X-Osso-Type=application/x-executable
 Terminal=false

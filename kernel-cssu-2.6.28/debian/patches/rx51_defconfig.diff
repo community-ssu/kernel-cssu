@@ -1,5 +1,5 @@
---- kernel-power-2.6.28/arch/arm/configs/rx51_defconfig	2012-01-07 10:28:59.445346942 +0100
-+++ kernel-power-2.6.28/arch/arm/configs/rx51_defconfig	2012-01-07 10:30:09.121345857 +0100
+--- kernel-cssu-2.6.28/arch/arm/configs/rx51_defconfig	2012-01-07 10:28:59.445346942 +0100
++++ kernel-cssu-2.6.28/arch/arm/configs/rx51_defconfig	2012-01-07 10:30:09.121345857 +0100
 @@ -36,17 +36,21 @@
  CONFIG_LOCK_KERNEL=y
  CONFIG_INIT_ENV_ARG_LIMIT=32

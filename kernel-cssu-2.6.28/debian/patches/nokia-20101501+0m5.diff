@@ -1,5 +1,5 @@
---- kernel-power-2.6.28.orig/arch/arm/mach-omap2/board-rx51-camera.c
-+++ kernel-power-2.6.28/arch/arm/mach-omap2/board-rx51-camera.c
+--- kernel-cssu-2.6.28.orig/arch/arm/mach-omap2/board-rx51-camera.c
++++ kernel-cssu-2.6.28/arch/arm/mach-omap2/board-rx51-camera.c
 @@ -561,7 +561,7 @@
  	gpio_set_value(ADP1653_GPIO_ENABLE, 1);
  
@@ -9,8 +9,8 @@
  
  	return 0;
  }
---- kernel-power-2.6.28.orig/arch/arm/mach-omap2/pm34xx.c
-+++ kernel-power-2.6.28/arch/arm/mach-omap2/pm34xx.c
+--- kernel-cssu-2.6.28.orig/arch/arm/mach-omap2/pm34xx.c
++++ kernel-cssu-2.6.28/arch/arm/mach-omap2/pm34xx.c
 @@ -45,6 +45,7 @@
  #include <mach/dma.h>
  #include <mach/vrfb.h>
@@ -153,8 +153,8 @@
  			 PLL_MOD,
  			 CM_AUTOIDLE);
  	cm_write_mod_reg(1 << OMAP3430ES2_AUTO_PERIPH2_DPLL_SHIFT,
---- kernel-power-2.6.28.orig/arch/arm/mach-omap2/ssi.c
-+++ kernel-power-2.6.28/arch/arm/mach-omap2/ssi.c
+--- kernel-cssu-2.6.28.orig/arch/arm/mach-omap2/ssi.c
++++ kernel-cssu-2.6.28/arch/arm/mach-omap2/ssi.c
 @@ -378,7 +378,7 @@
  	u32 v;
  
@@ -164,8 +164,8 @@
  	cm_write_mod_reg(v, PLL_MOD, CM_AUTOIDLE);
  }
  
---- kernel-power-2.6.28.orig/drivers/mmc/host/omap_hsmmc.c
-+++ kernel-power-2.6.28/drivers/mmc/host/omap_hsmmc.c
+--- kernel-cssu-2.6.28.orig/drivers/mmc/host/omap_hsmmc.c
++++ kernel-cssu-2.6.28/drivers/mmc/host/omap_hsmmc.c
 @@ -28,6 +28,7 @@
  #include <linux/clk.h>
  #include <linux/mmc/host.h>
@@ -243,8 +243,8 @@
  	if (mmc_card_can_sleep(host->mmc))
  		mmc_card_awake(host->mmc);
  
---- kernel-power-2.6.28.orig/drivers/net/wireless/wl12xx/wl1251_main.c
-+++ kernel-power-2.6.28/drivers/net/wireless/wl12xx/wl1251_main.c
+--- kernel-cssu-2.6.28.orig/drivers/net/wireless/wl12xx/wl1251_main.c
++++ kernel-cssu-2.6.28/drivers/net/wireless/wl12xx/wl1251_main.c
 @@ -1611,6 +1611,7 @@
  	}
  
@@ -253,8 +253,8 @@
  	kfree(params);
  	return ret;
  
---- kernel-power-2.6.28.orig/drivers/net/wireless/wl12xx/wl1251_spi.c
-+++ kernel-power-2.6.28/drivers/net/wireless/wl12xx/wl1251_spi.c
+--- kernel-cssu-2.6.28.orig/drivers/net/wireless/wl12xx/wl1251_spi.c
++++ kernel-cssu-2.6.28/drivers/net/wireless/wl12xx/wl1251_spi.c
 @@ -92,6 +92,8 @@
  	spi_sync(wl->spi, &m);
  
@@ -273,8 +273,8 @@
  }
  
  /* Set the SPI partitions to access the chip addresses
---- kernel-power-2.6.28.orig/net/mac80211/mlme.c
-+++ kernel-power-2.6.28/net/mac80211/mlme.c
+--- kernel-cssu-2.6.28.orig/net/mac80211/mlme.c
++++ kernel-cssu-2.6.28/net/mac80211/mlme.c
 @@ -1624,6 +1624,7 @@
  			memcpy(pos, &bss->supp_rates[8], rates);
  		}

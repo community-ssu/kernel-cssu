@@ -1,5 +1,5 @@
---- kernel-power-2.6.28.orig/arch/arm/include/asm/cacheflush.h
-+++ kernel-power-2.6.28/arch/arm/include/asm/cacheflush.h
+--- kernel-cssu-2.6.28.orig/arch/arm/include/asm/cacheflush.h
++++ kernel-cssu-2.6.28/arch/arm/include/asm/cacheflush.h
 @@ -138,16 +138,16 @@
   *	Please note that the implementation of these, and the required
   *	effects are cache-type (VIVT/VIPT/PIPT) specific.
@@ -50,8 +50,8 @@
  	__cpuc_coherent_user_range((start) & PAGE_MASK, PAGE_ALIGN(end))
  
  /*
---- kernel-power-2.6.28.orig/arch/arm/kernel/traps.c
-+++ kernel-power-2.6.28/arch/arm/kernel/traps.c
+--- kernel-cssu-2.6.28.orig/arch/arm/kernel/traps.c
++++ kernel-cssu-2.6.28/arch/arm/kernel/traps.c
 @@ -418,7 +418,9 @@
  		if (end > vma->vm_end)
  			end = vma->vm_end;
@@ -63,8 +63,8 @@
  	}
  	up_read(&mm->mmap_sem);
  }
---- kernel-power-2.6.28.orig/arch/arm/mach-omap2/smartreflex.c
-+++ kernel-power-2.6.28/arch/arm/mach-omap2/smartreflex.c
+--- kernel-cssu-2.6.28.orig/arch/arm/mach-omap2/smartreflex.c
++++ kernel-cssu-2.6.28/arch/arm/mach-omap2/smartreflex.c
 @@ -890,7 +890,7 @@
  		return SR_FAIL;
  	}
@@ -74,8 +74,8 @@
  		WARN(1, "SR: Must not transmit VCBYPASS command while SR is "
  		     "active");
  		return SR_FAIL;
---- kernel-power-2.6.28.orig/arch/arm/mm/fault.c
-+++ kernel-power-2.6.28/arch/arm/mm/fault.c
+--- kernel-cssu-2.6.28.orig/arch/arm/mm/fault.c
++++ kernel-cssu-2.6.28/arch/arm/mm/fault.c
 @@ -387,6 +387,9 @@
  	if (addr < TASK_SIZE)
  		return do_page_fault(addr, fsr, regs);
@@ -99,8 +99,8 @@
  	{ do_translation_fault,	SIGSEGV, SEGV_MAPERR,	"section translation fault"	   },
  	{ do_bad,		SIGBUS,	 0,		"external abort on linefetch"	   },
  	{ do_page_fault,	SIGSEGV, SEGV_MAPERR,	"page translation fault"	   },
---- kernel-power-2.6.28.orig/arch/arm/mm/mmu.c
-+++ kernel-power-2.6.28/arch/arm/mm/mmu.c
+--- kernel-cssu-2.6.28.orig/arch/arm/mm/mmu.c
++++ kernel-cssu-2.6.28/arch/arm/mm/mmu.c
 @@ -953,4 +953,6 @@
  		pmd[1] = __pmd(pmdval + (1 << (PGDIR_SHIFT - 1)));
  		flush_pmd_entry(pmd);
@@ -108,8 +108,8 @@
 +
 +	local_flush_tlb_all();
  }
---- kernel-power-2.6.28.orig/arch/arm/mm/proc-v6.S
-+++ kernel-power-2.6.28/arch/arm/mm/proc-v6.S
+--- kernel-cssu-2.6.28.orig/arch/arm/mm/proc-v6.S
++++ kernel-cssu-2.6.28/arch/arm/mm/proc-v6.S
 @@ -56,8 +56,6 @@
   *	to what would be the reset vector.
   *
@@ -119,8 +119,8 @@
   */
  	.align	5
  ENTRY(cpu_v6_reset)
---- kernel-power-2.6.28.orig/arch/arm/mm/proc-v7.S
-+++ kernel-power-2.6.28/arch/arm/mm/proc-v7.S
+--- kernel-cssu-2.6.28.orig/arch/arm/mm/proc-v7.S
++++ kernel-cssu-2.6.28/arch/arm/mm/proc-v7.S
 @@ -28,7 +28,14 @@
  ENDPROC(cpu_v7_proc_init)
  
@@ -146,8 +146,8 @@
   */
  	.align	5
  ENTRY(cpu_v7_reset)
---- kernel-power-2.6.28.orig/block/cfq-iosched.c
-+++ kernel-power-2.6.28/block/cfq-iosched.c
+--- kernel-cssu-2.6.28.orig/block/cfq-iosched.c
++++ kernel-cssu-2.6.28/block/cfq-iosched.c
 @@ -84,6 +84,11 @@
  	 */
  	struct cfq_rb_root service_tree;
@@ -564,8 +564,8 @@
  	}
  expire:
  	cfq_slice_expired(cfqd, timed_out);
---- kernel-power-2.6.28.orig/drivers/dsp/bridge/rmgr/drv.c
-+++ kernel-power-2.6.28/drivers/dsp/bridge/rmgr/drv.c
+--- kernel-cssu-2.6.28.orig/drivers/dsp/bridge/rmgr/drv.c
++++ kernel-cssu-2.6.28/drivers/dsp/bridge/rmgr/drv.c
 @@ -517,11 +517,12 @@
  		pDMMRes = pDMMList;
  		pDMMList = pDMMList->next;
@@ -584,8 +584,8 @@
  		}
  	}
  	return status;
---- kernel-power-2.6.28.orig/drivers/dsp/bridge/rmgr/proc.c
-+++ kernel-power-2.6.28/drivers/dsp/bridge/rmgr/proc.c
+--- kernel-cssu-2.6.28.orig/drivers/dsp/bridge/rmgr/proc.c
++++ kernel-cssu-2.6.28/drivers/dsp/bridge/rmgr/proc.c
 @@ -750,6 +750,7 @@
  			break;
  
@@ -594,8 +594,8 @@
  	}
  
  	if (!vma)
---- kernel-power-2.6.28.orig/drivers/i2c/chips/lis302dl.c
-+++ kernel-power-2.6.28/drivers/i2c/chips/lis302dl.c
+--- kernel-cssu-2.6.28.orig/drivers/i2c/chips/lis302dl.c
++++ kernel-cssu-2.6.28/drivers/i2c/chips/lis302dl.c
 @@ -44,6 +44,7 @@
  #	define LIS302_CTRL1_Y		(1 << 1)
  #	define LIS302_CTRL1_X		(1 << 0)
@@ -620,8 +620,8 @@
  
  	/* REG 3
  	 * Interrupt CTRL register. One interrupt pin is used for
---- kernel-power-2.6.28.orig/drivers/leds/leds-lp5523.c
-+++ kernel-power-2.6.28/drivers/leds/leds-lp5523.c
+--- kernel-cssu-2.6.28.orig/drivers/leds/leds-lp5523.c
++++ kernel-cssu-2.6.28/drivers/leds/leds-lp5523.c
 @@ -32,6 +32,7 @@
  #include <linux/wait.h>
  #include <linux/leds.h>
@@ -707,8 +707,8 @@
  
  	kfree(chip);
  
---- kernel-power-2.6.28.orig/drivers/media/radio/radio-si4713.c
-+++ kernel-power-2.6.28/drivers/media/radio/radio-si4713.c
+--- kernel-cssu-2.6.28.orig/drivers/media/radio/radio-si4713.c
++++ kernel-cssu-2.6.28/drivers/media/radio/radio-si4713.c
 @@ -54,6 +54,25 @@
  /* module parameters */
  static int radio_nr = -1;	/* radio device minor (-1 ==> auto assign) */
@@ -921,8 +921,8 @@
  	return 0;
  
  free_sysfs:
---- kernel-power-2.6.28.orig/drivers/media/radio/radio-si4713.h
-+++ kernel-power-2.6.28/drivers/media/radio/radio-si4713.h
+--- kernel-cssu-2.6.28.orig/drivers/media/radio/radio-si4713.h
++++ kernel-cssu-2.6.28/drivers/media/radio/radio-si4713.h
 @@ -21,6 +21,9 @@
  #define SI4713_I2C_ADDR_BUSEN_HIGH	0x63
  #define SI4713_I2C_ADDR_BUSEN_LOW	0x11
@@ -933,8 +933,8 @@
  /*
   * Platform dependent definition
   */
---- kernel-power-2.6.28.orig/drivers/media/video/omap34xxcam.c
-+++ kernel-power-2.6.28/drivers/media/video/omap34xxcam.c
+--- kernel-cssu-2.6.28.orig/drivers/media/video/omap34xxcam.c
++++ kernel-cssu-2.6.28/drivers/media/video/omap34xxcam.c
 @@ -1833,6 +1833,7 @@
  	struct omap34xxcam_videodev *vdev = fh->vdev;
  	struct device *isp = vdev->cam->isp;
@@ -962,8 +962,8 @@
  daemon_out:
  	file->private_data = NULL;
  
---- kernel-power-2.6.28.orig/drivers/mmc/host/omap_hsmmc.c
-+++ kernel-power-2.6.28/drivers/mmc/host/omap_hsmmc.c
+--- kernel-cssu-2.6.28.orig/drivers/mmc/host/omap_hsmmc.c
++++ kernel-cssu-2.6.28/drivers/mmc/host/omap_hsmmc.c
 @@ -115,6 +115,7 @@
  /* Timeouts for entering power saving states on inactivity, msec */
  #define OMAP_MMC_DISABLED_TIMEOUT	100
@@ -1109,8 +1109,8 @@
  	case CARDSLEEP:
  	case REGSLEEP:
  		return omap_hsmmc_sleep_to_off(host);
---- kernel-power-2.6.28.orig/drivers/net/wireless/wl12xx/wl1251_acx.c
-+++ kernel-power-2.6.28/drivers/net/wireless/wl12xx/wl1251_acx.c
+--- kernel-cssu-2.6.28.orig/drivers/net/wireless/wl12xx/wl1251_acx.c
++++ kernel-cssu-2.6.28/drivers/net/wireless/wl12xx/wl1251_acx.c
 @@ -910,7 +910,7 @@
  	}
  
@@ -1120,8 +1120,8 @@
  
  out:
  	kfree(tsf_info);
---- kernel-power-2.6.28.orig/drivers/net/wireless/wl12xx/wl1251_cmd.c
-+++ kernel-power-2.6.28/drivers/net/wireless/wl12xx/wl1251_cmd.c
+--- kernel-cssu-2.6.28.orig/drivers/net/wireless/wl12xx/wl1251_cmd.c
++++ kernel-cssu-2.6.28/drivers/net/wireless/wl12xx/wl1251_cmd.c
 @@ -242,7 +242,7 @@
  	if (ret < 0) {
  		wl1251_error("tx %s cmd for channel %d failed",
@@ -1131,8 +1131,8 @@
  	}
  
  	wl1251_debug(DEBUG_BOOT, "tx %s cmd channel %d",
---- kernel-power-2.6.28.orig/include/linux/sched.h
-+++ kernel-power-2.6.28/include/linux/sched.h
+--- kernel-cssu-2.6.28.orig/include/linux/sched.h
++++ kernel-cssu-2.6.28/include/linux/sched.h
 @@ -1665,11 +1665,11 @@
  static inline void wake_up_idle_cpu(int cpu) { }
  #endif
@@ -1146,8 +1146,8 @@
  extern unsigned int sysctl_sched_features;
  extern unsigned int sysctl_sched_migration_cost;
  extern unsigned int sysctl_sched_nr_migrate;
---- kernel-power-2.6.28.orig/include/linux/swap.h
-+++ kernel-power-2.6.28/include/linux/swap.h
+--- kernel-cssu-2.6.28.orig/include/linux/swap.h
++++ kernel-cssu-2.6.28/include/linux/swap.h
 @@ -130,6 +130,17 @@
  #define SWAP_MAP_MAX	0x7fff
  #define SWAP_MAP_BAD	0x8000
@@ -1176,8 +1176,8 @@
  	unsigned int lowest_bit;
  	unsigned int highest_bit;
  	unsigned int cluster_next;
---- kernel-power-2.6.28.orig/include/net/bluetooth/sco.h
-+++ kernel-power-2.6.28/include/net/bluetooth/sco.h
+--- kernel-cssu-2.6.28.orig/include/net/bluetooth/sco.h
++++ kernel-cssu-2.6.28/include/net/bluetooth/sco.h
 @@ -29,7 +29,7 @@
  #define SCO_DEFAULT_MTU		500
  #define SCO_DEFAULT_FLUSH_TO	0xFFFF
@@ -1187,8 +1187,8 @@
  #define SCO_DISCONN_TIMEOUT	(HZ * 2)
  #define SCO_CONN_IDLE_TIMEOUT	(HZ * 60)
  
---- kernel-power-2.6.28.orig/kernel/sched_fair.c
-+++ kernel-power-2.6.28/kernel/sched_fair.c
+--- kernel-cssu-2.6.28.orig/kernel/sched_fair.c
++++ kernel-cssu-2.6.28/kernel/sched_fair.c
 @@ -48,10 +48,10 @@
  static unsigned int sched_nr_latency = 5;
  
@@ -1202,8 +1202,8 @@
  
  /*
   * sys_sched_yield() compat mode
---- kernel-power-2.6.28.orig/kernel/sysctl.c
-+++ kernel-power-2.6.28/kernel/sysctl.c
+--- kernel-cssu-2.6.28.orig/kernel/sysctl.c
++++ kernel-cssu-2.6.28/kernel/sysctl.c
 @@ -235,6 +235,14 @@
  #endif
  
@@ -1234,8 +1234,8 @@
  		.procname	= "sched_features",
  		.data		= &sysctl_sched_features,
  		.maxlen		= sizeof(unsigned int),
---- kernel-power-2.6.28.orig/mm/swapfile.c
-+++ kernel-power-2.6.28/mm/swapfile.c
+--- kernel-cssu-2.6.28.orig/mm/swapfile.c
++++ kernel-cssu-2.6.28/mm/swapfile.c
 @@ -996,11 +996,55 @@
  	spin_unlock(&mmlist_lock);
  }
@@ -1363,8 +1363,8 @@
  	mutex_lock(&swapon_mutex);
  	spin_lock(&swap_lock);
  	if (swap_flags & SWAP_FLAG_PREFER)
---- kernel-power-2.6.28.orig/net/bluetooth/hci_conn.c
-+++ kernel-power-2.6.28/net/bluetooth/hci_conn.c
+--- kernel-cssu-2.6.28.orig/net/bluetooth/hci_conn.c
++++ kernel-cssu-2.6.28/net/bluetooth/hci_conn.c
 @@ -375,6 +375,9 @@
  
  	if (acl->state == BT_CONNECTED &&
@@ -1375,8 +1375,8 @@
  		if (lmp_esco_capable(hdev))
  			hci_setup_sync(sco, acl->handle);
  		else
---- kernel-power-2.6.28.orig/net/bluetooth/hci_event.c
-+++ kernel-power-2.6.28/net/bluetooth/hci_event.c
+--- kernel-cssu-2.6.28.orig/net/bluetooth/hci_event.c
++++ kernel-cssu-2.6.28/net/bluetooth/hci_event.c
 @@ -1056,6 +1056,8 @@
  	if (conn) {
  		if (!ev->status)

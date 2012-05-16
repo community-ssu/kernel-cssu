@@ -1,4 +1,4 @@
-Source: kernel-power
+Source: kernel-cssu
 Section: utils
 Priority: optional
 Maintainer: Pali Rohár <pali.rohar@gmail.com>
@@ -7,20 +7,20 @@ Build-Depends: debhelper (>= 4.0.0), quilt, sdk-fiasco-gen, libncurses5-dev, sha
 Build-Depends-Indep: bzip2
 Standards-Version: 3.8.0
 
-Package: kernel-power
+Package: kernel-cssu
 Architecture: armel
 Conflicts: kernel-maemo
 Description: Flashable Linux kernel (kernel power 2.6.28.10)
  This package provides a flashable kernel image.
  .
- Install package kernel-power-flasher to automatically flash it.
+ Install package kernel-cssu-flasher to automatically flash it.
 
-Package: kernel-power-bootimg
+Package: kernel-cssu-bootimg
 Section: user/system
 Architecture: armel
-Depends: kernel-power-modules (= ${binary:Version})
-Conflicts: multiboot-kernel-power
-Recommends: multiboot, kernel-power-flasher, kernel-power-settings, usbip, iptables, mtd-utils, kexec-tools
+Depends: kernel-cssu-modules (= ${binary:Version})
+Conflicts: multiboot-kernel-cssu
+Recommends: multiboot, kernel-cssu-flasher, kernel-power-settings, usbip, iptables, mtd-utils, kexec-tools
 Provides: kernel-feature-netfilter, kernel-feature-ipv6, kernel-feature-ext4, kernel-feature-xfs, kernel-feature-reiserfs,
   kernel-feature-ntfs-read, kernel-feature-udf, kernel-feature-cifs, kernel-feature-automounter, kernel-feature-squashfs, 
   kernel-feature-unionfs, kernel-feature-crypto, kernel-feature-dmloop, kernel-feature-utf8, kernel-feature-mousejoy,
@@ -103,13 +103,13 @@ XB-Maemo-Icon-26:
  MDItMDZUMTk6Mjk6MjMrMDE6MDBL9SgPAAAAJXRFWHRtb2RpZnktZGF0ZQAy
  MDA5LTA5LTI3VDA5OjM1OjM0KzAyOjAwrPojkwAAAABJRU5ErkJggg==
 
-Package: kernel-power-flasher
+Package: kernel-cssu-flasher
 Section: user/system
 Architecture: armel
-Pre-Depends: kernel-power (= ${binary:Version}), kernel-power-modules (= ${binary:Version}), softupd (>= 0.4.0), maemo-installer-utils
+Pre-Depends: kernel-cssu (= ${binary:Version}), kernel-power-modules (= ${binary:Version}), softupd (>= 0.4.0), maemo-installer-utils
 Depends: sudo
 Conflicts: kernel-flasher-maemo (<= 2.6.28-maemo22), kernel-maemo, kernel-modules-maemo, kernel-headers-maemo, linux-kernel-headers-maemo
-Recommends: kernel-power-settings, usbip, iptables, mtd-utils, kexec-tools
+Recommends: kernel-cssu-settings, usbip, iptables, mtd-utils, kexec-tools
 Provides: kernel-feature-netfilter, kernel-feature-ipv6, kernel-feature-ext4, kernel-feature-xfs, kernel-feature-reiserfs,
   kernel-feature-ntfs-read, kernel-feature-udf, kernel-feature-cifs, kernel-feature-automounter, kernel-feature-squashfs, 
   kernel-feature-unionfs, kernel-feature-crypto, kernel-feature-dmloop, kernel-feature-utf8, kernel-feature-mousejoy,
@@ -126,7 +126,7 @@ Description: Linux kernel updater (kernel power 2.6.28.10)
  For more details and help please visit http://wiki.maemo.org/Kernel_Power
  .
  If you want to deinstall this kernel to revert to the original Nokia kernel,
- you must run the "Deinstall kernel-power" application. Deinstallation in
+ you must run the "Deinstall kernel-cssu" application. Deinstallation in
  the Application Manager is not possible.
  .
  This custom kernel contains additional modules for IPv6, packet filtering,
@@ -210,14 +210,14 @@ XB-Maemo-Icon-26:
  MDItMDZUMTk6Mjk6MjMrMDE6MDBL9SgPAAAAJXRFWHRtb2RpZnktZGF0ZQAy
  MDA5LTA5LTI3VDA5OjM1OjM0KzAyOjAwrPojkwAAAABJRU5ErkJggg==
 
-Package: kernel-power-headers
+Package: kernel-cssu-headers
 Architecture: armel
 Depends: ${shlibs:Depends}
 Conflicts: kernel-headers-maemo
 Description: Linux kernel headers (kernel power 2.6.28.10)
  This package provides kernel headers.
 
-Package: linux-kernel-power-headers
+Package: linux-kernel-cssu-headers
 Architecture: any
 Depends: ${shlibs:Depends}
 Conflicts: linux-kernel-headers-maemo, linux-kernel-headers
@@ -225,26 +225,26 @@ Description: Linux Kernel headers for development (kernel power 2.6.28.10)
  This package provides headers from the Linux kernel. These headers
  are used by the installed headers for GNU glibc and other system libraries.
 
-Package: kernel-power-modules
+Package: kernel-cssu-modules
 Architecture: armel
 Conflicts: kernel-modules-maemo
-Depends: module-init-tools (>= 3.3), kernel-power (= ${binary:Version}) | kernel-power-bootimg (= ${binary:Version})
+Depends: module-init-tools (>= 3.3), kernel-cssu (= ${binary:Version}) | kernel-power-bootimg (= ${binary:Version})
 Description: Linux kernel modules (kernel power 2.6.28.10)
  This package provides kernel modules.
 
-Package: kernel-power-modules-debug
+Package: kernel-cssu-modules-debug
 Architecture: armel
-Depends: module-init-tools (>= 3.3), kernel-power-modules
+Depends: module-init-tools (>= 3.3), kernel-cssu-modules
 Description: Linux kernel modules for debugging (kernel power 2.6.28.10)
  This package provides kernel modules needed for debugging and profiling.
 
-Package: kernel-power-debug
+Package: kernel-cssu-debug
 Architecture: armel
 Description: Linux kernel debug symblos (kernel power 2.6.28.10)
  This packages provides vmlinux file for the kernel and
  kernel modules related to debugging.
 
-Package: kernel-power-source
+Package: kernel-cssu-source
 Architecture: all
 Section: devel
 Priority: optional

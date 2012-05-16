@@ -3,7 +3,7 @@ Extended kernel-sources for Nokia N900
 
 * Downloading the sources:
 
- apt-get source kernel-power
+ apt-get source kernel-cssu
 
 * Building the kernel packages:
 

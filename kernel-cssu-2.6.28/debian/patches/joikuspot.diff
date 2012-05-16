@@ -1,5 +1,5 @@
---- kernel-power-2.6.28/drivers/misc/Makefile	2011-04-16 03:01:15.000000000 +0200
-+++ kernel-power-2.6.28/drivers/misc/Makefile	2011-04-16 03:01:45.000000000 +0200
+--- kernel-cssu-2.6.28/drivers/misc/Makefile	2011-04-16 03:01:15.000000000 +0200
++++ kernel-cssu-2.6.28/drivers/misc/Makefile	2011-04-16 03:01:45.000000000 +0200
 @@ -3,6 +3,8 @@
  #
  obj- := misc.o	# Dummy rule to force built-in.o to be made
@@ -9,8 +9,8 @@
  obj-$(CONFIG_IBM_ASM)		+= ibmasm/
  obj-$(CONFIG_HDPU_FEATURES)	+= hdpuftrs/
  obj-$(CONFIG_OMAP_STI)		+= sti/
---- kernel-power-2.6.28/drivers/misc/JoikuSpot_Bouncer.c	2011-04-15 15:30:29.223356000 +0200
-+++ kernel-power-2.6.28/drivers/misc/JoikuSpot_Bouncer.c	2011-04-16 03:00:40.000000000 +0200
+--- kernel-cssu-2.6.28/drivers/misc/JoikuSpot_Bouncer.c	2011-04-15 15:30:29.223356000 +0200
++++ kernel-cssu-2.6.28/drivers/misc/JoikuSpot_Bouncer.c	2011-04-16 03:00:40.000000000 +0200
 @@ -0,0 +1,196 @@
 +/* 
 + * Implementation of JoikuSpotBouncer module

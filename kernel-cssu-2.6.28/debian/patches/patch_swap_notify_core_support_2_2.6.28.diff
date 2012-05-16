@@ -2,10 +2,10 @@
  mm/swapfile.c |    7 +++----
  1 files changed, 3 insertions(+), 4 deletions(-)
 
-Index: kernel-power-2.6.28/mm/swapfile.c
+Index: kernel-cssu-2.6.28/mm/swapfile.c
 ===================================================================
---- kernel-power-2.6.28.orig/mm/swapfile.c
-+++ kernel-power-2.6.28/mm/swapfile.c
+--- kernel-cssu-2.6.28.orig/mm/swapfile.c
++++ kernel-cssu-2.6.28/mm/swapfile.c
 @@ -285,7 +285,7 @@
  static int swap_entry_free(struct swap_info_struct *p, unsigned long offset)
  {

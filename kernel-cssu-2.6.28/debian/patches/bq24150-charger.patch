@@ -1,5 +1,5 @@
 --- /dev/null	2012-04-29 08:55:34.366920721 +0200
-+++ kernel-power/drivers/power/bq2415x_charger.c	2012-04-29 17:53:57.799826239 +0200
++++ kernel-cssu/drivers/power/bq2415x_charger.c	2012-04-29 17:53:57.799826239 +0200
 @@ -0,0 +1,1564 @@
 +/*
 +    bq2415x_charger.c - bq2415x charger driver
@@ -1566,7 +1566,7 @@
 +MODULE_DESCRIPTION("bq2415x charger driver");
 +MODULE_LICENSE("GPL");
 --- /dev/null	2012-04-29 08:55:34.366920721 +0200
-+++ kernel-power/include/linux/power/bq2415x_charger.h	2012-01-27 15:47:45.689585447 +0100
++++ kernel-cssu/include/linux/power/bq2415x_charger.h	2012-01-27 15:47:45.689585447 +0100
 @@ -0,0 +1,78 @@
 +/*
 +    bq2415x_charger.h - bq2415x charger driver
@@ -1646,15 +1646,15 @@
 +};
 +
 +#endif
---- kernel-power/drivers/power/Makefile.orig	2012-04-29 18:03:10.751810073 +0200
-+++ kernel-power/drivers/power/Makefile	2012-04-29 18:03:52.207808860 +0200
+--- kernel-cssu/drivers/power/Makefile.orig	2012-04-29 18:03:10.751810073 +0200
++++ kernel-cssu/drivers/power/Makefile	2012-04-29 18:03:52.207808860 +0200
 @@ -25,3 +25,4 @@ obj-$(CONFIG_TWL4030_BCI_BATTERY)	+= twl
  obj-$(CONFIG_BATTERY_TOSA)	+= tosa_battery.o
  obj-$(CONFIG_BATTERY_WM97XX)	+= wm97xx_battery.o
  obj-$(CONFIG_BATTERY_BQ27x00)	+= bq27x00_battery.o
 +obj-$(CONFIG_CHARGER_BQ2415X)	+= bq2415x_charger.o
---- kernel-power/drivers/power/Kconfig.orig	2012-04-29 18:01:48.819812466 +0200
-+++ kernel-power/drivers/power/Kconfig	2012-04-29 18:03:06.043810209 +0200
+--- kernel-cssu/drivers/power/Kconfig.orig	2012-04-29 18:01:48.819812466 +0200
++++ kernel-cssu/drivers/power/Kconfig	2012-04-29 18:03:06.043810209 +0200
 @@ -75,4 +75,10 @@ config BATTERY_BQ27x00
  	help
  	  Say Y here to enable support for batteries with BQ27200(I2C) chip.

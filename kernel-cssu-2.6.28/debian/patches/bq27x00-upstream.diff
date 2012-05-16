@@ -1,5 +1,5 @@
---- kernel-power-2.6.28/drivers/power/bq27x00_battery.c	2011-10-09 17:10:05.891697314 +0200
-+++ kernel-power-2.6.28/drivers/power/bq27x00_battery.c	2011-10-31 22:08:03.185443335 +0100
+--- kernel-cssu-2.6.28/drivers/power/bq27x00_battery.c	2011-10-09 17:10:05.891697314 +0200
++++ kernel-cssu-2.6.28/drivers/power/bq27x00_battery.c	2011-10-31 22:08:03.185443335 +0100
 @@ -3,6 +3,8 @@
   *
   * Copyright (C) 2008 Rodolfo Giometti <giometti@linux.it>

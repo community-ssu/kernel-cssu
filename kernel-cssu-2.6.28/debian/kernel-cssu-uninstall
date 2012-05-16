@@ -1,5 +1,5 @@
 #!/bin/sh
-tmp=/tmp/kernel-power-uninstall
+tmp=/tmp/kernel-cssu-uninstall
 cat > $tmp <<EOF
 This program will restore original Nokia kernel
 and uninstall package "Linux kernel for power user".
@@ -58,7 +58,7 @@ else
     exit 1
 fi
 dbusmsg "Nokia kernel was restored. Removing package \"Linux kernel for power user\"..."
-apt-get remove --auto-remove -y kernel-power-flasher > $tmp
+apt-get remove --auto-remove -y kernel-cssu-flasher > $tmp
 ok=$?
 cat $tmp
 if test $ok = 0; then

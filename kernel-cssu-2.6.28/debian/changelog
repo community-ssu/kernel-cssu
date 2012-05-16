@@ -1,4 +1,4 @@
-kernel-power (1:2.6.28-10power50) fremantle; urgency=low
+kernel-cssu (1:2.6.28-10power50) fremantle; urgency=low
 
    * Fixed reboot problem
    * Added option (sysfs entry) to disable indicator led
@@ -15,11 +15,11 @@ kernel-power (1:2.6.28-10power50) fremantle; urgency=low
    * Disabled errata 430973
    * If FM transmitter is locked do not show error message when trying to change power level
    * Fixed oops in g_ether with windows
-   * kernel-power-bootimg package now working with U-Boot Bootmenu too
+   * kernel-cssu-bootimg package now working with U-Boot Bootmenu too
 
  -- Pali Rohár <pali.rohar@gmail.com>  Wed, 14 Mar 2012 19:43:04 +0100
 
-kernel-power (1:2.6.28-10power49) fremantle; urgency=low
+kernel-cssu (1:2.6.28-10power49) fremantle; urgency=low
 
   * support for binding and unbinding framebuffer console
   * split nokia patch nokia-20093908+0m5.diff into more
@@ -47,14 +47,14 @@ kernel-power (1:2.6.28-10power49) fremantle; urgency=low
 
  -- Pali Rohár <pali.rohar@gmail.com>  Fri, 18 Nov 2011 22:44:19 +0100
 
-kernel-power (1:2.6.28-10power48) fremantle; urgency=low
+kernel-cssu (1:2.6.28-10power48) fremantle; urgency=low
 
   * cleaned and rewritten debian/rules
   * cleaned patches (splitted nokia and omap patches)
   * revert back -source and -debug package
-  * updated info about kernel-power for HAM
+  * updated info about kernel-cssu for HAM
   * possible to install only -bootimg package (same features)
-  * fixed kernel-power uninstall script
+  * fixed kernel-cssu uninstall script
   * 720p DSP patch by freemangordon
   * ext4 data corruption patch by Tigerite
   * minstrel-aziwoqpa patch from garage tracker
@@ -68,23 +68,23 @@ kernel-power (1:2.6.28-10power48) fremantle; urgency=low
 
  -- Pali Rohár <pali.rohar@gmail.com>  Sat, 09 Jul 2011 16:03:55 +0200
 
-kernel-power (1:2.6.28-10power47) fremantle; urgency=low
+kernel-cssu (1:2.6.28-10power47) fremantle; urgency=low
 
   * enabled additional kernel modules (for usb host mode)
   * backported bq27x00_battery patch
-  * some patches from kernel-power bugtracker
-  * multiboot support in kernel-power-bootimg package
+  * some patches from kernel-cssu bugtracker
+  * multiboot support in kernel-cssu-bootimg package
 
  -- Pali Rohár <pali.rohar@gmail.com>  Sun, 01 May 2011 01:22:09 +0200
 
-kernel-power (2.6.28-maemo46) fremantle; urgency=low
+kernel-cssu (2.6.28-maemo46) fremantle; urgency=low
 
   * disable u-boot as causes too much trouble
   * bluetooth patch to make mice work (by freemangordon)
 
  -- Thomas Tanner <maemo@tannerlab.com>  Thu, 18 Nov 2010 14:40:58 +0100
 
-kernel-power (2.6.28-maemo45) fremantle; urgency=low
+kernel-cssu (2.6.28-maemo45) fremantle; urgency=low
 
   * revert to old binary u-boot image for now
   * apply Paul Ferter's latest usbhost patches
@@ -92,13 +92,13 @@ kernel-power (2.6.28-maemo45) fremantle; urgency=low
 
  -- Thomas Tanner <maemo@tannerlab.com>  Wed,  11 Nov 2010 14:00:00 +0200
 
-kernel-power (2.6.28-maemo44) fremantle; urgency=low
+kernel-cssu (2.6.28-maemo44) fremantle; urgency=low
 
   * use enhanced u-boot binary from package u-boot-for-power-kernel
 
  -- Thomas Tanner <maemo@tannerlab.com>  Tue,  10 Nov 2010 14:00:00 +0200
 
-kernel-power (2.6.28-maemo43) fremantle; urgency=low
+kernel-cssu (2.6.28-maemo43) fremantle; urgency=low
 
   * build u-boot kernel and add necessary build-depends
   * compile some governors and ext3 as modules to reduce kernel size
@@ -107,7 +107,7 @@ kernel-power (2.6.28-maemo43) fremantle; urgency=low
 
  -- Thomas Tanner <maemo@tannerlab.com>  Tue,  10 Nov 2010 13:00:00 +0200
 
-kernel-power (2.6.28-maemo42) fremantle; urgency=low
+kernel-cssu (2.6.28-maemo42) fremantle; urgency=low
 
   * remove fmtx power lock (Matan Ziv-Av)
   * add RDS support to FMRX driver (Niels Faerber)
@@ -117,7 +117,7 @@ kernel-power (2.6.28-maemo42) fremantle; urgency=low
 
  -- Thomas Tanner <maemo@tannerlab.com>  Tue,  09 Nov 2010 23:00:00 +0200
 
-kernel-power (2.6.28-maemo41) fremantle; urgency=low
+kernel-cssu (2.6.28-maemo41) fremantle; urgency=low
 
   * integrate PR1.3 kernel patches
   * applied Pali Rohar's <pali.rohar@gmail.com> wl12xx patch for setting wifi mode
@@ -126,42 +126,42 @@ kernel-power (2.6.28-maemo41) fremantle; urgency=low
 
  -- Thomas Tanner <maemo@tannerlab.com>  Tue,  09 Nov 2010 21:00:00 +0200
 
-kernel-power (2.6.28-maemo40) fremantle; urgency=low
+kernel-cssu (2.6.28-maemo40) fremantle; urgency=low
 
-  * install build scripts properly in /usr/src/kernel-power-kbuild
+  * install build scripts properly in /usr/src/kernel-cssu-kbuild
 
  -- Thomas Tanner <maemo@tannerlab.com>  Mon,  9 Aug 2010 23:17:47 +0200
 
-kernel-power (2.6.28-maemo39) fremantle; urgency=low
+kernel-cssu (2.6.28-maemo39) fremantle; urgency=low
 
-  * new kernel-power-bootimg package for the kernel zImage
+  * new kernel-cssu-bootimg package for the kernel zImage
 
  -- Thomas Tanner <maemo@tannerlab.com>  Tue,  3 Aug 2010 22:25:38 +0200
 
-kernel-power (2.6.28-maemo38) fremantle; urgency=low
+kernel-cssu (2.6.28-maemo38) fremantle; urgency=low
 
-  * add missing linux headers to kernel-power-headers
+  * add missing linux headers to kernel-cssu-headers
   * enable netfiler tcpmss+mac
   * increase kernel log buffer to 64K
   * add ARM thumb2 fix
 
  -- Thomas Tanner <maemo@tannerlab.com>  Tue,  3 Aug 2010 09:25:38 +0200
 
-kernel-power (2.6.28-maemo37) fremantle; urgency=low
+kernel-cssu (2.6.28-maemo37) fremantle; urgency=low
 
   * disable buitin extra network options+MMC bounce from v28 due to possible side-effects
   * remove system-update flag due to HAM problems
 
  -- Thomas Tanner <maemo@tannerlab.com>  Tue, 25 May 2010 23:07:37 +0200
 
-kernel-power (2.6.28-maemo36) fremantle; urgency=low
+kernel-cssu (2.6.28-maemo36) fremantle; urgency=low
 
   * deinstall warning
   * reupload due to autobuilder issue
 
  -- Thomas Tanner <maemo@tannerlab.com>  Tue, 25 May 2010 18:01:59 +0200
 
-kernel-power (2.6.28-maemo35) fremantle; urgency=low
+kernel-cssu (2.6.28-maemo35) fremantle; urgency=low
 
   * activate new wlan-monitor patch
   * added system update flag to prevent deinstallation in Application manager
@@ -170,14 +170,14 @@ kernel-power (2.6.28-maemo35) fremantle; urgency=low
 
  -- Thomas Tanner <maemo@tannerlab.com>  Tue, 25 May 2010 09:40:35 +0200
 
-kernel-power (2.6.28-maemo34) fremantle; urgency=low
+kernel-cssu (2.6.28-maemo34) fremantle; urgency=low
 
   * install blacklist properly
   * control: remove OABI
 
  -- Thomas Tanner <maemo@tannerlab.com>  Wed, 19 May 2010 17:54:12 +0200
 
-kernel-power (2.6.28-maemo33) fremantle; urgency=low
+kernel-cssu (2.6.28-maemo33) fremantle; urgency=low
 
   * enable all v28 features again, except for OABI
    (commenting out features in configuration had no effect)
@@ -186,26 +186,26 @@ kernel-power (2.6.28-maemo33) fremantle; urgency=low
 
  -- Thomas Tanner <maemo@tannerlab.com>  Wed, 19 May 2010 17:13:39 +0200
 
-kernel-power (2.6.28-maemo32) fremantle; urgency=low
+kernel-cssu (2.6.28-maemo32) fremantle; urgency=low
 
   * copied config from v27
   * modules.post*: don't fix preinit (is this the bug?)
 
  -- Thomas Tanner <maemo@tannerlab.com>  Mon, 17 May 2010 21:27:36 +0200
 
-kernel-power (2.6.28-maemo31) fremantle; urgency=low
+kernel-cssu (2.6.28-maemo31) fremantle; urgency=low
 
   * reverted the remaining changes to v27
 
  -- Thomas Tanner <maemo@tannerlab.com>  Mon, 17 May 2010 18:27:36 +0200
 
-kernel-power (2.6.28-maemo30) fremantle; urgency=low
+kernel-cssu (2.6.28-maemo30) fremantle; urgency=low
 
   * disable OABI too
 
  -- Thomas Tanner <maemo@tannerlab.com>  Mon, 17 May 2010 08:52:48 +0200
 
-kernel-power (2.6.28-maemo29) fremantle; urgency=low
+kernel-cssu (2.6.28-maemo29) fremantle; urgency=low
 
   * revert most changes to v27: disabled more QoS modules, IP multiple table+multipath,
     MMC block bouncing, old wlan-monitor patch, remove USB OHCI,EHCI
@@ -213,23 +213,23 @@ kernel-power (2.6.28-maemo29) fremantle; urgency=low
 
  -- Thomas Tanner <maemo@tannerlab.com>  Mon, 17 May 2010 07:45:30 +0200
 
-kernel-power (2.6.28-maemo28) fremantle; urgency=low
+kernel-cssu (2.6.28-maemo28) fremantle; urgency=low
 
   * enabled more QoS modules, IP multiple table+multipath,
     MMC block bouncing, OABI support
   * updated wlan-monitor patch
-  * kernel-power-modules: fix preinit MODULE_PATH to always load current kernel modules
-  * kernel-power-deinstall: improved script, msg boxes, error checking
+  * kernel-cssu-modules: fix preinit MODULE_PATH to always load current kernel modules
+  * kernel-cssu-deinstall: improved script, msg boxes, error checking
 
  -- Thomas Tanner <maemo@tannerlab.com>  Sun, 16 May 2010 18:46:47 +0200
 
-kernel-power (2.6.28-maemo27) fremantle; urgency=low
+kernel-cssu (2.6.28-maemo27) fremantle; urgency=low
 
   * prerm: minor fix to warn check for HAM only during deinstallation, not on upgrades
 
  -- Thomas Tanner <maemo@tannerlab.com>  Sun,  9 May 2010 14:33:40 +0200
 
-kernel-power (2.6.28-maemo26) fremantle; urgency=low
+kernel-cssu (2.6.28-maemo26) fremantle; urgency=low
 
   * 599Mhz is now interpreted as 600MHz, keep ignoring 600MHz setting by telephone app
   * changed extraversion to power$(version)
@@ -242,7 +242,7 @@ kernel-power (2.6.28-maemo26) fremantle; urgency=low
 
  -- Thomas Tanner <maemo@tannerlab.com>  Sun,  9 May 2010 12:53:18 +0200
 
-kernel-power (2.6.28-maemo25) fremantle; urgency=low
+kernel-cssu (2.6.28-maemo25) fremantle; urgency=low
 
    * control: new bugtracker, fix builddeps, set display name, mention reboot
    * added ondemand-avoid patches by Matan Ziv-Av
@@ -250,10 +250,10 @@ kernel-power (2.6.28-maemo25) fremantle; urgency=low
 
  -- Thomas Tanner <maemo@tannerlab.com>  Thu, 15 Apr 2010 00:00:00 +0100
 
-kernel-power (2.6.28-maemo24) fremantle; urgency=low
+kernel-cssu (2.6.28-maemo24) fremantle; urgency=low
 
-   * renamed package to kernel-power due to trademark issues
-   * control: updated (renamed to kernel-power*), new features in Provides
+   * renamed package to kernel-cssu due to trademark issues
+   * control: updated (renamed to kernel-cssu*), new features in Provides
    * DSP frequencies are specified as MHz
    * enabled crypto seqiv and twofish modules
    * added patches by Matan Ziv-Av: squashfs and led triggers and bugfixes

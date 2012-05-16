@@ -5,7 +5,7 @@ RELEASE := $(shell dpkg-parsechangelog | sed -ne 's/^Version: 1:\(.*\)/\1/p' | s
 REVISION := $(shell echo "$(RELEASE)" | sed 's/.*\./\./')
 EXTRAVERSION := EXTRAVERSION=$(REVISION)
 
-PACKAGE := kernel-power
+PACKAGE := kernel-cssu
 FLASHER_PACKAGE := $(PACKAGE)-flasher
 SOURCE_PACKAGE := $(PACKAGE)-source
 KERNEL_PACKAGE := $(PACKAGE)
@@ -44,7 +44,7 @@ ifneq (,$(findstring parallel,$(DEB_BUILD_OPTIONS)))
 endif
 
 get-orig-source:
-	wget http://repository.maemo.org/pool/maemo5.0/free/k/kernel/kernel_2.6.28.orig.tar.gz -O kernel-power_2.6.28.orig.tar.gz
+	wget http://repository.maemo.org/pool/maemo5.0/free/k/kernel/kernel_2.6.28.orig.tar.gz -O kernel-cssu_2.6.28.orig.tar.gz
 
 source-stamp:
 	dh_testdir
@@ -104,9 +104,9 @@ install-flasher:
 	mkdir -p $(CURDIR)/debian/$(FLASHER_PACKAGE)/etc/sudoers.d
 	mkdir -p $(CURDIR)/debian/$(FLASHER_PACKAGE)/usr/sbin
 	mkdir -p $(CURDIR)/debian/$(FLASHER_PACKAGE)/usr/share/applications/hildon
-	install -m644 $(CURDIR)/debian/kernel-power-flasher.sudoers $(CURDIR)/debian/$(FLASHER_PACKAGE)/etc/sudoers.d
-	install -m755 $(CURDIR)/debian/kernel-power-uninstall $(CURDIR)/debian/$(FLASHER_PACKAGE)/usr/sbin
-	install -m644 $(CURDIR)/debian/kernel-power-uninstall.desktop $(CURDIR)/debian/$(FLASHER_PACKAGE)/usr/share/applications/hildon
+	install -m644 $(CURDIR)/debian/kernel-cssu-flasher.sudoers $(CURDIR)/debian/$(FLASHER_PACKAGE)/etc/sudoers.d
+	install -m755 $(CURDIR)/debian/kernel-cssu-uninstall $(CURDIR)/debian/$(FLASHER_PACKAGE)/usr/sbin
+	install -m644 $(CURDIR)/debian/kernel-cssu-uninstall.desktop $(CURDIR)/debian/$(FLASHER_PACKAGE)/usr/share/applications/hildon
 
 install-debug: install-modules
 	mkdir -p $(CURDIR)/debian/$(DEBUG_PACKAGE)/usr/lib/debug/lib/modules/$(RELEASE)
@@ -134,7 +134,7 @@ install-modules:
 		install -c -m644 $$f $(CURDIR)/debian/$(MODULES_PACKAGE)/lib/modules/$(RELEASE)/$$(basename $$f); \
 		strip --remove-section=.comment --remove-section=.note --strip-unneeded  $(CURDIR)/debian/$(MODULES_PACKAGE)/lib/modules/$(RELEASE)/$$(basename $$f); \
 	done
-	install -m644 $(CURDIR)/debian/kernel-power.blacklist $(CURDIR)/debian/$(MODULES_PACKAGE)/etc/modprobe.d
+	install -m644 $(CURDIR)/debian/kernel-cssu.blacklist $(CURDIR)/debian/$(MODULES_PACKAGE)/etc/modprobe.d
 
 install-headers:
 	dh_testdir

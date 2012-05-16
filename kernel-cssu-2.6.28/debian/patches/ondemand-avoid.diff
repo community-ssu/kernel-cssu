@@ -1,5 +1,5 @@
---- kernel-power-2.6.28.orig/drivers/cpufreq/cpufreq_ondemand.c
-+++ kernel-power-2.6.28/drivers/cpufreq/cpufreq_ondemand.c
+--- kernel-cssu-2.6.28.orig/drivers/cpufreq/cpufreq_ondemand.c
++++ kernel-cssu-2.6.28/drivers/cpufreq/cpufreq_ondemand.c
 @@ -57,6 +57,9 @@
  #define DEF_SAMPLING_RATE_LATENCY_MULTIPLIER	(1000)
  #define TRANSITION_LATENCY_LIMIT		(10 * 1000 * 1000)

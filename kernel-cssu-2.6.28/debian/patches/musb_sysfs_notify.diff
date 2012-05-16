@@ -1,5 +1,5 @@
---- kernel-power/drivers/usb/musb/musb_core.c	2012-01-28 01:52:40.709486709 +0100
-+++ kernel-power/drivers/usb/musb/musb_core.c	2012-01-28 01:53:42.009484919 +0100
+--- kernel-cssu/drivers/usb/musb/musb_core.c	2012-01-28 01:52:40.709486709 +0100
++++ kernel-cssu/drivers/usb/musb/musb_core.c	2012-01-28 01:53:42.009484919 +0100
 @@ -2044,6 +2044,9 @@ musb_mode_store(struct device *dev, stru
  		status = -EINVAL;
  	mutex_unlock(&musb->mutex);
@@ -10,8 +10,8 @@
  	return (status == 0) ? n : status;
  }
  static DEVICE_ATTR(mode, 0644, musb_mode_show, musb_mode_store);
---- kernel-power/drivers/usb/musb/musb_procfs.c	2012-01-29 00:00:50.961863921 +0100
-+++ kernel-power/drivers/usb/musb/musb_procfs.c	2012-01-29 00:01:52.089862132 +0100
+--- kernel-cssu/drivers/usb/musb/musb_procfs.c	2012-01-29 00:00:50.961863921 +0100
++++ kernel-cssu/drivers/usb/musb/musb_procfs.c	2012-01-29 00:01:52.089862132 +0100
 @@ -721,6 +721,8 @@ static int musb_proc_write(struct file *
  		DBG(1, "CONNECT (%s) devctl %02x\n",
  				otg_state_string(musb), devctl);

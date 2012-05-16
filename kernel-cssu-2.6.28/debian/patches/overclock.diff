@@ -1,5 +1,5 @@
---- kernel-power-2.6.28.orig/arch/arm/mach-omap2/omap3-opp.h
-+++ kernel-power-2.6.28/arch/arm/mach-omap2/omap3-opp.h
+--- kernel-cssu-2.6.28.orig/arch/arm/mach-omap2/omap3-opp.h
++++ kernel-cssu-2.6.28/arch/arm/mach-omap2/omap3-opp.h
 @@ -4,6 +4,15 @@
  #include <mach/omap-pm.h>
  
@@ -70,8 +70,8 @@
 +extern struct omap_opp omap3_l3_rate_table[];
  
  #endif
---- kernel-power-2.6.28.orig/arch/arm/plat-omap/include/mach/omap34xx.h
-+++ kernel-power-2.6.28/arch/arm/plat-omap/include/mach/omap34xx.h
+--- kernel-cssu-2.6.28.orig/arch/arm/plat-omap/include/mach/omap34xx.h
++++ kernel-cssu-2.6.28/arch/arm/plat-omap/include/mach/omap34xx.h
 @@ -114,7 +114,8 @@
  #define VDD2_OPP3	0x3
  
@@ -82,8 +82,8 @@
  #define MIN_VDD2_OPP	VDD2_OPP1
  #define MAX_VDD2_OPP	VDD2_OPP3
  
---- kernel-power-2.6.28.orig/arch/arm/mach-omap2/smartreflex.c
-+++ kernel-power-2.6.28/arch/arm/mach-omap2/smartreflex.c
+--- kernel-cssu-2.6.28.orig/arch/arm/mach-omap2/smartreflex.c
++++ kernel-cssu-2.6.28/arch/arm/mach-omap2/smartreflex.c
 @@ -513,7 +513,7 @@
  	sr->req_opp_no = target_opp_no;
  
@@ -101,8 +101,8 @@
  			nvalue_reciprocal = sr->opp1_nvalue;
  			break;
  		default:
---- kernel-power-2.6.28.orig/arch/arm/plat-omap/cpu-omap.c
-+++ kernel-power-2.6.28/arch/arm/plat-omap/cpu-omap.c
+--- kernel-cssu-2.6.28.orig/arch/arm/plat-omap/cpu-omap.c
++++ kernel-cssu-2.6.28/arch/arm/plat-omap/cpu-omap.c
 @@ -148,10 +148,13 @@
  							VERY_HI_RATE) / 1000;
  	}
@@ -120,8 +120,8 @@
  	policy->cur = omap_getspeed(0);
  
  	policy->cpuinfo.transition_latency = 300 * 1000;
---- kernel-power-2.6.28.orig/arch/arm/mach-omap2/smartreflex.h
-+++ kernel-power-2.6.28/arch/arm/mach-omap2/smartreflex.h
+--- kernel-cssu-2.6.28.orig/arch/arm/mach-omap2/smartreflex.h
++++ kernel-cssu-2.6.28/arch/arm/mach-omap2/smartreflex.h
 @@ -254,7 +254,7 @@
  /* XXX: end remove/move */
  
@@ -131,8 +131,8 @@
  
  /* XXX: find more appropriate place for these once DVFS is in place */
  extern u32 current_vdd1_opp;
---- kernel-power-2.6.28.orig/drivers/cpufreq/cpufreq.c
-+++ kernel-power-2.6.28/drivers/cpufreq/cpufreq.c
+--- kernel-cssu-2.6.28.orig/drivers/cpufreq/cpufreq.c
++++ kernel-cssu-2.6.28/drivers/cpufreq/cpufreq.c
 @@ -465,7 +465,7 @@
  /**
   * cpufreq_per_cpu_attr_write() / store_##file_name() - sysfs write access
@@ -164,8 +164,8 @@
  
  /**
   * show_cpuinfo_cur_freq - current CPU frequency as detected by hardware
---- kernel-power-2.6.28.orig/arch/arm/mach-omap2/pm.c
-+++ kernel-power-2.6.28/arch/arm/mach-omap2/pm.c
+--- kernel-cssu-2.6.28.orig/arch/arm/mach-omap2/pm.c
++++ kernel-cssu-2.6.28/arch/arm/mach-omap2/pm.c
 @@ -39,6 +39,62 @@
  #include "prm-regbits-34xx.h"
  #include "pm.h"
@@ -356,8 +356,8 @@
  #ifdef CONFIG_OMAP_PM_SRF
  	error = sysfs_create_file(power_kobj,
  				  &vdd1_opp_attr.attr);
---- kernel-power-2.6.28.orig/drivers/cpufreq/cpufreq_ondemand.c
-+++ kernel-power-2.6.28/drivers/cpufreq/cpufreq_ondemand.c
+--- kernel-cssu-2.6.28.orig/drivers/cpufreq/cpufreq_ondemand.c
++++ kernel-cssu-2.6.28/drivers/cpufreq/cpufreq_ondemand.c
 @@ -844,6 +844,10 @@
  	u64 idle_time;
  	int cpu = get_cpu();

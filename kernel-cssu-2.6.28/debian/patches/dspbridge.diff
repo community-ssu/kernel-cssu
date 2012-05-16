@@ -1,6 +1,6 @@
-diff -urN kernel-power-2.6.28/arch/arm/configs/rx51_defconfig kernel-power-2.6.28.new/arch/arm/configs/rx51_defconfig
---- kernel-power-2.6.28/arch/arm/configs/rx51_defconfig	2011-10-11 13:51:21.756718563 +0100
-+++ kernel-power-2.6.28.new/arch/arm/configs/rx51_defconfig	2011-10-11 20:32:27.976257000 +0100
+diff -urN kernel-cssu-2.6.28/arch/arm/configs/rx51_defconfig kernel-power-2.6.28.new/arch/arm/configs/rx51_defconfig
+--- kernel-cssu-2.6.28/arch/arm/configs/rx51_defconfig	2011-10-11 13:51:21.756718563 +0100
++++ kernel-cssu-2.6.28.new/arch/arm/configs/rx51_defconfig	2011-10-11 20:32:27.976257000 +0100
 @@ -1514,7 +1514,7 @@
  CONFIG_FB_OMAP_BOOTLOADER_INIT=y
  CONFIG_FB_OMAP_CONSISTENT_DMA_SIZE=14
@@ -19,9 +19,9 @@ diff -urN kernel-power-2.6.28/arch/arm/configs/rx51_defconfig kernel-power-2.6.2
  # CONFIG_BRIDGE_DEBUG is not set
  
  #
-diff -urN kernel-power-2.6.28/arch/arm/mach-omap2/dspbridge.c kernel-power-2.6.28.new/arch/arm/mach-omap2/dspbridge.c
---- kernel-power-2.6.28/arch/arm/mach-omap2/dspbridge.c	2011-10-11 13:50:56.340880660 +0100
-+++ kernel-power-2.6.28.new/arch/arm/mach-omap2/dspbridge.c	2011-10-29 20:29:54.187994000 +0100
+diff -urN kernel-cssu-2.6.28/arch/arm/mach-omap2/dspbridge.c kernel-power-2.6.28.new/arch/arm/mach-omap2/dspbridge.c
+--- kernel-cssu-2.6.28/arch/arm/mach-omap2/dspbridge.c	2011-10-11 13:50:56.340880660 +0100
++++ kernel-cssu-2.6.28.new/arch/arm/mach-omap2/dspbridge.c	2011-10-29 20:29:54.187994000 +0100
 @@ -15,17 +15,184 @@
  
  #include <mach/omap-pm.h>
@@ -250,9 +250,9 @@ diff -urN kernel-power-2.6.28/arch/arm/mach-omap2/dspbridge.c kernel-power-2.6.2
  	platform_device_unregister(dspbridge_pdev);
  }
  module_exit(dspbridge_exit);
-diff -urN kernel-power-2.6.28/arch/arm/mach-omap2/mailbox.c kernel-power-2.6.28.new/arch/arm/mach-omap2/mailbox.c
---- kernel-power-2.6.28/arch/arm/mach-omap2/mailbox.c	2011-10-11 13:50:51.509840006 +0100
-+++ kernel-power-2.6.28.new/arch/arm/mach-omap2/mailbox.c	2011-10-13 20:52:53.670502000 +0100
+diff -urN kernel-cssu-2.6.28/arch/arm/mach-omap2/mailbox.c kernel-power-2.6.28.new/arch/arm/mach-omap2/mailbox.c
+--- kernel-cssu-2.6.28/arch/arm/mach-omap2/mailbox.c	2011-10-11 13:50:51.509840006 +0100
++++ kernel-cssu-2.6.28.new/arch/arm/mach-omap2/mailbox.c	2011-10-13 20:52:53.670502000 +0100
 @@ -1,7 +1,7 @@
  /*
   * Mailbox reservation modules for OMAP2/3
@@ -610,9 +610,9 @@ diff -urN kernel-power-2.6.28/arch/arm/mach-omap2/mailbox.c kernel-power-2.6.28.
 +MODULE_AUTHOR("Hiroshi DOYU <Hiroshi.DOYU@nokia.com>");
 +MODULE_AUTHOR("Paul Mundt");
  MODULE_ALIAS("platform:"DRV_NAME);
-diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/brddefs.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/brddefs.h
---- kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/brddefs.h	2011-10-11 13:50:57.349662913 +0100
-+++ kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/brddefs.h	2011-08-19 18:42:45.000000000 +0100
+diff -urN kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/brddefs.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/brddefs.h
+--- kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/brddefs.h	2011-10-11 13:50:57.349662913 +0100
++++ kernel-cssu-2.6.28.new/arch/arm/plat-omap/include/dspbridge/brddefs.h	2011-08-19 18:42:45.000000000 +0100
 @@ -3,6 +3,8 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -673,9 +673,9 @@ diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/brddefs.h ker
  
 -#endif				/* BRDDEFS_ */
 +#endif /* BRDDEFS_ */
-diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/cfgdefs.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/cfgdefs.h
---- kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/cfgdefs.h	2011-10-11 13:50:57.349662913 +0100
-+++ kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/cfgdefs.h	2011-08-19 18:42:45.000000000 +0100
+diff -urN kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/cfgdefs.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/cfgdefs.h
+--- kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/cfgdefs.h	2011-10-11 13:50:57.349662913 +0100
++++ kernel-cssu-2.6.28.new/arch/arm/plat-omap/include/dspbridge/cfgdefs.h	2011-08-19 18:42:45.000000000 +0100
 @@ -3,6 +3,8 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -824,9 +824,9 @@ diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/cfgdefs.h ker
  
 -#endif				/* CFGDEFS_ */
 +#endif /* CFGDEFS_ */
-diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/cfg.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/cfg.h
---- kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/cfg.h	2011-10-11 13:50:57.432894958 +0100
-+++ kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/cfg.h	2011-08-19 18:42:45.000000000 +0100
+diff -urN kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/cfg.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/cfg.h
+--- kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/cfg.h	2011-10-11 13:50:57.432894958 +0100
++++ kernel-cssu-2.6.28.new/arch/arm/plat-omap/include/dspbridge/cfg.h	2011-08-19 18:42:45.000000000 +0100
 @@ -3,6 +3,8 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -1207,9 +1207,9 @@ diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/cfg.h kernel-
  
 -#endif				/* CFG_ */
 +#endif /* CFG_ */
-diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/chnldefs.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/chnldefs.h
---- kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/chnldefs.h	2011-10-11 13:50:57.713203334 +0100
-+++ kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/chnldefs.h	2011-08-19 18:42:45.000000000 +0100
+diff -urN kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/chnldefs.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/chnldefs.h
+--- kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/chnldefs.h	2011-10-11 13:50:57.713203334 +0100
++++ kernel-cssu-2.6.28.new/arch/arm/plat-omap/include/dspbridge/chnldefs.h	2011-08-19 18:42:45.000000000 +0100
 @@ -3,6 +3,8 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -1326,9 +1326,9 @@ diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/chnldefs.h ke
  
 -#endif				/* CHNLDEFS_ */
 +#endif /* CHNLDEFS_ */
-diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/chnl.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/chnl.h
---- kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/chnl.h	2011-10-11 13:50:57.729545532 +0100
-+++ kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/chnl.h	2011-08-19 18:42:45.000000000 +0100
+diff -urN kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/chnl.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/chnl.h
+--- kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/chnl.h	2011-10-11 13:50:57.729545532 +0100
++++ kernel-cssu-2.6.28.new/arch/arm/plat-omap/include/dspbridge/chnl.h	2011-08-19 18:42:45.000000000 +0100
 @@ -3,6 +3,11 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -1532,9 +1532,9 @@ diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/chnl.h kernel
  
 -#endif				/* CHNL_ */
 +#endif /* CHNL_ */
-diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/chnlpriv.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/chnlpriv.h
---- kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/chnlpriv.h	2011-10-11 13:50:57.734440461 +0100
-+++ kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/chnlpriv.h	2011-08-19 18:42:45.000000000 +0100
+diff -urN kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/chnlpriv.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/chnlpriv.h
+--- kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/chnlpriv.h	2011-10-11 13:50:57.734440461 +0100
++++ kernel-cssu-2.6.28.new/arch/arm/plat-omap/include/dspbridge/chnlpriv.h	2011-08-19 18:42:45.000000000 +0100
 @@ -3,6 +3,8 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -1683,9 +1683,9 @@ diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/chnlpriv.h ke
  
 -#endif				/* CHNLPRIV_ */
 +#endif /* CHNLPRIV_ */
-diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/_chnl_sm.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/_chnl_sm.h
---- kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/_chnl_sm.h	2011-10-11 13:50:57.756107040 +0100
-+++ kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/_chnl_sm.h	2011-08-19 18:42:45.000000000 +0100
+diff -urN kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/_chnl_sm.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/_chnl_sm.h
+--- kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/_chnl_sm.h	2011-10-11 13:50:57.756107040 +0100
++++ kernel-cssu-2.6.28.new/arch/arm/plat-omap/include/dspbridge/_chnl_sm.h	2011-08-19 18:42:45.000000000 +0100
 @@ -3,6 +3,12 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -2009,9 +2009,9 @@ diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/_chnl_sm.h ke
  
 -#endif				/* _CHNL_SM_ */
 +#endif /* _CHNL_SM_ */
-diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/chnl_sm.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/chnl_sm.h
---- kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/chnl_sm.h	2011-10-11 13:50:57.743213909 +0100
-+++ kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/chnl_sm.h	1970-01-01 01:00:00.000000000 +0100
+diff -urN kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/chnl_sm.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/chnl_sm.h
+--- kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/chnl_sm.h	2011-10-11 13:50:57.743213909 +0100
++++ kernel-cssu-2.6.28.new/arch/arm/plat-omap/include/dspbridge/chnl_sm.h	1970-01-01 01:00:00.000000000 +0100
 @@ -1,168 +0,0 @@
 -/*
 - * chnl_sm.h
@@ -2181,9 +2181,9 @@ diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/chnl_sm.h ker
 -					    u32 dwDSPAddr, u32 ulNumBytes);
 -
 -#endif				/* CHNLSM_ */
-diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/clk.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/clk.h
---- kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/clk.h	2011-10-11 13:50:57.432894958 +0100
-+++ kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/clk.h	2011-08-19 18:42:45.000000000 +0100
+diff -urN kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/clk.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/clk.h
+--- kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/clk.h	2011-10-11 13:50:57.432894958 +0100
++++ kernel-cssu-2.6.28.new/arch/arm/plat-omap/include/dspbridge/clk.h	2011-08-19 18:42:45.000000000 +0100
 @@ -3,6 +3,8 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -2363,9 +2363,9 @@ diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/clk.h kernel-
  
 -#endif				/* _SYNC_H */
 +#endif /* _SYNC_H */
-diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/cmmdefs.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/cmmdefs.h
---- kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/cmmdefs.h	2011-10-11 13:50:57.432894958 +0100
-+++ kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/cmmdefs.h	2011-08-19 18:42:45.000000000 +0100
+diff -urN kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/cmmdefs.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/cmmdefs.h
+--- kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/cmmdefs.h	2011-10-11 13:50:57.432894958 +0100
++++ kernel-cssu-2.6.28.new/arch/arm/plat-omap/include/dspbridge/cmmdefs.h	2011-08-19 18:42:45.000000000 +0100
 @@ -3,6 +3,8 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -2549,9 +2549,9 @@ diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/cmmdefs.h ker
  
 -#endif				/* CMMDEFS_ */
 +#endif /* CMMDEFS_ */
-diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/cmm.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/cmm.h
---- kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/cmm.h	2011-10-11 13:50:57.437299197 +0100
-+++ kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/cmm.h	2011-08-19 18:42:45.000000000 +0100
+diff -urN kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/cmm.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/cmm.h
+--- kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/cmm.h	2011-10-11 13:50:57.437299197 +0100
++++ kernel-cssu-2.6.28.new/arch/arm/plat-omap/include/dspbridge/cmm.h	2011-08-19 18:42:45.000000000 +0100
 @@ -3,6 +3,22 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -3079,9 +3079,9 @@ diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/cmm.h kernel-
  
 -#endif				/* CMM_ */
 +#endif /* CMM_ */
-diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/cod.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/cod.h
---- kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/cod.h	2011-10-11 13:50:57.437299197 +0100
-+++ kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/cod.h	2011-08-19 18:42:45.000000000 +0100
+diff -urN kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/cod.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/cod.h
+--- kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/cod.h	2011-10-11 13:50:57.437299197 +0100
++++ kernel-cssu-2.6.28.new/arch/arm/plat-omap/include/dspbridge/cod.h	2011-08-19 18:42:45.000000000 +0100
 @@ -3,6 +3,10 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -3575,9 +3575,9 @@ diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/cod.h kernel-
  
 -#endif				/* COD_ */
 +#endif /* COD_ */
-diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/csl.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/csl.h
---- kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/csl.h	2011-10-11 13:50:57.437299197 +0100
-+++ kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/csl.h	1970-01-01 01:00:00.000000000 +0100
+diff -urN kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/csl.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/csl.h
+--- kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/csl.h	2011-10-11 13:50:57.437299197 +0100
++++ kernel-cssu-2.6.28.new/arch/arm/plat-omap/include/dspbridge/csl.h	1970-01-01 01:00:00.000000000 +0100
 @@ -1,135 +0,0 @@
 -/*
 - * csl.h
@@ -3714,9 +3714,9 @@ diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/csl.h kernel-
 -				 OUT char **ppstrCur);
 -
 -#endif				/* CSL_ */
-diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/dbc.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/dbc.h
---- kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/dbc.h	2011-10-11 13:50:57.437299197 +0100
-+++ kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/dbc.h	2011-08-19 18:42:45.000000000 +0100
+diff -urN kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/dbc.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/dbc.h
+--- kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/dbc.h	2011-10-11 13:50:57.437299197 +0100
++++ kernel-cssu-2.6.28.new/arch/arm/plat-omap/include/dspbridge/dbc.h	2011-08-19 18:42:45.000000000 +0100
 @@ -3,6 +3,14 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -3796,9 +3796,9 @@ diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/dbc.h kernel-
  
 -#endif				/* DBC_ */
 +#endif /* DBC_ */
-diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/dbdcddef.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/dbdcddef.h
---- kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/dbdcddef.h	2011-10-11 13:50:57.437299197 +0100
-+++ kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/dbdcddef.h	2011-08-19 18:42:45.000000000 +0100
+diff -urN kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/dbdcddef.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/dbdcddef.h
+--- kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/dbdcddef.h	2011-10-11 13:50:57.437299197 +0100
++++ kernel-cssu-2.6.28.new/arch/arm/plat-omap/include/dspbridge/dbdcddef.h	2011-08-19 18:42:45.000000000 +0100
 @@ -3,6 +3,8 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -3914,9 +3914,9 @@ diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/dbdcddef.h ke
 +				      IN void *handle);
  
 +#endif /* DBDCDDEF_ */
-diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/dbdcd.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/dbdcd.h
---- kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/dbdcd.h	2011-10-11 13:50:57.463926177 +0100
-+++ kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/dbdcd.h	2011-08-19 18:42:45.000000000 +0100
+diff -urN kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/dbdcd.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/dbdcd.h
+--- kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/dbdcd.h	2011-10-11 13:50:57.463926177 +0100
++++ kernel-cssu-2.6.28.new/arch/arm/plat-omap/include/dspbridge/dbdcd.h	2011-08-19 18:42:45.000000000 +0100
 @@ -3,6 +3,8 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -4330,9 +4330,9 @@ diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/dbdcd.h kerne
  
 -#endif				/* _DBDCD_H */
 +#endif /* _DBDCD_H */
-diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/dbdefs.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/dbdefs.h
---- kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/dbdefs.h	2011-10-11 13:50:57.483457853 +0100
-+++ kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/dbdefs.h	2011-08-19 18:42:45.000000000 +0100
+diff -urN kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/dbdefs.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/dbdefs.h
+--- kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/dbdefs.h	2011-10-11 13:50:57.483457853 +0100
++++ kernel-cssu-2.6.28.new/arch/arm/plat-omap/include/dspbridge/dbdefs.h	2011-08-19 18:42:45.000000000 +0100
 @@ -3,6 +3,8 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -5172,9 +5172,9 @@ diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/dbdefs.h kern
 +#define DSPRESOURCES	"DspTMSResources"	/* C55 DSP resurces on OMAP */
 +
 +#endif /* DBDEFS_ */
-diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/dbg.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/dbg.h
---- kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/dbg.h	2011-10-11 13:50:57.495200500 +0100
-+++ kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/dbg.h	1970-01-01 01:00:00.000000000 +0100
+diff -urN kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/dbg.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/dbg.h
+--- kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/dbg.h	2011-10-11 13:50:57.495200500 +0100
++++ kernel-cssu-2.6.28.new/arch/arm/plat-omap/include/dspbridge/dbg.h	1970-01-01 01:00:00.000000000 +0100
 @@ -1,110 +0,0 @@
 -/*
 - * dbg.h
@@ -5286,9 +5286,9 @@ diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/dbg.h kernel-
 -#endif	     /* (defined(DEBUG) || defined(DDSP_DEBUG_PRODUCT)) && GT_TRACE */
 -
 -#endif				/* DBG_ */
-diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/dbldefs.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/dbldefs.h
---- kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/dbldefs.h	2011-10-11 13:50:57.495200500 +0100
-+++ kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/dbldefs.h	2011-08-19 18:42:45.000000000 +0100
+diff -urN kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/dbldefs.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/dbldefs.h
+--- kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/dbldefs.h	2011-10-11 13:50:57.495200500 +0100
++++ kernel-cssu-2.6.28.new/arch/arm/plat-omap/include/dspbridge/dbldefs.h	2011-08-19 18:42:45.000000000 +0100
 @@ -14,21 +14,11 @@
   * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
   */
@@ -5475,9 +5475,9 @@ diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/dbldefs.h ker
  
 -#endif				/* DBLDEFS_ */
 +#endif /* DBLDEFS_ */
-diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/dbl.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/dbl.h
---- kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/dbl.h	2011-10-11 13:50:57.505213641 +0100
-+++ kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/dbl.h	1970-01-01 01:00:00.000000000 +0100
+diff -urN kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/dbl.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/dbl.h
+--- kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/dbl.h	2011-10-11 13:50:57.505213641 +0100
++++ kernel-cssu-2.6.28.new/arch/arm/plat-omap/include/dspbridge/dbl.h	1970-01-01 01:00:00.000000000 +0100
 @@ -1,354 +0,0 @@
 -/*
 - * dbl.h
@@ -5833,9 +5833,9 @@ diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/dbl.h kernel-
 -					 struct DBL_Attrs *attrs);
 -
 -#endif				/* DBL_ */
-diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/dblldefs.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/dblldefs.h
---- kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/dblldefs.h	2011-10-11 13:50:57.513715541 +0100
-+++ kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/dblldefs.h	2011-08-19 18:42:45.000000000 +0100
+diff -urN kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/dblldefs.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/dblldefs.h
+--- kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/dblldefs.h	2011-10-11 13:50:57.513715541 +0100
++++ kernel-cssu-2.6.28.new/arch/arm/plat-omap/include/dspbridge/dblldefs.h	2011-08-19 18:42:45.000000000 +0100
 @@ -14,22 +14,11 @@
   * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
   */
@@ -6449,9 +6449,9 @@ diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/dblldefs.h ke
  
 -#endif				/* DBLDEFS_ */
 +#endif /* DBLDEFS_ */
-diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/dbll.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/dbll.h
---- kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/dbll.h	2011-10-11 13:50:57.517621153 +0100
-+++ kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/dbll.h	2011-08-19 18:42:45.000000000 +0100
+diff -urN kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/dbll.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/dbll.h
+--- kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/dbll.h	2011-10-11 13:50:57.517621153 +0100
++++ kernel-cssu-2.6.28.new/arch/arm/plat-omap/include/dspbridge/dbll.h	2011-08-19 18:42:45.000000000 +0100
 @@ -3,6 +3,9 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -6549,9 +6549,9 @@ diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/dbll.h kernel
 +				   char *sectName, struct dbll_attrs *attrs);
  
 +#endif /* DBLL_ */
-diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/dbof.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/dbof.h
---- kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/dbof.h	2011-10-11 13:50:57.566986998 +0100
-+++ kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/dbof.h	1970-01-01 01:00:00.000000000 +0100
+diff -urN kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/dbof.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/dbof.h
+--- kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/dbof.h	2011-10-11 13:50:57.566986998 +0100
++++ kernel-cssu-2.6.28.new/arch/arm/plat-omap/include/dspbridge/dbof.h	1970-01-01 01:00:00.000000000 +0100
 @@ -1,117 +0,0 @@
 -/*
 - * dbof.h
@@ -6670,9 +6670,9 @@ diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/dbof.h kernel
 -
 -#endif				/* DBOF_ */
 -
-diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/dbreg.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/dbreg.h
---- kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/dbreg.h	2011-10-11 13:50:57.566986998 +0100
-+++ kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/dbreg.h	1970-01-01 01:00:00.000000000 +0100
+diff -urN kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/dbreg.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/dbreg.h
+--- kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/dbreg.h	2011-10-11 13:50:57.566986998 +0100
++++ kernel-cssu-2.6.28.new/arch/arm/plat-omap/include/dspbridge/dbreg.h	1970-01-01 01:00:00.000000000 +0100
 @@ -1,113 +0,0 @@
 -/*
 - * dbreg.h
@@ -6787,9 +6787,9 @@ diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/dbreg.h kerne
 -#define PHYSMEMPOOLSIZE  "PhysicalMemSize"   /* Physical mem passed to driver */
 -
 -#endif				/* DBREG_ */
-diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/dbtype.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/dbtype.h
---- kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/dbtype.h	2011-10-11 13:50:57.566986998 +0100
-+++ kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/dbtype.h	2011-08-19 18:42:45.000000000 +0100
+diff -urN kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/dbtype.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/dbtype.h
+--- kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/dbtype.h	2011-10-11 13:50:57.566986998 +0100
++++ kernel-cssu-2.6.28.new/arch/arm/plat-omap/include/dspbridge/dbtype.h	2011-08-19 18:42:45.000000000 +0100
 @@ -3,6 +3,10 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -6905,9 +6905,9 @@ diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/dbtype.h kern
  
 -#endif				/* DBTYPE_ */
 +#endif /* DBTYPE_ */
-diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/_dcd.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/_dcd.h
---- kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/_dcd.h	2011-10-11 13:50:57.566986998 +0100
-+++ kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/_dcd.h	2011-08-19 18:42:45.000000000 +0100
+diff -urN kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/_dcd.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/_dcd.h
+--- kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/_dcd.h	2011-10-11 13:50:57.566986998 +0100
++++ kernel-cssu-2.6.28.new/arch/arm/plat-omap/include/dspbridge/_dcd.h	2011-08-19 18:42:45.000000000 +0100
 @@ -3,6 +3,9 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -7179,9 +7179,9 @@ diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/_dcd.h kernel
  
 -#endif				/* _WCD_ */
 +#endif /* _WCD_ */
-diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/dehdefs.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/dehdefs.h
---- kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/dehdefs.h	2011-10-11 13:50:57.566986998 +0100
-+++ kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/dehdefs.h	2011-08-19 18:42:45.000000000 +0100
+diff -urN kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/dehdefs.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/dehdefs.h
+--- kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/dehdefs.h	2011-10-11 13:50:57.566986998 +0100
++++ kernel-cssu-2.6.28.new/arch/arm/plat-omap/include/dspbridge/dehdefs.h	2011-08-19 18:42:45.000000000 +0100
 @@ -3,6 +3,8 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -7224,9 +7224,9 @@ diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/dehdefs.h ker
  
 -#endif				/* _DEHDEFS_H */
 +#endif /* _DEHDEFS_H */
-diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/devdefs.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/devdefs.h
---- kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/devdefs.h	2011-10-11 13:50:57.577198228 +0100
-+++ kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/devdefs.h	2011-08-19 18:42:45.000000000 +0100
+diff -urN kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/devdefs.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/devdefs.h
+--- kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/devdefs.h	2011-10-11 13:50:57.577198228 +0100
++++ kernel-cssu-2.6.28.new/arch/arm/plat-omap/include/dspbridge/devdefs.h	2011-08-19 18:42:45.000000000 +0100
 @@ -3,6 +3,9 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -7262,9 +7262,9 @@ diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/devdefs.h ker
  
 -#endif				/* DEVDEFS_ */
 +#endif /* DEVDEFS_ */
-diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/dev.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/dev.h
---- kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/dev.h	2011-10-11 13:50:57.602589316 +0100
-+++ kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/dev.h	2011-08-19 18:42:45.000000000 +0100
+diff -urN kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/dev.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/dev.h
+--- kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/dev.h	2011-10-11 13:50:57.602589316 +0100
++++ kernel-cssu-2.6.28.new/arch/arm/plat-omap/include/dspbridge/dev.h	2011-08-19 18:42:45.000000000 +0100
 @@ -3,6 +3,8 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -8198,9 +8198,9 @@ diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/dev.h kernel-
  
 -#endif				/* DEV_ */
 +#endif /* DEV_ */
-diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/dispdefs.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/dispdefs.h
---- kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/dispdefs.h	2011-10-11 13:50:57.602589316 +0100
-+++ kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/dispdefs.h	2011-08-19 18:42:45.000000000 +0100
+diff -urN kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/dispdefs.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/dispdefs.h
+--- kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/dispdefs.h	2011-10-11 13:50:57.602589316 +0100
++++ kernel-cssu-2.6.28.new/arch/arm/plat-omap/include/dspbridge/dispdefs.h	2011-08-19 18:42:45.000000000 +0100
 @@ -3,6 +3,8 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -8254,9 +8254,9 @@ diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/dispdefs.h ke
  
 -#endif				/* DISPDEFS_ */
 +#endif /* DISPDEFS_ */
-diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/disp.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/disp.h
---- kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/disp.h	2011-10-11 13:50:57.609424499 +0100
-+++ kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/disp.h	2011-08-19 18:42:45.000000000 +0100
+diff -urN kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/disp.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/disp.h
+--- kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/disp.h	2011-10-11 13:50:57.609424499 +0100
++++ kernel-cssu-2.6.28.new/arch/arm/plat-omap/include/dspbridge/disp.h	2011-08-19 18:42:45.000000000 +0100
 @@ -3,6 +3,8 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -8552,9 +8552,9 @@ diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/disp.h kernel
  
 -#endif				/* DISP_ */
 +#endif /* DISP_ */
-diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/dmm.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/dmm.h
---- kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/dmm.h	2011-10-11 13:50:57.609424499 +0100
-+++ kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/dmm.h	2011-08-19 18:42:45.000000000 +0100
+diff -urN kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/dmm.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/dmm.h
+--- kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/dmm.h	2011-10-11 13:50:57.609424499 +0100
++++ kernel-cssu-2.6.28.new/arch/arm/plat-omap/include/dspbridge/dmm.h	2011-08-19 18:42:45.000000000 +0100
 @@ -3,6 +3,9 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -8664,9 +8664,9 @@ diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/dmm.h kernel-
 +extern dsp_status dmm_create_tables(struct dmm_object *dmm_mgr,
 +				    u32 addr, u32 size);
 +#endif /* DMM_ */
-diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/dpc.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/dpc.h
---- kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/dpc.h	2011-10-11 13:50:57.609424499 +0100
-+++ kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/dpc.h	1970-01-01 01:00:00.000000000 +0100
+diff -urN kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/dpc.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/dpc.h
+--- kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/dpc.h	2011-10-11 13:50:57.609424499 +0100
++++ kernel-cssu-2.6.28.new/arch/arm/plat-omap/include/dspbridge/dpc.h	1970-01-01 01:00:00.000000000 +0100
 @@ -1,167 +0,0 @@
 -/*
 - * dpc.h
@@ -8835,9 +8835,9 @@ diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/dpc.h kernel-
 -       extern DSP_STATUS DPC_Schedule(IN struct DPC_OBJECT *hDPC);
 -
 -#endif				/* DPC_ */
-diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/drvdefs.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/drvdefs.h
---- kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/drvdefs.h	2011-10-11 13:50:57.609424499 +0100
-+++ kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/drvdefs.h	2011-08-19 18:42:46.000000000 +0100
+diff -urN kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/drvdefs.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/drvdefs.h
+--- kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/drvdefs.h	2011-10-11 13:50:57.609424499 +0100
++++ kernel-cssu-2.6.28.new/arch/arm/plat-omap/include/dspbridge/drvdefs.h	2011-08-19 18:42:46.000000000 +0100
 @@ -3,6 +3,8 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -8871,9 +8871,9 @@ diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/drvdefs.h ker
  
 -#endif				/* DRVDEFS_ */
 +#endif /* DRVDEFS_ */
-diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/drv.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/drv.h
---- kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/drv.h	2011-10-11 13:51:19.272405381 +0100
-+++ kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/drv.h	2011-08-19 18:42:46.000000000 +0100
+diff -urN kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/drv.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/drv.h
+--- kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/drv.h	2011-10-11 13:51:19.272405381 +0100
++++ kernel-cssu-2.6.28.new/arch/arm/plat-omap/include/dspbridge/drv.h	2011-08-19 18:42:46.000000000 +0100
 @@ -3,6 +3,10 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -9412,9 +9412,9 @@ diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/drv.h kernel-
  
 -#endif				/* DRV_ */
 +#endif /* DRV_ */
-diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/dspdrv.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/dspdrv.h
---- kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/dspdrv.h	2011-10-11 13:50:57.622110502 +0100
-+++ kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/dspdrv.h	2011-08-19 18:42:46.000000000 +0100
+diff -urN kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/dspdrv.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/dspdrv.h
+--- kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/dspdrv.h	2011-10-11 13:50:57.622110502 +0100
++++ kernel-cssu-2.6.28.new/arch/arm/plat-omap/include/dspbridge/dspdrv.h	2011-08-19 18:42:46.000000000 +0100
 @@ -3,6 +3,9 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -9499,9 +9499,9 @@ diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/dspdrv.h kern
 +extern u32 dsp_init(OUT u32 *init_status);
  
  #endif
-diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/dynamic_loader.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/dynamic_loader.h
---- kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/dynamic_loader.h	2011-10-11 13:50:57.634864592 +0100
-+++ kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/dynamic_loader.h	2011-08-19 18:42:46.000000000 +0100
+diff -urN kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/dynamic_loader.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/dynamic_loader.h
+--- kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/dynamic_loader.h	2011-10-11 13:50:57.634864592 +0100
++++ kernel-cssu-2.6.28.new/arch/arm/plat-omap/include/dspbridge/dynamic_loader.h	2011-08-19 18:42:46.000000000 +0100
 @@ -14,8 +14,6 @@
   * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
   */
@@ -10012,9 +10012,9 @@ diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/dynamic_loade
  
 -#endif				/* _DYNAMIC_LOADER_H_ */
 +#endif /* _DYNAMIC_LOADER_H_ */
-diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/errbase.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/errbase.h
---- kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/errbase.h	2011-10-11 13:50:57.663130211 +0100
-+++ kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/errbase.h	2011-08-19 18:42:46.000000000 +0100
+diff -urN kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/errbase.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/errbase.h
+--- kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/errbase.h	2011-10-11 13:50:57.663130211 +0100
++++ kernel-cssu-2.6.28.new/arch/arm/plat-omap/include/dspbridge/errbase.h	2011-08-19 18:42:46.000000000 +0100
 @@ -3,6 +3,14 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -10170,9 +10170,9 @@ diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/errbase.h ker
 -
 -#endif				/* ERRBASE_ */
 +#endif /* ERRBASE_ */
-diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/gb.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/gb.h
---- kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/gb.h	2011-10-11 13:50:57.663130211 +0100
-+++ kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/gb.h	2011-08-19 18:42:46.000000000 +0100
+diff -urN kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/gb.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/gb.h
+--- kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/gb.h	2011-10-11 13:50:57.663130211 +0100
++++ kernel-cssu-2.6.28.new/arch/arm/plat-omap/include/dspbridge/gb.h	2011-08-19 18:42:46.000000000 +0100
 @@ -3,6 +3,8 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -10275,9 +10275,9 @@ diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/gb.h kernel-p
  
 -#endif				/*GB_ */
 +#endif /*GB_ */
-diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/getsection.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/getsection.h
---- kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/getsection.h	2011-10-11 13:50:57.699261250 +0100
-+++ kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/getsection.h	2011-08-19 18:42:46.000000000 +0100
+diff -urN kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/getsection.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/getsection.h
+--- kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/getsection.h	2011-10-11 13:50:57.699261250 +0100
++++ kernel-cssu-2.6.28.new/arch/arm/plat-omap/include/dspbridge/getsection.h	2011-08-19 18:42:46.000000000 +0100
 @@ -3,6 +3,14 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -10410,9 +10410,9 @@ diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/getsection.h 
  
 -#endif				/* _GETSECTION_H_ */
 +#endif /* _GETSECTION_H_ */
-diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/gh.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/gh.h
---- kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/gh.h	2011-10-11 13:50:57.699261250 +0100
-+++ kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/gh.h	2011-08-19 18:42:46.000000000 +0100
+diff -urN kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/gh.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/gh.h
+--- kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/gh.h	2011-10-11 13:50:57.699261250 +0100
++++ kernel-cssu-2.6.28.new/arch/arm/plat-omap/include/dspbridge/gh.h	2011-08-19 18:42:46.000000000 +0100
 @@ -14,24 +14,17 @@
   * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
   */
@@ -10448,9 +10448,9 @@ diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/gh.h kernel-p
 +extern void gh_init(void);
 +extern void *gh_insert(struct gh_t_hash_tab *hash_tab, void *key, void *value);
 +#endif /* GH_ */
-diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/gs.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/gs.h
---- kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/gs.h	2011-10-11 13:50:57.703175692 +0100
-+++ kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/gs.h	2011-08-19 18:42:46.000000000 +0100
+diff -urN kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/gs.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/gs.h
+--- kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/gs.h	2011-10-11 13:50:57.703175692 +0100
++++ kernel-cssu-2.6.28.new/arch/arm/plat-omap/include/dspbridge/gs.h	2011-08-19 18:42:46.000000000 +0100
 @@ -3,6 +3,11 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -10530,9 +10530,9 @@ diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/gs.h kernel-p
  
 -#endif				/*GS_ */
 +#endif /*GS_ */
-diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/gt.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/gt.h
---- kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/gt.h	2011-10-11 13:50:57.703175692 +0100
-+++ kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/gt.h	1970-01-01 01:00:00.000000000 +0100
+diff -urN kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/gt.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/gt.h
+--- kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/gt.h	2011-10-11 13:50:57.703175692 +0100
++++ kernel-cssu-2.6.28.new/arch/arm/plat-omap/include/dspbridge/gt.h	1970-01-01 01:00:00.000000000 +0100
 @@ -1,317 +0,0 @@
 -/*
 - * gt.h
@@ -10851,9 +10851,9 @@ diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/gt.h kernel-p
 -#endif				/* _LINT_ */
 -
 -#endif				/* GTCE_ */
-diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/host_os.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/host_os.h
---- kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/host_os.h	2011-10-11 13:50:57.713203334 +0100
-+++ kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/host_os.h	2011-10-29 20:21:28.831718000 +0100
+diff -urN kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/host_os.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/host_os.h
+--- kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/host_os.h	2011-10-11 13:50:57.713203334 +0100
++++ kernel-cssu-2.6.28.new/arch/arm/plat-omap/include/dspbridge/host_os.h	2011-10-29 20:21:28.831718000 +0100
 @@ -14,20 +14,9 @@
   * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
   */
@@ -10938,9 +10938,9 @@ diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/host_os.h ker
  extern unsigned long dspbridge_get_mempool_base(void);
  #endif
 -
-diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/iodefs.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/iodefs.h
---- kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/iodefs.h	2011-10-11 13:50:57.756107040 +0100
-+++ kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/iodefs.h	2011-08-19 18:42:46.000000000 +0100
+diff -urN kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/iodefs.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/iodefs.h
+--- kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/iodefs.h	2011-10-11 13:50:57.756107040 +0100
++++ kernel-cssu-2.6.28.new/arch/arm/plat-omap/include/dspbridge/iodefs.h	2011-08-19 18:42:46.000000000 +0100
 @@ -3,6 +3,8 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -10992,9 +10992,9 @@ diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/iodefs.h kern
  
 -#endif				/* IODEFS_ */
 +#endif /* IODEFS_ */
-diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/io.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/io.h
---- kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/io.h	2011-10-11 13:50:57.756107040 +0100
-+++ kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/io.h	2011-08-19 18:42:46.000000000 +0100
+diff -urN kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/io.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/io.h
+--- kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/io.h	2011-10-11 13:50:57.756107040 +0100
++++ kernel-cssu-2.6.28.new/arch/arm/plat-omap/include/dspbridge/io.h	2011-08-19 18:42:46.000000000 +0100
 @@ -3,6 +3,8 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -11149,9 +11149,9 @@ diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/io.h kernel-p
  
 -#endif				/* CHNL_ */
 +#endif /* CHNL_ */
-diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/io_sm.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/io_sm.h
---- kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/io_sm.h	2011-10-11 13:50:57.762750774 +0100
-+++ kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/io_sm.h	2011-08-19 18:42:46.000000000 +0100
+diff -urN kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/io_sm.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/io_sm.h
+--- kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/io_sm.h	2011-10-11 13:50:57.762750774 +0100
++++ kernel-cssu-2.6.28.new/arch/arm/plat-omap/include/dspbridge/io_sm.h	2011-08-19 18:42:46.000000000 +0100
 @@ -3,6 +3,9 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -11547,9 +11547,9 @@ diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/io_sm.h kerne
  
 -#endif				/* IOSM_ */
 +#endif /* IOSM_ */
-diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/kfile.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/kfile.h
---- kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/kfile.h	2011-10-11 13:50:57.762750774 +0100
-+++ kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/kfile.h	1970-01-01 01:00:00.000000000 +0100
+diff -urN kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/kfile.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/kfile.h
+--- kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/kfile.h	2011-10-11 13:50:57.762750774 +0100
++++ kernel-cssu-2.6.28.new/arch/arm/plat-omap/include/dspbridge/kfile.h	1970-01-01 01:00:00.000000000 +0100
 @@ -1,216 +0,0 @@
 -/*
 - * kfile.h
@@ -11767,9 +11767,9 @@ diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/kfile.h kerne
 -			       IN struct KFILE_FileObj *hFile);
 -
 -#endif				/* KFILE_ */
-diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/ldr.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/ldr.h
---- kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/ldr.h	2011-10-11 13:50:57.770552532 +0100
-+++ kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/ldr.h	2011-08-19 18:42:46.000000000 +0100
+diff -urN kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/ldr.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/ldr.h
+--- kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/ldr.h	2011-10-11 13:50:57.770552532 +0100
++++ kernel-cssu-2.6.28.new/arch/arm/plat-omap/include/dspbridge/ldr.h	2011-08-19 18:42:46.000000000 +0100
 @@ -3,6 +3,12 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -11824,9 +11824,9 @@ diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/ldr.h kernel-
  
 -#endif				/* LDR_ */
 +#endif /* LDR_ */
-diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/list.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/list.h
---- kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/list.h	2011-10-11 13:50:57.776426124 +0100
-+++ kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/list.h	2011-08-19 18:42:46.000000000 +0100
+diff -urN kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/list.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/list.h
+--- kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/list.h	2011-10-11 13:50:57.776426124 +0100
++++ kernel-cssu-2.6.28.new/arch/arm/plat-omap/include/dspbridge/list.h	2011-08-19 18:42:46.000000000 +0100
 @@ -3,6 +3,9 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -12172,9 +12172,9 @@ diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/list.h kernel
  
 -#endif				/* LIST_ */
 +#endif /* LIST_ */
-diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/mbx_sh.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/mbx_sh.h
---- kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/mbx_sh.h	2011-10-11 13:50:57.782273787 +0100
-+++ kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/mbx_sh.h	2011-08-19 18:42:46.000000000 +0100
+diff -urN kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/mbx_sh.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/mbx_sh.h
+--- kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/mbx_sh.h	2011-10-11 13:50:57.782273787 +0100
++++ kernel-cssu-2.6.28.new/arch/arm/plat-omap/include/dspbridge/mbx_sh.h	2011-08-19 18:42:46.000000000 +0100
 @@ -3,6 +3,9 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -12267,9 +12267,9 @@ diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/mbx_sh.h kern
  
 -#endif				/* _MBX_SH_H */
 +#endif /* _MBX_SH_H */
-diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/memdefs.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/memdefs.h
---- kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/memdefs.h	2011-10-11 13:50:57.782273787 +0100
-+++ kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/memdefs.h	2011-08-19 18:42:46.000000000 +0100
+diff -urN kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/memdefs.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/memdefs.h
+--- kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/memdefs.h	2011-10-11 13:50:57.782273787 +0100
++++ kernel-cssu-2.6.28.new/arch/arm/plat-omap/include/dspbridge/memdefs.h	2011-08-19 18:42:46.000000000 +0100
 @@ -3,6 +3,8 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -12323,9 +12323,9 @@ diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/memdefs.h ker
 -
 -#endif				/* MEMDEFS_ */
 +#endif /* MEMDEFS_ */
-diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/mem.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/mem.h
---- kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/mem.h	2011-10-11 13:50:57.797537381 +0100
-+++ kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/mem.h	2011-08-19 18:42:46.000000000 +0100
+diff -urN kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/mem.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/mem.h
+--- kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/mem.h	2011-10-11 13:50:57.797537381 +0100
++++ kernel-cssu-2.6.28.new/arch/arm/plat-omap/include/dspbridge/mem.h	2011-08-19 18:42:46.000000000 +0100
 @@ -3,6 +3,9 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -12731,9 +12731,9 @@ diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/mem.h kernel-
  
 -#endif				/* MEM_ */
 +#endif /* MEM_ */
-diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/mgr.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/mgr.h
---- kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/mgr.h	2011-10-11 13:50:57.797537381 +0100
-+++ kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/mgr.h	2011-08-19 18:42:46.000000000 +0100
+diff -urN kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/mgr.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/mgr.h
+--- kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/mgr.h	2011-10-11 13:50:57.797537381 +0100
++++ kernel-cssu-2.6.28.new/arch/arm/plat-omap/include/dspbridge/mgr.h	2011-08-19 18:42:46.000000000 +0100
 @@ -3,6 +3,8 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -13009,9 +13009,9 @@ diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/mgr.h kernel-
  
 -#endif				/* MGR_ */
 +#endif /* MGR_ */
-diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/mgrpriv.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/mgrpriv.h
---- kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/mgrpriv.h	2011-10-11 13:50:57.797537381 +0100
-+++ kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/mgrpriv.h	2011-08-19 18:42:46.000000000 +0100
+diff -urN kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/mgrpriv.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/mgrpriv.h
+--- kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/mgrpriv.h	2011-10-11 13:50:57.797537381 +0100
++++ kernel-cssu-2.6.28.new/arch/arm/plat-omap/include/dspbridge/mgrpriv.h	2011-08-19 18:42:46.000000000 +0100
 @@ -3,6 +3,8 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -13073,9 +13073,9 @@ diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/mgrpriv.h ker
  
 -#endif				/* MGRPRIV_ */
 +#endif /* MGRPRIV_ */
-diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/msgdefs.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/msgdefs.h
---- kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/msgdefs.h	2011-10-11 13:50:57.797537381 +0100
-+++ kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/msgdefs.h	2011-08-19 18:42:46.000000000 +0100
+diff -urN kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/msgdefs.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/msgdefs.h
+--- kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/msgdefs.h	2011-10-11 13:50:57.797537381 +0100
++++ kernel-cssu-2.6.28.new/arch/arm/plat-omap/include/dspbridge/msgdefs.h	2011-08-19 18:42:46.000000000 +0100
 @@ -3,6 +3,8 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -13121,9 +13121,9 @@ diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/msgdefs.h ker
 +typedef void (*msg_onexit) (bhandle h, s32 nStatus);
  
 +#endif /* MSGDEFS_ */
-diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/msg.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/msg.h
---- kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/msg.h	2011-10-11 13:50:57.812604009 +0100
-+++ kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/msg.h	2011-08-19 18:42:46.000000000 +0100
+diff -urN kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/msg.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/msg.h
+--- kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/msg.h	2011-10-11 13:50:57.812604009 +0100
++++ kernel-cssu-2.6.28.new/arch/arm/plat-omap/include/dspbridge/msg.h	2011-08-19 18:42:46.000000000 +0100
 @@ -3,6 +3,8 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -13252,9 +13252,9 @@ diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/msg.h kernel-
  
 -#endif				/* MSG_ */
 +#endif /* MSG_ */
-diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/nldrdefs.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/nldrdefs.h
---- kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/nldrdefs.h	2011-10-11 13:50:57.819402194 +0100
-+++ kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/nldrdefs.h	2011-08-19 18:42:46.000000000 +0100
+diff -urN kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/nldrdefs.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/nldrdefs.h
+--- kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/nldrdefs.h	2011-10-11 13:50:57.819402194 +0100
++++ kernel-cssu-2.6.28.new/arch/arm/plat-omap/include/dspbridge/nldrdefs.h	2011-08-19 18:42:46.000000000 +0100
 @@ -3,6 +3,8 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -13668,9 +13668,9 @@ diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/nldrdefs.h ke
  
 -#endif				/* NLDRDEFS_ */
 +#endif /* NLDRDEFS_ */
-diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/nldr.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/nldr.h
---- kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/nldr.h	2011-10-11 13:50:57.819402194 +0100
-+++ kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/nldr.h	2011-08-19 18:42:46.000000000 +0100
+diff -urN kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/nldr.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/nldr.h
+--- kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/nldr.h	2011-10-11 13:50:57.819402194 +0100
++++ kernel-cssu-2.6.28.new/arch/arm/plat-omap/include/dspbridge/nldr.h	2011-08-19 18:42:46.000000000 +0100
 @@ -3,6 +3,8 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -13772,9 +13772,9 @@ diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/nldr.h kernel
  
 -#endif				/* NLDR_ */
 +#endif /* NLDR_ */
-diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/nodedefs.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/nodedefs.h
---- kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/nodedefs.h	2011-10-11 13:50:57.819402194 +0100
-+++ kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/nodedefs.h	2011-08-19 18:42:46.000000000 +0100
+diff -urN kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/nodedefs.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/nodedefs.h
+--- kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/nodedefs.h	2011-10-11 13:50:57.819402194 +0100
++++ kernel-cssu-2.6.28.new/arch/arm/plat-omap/include/dspbridge/nodedefs.h	2011-08-19 18:42:46.000000000 +0100
 @@ -3,6 +3,8 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -13815,9 +13815,9 @@ diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/nodedefs.h ke
  
 -#endif				/* NODEDEFS_ */
 +#endif /* NODEDEFS_ */
-diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/node.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/node.h
---- kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/node.h	2011-10-11 13:50:58.006365304 +0100
-+++ kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/node.h	2011-08-19 18:42:46.000000000 +0100
+diff -urN kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/node.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/node.h
+--- kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/node.h	2011-10-11 13:50:58.006365304 +0100
++++ kernel-cssu-2.6.28.new/arch/arm/plat-omap/include/dspbridge/node.h	2011-08-19 18:42:46.000000000 +0100
 @@ -3,6 +3,8 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -14609,9 +14609,9 @@ diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/node.h kernel
  
 -#endif				/* NODE_ */
 +#endif /* NODE_ */
-diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/nodepriv.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/nodepriv.h
---- kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/nodepriv.h	2011-10-11 13:50:58.016663133 +0100
-+++ kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/nodepriv.h	2011-08-19 18:42:46.000000000 +0100
+diff -urN kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/nodepriv.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/nodepriv.h
+--- kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/nodepriv.h	2011-10-11 13:50:58.016663133 +0100
++++ kernel-cssu-2.6.28.new/arch/arm/plat-omap/include/dspbridge/nodepriv.h	2011-08-19 18:42:46.000000000 +0100
 @@ -3,6 +3,8 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -14888,9 +14888,9 @@ diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/nodepriv.h ke
  
 -#endif				/* NODEPRIV_ */
 +#endif /* NODEPRIV_ */
-diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/ntfy.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/ntfy.h
---- kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/ntfy.h	2011-10-11 13:50:58.016663133 +0100
-+++ kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/ntfy.h	2011-08-19 18:42:46.000000000 +0100
+diff -urN kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/ntfy.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/ntfy.h
+--- kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/ntfy.h	2011-10-11 13:50:58.016663133 +0100
++++ kernel-cssu-2.6.28.new/arch/arm/plat-omap/include/dspbridge/ntfy.h	2011-08-19 18:42:46.000000000 +0100
 @@ -3,6 +3,8 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -15074,9 +15074,9 @@ diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/ntfy.h kernel
  
 -#endif				/* NTFY_ */
 +#endif /* NTFY_ */
-diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/proc.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/proc.h
---- kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/proc.h	2011-10-11 13:50:58.104784372 +0100
-+++ kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/proc.h	2011-08-19 18:42:46.000000000 +0100
+diff -urN kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/proc.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/proc.h
+--- kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/proc.h	2011-10-11 13:50:58.104784372 +0100
++++ kernel-cssu-2.6.28.new/arch/arm/plat-omap/include/dspbridge/proc.h	2011-08-19 18:42:46.000000000 +0100
 @@ -3,6 +3,8 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -15866,9 +15866,9 @@ diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/proc.h kernel
  
 -#endif				/* PROC_ */
 +#endif /* PROC_ */
-diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/procpriv.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/procpriv.h
---- kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/procpriv.h	2011-10-11 13:50:58.104784372 +0100
-+++ kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/procpriv.h	2011-08-19 18:42:46.000000000 +0100
+diff -urN kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/procpriv.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/procpriv.h
+--- kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/procpriv.h	2011-10-11 13:50:58.104784372 +0100
++++ kernel-cssu-2.6.28.new/arch/arm/plat-omap/include/dspbridge/procpriv.h	2011-08-19 18:42:46.000000000 +0100
 @@ -3,6 +3,8 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -15903,9 +15903,9 @@ diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/procpriv.h ke
 +struct proc_object;
  
 +#endif /* PROCPRIV_ */
-diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/pwr.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/pwr.h
---- kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/pwr.h	2011-10-11 13:50:58.104784372 +0100
-+++ kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/pwr.h	2011-10-29 20:57:30.675979558 +0100
+diff -urN kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/pwr.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/pwr.h
+--- kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/pwr.h	2011-10-11 13:50:58.104784372 +0100
++++ kernel-cssu-2.6.28.new/arch/arm/plat-omap/include/dspbridge/pwr.h	2011-10-29 20:57:30.675979558 +0100
 @@ -14,25 +14,6 @@
   * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
   */
@@ -15992,9 +15992,9 @@ diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/pwr.h kernel-
 +extern dsp_status pwr_pm_post_scale(IN u16 voltage_domain, u32 level);
 +
 +#endif /* PWR_ */
-diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/pwr_sh.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/pwr_sh.h
---- kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/pwr_sh.h	2011-10-11 13:50:58.119185685 +0100
-+++ kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/pwr_sh.h	2011-08-19 18:42:46.000000000 +0100
+diff -urN kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/pwr_sh.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/pwr_sh.h
+--- kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/pwr_sh.h	2011-10-11 13:50:58.119185685 +0100
++++ kernel-cssu-2.6.28.new/arch/arm/plat-omap/include/dspbridge/pwr_sh.h	2011-08-19 18:42:46.000000000 +0100
 @@ -3,6 +3,8 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -16027,9 +16027,9 @@ diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/pwr_sh.h kern
  
 -#endif				/* PWR_SH_ */
 +#endif /* PWR_SH_ */
-diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/reg.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/reg.h
---- kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/reg.h	2011-10-11 13:50:58.119185685 +0100
-+++ kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/reg.h	2011-08-19 18:42:46.000000000 +0100
+diff -urN kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/reg.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/reg.h
+--- kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/reg.h	2011-10-11 13:50:58.119185685 +0100
++++ kernel-cssu-2.6.28.new/arch/arm/plat-omap/include/dspbridge/reg.h	2011-08-19 18:42:46.000000000 +0100
 @@ -3,6 +3,8 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -16292,9 +16292,9 @@ diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/reg.h kernel-
  
 -#endif				/* _REG_H */
 +#endif /* _REG_H */
-diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/resourcecleanup.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/resourcecleanup.h
---- kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/resourcecleanup.h	2011-10-11 13:50:58.119185685 +0100
-+++ kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/resourcecleanup.h	2011-08-19 18:42:46.000000000 +0100
+diff -urN kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/resourcecleanup.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/resourcecleanup.h
+--- kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/resourcecleanup.h	2011-10-11 13:50:58.119185685 +0100
++++ kernel-cssu-2.6.28.new/arch/arm/plat-omap/include/dspbridge/resourcecleanup.h	2011-08-19 18:42:46.000000000 +0100
 @@ -14,70 +14,50 @@
   * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
   */
@@ -16393,9 +16393,9 @@ diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/resourceclean
  
 -#endif
 +extern enum node_state node_get_state(bhandle hnode);
-diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/rmm.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/rmm.h
---- kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/rmm.h	2011-10-11 13:50:58.134819624 +0100
-+++ kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/rmm.h	2011-08-19 18:42:46.000000000 +0100
+diff -urN kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/rmm.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/rmm.h
+--- kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/rmm.h	2011-10-11 13:50:58.134819624 +0100
++++ kernel-cssu-2.6.28.new/arch/arm/plat-omap/include/dspbridge/rmm.h	2011-08-19 18:42:46.000000000 +0100
 @@ -3,6 +3,10 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -16621,9 +16621,9 @@ diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/rmm.h kernel-
  
 -#endif				/* RMM_ */
 +#endif /* RMM_ */
-diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/rms_sh.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/rms_sh.h
---- kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/rms_sh.h	2011-10-11 13:50:58.134819624 +0100
-+++ kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/rms_sh.h	2011-08-19 18:42:46.000000000 +0100
+diff -urN kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/rms_sh.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/rms_sh.h
+--- kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/rms_sh.h	2011-10-11 13:50:58.134819624 +0100
++++ kernel-cssu-2.6.28.new/arch/arm/plat-omap/include/dspbridge/rms_sh.h	2011-08-19 18:42:46.000000000 +0100
 @@ -3,6 +3,9 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -16774,9 +16774,9 @@ diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/rms_sh.h kern
 +};
  
 +#endif /* RMS_SH_ */
-diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/rmstypes.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/rmstypes.h
---- kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/rmstypes.h	2011-10-11 13:50:58.147546941 +0100
-+++ kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/rmstypes.h	2011-08-19 18:42:46.000000000 +0100
+diff -urN kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/rmstypes.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/rmstypes.h
+--- kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/rmstypes.h	2011-10-11 13:50:58.147546941 +0100
++++ kernel-cssu-2.6.28.new/arch/arm/plat-omap/include/dspbridge/rmstypes.h	2011-08-19 18:42:46.000000000 +0100
 @@ -3,6 +3,8 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -16817,9 +16817,9 @@ diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/rmstypes.h ke
  
 -#endif				/* RMSTYPES_ */
 +#endif /* RMSTYPES_ */
-diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/services.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/services.h
---- kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/services.h	2011-10-11 13:50:58.147546941 +0100
-+++ kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/services.h	2011-08-19 18:42:46.000000000 +0100
+diff -urN kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/services.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/services.h
+--- kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/services.h	2011-10-11 13:50:58.147546941 +0100
++++ kernel-cssu-2.6.28.new/arch/arm/plat-omap/include/dspbridge/services.h	2011-08-19 18:42:46.000000000 +0100
 @@ -3,6 +3,8 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -16880,9 +16880,9 @@ diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/services.h ke
  
 -#endif				/* SERVICES_ */
 +#endif /* SERVICES_ */
-diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/std.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/std.h
---- kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/std.h	2011-10-11 13:50:58.147546941 +0100
-+++ kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/std.h	2011-08-19 18:42:46.000000000 +0100
+diff -urN kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/std.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/std.h
+--- kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/std.h	2011-10-11 13:50:58.147546941 +0100
++++ kernel-cssu-2.6.28.new/arch/arm/plat-omap/include/dspbridge/std.h	2011-08-19 18:42:46.000000000 +0100
 @@ -14,54 +14,6 @@
   * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
   */
@@ -16969,9 +16969,9 @@ diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/std.h kernel-
  
 -#endif				/* STD_ */
 +#endif /* STD_ */
-diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/strmdefs.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/strmdefs.h
---- kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/strmdefs.h	2011-10-11 13:50:58.156294492 +0100
-+++ kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/strmdefs.h	2011-08-19 18:42:46.000000000 +0100
+diff -urN kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/strmdefs.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/strmdefs.h
+--- kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/strmdefs.h	2011-10-11 13:50:58.156294492 +0100
++++ kernel-cssu-2.6.28.new/arch/arm/plat-omap/include/dspbridge/strmdefs.h	2011-08-19 18:42:46.000000000 +0100
 @@ -3,6 +3,8 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -17043,9 +17043,9 @@ diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/strmdefs.h ke
 +};
  
 +#endif /* STRMDEFS_ */
-diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/strm.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/strm.h
---- kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/strm.h	2011-10-11 13:50:58.156294492 +0100
-+++ kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/strm.h	2011-08-19 18:42:46.000000000 +0100
+diff -urN kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/strm.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/strm.h
+--- kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/strm.h	2011-10-11 13:50:58.156294492 +0100
++++ kernel-cssu-2.6.28.new/arch/arm/plat-omap/include/dspbridge/strm.h	2011-08-19 18:42:46.000000000 +0100
 @@ -3,6 +3,8 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -17629,9 +17629,9 @@ diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/strm.h kernel
  
 -#endif				/* STRM_ */
 +#endif /* STRM_ */
-diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/sync.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/sync.h
---- kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/sync.h	2011-10-11 13:50:58.156294492 +0100
-+++ kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/sync.h	2011-08-19 18:42:46.000000000 +0100
+diff -urN kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/sync.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/sync.h
+--- kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/sync.h	2011-10-11 13:50:58.156294492 +0100
++++ kernel-cssu-2.6.28.new/arch/arm/plat-omap/include/dspbridge/sync.h	2011-08-19 18:42:46.000000000 +0100
 @@ -3,6 +3,8 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -18014,9 +18014,9 @@ diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/sync.h kernel
  
 -#endif				/* _SYNC_H */
 +#endif /* _SYNC_H */
-diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/utildefs.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/utildefs.h
---- kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/utildefs.h	2011-10-11 13:50:58.156294492 +0100
-+++ kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/utildefs.h	2011-08-19 18:42:46.000000000 +0100
+diff -urN kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/utildefs.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/utildefs.h
+--- kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/utildefs.h	2011-10-11 13:50:58.156294492 +0100
++++ kernel-cssu-2.6.28.new/arch/arm/plat-omap/include/dspbridge/utildefs.h	2011-08-19 18:42:46.000000000 +0100
 @@ -3,6 +3,8 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -18066,9 +18066,9 @@ diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/utildefs.h ke
  
 -#endif				/* UTILDEFS_ */
 +#endif /* UTILDEFS_ */
-diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/util.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/util.h
---- kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/util.h	2011-10-11 13:50:58.261773218 +0100
-+++ kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/util.h	1970-01-01 01:00:00.000000000 +0100
+diff -urN kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/util.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/util.h
+--- kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/util.h	2011-10-11 13:50:58.261773218 +0100
++++ kernel-cssu-2.6.28.new/arch/arm/plat-omap/include/dspbridge/util.h	1970-01-01 01:00:00.000000000 +0100
 @@ -1,122 +0,0 @@
 -/*
 - * util.h
@@ -18192,9 +18192,9 @@ diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/util.h kernel
 -	}
 -
 -#endif				/* _UTIL_H */
-diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/uuidutil.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/uuidutil.h
---- kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/uuidutil.h	2011-10-11 13:50:58.271536879 +0100
-+++ kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/uuidutil.h	2011-08-19 18:42:46.000000000 +0100
+diff -urN kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/uuidutil.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/uuidutil.h
+--- kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/uuidutil.h	2011-10-11 13:50:58.271536879 +0100
++++ kernel-cssu-2.6.28.new/arch/arm/plat-omap/include/dspbridge/uuidutil.h	2011-08-19 18:42:46.000000000 +0100
 @@ -3,6 +3,8 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -18280,9 +18280,9 @@ diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/uuidutil.h ke
  
 -#endif				/* UUIDUTIL_ */
 +#endif /* UUIDUTIL_ */
-diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/wcd.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/wcd.h
---- kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/wcd.h	2011-10-11 13:50:58.271536879 +0100
-+++ kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/wcd.h	2011-08-19 18:42:46.000000000 +0100
+diff -urN kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/wcd.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/wcd.h
+--- kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/wcd.h	2011-10-11 13:50:58.271536879 +0100
++++ kernel-cssu-2.6.28.new/arch/arm/plat-omap/include/dspbridge/wcd.h	2011-08-19 18:42:46.000000000 +0100
 @@ -3,6 +3,18 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -18353,9 +18353,9 @@ diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/wcd.h kernel-
  
 -#endif				/* WCD_ */
 +#endif /* WCD_ */
-diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/wcdioctl.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/wcdioctl.h
---- kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/wcdioctl.h	2011-10-11 13:50:58.289124764 +0100
-+++ kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/wcdioctl.h	2011-10-17 20:54:16.392039000 +0100
+diff -urN kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/wcdioctl.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/wcdioctl.h
+--- kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/wcdioctl.h	2011-10-11 13:50:58.289124764 +0100
++++ kernel-cssu-2.6.28.new/arch/arm/plat-omap/include/dspbridge/wcdioctl.h	2011-10-17 20:54:16.392039000 +0100
 @@ -3,6 +3,9 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -19237,9 +19237,9 @@ diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/wcdioctl.h ke
 -#define CMD_BASE_END_OFFSET	CMD_CMM_END_OFFSET
 -#endif				/* WCDIOCTL_ */
 +#endif /* WCDIOCTL_ */
-diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/wdt.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/wdt.h
---- kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/wdt.h	1970-01-01 01:00:00.000000000 +0100
-+++ kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/wdt.h	2011-08-19 18:42:46.000000000 +0100
+diff -urN kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/wdt.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/wdt.h
+--- kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/wdt.h	1970-01-01 01:00:00.000000000 +0100
++++ kernel-cssu-2.6.28.new/arch/arm/plat-omap/include/dspbridge/wdt.h	2011-08-19 18:42:46.000000000 +0100
 @@ -0,0 +1,78 @@
 +/*
 + * wdt.h
@@ -19319,9 +19319,9 @@ diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/wdt.h kernel-
 +void dsp_wdt_sm_set(void *data);
 +
 +#endif
-diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/wmdchnl.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/wmdchnl.h
---- kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/wmdchnl.h	2011-10-11 13:50:58.970805887 +0100
-+++ kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/wmdchnl.h	2011-08-19 18:42:46.000000000 +0100
+diff -urN kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/wmdchnl.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/wmdchnl.h
+--- kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/wmdchnl.h	2011-10-11 13:50:58.970805887 +0100
++++ kernel-cssu-2.6.28.new/arch/arm/plat-omap/include/dspbridge/wmdchnl.h	2011-08-19 18:42:46.000000000 +0100
 @@ -3,6 +3,13 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -19459,9 +19459,9 @@ diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/wmdchnl.h ker
  
 -#endif				/* WMDCHNL_ */
 +#endif /* WMDCHNL_ */
-diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/wmddeh.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/wmddeh.h
---- kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/wmddeh.h	2011-10-11 13:50:58.289124764 +0100
-+++ kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/wmddeh.h	2011-08-19 18:42:46.000000000 +0100
+diff -urN kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/wmddeh.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/wmddeh.h
+--- kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/wmddeh.h	2011-10-11 13:50:58.289124764 +0100
++++ kernel-cssu-2.6.28.new/arch/arm/plat-omap/include/dspbridge/wmddeh.h	2011-08-19 18:42:46.000000000 +0100
 @@ -3,6 +3,12 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -19543,9 +19543,9 @@ diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/wmddeh.h kern
 -#endif				/* WMDDEH_ */
 +extern void bridge_deh_release_dummy_mem(void);
 +#endif /* WMDDEH_ */
-diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/wmd.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/wmd.h
---- kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/wmd.h	2011-10-11 13:50:58.970805887 +0100
-+++ kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/wmd.h	2011-08-19 18:42:46.000000000 +0100
+diff -urN kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/wmd.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/wmd.h
+--- kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/wmd.h	2011-10-11 13:50:58.970805887 +0100
++++ kernel-cssu-2.6.28.new/arch/arm/plat-omap/include/dspbridge/wmd.h	2011-08-19 18:42:46.000000000 +0100
 @@ -3,6 +3,18 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -21005,9 +21005,9 @@ diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/wmd.h kernel-
  
 -#endif				/* WMD_ */
 +#endif /* WMD_ */
-diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/wmdioctl.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/wmdioctl.h
---- kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/wmdioctl.h	2011-10-11 13:50:58.983481606 +0100
-+++ kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/wmdioctl.h	2011-10-29 20:34:30.467753274 +0100
+diff -urN kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/wmdioctl.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/wmdioctl.h
+--- kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/wmdioctl.h	2011-10-11 13:50:58.983481606 +0100
++++ kernel-cssu-2.6.28.new/arch/arm/plat-omap/include/dspbridge/wmdioctl.h	2011-10-29 20:34:30.467753274 +0100
 @@ -3,6 +3,8 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -21110,9 +21110,9 @@ diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/wmdioctl.h ke
 -#endif				/* WMDIOCTL_ */
 -
 +#endif /* WMDIOCTL_ */
-diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/wmdio.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/wmdio.h
---- kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/wmdio.h	2011-10-11 13:50:58.983481606 +0100
-+++ kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/wmdio.h	2011-08-19 18:42:46.000000000 +0100
+diff -urN kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/wmdio.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/wmdio.h
+--- kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/wmdio.h	2011-10-11 13:50:58.983481606 +0100
++++ kernel-cssu-2.6.28.new/arch/arm/plat-omap/include/dspbridge/wmdio.h	2011-08-19 18:42:46.000000000 +0100
 @@ -3,6 +3,12 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -21176,9 +21176,9 @@ diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/wmdio.h kerne
  
 -#endif				/* WMDIO_ */
 +#endif /* WMDIO_ */
-diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/wmdmsg.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/wmdmsg.h
---- kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/wmdmsg.h	2011-10-11 13:50:58.990498562 +0100
-+++ kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/wmdmsg.h	2011-08-19 18:42:46.000000000 +0100
+diff -urN kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/wmdmsg.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/dspbridge/wmdmsg.h
+--- kernel-cssu-2.6.28/arch/arm/plat-omap/include/dspbridge/wmdmsg.h	2011-10-11 13:50:58.990498562 +0100
++++ kernel-cssu-2.6.28.new/arch/arm/plat-omap/include/dspbridge/wmdmsg.h	2011-08-19 18:42:46.000000000 +0100
 @@ -3,6 +3,13 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -21270,9 +21270,9 @@ diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/dspbridge/wmdmsg.h kern
  
 -#endif				/* WMDMSG_ */
 +#endif /* WMDMSG_ */
-diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/mach/mailbox.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/mach/mailbox.h
---- kernel-power-2.6.28/arch/arm/plat-omap/include/mach/mailbox.h	2011-10-11 13:50:52.228594642 +0100
-+++ kernel-power-2.6.28.new/arch/arm/plat-omap/include/mach/mailbox.h	2011-10-11 17:47:23.155624000 +0100
+diff -urN kernel-cssu-2.6.28/arch/arm/plat-omap/include/mach/mailbox.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/mach/mailbox.h
+--- kernel-cssu-2.6.28/arch/arm/plat-omap/include/mach/mailbox.h	2011-10-11 13:50:52.228594642 +0100
++++ kernel-cssu-2.6.28.new/arch/arm/plat-omap/include/mach/mailbox.h	2011-10-11 17:47:23.155624000 +0100
 @@ -5,10 +5,10 @@
  
  #include <linux/wait.h>
@@ -21336,9 +21336,9 @@ diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/mach/mailbox.h kernel-p
 +}
 +
  #endif /* MAILBOX_H */
-diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/mach/mboxkfifo.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/mach/mboxkfifo.h
---- kernel-power-2.6.28/arch/arm/plat-omap/include/mach/mboxkfifo.h	1970-01-01 01:00:00.000000000 +0100
-+++ kernel-power-2.6.28.new/arch/arm/plat-omap/include/mach/mboxkfifo.h	2011-10-11 17:40:03.093441000 +0100
+diff -urN kernel-cssu-2.6.28/arch/arm/plat-omap/include/mach/mboxkfifo.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/mach/mboxkfifo.h
+--- kernel-cssu-2.6.28/arch/arm/plat-omap/include/mach/mboxkfifo.h	1970-01-01 01:00:00.000000000 +0100
++++ kernel-cssu-2.6.28.new/arch/arm/plat-omap/include/mach/mboxkfifo.h	2011-10-11 17:40:03.093441000 +0100
 @@ -0,0 +1,615 @@
 +/*
 + * A generic kernel FIFO implementation.
@@ -21955,9 +21955,9 @@ diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/mach/mboxkfifo.h kernel
 +}
 +
 +#endif
-diff -urN kernel-power-2.6.28/arch/arm/plat-omap/Kconfig kernel-power-2.6.28.new/arch/arm/plat-omap/Kconfig
---- kernel-power-2.6.28/arch/arm/plat-omap/Kconfig	2011-10-11 13:50:59.306680562 +0100
-+++ kernel-power-2.6.28.new/arch/arm/plat-omap/Kconfig	2011-10-11 17:14:45.286048000 +0100
+diff -urN kernel-cssu-2.6.28/arch/arm/plat-omap/Kconfig kernel-power-2.6.28.new/arch/arm/plat-omap/Kconfig
+--- kernel-cssu-2.6.28/arch/arm/plat-omap/Kconfig	2011-10-11 13:50:59.306680562 +0100
++++ kernel-cssu-2.6.28.new/arch/arm/plat-omap/Kconfig	2011-10-11 17:14:45.286048000 +0100
 @@ -182,6 +182,15 @@
  	  Say Y here if you want to use OMAP Mailbox framework support for
  	  DSP, IVA1.0 and IVA2 in OMAP1/2/3.
@@ -21974,9 +21974,9 @@ diff -urN kernel-power-2.6.28/arch/arm/plat-omap/Kconfig kernel-power-2.6.28.new
  config OMAP_IOMMU
  	tristate "IOMMU support"
  	depends on ARCH_OMAP
-diff -urN kernel-power-2.6.28/arch/arm/plat-omap/mailbox.c kernel-power-2.6.28.new/arch/arm/plat-omap/mailbox.c
---- kernel-power-2.6.28/arch/arm/plat-omap/mailbox.c	2011-10-11 13:50:52.386786914 +0100
-+++ kernel-power-2.6.28.new/arch/arm/plat-omap/mailbox.c	2011-10-17 20:21:52.241682000 +0100
+diff -urN kernel-cssu-2.6.28/arch/arm/plat-omap/mailbox.c kernel-power-2.6.28.new/arch/arm/plat-omap/mailbox.c
+--- kernel-cssu-2.6.28/arch/arm/plat-omap/mailbox.c	2011-10-11 13:50:52.386786914 +0100
++++ kernel-cssu-2.6.28.new/arch/arm/plat-omap/mailbox.c	2011-10-17 20:21:52.241682000 +0100
 @@ -1,7 +1,7 @@
  /*
   * OMAP mailbox driver
@@ -22612,9 +22612,9 @@ diff -urN kernel-power-2.6.28/arch/arm/plat-omap/mailbox.c kernel-power-2.6.28.n
 -MODULE_AUTHOR("Toshihiro Kobayashi and Hiroshi DOYU");
 +MODULE_AUTHOR("Toshihiro Kobayashi");
 +MODULE_AUTHOR("Hiroshi DOYU");
-diff -urN kernel-power-2.6.28/arch/arm/plat-omap/mboxkfifo.c kernel-power-2.6.28.new/arch/arm/plat-omap/mboxkfifo.c
---- kernel-power-2.6.28/arch/arm/plat-omap/mboxkfifo.c	1970-01-01 01:00:00.000000000 +0100
-+++ kernel-power-2.6.28.new/arch/arm/plat-omap/mboxkfifo.c	2011-10-17 20:39:39.198215000 +0100
+diff -urN kernel-cssu-2.6.28/arch/arm/plat-omap/mboxkfifo.c kernel-power-2.6.28.new/arch/arm/plat-omap/mboxkfifo.c
+--- kernel-cssu-2.6.28/arch/arm/plat-omap/mboxkfifo.c	1970-01-01 01:00:00.000000000 +0100
++++ kernel-cssu-2.6.28.new/arch/arm/plat-omap/mboxkfifo.c	2011-10-17 20:39:39.198215000 +0100
 @@ -0,0 +1,419 @@
 +/*
 + * A generic kernel FIFO implementation.
@@ -23035,9 +23035,9 @@ diff -urN kernel-power-2.6.28/arch/arm/plat-omap/mboxkfifo.c kernel-power-2.6.28
 +{
 +        __mbox_kfifo_skip_rec(fifo, recsize);
 +}
-diff -urN kernel-power-2.6.28/drivers/dsp/bridge/dynload/cload.c kernel-power-2.6.28.new/drivers/dsp/bridge/dynload/cload.c
---- kernel-power-2.6.28/drivers/dsp/bridge/dynload/cload.c	2011-10-11 13:51:00.023744307 +0100
-+++ kernel-power-2.6.28.new/drivers/dsp/bridge/dynload/cload.c	2011-10-23 08:22:37.606293000 +0100
+diff -urN kernel-cssu-2.6.28/drivers/dsp/bridge/dynload/cload.c kernel-power-2.6.28.new/drivers/dsp/bridge/dynload/cload.c
+--- kernel-cssu-2.6.28/drivers/dsp/bridge/dynload/cload.c	2011-10-11 13:51:00.023744307 +0100
++++ kernel-cssu-2.6.28.new/drivers/dsp/bridge/dynload/cload.c	2011-10-23 08:22:37.606293000 +0100
 @@ -21,10 +21,10 @@
  
  /*
@@ -24804,9 +24804,9 @@ diff -urN kernel-power-2.6.28/drivers/dsp/bridge/dynload/cload.c kernel-power-2.
  	    (soffset >> (LOG_BITS_PER_AU - LOG_BITS_PER_BYTE));
  	dst = dlthis->str_temp;
  	if (soffset & 1)
-diff -urN kernel-power-2.6.28/drivers/dsp/bridge/dynload/dlclasses_hdr.h kernel-power-2.6.28.new/drivers/dsp/bridge/dynload/dlclasses_hdr.h
---- kernel-power-2.6.28/drivers/dsp/bridge/dynload/dlclasses_hdr.h	2011-10-11 13:51:00.030317934 +0100
-+++ kernel-power-2.6.28.new/drivers/dsp/bridge/dynload/dlclasses_hdr.h	1970-01-01 01:00:00.000000000 +0100
+diff -urN kernel-cssu-2.6.28/drivers/dsp/bridge/dynload/dlclasses_hdr.h kernel-power-2.6.28.new/drivers/dsp/bridge/dynload/dlclasses_hdr.h
+--- kernel-cssu-2.6.28/drivers/dsp/bridge/dynload/dlclasses_hdr.h	2011-10-11 13:51:00.030317934 +0100
++++ kernel-cssu-2.6.28.new/drivers/dsp/bridge/dynload/dlclasses_hdr.h	1970-01-01 01:00:00.000000000 +0100
 @@ -1,41 +0,0 @@
 -/*
 - * dlclasses_hdr.h
@@ -24849,9 +24849,9 @@ diff -urN kernel-power-2.6.28/drivers/dsp/bridge/dynload/dlclasses_hdr.h kernel-
 -#include "DLinit.h"
 -
 -#endif				/* _DLCLASSES_HDR_H */
-diff -urN kernel-power-2.6.28/drivers/dsp/bridge/dynload/dload_internal.h kernel-power-2.6.28.new/drivers/dsp/bridge/dynload/dload_internal.h
---- kernel-power-2.6.28/drivers/dsp/bridge/dynload/dload_internal.h	2011-10-11 13:51:00.043007752 +0100
-+++ kernel-power-2.6.28.new/drivers/dsp/bridge/dynload/dload_internal.h	2011-10-23 08:22:37.609703000 +0100
+diff -urN kernel-cssu-2.6.28/drivers/dsp/bridge/dynload/dload_internal.h kernel-power-2.6.28.new/drivers/dsp/bridge/dynload/dload_internal.h
+--- kernel-cssu-2.6.28/drivers/dsp/bridge/dynload/dload_internal.h	2011-10-11 13:51:00.043007752 +0100
++++ kernel-cssu-2.6.28.new/drivers/dsp/bridge/dynload/dload_internal.h	2011-10-23 08:22:37.609703000 +0100
 @@ -14,10 +14,8 @@
   * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
   */
@@ -25185,9 +25185,9 @@ diff -urN kernel-power-2.6.28/drivers/dsp/bridge/dynload/dload_internal.h kernel
 +extern void dload_tramp_cleanup(struct dload_state *dlthis);
 +
 +#endif /* _DLOAD_INTERNAL_ */
-diff -urN kernel-power-2.6.28/drivers/dsp/bridge/dynload/doff.h kernel-power-2.6.28.new/drivers/dsp/bridge/dynload/doff.h
---- kernel-power-2.6.28/drivers/dsp/bridge/dynload/doff.h	2011-10-11 13:51:00.054731309 +0100
-+++ kernel-power-2.6.28.new/drivers/dsp/bridge/dynload/doff.h	2011-10-23 08:22:37.609703000 +0100
+diff -urN kernel-cssu-2.6.28/drivers/dsp/bridge/dynload/doff.h kernel-power-2.6.28.new/drivers/dsp/bridge/dynload/doff.h
+--- kernel-cssu-2.6.28/drivers/dsp/bridge/dynload/doff.h	2011-10-11 13:51:00.054731309 +0100
++++ kernel-cssu-2.6.28.new/drivers/dsp/bridge/dynload/doff.h	2011-10-23 08:22:37.609703000 +0100
 @@ -3,6 +3,13 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -25583,9 +25583,9 @@ diff -urN kernel-power-2.6.28/drivers/dsp/bridge/dynload/doff.h kernel-power-2.6
  
 -#endif				/* _DOFF_H */
 +#endif /* _DOFF_H */
-diff -urN kernel-power-2.6.28/drivers/dsp/bridge/dynload/getsection.c kernel-power-2.6.28.new/drivers/dsp/bridge/dynload/getsection.c
---- kernel-power-2.6.28/drivers/dsp/bridge/dynload/getsection.c	2011-10-11 13:51:00.060583055 +0100
-+++ kernel-power-2.6.28.new/drivers/dsp/bridge/dynload/getsection.c	2011-10-23 08:22:37.609703000 +0100
+diff -urN kernel-cssu-2.6.28/drivers/dsp/bridge/dynload/getsection.c kernel-power-2.6.28.new/drivers/dsp/bridge/dynload/getsection.c
+--- kernel-cssu-2.6.28/drivers/dsp/bridge/dynload/getsection.c	2011-10-11 13:51:00.060583055 +0100
++++ kernel-cssu-2.6.28.new/drivers/dsp/bridge/dynload/getsection.c	2011-10-23 08:22:37.609703000 +0100
 @@ -14,43 +14,44 @@
   * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
   */
@@ -25988,9 +25988,9 @@ diff -urN kernel-power-2.6.28/drivers/dsp/bridge/dynload/getsection.c kernel-pow
 -	dlthis->mysym->Deallocate(dlthis->mysym, dlthis);
 +	dlthis->mysym->dload_deallocate(dlthis->mysym, dlthis);
  }
-diff -urN kernel-power-2.6.28/drivers/dsp/bridge/dynload/header.h kernel-power-2.6.28.new/drivers/dsp/bridge/dynload/header.h
---- kernel-power-2.6.28/drivers/dsp/bridge/dynload/header.h	2011-10-11 13:51:00.060583055 +0100
-+++ kernel-power-2.6.28.new/drivers/dsp/bridge/dynload/header.h	2011-10-23 08:22:37.609703000 +0100
+diff -urN kernel-cssu-2.6.28/drivers/dsp/bridge/dynload/header.h kernel-power-2.6.28.new/drivers/dsp/bridge/dynload/header.h
+--- kernel-cssu-2.6.28/drivers/dsp/bridge/dynload/header.h	2011-10-11 13:51:00.060583055 +0100
++++ kernel-cssu-2.6.28.new/drivers/dsp/bridge/dynload/header.h	2011-10-23 08:22:37.609703000 +0100
 @@ -14,8 +14,6 @@
   * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
   */
@@ -26011,9 +26011,9 @@ diff -urN kernel-power-2.6.28/drivers/dsp/bridge/dynload/header.h kernel-power-2
  
  #include "doff.h"
  #include <dspbridge/dynamic_loader.h>
-diff -urN kernel-power-2.6.28/drivers/dsp/bridge/dynload/module_list.h kernel-power-2.6.28.new/drivers/dsp/bridge/dynload/module_list.h
---- kernel-power-2.6.28/drivers/dsp/bridge/dynload/module_list.h	2011-10-11 13:51:00.060583055 +0100
-+++ kernel-power-2.6.28.new/drivers/dsp/bridge/dynload/module_list.h	2011-10-23 08:22:37.613570000 +0100
+diff -urN kernel-cssu-2.6.28/drivers/dsp/bridge/dynload/module_list.h kernel-power-2.6.28.new/drivers/dsp/bridge/dynload/module_list.h
+--- kernel-cssu-2.6.28/drivers/dsp/bridge/dynload/module_list.h	2011-10-11 13:51:00.060583055 +0100
++++ kernel-cssu-2.6.28.new/drivers/dsp/bridge/dynload/module_list.h	2011-10-23 08:22:37.613570000 +0100
 @@ -14,61 +14,55 @@
   * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
   */
@@ -26167,9 +26167,9 @@ diff -urN kernel-power-2.6.28/drivers/dsp/bridge/dynload/module_list.h kernel-po
  
 -#endif				/* _MODULE_LIST_H_ */
 +#endif /* _MODULE_LIST_H_ */
-diff -urN kernel-power-2.6.28/drivers/dsp/bridge/dynload/params.h kernel-power-2.6.28.new/drivers/dsp/bridge/dynload/params.h
---- kernel-power-2.6.28/drivers/dsp/bridge/dynload/params.h	2011-10-11 13:51:00.060583055 +0100
-+++ kernel-power-2.6.28.new/drivers/dsp/bridge/dynload/params.h	2011-10-23 08:22:37.613570000 +0100
+diff -urN kernel-cssu-2.6.28/drivers/dsp/bridge/dynload/params.h kernel-power-2.6.28.new/drivers/dsp/bridge/dynload/params.h
+--- kernel-cssu-2.6.28/drivers/dsp/bridge/dynload/params.h	2011-10-11 13:51:00.060583055 +0100
++++ kernel-cssu-2.6.28.new/drivers/dsp/bridge/dynload/params.h	2011-10-23 08:22:37.613570000 +0100
 @@ -3,6 +3,15 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -26287,9 +26287,9 @@ diff -urN kernel-power-2.6.28/drivers/dsp/bridge/dynload/params.h kernel-power-2
  #endif
  
  /* size of that unit */
-diff -urN kernel-power-2.6.28/drivers/dsp/bridge/dynload/reloc.c kernel-power-2.6.28.new/drivers/dsp/bridge/dynload/reloc.c
---- kernel-power-2.6.28/drivers/dsp/bridge/dynload/reloc.c	2011-10-11 13:51:00.060583055 +0100
-+++ kernel-power-2.6.28.new/drivers/dsp/bridge/dynload/reloc.c	2011-10-23 08:22:37.613570000 +0100
+diff -urN kernel-cssu-2.6.28/drivers/dsp/bridge/dynload/reloc.c kernel-power-2.6.28.new/drivers/dsp/bridge/dynload/reloc.c
+--- kernel-cssu-2.6.28/drivers/dsp/bridge/dynload/reloc.c	2011-10-11 13:51:00.060583055 +0100
++++ kernel-cssu-2.6.28.new/drivers/dsp/bridge/dynload/reloc.c	2011-10-23 08:22:37.613570000 +0100
 @@ -18,7 +18,7 @@
  
  #if TMS32060
@@ -26782,9 +26782,9 @@ diff -urN kernel-power-2.6.28/drivers/dsp/bridge/dynload/reloc.c kernel-power-2.
 -} /* reloc_value */
 -
 +}				/* reloc_value */
-diff -urN kernel-power-2.6.28/drivers/dsp/bridge/dynload/reloc_table_c6000.c kernel-power-2.6.28.new/drivers/dsp/bridge/dynload/reloc_table_c6000.c
---- kernel-power-2.6.28/drivers/dsp/bridge/dynload/reloc_table_c6000.c	2011-10-11 13:51:00.060583055 +0100
-+++ kernel-power-2.6.28.new/drivers/dsp/bridge/dynload/reloc_table_c6000.c	2011-10-23 08:22:37.613570000 +0100
+diff -urN kernel-cssu-2.6.28/drivers/dsp/bridge/dynload/reloc_table_c6000.c kernel-power-2.6.28.new/drivers/dsp/bridge/dynload/reloc_table_c6000.c
+--- kernel-cssu-2.6.28/drivers/dsp/bridge/dynload/reloc_table_c6000.c	2011-10-11 13:51:00.060583055 +0100
++++ kernel-cssu-2.6.28.new/drivers/dsp/bridge/dynload/reloc_table_c6000.c	2011-10-23 08:22:37.613570000 +0100
 @@ -14,7 +14,6 @@
   * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
   */
@@ -26793,9 +26793,9 @@ diff -urN kernel-power-2.6.28/drivers/dsp/bridge/dynload/reloc_table_c6000.c ker
  /* Tables generated for c6000 */
  
  #define HASH_FUNC(zz) (((((zz) + 1) * UINT32_C(1845)) >> 11) & 63)
-diff -urN kernel-power-2.6.28/drivers/dsp/bridge/dynload/reloc_table.h kernel-power-2.6.28.new/drivers/dsp/bridge/dynload/reloc_table.h
---- kernel-power-2.6.28/drivers/dsp/bridge/dynload/reloc_table.h	2011-10-11 13:51:00.060583055 +0100
-+++ kernel-power-2.6.28.new/drivers/dsp/bridge/dynload/reloc_table.h	2011-10-23 08:22:37.613570000 +0100
+diff -urN kernel-cssu-2.6.28/drivers/dsp/bridge/dynload/reloc_table.h kernel-power-2.6.28.new/drivers/dsp/bridge/dynload/reloc_table.h
+--- kernel-cssu-2.6.28/drivers/dsp/bridge/dynload/reloc_table.h	2011-10-11 13:51:00.060583055 +0100
++++ kernel-cssu-2.6.28.new/drivers/dsp/bridge/dynload/reloc_table.h	2011-10-23 08:22:37.613570000 +0100
 @@ -14,10 +14,8 @@
   * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
   */
@@ -26850,9 +26850,9 @@ diff -urN kernel-power-2.6.28/drivers/dsp/bridge/dynload/reloc_table.h kernel-po
  
 -#endif				/* __RELOC_TABLE_H__ */
 +#endif /* _RELOC_TABLE_H_ */
-diff -urN kernel-power-2.6.28/drivers/dsp/bridge/dynload/tramp.c kernel-power-2.6.28.new/drivers/dsp/bridge/dynload/tramp.c
---- kernel-power-2.6.28/drivers/dsp/bridge/dynload/tramp.c	1970-01-01 01:00:00.000000000 +0100
-+++ kernel-power-2.6.28.new/drivers/dsp/bridge/dynload/tramp.c	2011-10-23 08:22:37.613570000 +0100
+diff -urN kernel-cssu-2.6.28/drivers/dsp/bridge/dynload/tramp.c kernel-power-2.6.28.new/drivers/dsp/bridge/dynload/tramp.c
+--- kernel-cssu-2.6.28/drivers/dsp/bridge/dynload/tramp.c	1970-01-01 01:00:00.000000000 +0100
++++ kernel-cssu-2.6.28.new/drivers/dsp/bridge/dynload/tramp.c	2011-10-23 08:22:37.613570000 +0100
 @@ -0,0 +1,1143 @@
 +/*
 + * tramp.c
@@ -27997,9 +27997,9 @@ diff -urN kernel-power-2.6.28/drivers/dsp/bridge/dynload/tramp.c kernel-power-2.
 +		dlthis->mysym->dload_deallocate(dlthis->mysym, cur_dup_pkt);
 +	}
 +}
-diff -urN kernel-power-2.6.28/drivers/dsp/bridge/dynload/tramp_table_c6000.c kernel-power-2.6.28.new/drivers/dsp/bridge/dynload/tramp_table_c6000.c
---- kernel-power-2.6.28/drivers/dsp/bridge/dynload/tramp_table_c6000.c	1970-01-01 01:00:00.000000000 +0100
-+++ kernel-power-2.6.28.new/drivers/dsp/bridge/dynload/tramp_table_c6000.c	2011-10-23 08:22:37.613570000 +0100
+diff -urN kernel-cssu-2.6.28/drivers/dsp/bridge/dynload/tramp_table_c6000.c kernel-power-2.6.28.new/drivers/dsp/bridge/dynload/tramp_table_c6000.c
+--- kernel-cssu-2.6.28/drivers/dsp/bridge/dynload/tramp_table_c6000.c	1970-01-01 01:00:00.000000000 +0100
++++ kernel-cssu-2.6.28.new/drivers/dsp/bridge/dynload/tramp_table_c6000.c	2011-10-23 08:22:37.613570000 +0100
 @@ -0,0 +1,164 @@
 +/*
 + * tramp_table_c6000.c
@@ -28165,9 +28165,9 @@ diff -urN kernel-power-2.6.28/drivers/dsp/bridge/dynload/tramp_table_c6000.c ker
 +{
 +	return sizeof(struct c6000_gen_code);
 +}
-diff -urN kernel-power-2.6.28/drivers/dsp/bridge/gen/gb.c kernel-power-2.6.28.new/drivers/dsp/bridge/gen/gb.c
---- kernel-power-2.6.28/drivers/dsp/bridge/gen/gb.c	2011-10-11 13:51:00.068015094 +0100
-+++ kernel-power-2.6.28.new/drivers/dsp/bridge/gen/gb.c	2011-10-23 08:22:37.613570000 +0100
+diff -urN kernel-cssu-2.6.28/drivers/dsp/bridge/gen/gb.c kernel-power-2.6.28.new/drivers/dsp/bridge/gen/gb.c
+--- kernel-cssu-2.6.28/drivers/dsp/bridge/gen/gb.c	2011-10-11 13:51:00.068015094 +0100
++++ kernel-cssu-2.6.28.new/drivers/dsp/bridge/gen/gb.c	2011-10-23 08:22:37.613570000 +0100
 @@ -3,6 +3,8 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -28369,9 +28369,9 @@ diff -urN kernel-power-2.6.28/drivers/dsp/bridge/gen/gb.c kernel-power-2.6.28.ne
  {
  	bool state;
  	u32 mask;
-diff -urN kernel-power-2.6.28/drivers/dsp/bridge/gen/gh.c kernel-power-2.6.28.new/drivers/dsp/bridge/gen/gh.c
---- kernel-power-2.6.28/drivers/dsp/bridge/gen/gh.c	2011-10-11 13:51:00.084021221 +0100
-+++ kernel-power-2.6.28.new/drivers/dsp/bridge/gen/gh.c	2011-10-23 08:22:37.613570000 +0100
+diff -urN kernel-cssu-2.6.28/drivers/dsp/bridge/gen/gh.c kernel-power-2.6.28.new/drivers/dsp/bridge/gen/gh.c
+--- kernel-cssu-2.6.28/drivers/dsp/bridge/gen/gh.c	2011-10-11 13:51:00.084021221 +0100
++++ kernel-cssu-2.6.28.new/drivers/dsp/bridge/gen/gh.c	2011-10-23 08:22:37.613570000 +0100
 @@ -14,11 +14,6 @@
   * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
   */
@@ -28618,9 +28618,9 @@ diff -urN kernel-power-2.6.28/drivers/dsp/bridge/gen/gh.c kernel-power-2.6.28.ne
 -	GS_free(ptr);
 +	gs_free(ptr);
  }
-diff -urN kernel-power-2.6.28/drivers/dsp/bridge/gen/gs.c kernel-power-2.6.28.new/drivers/dsp/bridge/gen/gs.c
---- kernel-power-2.6.28/drivers/dsp/bridge/gen/gs.c	2011-10-11 13:51:00.084021221 +0100
-+++ kernel-power-2.6.28.new/drivers/dsp/bridge/gen/gs.c	2011-10-23 08:22:37.613570000 +0100
+diff -urN kernel-cssu-2.6.28/drivers/dsp/bridge/gen/gs.c kernel-power-2.6.28.new/drivers/dsp/bridge/gen/gs.c
+--- kernel-cssu-2.6.28/drivers/dsp/bridge/gen/gs.c	2011-10-11 13:51:00.084021221 +0100
++++ kernel-cssu-2.6.28.new/drivers/dsp/bridge/gen/gs.c	2011-10-23 08:22:37.613570000 +0100
 @@ -3,6 +3,8 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -28732,9 +28732,9 @@ diff -urN kernel-power-2.6.28/drivers/dsp/bridge/gen/gs.c kernel-power-2.6.28.ne
 -	}
 +	/* Do nothing */
  }
-diff -urN kernel-power-2.6.28/drivers/dsp/bridge/gen/gt.c kernel-power-2.6.28.new/drivers/dsp/bridge/gen/gt.c
---- kernel-power-2.6.28/drivers/dsp/bridge/gen/gt.c	2011-10-11 13:51:00.084021221 +0100
-+++ kernel-power-2.6.28.new/drivers/dsp/bridge/gen/gt.c	1970-01-01 01:00:00.000000000 +0100
+diff -urN kernel-cssu-2.6.28/drivers/dsp/bridge/gen/gt.c kernel-power-2.6.28.new/drivers/dsp/bridge/gen/gt.c
+--- kernel-cssu-2.6.28/drivers/dsp/bridge/gen/gt.c	2011-10-11 13:51:00.084021221 +0100
++++ kernel-cssu-2.6.28.new/drivers/dsp/bridge/gen/gt.c	1970-01-01 01:00:00.000000000 +0100
 @@ -1,348 +0,0 @@
 -/*
 - * gt.c
@@ -29084,9 +29084,9 @@ diff -urN kernel-power-2.6.28/drivers/dsp/bridge/gen/gt.c kernel-power-2.6.28.ne
 -		}
 -	}
 -}
-diff -urN kernel-power-2.6.28/drivers/dsp/bridge/gen/_gt_para.c kernel-power-2.6.28.new/drivers/dsp/bridge/gen/_gt_para.c
---- kernel-power-2.6.28/drivers/dsp/bridge/gen/_gt_para.c	2011-10-11 13:51:00.156767695 +0100
-+++ kernel-power-2.6.28.new/drivers/dsp/bridge/gen/_gt_para.c	1970-01-01 01:00:00.000000000 +0100
+diff -urN kernel-cssu-2.6.28/drivers/dsp/bridge/gen/_gt_para.c kernel-power-2.6.28.new/drivers/dsp/bridge/gen/_gt_para.c
+--- kernel-cssu-2.6.28/drivers/dsp/bridge/gen/_gt_para.c	2011-10-11 13:51:00.156767695 +0100
++++ kernel-cssu-2.6.28.new/drivers/dsp/bridge/gen/_gt_para.c	1970-01-01 01:00:00.000000000 +0100
 @@ -1,107 +0,0 @@
 -/*
 - * _gt_para.c
@@ -29195,9 +29195,9 @@ diff -urN kernel-power-2.6.28/drivers/dsp/bridge/gen/_gt_para.c kernel-power-2.6
 -	}
 -#endif
 -}
-diff -urN kernel-power-2.6.28/drivers/dsp/bridge/gen/uuidutil.c kernel-power-2.6.28.new/drivers/dsp/bridge/gen/uuidutil.c
---- kernel-power-2.6.28/drivers/dsp/bridge/gen/uuidutil.c	2011-10-11 13:51:00.163164400 +0100
-+++ kernel-power-2.6.28.new/drivers/dsp/bridge/gen/uuidutil.c	2011-10-23 08:22:37.613570000 +0100
+diff -urN kernel-cssu-2.6.28/drivers/dsp/bridge/gen/uuidutil.c kernel-power-2.6.28.new/drivers/dsp/bridge/gen/uuidutil.c
+--- kernel-cssu-2.6.28/drivers/dsp/bridge/gen/uuidutil.c	2011-10-11 13:51:00.163164400 +0100
++++ kernel-cssu-2.6.28.new/drivers/dsp/bridge/gen/uuidutil.c	2011-10-23 08:22:37.613570000 +0100
 @@ -3,6 +3,8 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -29341,9 +29341,9 @@ diff -urN kernel-power-2.6.28/drivers/dsp/bridge/gen/uuidutil.c kernel-power-2.6
 +		uuid_obj->uc_data6[j] = (u8) result;
  	}
  }
-diff -urN kernel-power-2.6.28/drivers/dsp/bridge/hw/EasiGlobal.h kernel-power-2.6.28.new/drivers/dsp/bridge/hw/EasiGlobal.h
---- kernel-power-2.6.28/drivers/dsp/bridge/hw/EasiGlobal.h	2011-10-11 13:51:00.163164400 +0100
-+++ kernel-power-2.6.28.new/drivers/dsp/bridge/hw/EasiGlobal.h	2011-10-23 08:22:37.613570000 +0100
+diff -urN kernel-cssu-2.6.28/drivers/dsp/bridge/hw/EasiGlobal.h kernel-power-2.6.28.new/drivers/dsp/bridge/hw/EasiGlobal.h
+--- kernel-cssu-2.6.28/drivers/dsp/bridge/hw/EasiGlobal.h	2011-10-11 13:51:00.163164400 +0100
++++ kernel-cssu-2.6.28.new/drivers/dsp/bridge/hw/EasiGlobal.h	2011-10-23 08:22:37.613570000 +0100
 @@ -14,8 +14,8 @@
   * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
   */
@@ -29373,9 +29373,9 @@ diff -urN kernel-power-2.6.28/drivers/dsp/bridge/hw/EasiGlobal.h kernel-power-2.
 +#define _DEBUG_LEVEL1_EASI(easiNum)     ((void)0)
  
 +#endif /* _EASIGLOBAL_H */
-diff -urN kernel-power-2.6.28/drivers/dsp/bridge/hw/GlobalTypes.h kernel-power-2.6.28.new/drivers/dsp/bridge/hw/GlobalTypes.h
---- kernel-power-2.6.28/drivers/dsp/bridge/hw/GlobalTypes.h	2011-10-11 13:51:00.250113400 +0100
-+++ kernel-power-2.6.28.new/drivers/dsp/bridge/hw/GlobalTypes.h	2011-10-23 08:22:37.613570000 +0100
+diff -urN kernel-cssu-2.6.28/drivers/dsp/bridge/hw/GlobalTypes.h kernel-power-2.6.28.new/drivers/dsp/bridge/hw/GlobalTypes.h
+--- kernel-cssu-2.6.28/drivers/dsp/bridge/hw/GlobalTypes.h	2011-10-11 13:51:00.250113400 +0100
++++ kernel-cssu-2.6.28.new/drivers/dsp/bridge/hw/GlobalTypes.h	2011-10-23 08:22:37.613570000 +0100
 @@ -3,6 +3,8 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -29763,9 +29763,9 @@ diff -urN kernel-power-2.6.28/drivers/dsp/bridge/hw/GlobalTypes.h kernel-power-2
  
 -#endif	/* __GLOBALTYPES_H */
 +#endif /* _GLOBALTYPES_H */
-diff -urN kernel-power-2.6.28/drivers/dsp/bridge/hw/hw_defs.h kernel-power-2.6.28.new/drivers/dsp/bridge/hw/hw_defs.h
---- kernel-power-2.6.28/drivers/dsp/bridge/hw/hw_defs.h	2011-10-11 13:51:00.250113400 +0100
-+++ kernel-power-2.6.28.new/drivers/dsp/bridge/hw/hw_defs.h	2011-10-23 08:22:37.613570000 +0100
+diff -urN kernel-cssu-2.6.28/drivers/dsp/bridge/hw/hw_defs.h kernel-power-2.6.28.new/drivers/dsp/bridge/hw/hw_defs.h
+--- kernel-cssu-2.6.28/drivers/dsp/bridge/hw/hw_defs.h	2011-10-11 13:51:00.250113400 +0100
++++ kernel-cssu-2.6.28.new/drivers/dsp/bridge/hw/hw_defs.h	2011-10-23 08:22:37.613570000 +0100
 @@ -3,6 +3,8 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -29869,9 +29869,9 @@ diff -urN kernel-power-2.6.28/drivers/dsp/bridge/hw/hw_defs.h kernel-power-2.6.2
  
 -#endif  /* __HW_DEFS_H */
 +#endif /* _HW_DEFS_H */
-diff -urN kernel-power-2.6.28/drivers/dsp/bridge/hw/hw_dspssC64P.c kernel-power-2.6.28.new/drivers/dsp/bridge/hw/hw_dspssC64P.c
---- kernel-power-2.6.28/drivers/dsp/bridge/hw/hw_dspssC64P.c	2011-10-11 13:51:00.259840145 +0100
-+++ kernel-power-2.6.28.new/drivers/dsp/bridge/hw/hw_dspssC64P.c	2011-10-23 08:22:37.613570000 +0100
+diff -urN kernel-cssu-2.6.28/drivers/dsp/bridge/hw/hw_dspssC64P.c kernel-power-2.6.28.new/drivers/dsp/bridge/hw/hw_dspssC64P.c
+--- kernel-cssu-2.6.28/drivers/dsp/bridge/hw/hw_dspssC64P.c	2011-10-11 13:51:00.259840145 +0100
++++ kernel-cssu-2.6.28.new/drivers/dsp/bridge/hw/hw_dspssC64P.c	2011-10-23 08:22:37.613570000 +0100
 @@ -3,6 +3,8 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -29930,9 +29930,9 @@ diff -urN kernel-power-2.6.28/drivers/dsp/bridge/hw/hw_dspssC64P.c kernel-power-
  
  	return status;
  }
-diff -urN kernel-power-2.6.28/drivers/dsp/bridge/hw/hw_dspssC64P.h kernel-power-2.6.28.new/drivers/dsp/bridge/hw/hw_dspssC64P.h
---- kernel-power-2.6.28/drivers/dsp/bridge/hw/hw_dspssC64P.h	2011-10-11 13:51:00.259840145 +0100
-+++ kernel-power-2.6.28.new/drivers/dsp/bridge/hw/hw_dspssC64P.h	2011-10-23 08:22:37.613570000 +0100
+diff -urN kernel-cssu-2.6.28/drivers/dsp/bridge/hw/hw_dspssC64P.h kernel-power-2.6.28.new/drivers/dsp/bridge/hw/hw_dspssC64P.h
+--- kernel-cssu-2.6.28/drivers/dsp/bridge/hw/hw_dspssC64P.h	2011-10-11 13:51:00.259840145 +0100
++++ kernel-cssu-2.6.28.new/drivers/dsp/bridge/hw/hw_dspssC64P.h	2011-10-23 08:22:37.613570000 +0100
 @@ -3,6 +3,8 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -29990,9 +29990,9 @@ diff -urN kernel-power-2.6.28/drivers/dsp/bridge/hw/hw_dspssC64P.h kernel-power-
  
 -#endif				/* __HW_DSPSS_H */
 +#endif /* _HW_DSPSS_H */
-diff -urN kernel-power-2.6.28/drivers/dsp/bridge/hw/hw_mbox.c kernel-power-2.6.28.new/drivers/dsp/bridge/hw/hw_mbox.c
---- kernel-power-2.6.28/drivers/dsp/bridge/hw/hw_mbox.c	2011-10-11 13:51:00.267967773 +0100
-+++ kernel-power-2.6.28.new/drivers/dsp/bridge/hw/hw_mbox.c	1970-01-01 01:00:00.000000000 +0100
+diff -urN kernel-cssu-2.6.28/drivers/dsp/bridge/hw/hw_mbox.c kernel-power-2.6.28.new/drivers/dsp/bridge/hw/hw_mbox.c
+--- kernel-cssu-2.6.28/drivers/dsp/bridge/hw/hw_mbox.c	2011-10-11 13:51:00.267967773 +0100
++++ kernel-cssu-2.6.28.new/drivers/dsp/bridge/hw/hw_mbox.c	1970-01-01 01:00:00.000000000 +0100
 @@ -1,247 +0,0 @@
 -/*
 - * hw_mbox.c
@@ -30241,9 +30241,9 @@ diff -urN kernel-power-2.6.28/drivers/dsp/bridge/hw/hw_mbox.c kernel-power-2.6.2
 -
 -	return status;
 -}
-diff -urN kernel-power-2.6.28/drivers/dsp/bridge/hw/hw_mbox.h kernel-power-2.6.28.new/drivers/dsp/bridge/hw/hw_mbox.h
---- kernel-power-2.6.28/drivers/dsp/bridge/hw/hw_mbox.h	2011-10-11 13:51:00.267967773 +0100
-+++ kernel-power-2.6.28.new/drivers/dsp/bridge/hw/hw_mbox.h	1970-01-01 01:00:00.000000000 +0100
+diff -urN kernel-cssu-2.6.28/drivers/dsp/bridge/hw/hw_mbox.h kernel-power-2.6.28.new/drivers/dsp/bridge/hw/hw_mbox.h
+--- kernel-cssu-2.6.28/drivers/dsp/bridge/hw/hw_mbox.h	2011-10-11 13:51:00.267967773 +0100
++++ kernel-cssu-2.6.28.new/drivers/dsp/bridge/hw/hw_mbox.h	1970-01-01 01:00:00.000000000 +0100
 @@ -1,328 +0,0 @@
 -/*
 - * hw_mbox.h
@@ -30573,9 +30573,9 @@ diff -urN kernel-power-2.6.28/drivers/dsp/bridge/hw/hw_mbox.h kernel-power-2.6.2
 -}
 -
 -#endif  /* __MBOX_H */
-diff -urN kernel-power-2.6.28/drivers/dsp/bridge/hw/hw_mmu.c kernel-power-2.6.28.new/drivers/dsp/bridge/hw/hw_mmu.c
---- kernel-power-2.6.28/drivers/dsp/bridge/hw/hw_mmu.c	2011-10-11 13:51:00.277597753 +0100
-+++ kernel-power-2.6.28.new/drivers/dsp/bridge/hw/hw_mmu.c	2011-10-23 08:22:37.619928000 +0100
+diff -urN kernel-cssu-2.6.28/drivers/dsp/bridge/hw/hw_mmu.c kernel-power-2.6.28.new/drivers/dsp/bridge/hw/hw_mmu.c
+--- kernel-cssu-2.6.28/drivers/dsp/bridge/hw/hw_mmu.c	2011-10-11 13:51:00.277597753 +0100
++++ kernel-cssu-2.6.28.new/drivers/dsp/bridge/hw/hw_mmu.c	2011-10-23 08:22:37.619928000 +0100
 @@ -3,6 +3,8 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -31599,9 +31599,9 @@ diff -urN kernel-power-2.6.28/drivers/dsp/bridge/hw/hw_mmu.c kernel-power-2.6.28
 +	return status;
  
  }
-diff -urN kernel-power-2.6.28/drivers/dsp/bridge/hw/hw_mmu.h kernel-power-2.6.28.new/drivers/dsp/bridge/hw/hw_mmu.h
---- kernel-power-2.6.28/drivers/dsp/bridge/hw/hw_mmu.h	2011-10-11 13:51:00.277597753 +0100
-+++ kernel-power-2.6.28.new/drivers/dsp/bridge/hw/hw_mmu.h	2011-10-23 08:22:37.619928000 +0100
+diff -urN kernel-cssu-2.6.28/drivers/dsp/bridge/hw/hw_mmu.h kernel-power-2.6.28.new/drivers/dsp/bridge/hw/hw_mmu.h
+--- kernel-cssu-2.6.28/drivers/dsp/bridge/hw/hw_mmu.h	2011-10-11 13:51:00.277597753 +0100
++++ kernel-cssu-2.6.28.new/drivers/dsp/bridge/hw/hw_mmu.h	2011-10-23 08:22:37.619928000 +0100
 @@ -3,6 +3,8 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -31855,9 +31855,9 @@ diff -urN kernel-power-2.6.28/drivers/dsp/bridge/hw/hw_mmu.h kernel-power-2.6.28
  
 -#endif  /* __HW_MMU_H */
 +#endif /* _HW_MMU_H */
-diff -urN kernel-power-2.6.28/drivers/dsp/bridge/hw/hw_prcm.c kernel-power-2.6.28.new/drivers/dsp/bridge/hw/hw_prcm.c
---- kernel-power-2.6.28/drivers/dsp/bridge/hw/hw_prcm.c	2011-10-11 13:51:00.277597753 +0100
-+++ kernel-power-2.6.28.new/drivers/dsp/bridge/hw/hw_prcm.c	2011-10-23 08:22:37.619928000 +0100
+diff -urN kernel-cssu-2.6.28/drivers/dsp/bridge/hw/hw_prcm.c kernel-power-2.6.28.new/drivers/dsp/bridge/hw/hw_prcm.c
+--- kernel-cssu-2.6.28/drivers/dsp/bridge/hw/hw_prcm.c	2011-10-11 13:51:00.277597753 +0100
++++ kernel-cssu-2.6.28.new/drivers/dsp/bridge/hw/hw_prcm.c	2011-10-23 08:22:37.619928000 +0100
 @@ -3,6 +3,8 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -32063,9 +32063,9 @@ diff -urN kernel-power-2.6.28/drivers/dsp/bridge/hw/hw_prcm.c kernel-power-2.6.2
  
  	return status;
  }
-diff -urN kernel-power-2.6.28/drivers/dsp/bridge/hw/hw_prcm.h kernel-power-2.6.28.new/drivers/dsp/bridge/hw/hw_prcm.h
---- kernel-power-2.6.28/drivers/dsp/bridge/hw/hw_prcm.h	2011-10-11 13:51:00.277597753 +0100
-+++ kernel-power-2.6.28.new/drivers/dsp/bridge/hw/hw_prcm.h	2011-10-23 08:22:37.619928000 +0100
+diff -urN kernel-cssu-2.6.28/drivers/dsp/bridge/hw/hw_prcm.h kernel-power-2.6.28.new/drivers/dsp/bridge/hw/hw_prcm.h
+--- kernel-cssu-2.6.28/drivers/dsp/bridge/hw/hw_prcm.h	2011-10-11 13:51:00.277597753 +0100
++++ kernel-cssu-2.6.28.new/drivers/dsp/bridge/hw/hw_prcm.h	2011-10-23 08:22:37.619928000 +0100
 @@ -3,6 +3,8 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -32349,9 +32349,9 @@ diff -urN kernel-power-2.6.28/drivers/dsp/bridge/hw/hw_prcm.h kernel-power-2.6.2
  
 -#endif  /* __HW_PRCM_H */
 +#endif /* _HW_PRCM_H */
-diff -urN kernel-power-2.6.28/drivers/dsp/bridge/hw/IPIAccInt.h kernel-power-2.6.28.new/drivers/dsp/bridge/hw/IPIAccInt.h
---- kernel-power-2.6.28/drivers/dsp/bridge/hw/IPIAccInt.h	2011-10-11 13:51:00.277597753 +0100
-+++ kernel-power-2.6.28.new/drivers/dsp/bridge/hw/IPIAccInt.h	2011-10-23 08:22:37.619928000 +0100
+diff -urN kernel-cssu-2.6.28/drivers/dsp/bridge/hw/IPIAccInt.h kernel-power-2.6.28.new/drivers/dsp/bridge/hw/IPIAccInt.h
+--- kernel-cssu-2.6.28/drivers/dsp/bridge/hw/IPIAccInt.h	2011-10-11 13:51:00.277597753 +0100
++++ kernel-cssu-2.6.28.new/drivers/dsp/bridge/hw/IPIAccInt.h	2011-10-23 08:22:37.619928000 +0100
 @@ -22,20 +22,5 @@
  #define SYSC_IVA2BOOTADDR_OFFSET                0x400
  #define SYSC_IVA2BOOTADDR_MASK                 0xfffffc00
@@ -32374,9 +32374,9 @@ diff -urN kernel-power-2.6.28/drivers/dsp/bridge/hw/IPIAccInt.h kernel-power-2.6
 -#endif				/* _IPI_ACC_INT_H */
 +#endif /* _IPI_ACC_INT_H */
  /* EOF */
-diff -urN kernel-power-2.6.28/drivers/dsp/bridge/hw/IVA2RegAcM.h kernel-power-2.6.28.new/drivers/dsp/bridge/hw/IVA2RegAcM.h
---- kernel-power-2.6.28/drivers/dsp/bridge/hw/IVA2RegAcM.h	2011-10-11 13:51:00.293197355 +0100
-+++ kernel-power-2.6.28.new/drivers/dsp/bridge/hw/IVA2RegAcM.h	2011-10-23 08:22:37.619928000 +0100
+diff -urN kernel-cssu-2.6.28/drivers/dsp/bridge/hw/IVA2RegAcM.h kernel-power-2.6.28.new/drivers/dsp/bridge/hw/IVA2RegAcM.h
+--- kernel-cssu-2.6.28/drivers/dsp/bridge/hw/IVA2RegAcM.h	2011-10-11 13:51:00.293197355 +0100
++++ kernel-cssu-2.6.28.new/drivers/dsp/bridge/hw/IVA2RegAcM.h	2011-10-23 08:22:37.619928000 +0100
 @@ -14,8 +14,6 @@
   * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
   */
@@ -32386,9 +32386,9 @@ diff -urN kernel-power-2.6.28/drivers/dsp/bridge/hw/IVA2RegAcM.h kernel-power-2.
  #ifndef _IVA2_REG_ACM_H
  #define _IVA2_REG_ACM_H
  
-diff -urN kernel-power-2.6.28/drivers/dsp/bridge/hw/MLBAccInt.h kernel-power-2.6.28.new/drivers/dsp/bridge/hw/MLBAccInt.h
---- kernel-power-2.6.28/drivers/dsp/bridge/hw/MLBAccInt.h	2011-10-11 13:51:00.298873588 +0100
-+++ kernel-power-2.6.28.new/drivers/dsp/bridge/hw/MLBAccInt.h	1970-01-01 01:00:00.000000000 +0100
+diff -urN kernel-cssu-2.6.28/drivers/dsp/bridge/hw/MLBAccInt.h kernel-power-2.6.28.new/drivers/dsp/bridge/hw/MLBAccInt.h
+--- kernel-cssu-2.6.28/drivers/dsp/bridge/hw/MLBAccInt.h	2011-10-11 13:51:00.298873588 +0100
++++ kernel-cssu-2.6.28.new/drivers/dsp/bridge/hw/MLBAccInt.h	1970-01-01 01:00:00.000000000 +0100
 @@ -1,132 +0,0 @@
 -/*
 - * MLBAccInt.h
@@ -32522,9 +32522,9 @@ diff -urN kernel-power-2.6.28/drivers/dsp/bridge/hw/MLBAccInt.h kernel-power-2.6
 -#define MLB_MAILBOX_MSGSTATUS___0_15_NbOfMsgMBm_OFFSET    (u32)(0)
 -
 -#endif /* _MLB_ACC_INT_H */
-diff -urN kernel-power-2.6.28/drivers/dsp/bridge/hw/MLBRegAcM.h kernel-power-2.6.28.new/drivers/dsp/bridge/hw/MLBRegAcM.h
---- kernel-power-2.6.28/drivers/dsp/bridge/hw/MLBRegAcM.h	2011-10-11 13:51:00.369223060 +0100
-+++ kernel-power-2.6.28.new/drivers/dsp/bridge/hw/MLBRegAcM.h	1970-01-01 01:00:00.000000000 +0100
+diff -urN kernel-cssu-2.6.28/drivers/dsp/bridge/hw/MLBRegAcM.h kernel-power-2.6.28.new/drivers/dsp/bridge/hw/MLBRegAcM.h
+--- kernel-cssu-2.6.28/drivers/dsp/bridge/hw/MLBRegAcM.h	2011-10-11 13:51:00.369223060 +0100
++++ kernel-cssu-2.6.28.new/drivers/dsp/bridge/hw/MLBRegAcM.h	1970-01-01 01:00:00.000000000 +0100
 @@ -1,201 +0,0 @@
 -/*
 - * MLBRegAcM.h
@@ -32727,9 +32727,9 @@ diff -urN kernel-power-2.6.28/drivers/dsp/bridge/hw/MLBRegAcM.h kernel-power-2.6
 -#endif	/* USE_LEVEL_1_MACROS */
 -
 -#endif /* _MLB_REG_ACM_H */
-diff -urN kernel-power-2.6.28/drivers/dsp/bridge/hw/MMUAccInt.h kernel-power-2.6.28.new/drivers/dsp/bridge/hw/MMUAccInt.h
---- kernel-power-2.6.28/drivers/dsp/bridge/hw/MMUAccInt.h	2011-10-11 13:51:00.369223060 +0100
-+++ kernel-power-2.6.28.new/drivers/dsp/bridge/hw/MMUAccInt.h	2011-10-23 08:22:37.619928000 +0100
+diff -urN kernel-cssu-2.6.28/drivers/dsp/bridge/hw/MMUAccInt.h kernel-power-2.6.28.new/drivers/dsp/bridge/hw/MMUAccInt.h
+--- kernel-cssu-2.6.28/drivers/dsp/bridge/hw/MMUAccInt.h	2011-10-11 13:51:00.369223060 +0100
++++ kernel-cssu-2.6.28.new/drivers/dsp/bridge/hw/MMUAccInt.h	2011-10-23 08:22:37.619928000 +0100
 @@ -19,29 +19,29 @@
  
  /* Mappings of level 1 EASI function numbers to function names */
@@ -32817,9 +32817,9 @@ diff -urN kernel-power-2.6.28/drivers/dsp/bridge/hw/MMUAccInt.h kernel-power-2.6
 +#define MMU_MMU_LOCK_CURRENT_VICTIM_OFFSET    4
  
  #endif /* _MMU_ACC_INT_H */
-diff -urN kernel-power-2.6.28/drivers/dsp/bridge/hw/MMURegAcM.h kernel-power-2.6.28.new/drivers/dsp/bridge/hw/MMURegAcM.h
---- kernel-power-2.6.28/drivers/dsp/bridge/hw/MMURegAcM.h	2011-10-11 13:51:00.385699277 +0100
-+++ kernel-power-2.6.28.new/drivers/dsp/bridge/hw/MMURegAcM.h	2011-10-23 08:22:37.619928000 +0100
+diff -urN kernel-cssu-2.6.28/drivers/dsp/bridge/hw/MMURegAcM.h kernel-power-2.6.28.new/drivers/dsp/bridge/hw/MMURegAcM.h
+--- kernel-cssu-2.6.28/drivers/dsp/bridge/hw/MMURegAcM.h	2011-10-11 13:51:00.385699277 +0100
++++ kernel-cssu-2.6.28.new/drivers/dsp/bridge/hw/MMURegAcM.h	2011-10-23 08:22:37.619928000 +0100
 @@ -14,7 +14,6 @@
   * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
   */
@@ -33137,9 +33137,9 @@ diff -urN kernel-power-2.6.28/drivers/dsp/bridge/hw/MMURegAcM.h kernel-power-2.6
 +#endif /* USE_LEVEL_1_MACROS */
  
  #endif /* _MMU_REG_ACM_H */
-diff -urN kernel-power-2.6.28/drivers/dsp/bridge/hw/PRCMAccInt.h kernel-power-2.6.28.new/drivers/dsp/bridge/hw/PRCMAccInt.h
---- kernel-power-2.6.28/drivers/dsp/bridge/hw/PRCMAccInt.h	2011-10-11 13:51:00.396535956 +0100
-+++ kernel-power-2.6.28.new/drivers/dsp/bridge/hw/PRCMAccInt.h	2011-10-23 08:22:37.619928000 +0100
+diff -urN kernel-cssu-2.6.28/drivers/dsp/bridge/hw/PRCMAccInt.h kernel-power-2.6.28.new/drivers/dsp/bridge/hw/PRCMAccInt.h
+--- kernel-cssu-2.6.28/drivers/dsp/bridge/hw/PRCMAccInt.h	2011-10-11 13:51:00.396535956 +0100
++++ kernel-cssu-2.6.28.new/drivers/dsp/bridge/hw/PRCMAccInt.h	2011-10-23 08:22:37.619928000 +0100
 @@ -19,91 +19,97 @@
  
  /* Mappings of level 1 EASI function numbers to function names */
@@ -33480,9 +33480,9 @@ diff -urN kernel-power-2.6.28/drivers/dsp/bridge/hw/PRCMAccInt.h kernel-power-2.
 +};
  
  #endif /* _PRCM_ACC_INT_H */
-diff -urN kernel-power-2.6.28/drivers/dsp/bridge/hw/PRCMRegAcM.h kernel-power-2.6.28.new/drivers/dsp/bridge/hw/PRCMRegAcM.h
---- kernel-power-2.6.28/drivers/dsp/bridge/hw/PRCMRegAcM.h	2011-10-11 13:51:00.408254520 +0100
-+++ kernel-power-2.6.28.new/drivers/dsp/bridge/hw/PRCMRegAcM.h	2011-10-23 08:22:37.625950000 +0100
+diff -urN kernel-cssu-2.6.28/drivers/dsp/bridge/hw/PRCMRegAcM.h kernel-power-2.6.28.new/drivers/dsp/bridge/hw/PRCMRegAcM.h
+--- kernel-cssu-2.6.28/drivers/dsp/bridge/hw/PRCMRegAcM.h	2011-10-11 13:51:00.408254520 +0100
++++ kernel-cssu-2.6.28.new/drivers/dsp/bridge/hw/PRCMRegAcM.h	2011-10-23 08:22:37.625950000 +0100
 @@ -26,38 +26,35 @@
  
  #if defined(USE_LEVEL_1_MACROS)
@@ -34284,9 +34284,9 @@ diff -urN kernel-power-2.6.28/drivers/dsp/bridge/hw/PRCMRegAcM.h kernel-power-2.
 +#endif /* USE_LEVEL_1_MACROS */
  
  #endif /* _PRCM_REG_ACM_H */
-diff -urN kernel-power-2.6.28/drivers/dsp/bridge/Kbuild kernel-power-2.6.28.new/drivers/dsp/bridge/Kbuild
---- kernel-power-2.6.28/drivers/dsp/bridge/Kbuild	2011-10-11 13:51:00.408254520 +0100
-+++ kernel-power-2.6.28.new/drivers/dsp/bridge/Kbuild	1970-01-01 01:00:00.000000000 +0100
+diff -urN kernel-cssu-2.6.28/drivers/dsp/bridge/Kbuild kernel-power-2.6.28.new/drivers/dsp/bridge/Kbuild
+--- kernel-cssu-2.6.28/drivers/dsp/bridge/Kbuild	2011-10-11 13:51:00.408254520 +0100
++++ kernel-cssu-2.6.28.new/drivers/dsp/bridge/Kbuild	1970-01-01 01:00:00.000000000 +0100
 @@ -1,39 +0,0 @@
 -obj-$(CONFIG_MPU_BRIDGE)	+= bridgedriver.o
 -
@@ -34327,9 +34327,9 @@ diff -urN kernel-power-2.6.28/drivers/dsp/bridge/Kbuild kernel-power-2.6.28.new/
 -ccflags-y += -Idrivers/dsp/bridge/rmgr
 -ccflags-y += -Idrivers/dsp/bridge/hw
 -ccflags-y += -Iarch/arm
-diff -urN kernel-power-2.6.28/drivers/dsp/bridge/Kconfig kernel-power-2.6.28.new/drivers/dsp/bridge/Kconfig
---- kernel-power-2.6.28/drivers/dsp/bridge/Kconfig	2011-10-11 13:51:00.408254520 +0100
-+++ kernel-power-2.6.28.new/drivers/dsp/bridge/Kconfig	2011-10-17 19:50:11.485124792 +0100
+diff -urN kernel-cssu-2.6.28/drivers/dsp/bridge/Kconfig kernel-power-2.6.28.new/drivers/dsp/bridge/Kconfig
+--- kernel-cssu-2.6.28/drivers/dsp/bridge/Kconfig	2011-10-11 13:51:00.408254520 +0100
++++ kernel-cssu-2.6.28.new/drivers/dsp/bridge/Kconfig	2011-10-17 19:50:11.485124792 +0100
 @@ -5,15 +5,17 @@
  menuconfig MPU_BRIDGE
  	tristate "DSP Bridge driver"
@@ -34408,9 +34408,9 @@ diff -urN kernel-power-2.6.28/drivers/dsp/bridge/Kconfig kernel-power-2.6.28.new
 +	depends on MPU_BRIDGE
 +	help
 +	  Say Y to allow only new DSP API(ioctl codes)
-diff -urN kernel-power-2.6.28/drivers/dsp/bridge/Makefile kernel-power-2.6.28.new/drivers/dsp/bridge/Makefile
---- kernel-power-2.6.28/drivers/dsp/bridge/Makefile	1970-01-01 01:00:00.000000000 +0100
-+++ kernel-power-2.6.28.new/drivers/dsp/bridge/Makefile	2011-10-17 19:52:37.640889272 +0100
+diff -urN kernel-cssu-2.6.28/drivers/dsp/bridge/Makefile kernel-power-2.6.28.new/drivers/dsp/bridge/Makefile
+--- kernel-cssu-2.6.28/drivers/dsp/bridge/Makefile	1970-01-01 01:00:00.000000000 +0100
++++ kernel-cssu-2.6.28.new/drivers/dsp/bridge/Makefile	2011-10-17 19:52:37.640889272 +0100
 @@ -0,0 +1,40 @@
 +obj-$(CONFIG_MPU_BRIDGE)	+= bridgedriver.o
 +
@@ -34452,9 +34452,9 @@ diff -urN kernel-power-2.6.28/drivers/dsp/bridge/Makefile kernel-power-2.6.28.ne
 +ccflags-y += -Idrivers/dsp/bridge/rmgr
 +ccflags-y += -Idrivers/dsp/bridge/hw
 +ccflags-y += -Iarch/arm
-diff -urN kernel-power-2.6.28/drivers/dsp/bridge/pmgr/chnl.c kernel-power-2.6.28.new/drivers/dsp/bridge/pmgr/chnl.c
---- kernel-power-2.6.28/drivers/dsp/bridge/pmgr/chnl.c	2011-10-11 13:51:00.877974626 +0100
-+++ kernel-power-2.6.28.new/drivers/dsp/bridge/pmgr/chnl.c	2011-10-23 08:22:37.625950000 +0100
+diff -urN kernel-cssu-2.6.28/drivers/dsp/bridge/pmgr/chnl.c kernel-power-2.6.28.new/drivers/dsp/bridge/pmgr/chnl.c
+--- kernel-cssu-2.6.28/drivers/dsp/bridge/pmgr/chnl.c	2011-10-11 13:51:00.877974626 +0100
++++ kernel-cssu-2.6.28.new/drivers/dsp/bridge/pmgr/chnl.c	2011-10-23 08:22:37.625950000 +0100
 @@ -3,6 +3,9 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -34758,9 +34758,9 @@ diff -urN kernel-power-2.6.28/drivers/dsp/bridge/pmgr/chnl.c kernel-power-2.6.28
  }
 -
 -
-diff -urN kernel-power-2.6.28/drivers/dsp/bridge/pmgr/chnlobj.h kernel-power-2.6.28.new/drivers/dsp/bridge/pmgr/chnlobj.h
---- kernel-power-2.6.28/drivers/dsp/bridge/pmgr/chnlobj.h	2011-10-11 13:51:00.887728995 +0100
-+++ kernel-power-2.6.28.new/drivers/dsp/bridge/pmgr/chnlobj.h	2011-10-23 08:22:37.625950000 +0100
+diff -urN kernel-cssu-2.6.28/drivers/dsp/bridge/pmgr/chnlobj.h kernel-power-2.6.28.new/drivers/dsp/bridge/pmgr/chnlobj.h
+--- kernel-cssu-2.6.28/drivers/dsp/bridge/pmgr/chnlobj.h	2011-10-11 13:51:00.887728995 +0100
++++ kernel-cssu-2.6.28.new/drivers/dsp/bridge/pmgr/chnlobj.h	2011-10-23 08:22:37.625950000 +0100
 @@ -3,6 +3,9 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -34847,9 +34847,9 @@ diff -urN kernel-power-2.6.28/drivers/dsp/bridge/pmgr/chnlobj.h kernel-power-2.6
 +};
  
 +#endif /* CHNLOBJ_ */
-diff -urN kernel-power-2.6.28/drivers/dsp/bridge/pmgr/cmm.c kernel-power-2.6.28.new/drivers/dsp/bridge/pmgr/cmm.c
---- kernel-power-2.6.28/drivers/dsp/bridge/pmgr/cmm.c	2011-10-11 13:51:00.485384115 +0100
-+++ kernel-power-2.6.28.new/drivers/dsp/bridge/pmgr/cmm.c	2011-10-23 08:22:37.625950000 +0100
+diff -urN kernel-cssu-2.6.28/drivers/dsp/bridge/pmgr/cmm.c kernel-power-2.6.28.new/drivers/dsp/bridge/pmgr/cmm.c
+--- kernel-cssu-2.6.28/drivers/dsp/bridge/pmgr/cmm.c	2011-10-11 13:51:00.485384115 +0100
++++ kernel-cssu-2.6.28.new/drivers/dsp/bridge/pmgr/cmm.c	2011-10-23 08:22:37.625950000 +0100
 @@ -3,6 +3,22 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -36770,9 +36770,9 @@ diff -urN kernel-power-2.6.28/drivers/dsp/bridge/pmgr/cmm.c kernel-power-2.6.28.
 -	return (void *)dwAddrXlate;
 +	return (void *)dw_addr_xlate;
  }
-diff -urN kernel-power-2.6.28/drivers/dsp/bridge/pmgr/cod.c kernel-power-2.6.28.new/drivers/dsp/bridge/pmgr/cod.c
---- kernel-power-2.6.28/drivers/dsp/bridge/pmgr/cod.c	2011-10-11 13:51:00.517611696 +0100
-+++ kernel-power-2.6.28.new/drivers/dsp/bridge/pmgr/cod.c	2011-10-23 08:22:37.625950000 +0100
+diff -urN kernel-cssu-2.6.28/drivers/dsp/bridge/pmgr/cod.c kernel-power-2.6.28.new/drivers/dsp/bridge/pmgr/cod.c
+--- kernel-cssu-2.6.28/drivers/dsp/bridge/pmgr/cod.c	2011-10-11 13:51:00.517611696 +0100
++++ kernel-cssu-2.6.28.new/drivers/dsp/bridge/pmgr/cod.c	2011-10-23 08:22:37.625950000 +0100
 @@ -3,6 +3,12 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -37804,9 +37804,9 @@ diff -urN kernel-power-2.6.28/drivers/dsp/bridge/pmgr/cod.c kernel-power-2.6.28.
  	return true;
  }
 -
-diff -urN kernel-power-2.6.28/drivers/dsp/bridge/pmgr/dbl.c kernel-power-2.6.28.new/drivers/dsp/bridge/pmgr/dbl.c
---- kernel-power-2.6.28/drivers/dsp/bridge/pmgr/dbl.c	2011-10-11 13:51:00.541076215 +0100
-+++ kernel-power-2.6.28.new/drivers/dsp/bridge/pmgr/dbl.c	1970-01-01 01:00:00.000000000 +0100
+diff -urN kernel-cssu-2.6.28/drivers/dsp/bridge/pmgr/dbl.c kernel-power-2.6.28.new/drivers/dsp/bridge/pmgr/dbl.c
+--- kernel-cssu-2.6.28/drivers/dsp/bridge/pmgr/dbl.c	2011-10-11 13:51:00.541076215 +0100
++++ kernel-cssu-2.6.28.new/drivers/dsp/bridge/pmgr/dbl.c	1970-01-01 01:00:00.000000000 +0100
 @@ -1,1385 +0,0 @@
 -/*
 - * dbl.c
@@ -39193,9 +39193,9 @@ diff -urN kernel-power-2.6.28/drivers/dsp/bridge/pmgr/dbl.c kernel-power-2.6.28.
 -	return status;
 -}
 -
-diff -urN kernel-power-2.6.28/drivers/dsp/bridge/pmgr/dbll.c kernel-power-2.6.28.new/drivers/dsp/bridge/pmgr/dbll.c
---- kernel-power-2.6.28/drivers/dsp/bridge/pmgr/dbll.c	2011-10-11 13:51:00.676156113 +0100
-+++ kernel-power-2.6.28.new/drivers/dsp/bridge/pmgr/dbll.c	2011-10-23 08:22:37.631615000 +0100
+diff -urN kernel-cssu-2.6.28/drivers/dsp/bridge/pmgr/dbll.c kernel-power-2.6.28.new/drivers/dsp/bridge/pmgr/dbll.c
+--- kernel-cssu-2.6.28/drivers/dsp/bridge/pmgr/dbll.c	2011-10-11 13:51:00.676156113 +0100
++++ kernel-cssu-2.6.28.new/drivers/dsp/bridge/pmgr/dbll.c	2011-10-23 08:22:37.631615000 +0100
 @@ -14,26 +14,6 @@
   * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
   */
@@ -41588,9 +41588,9 @@ diff -urN kernel-power-2.6.28/drivers/dsp/bridge/pmgr/dbll.c kernel-power-2.6.28
  {
  }
 -
-diff -urN kernel-power-2.6.28/drivers/dsp/bridge/pmgr/dev.c kernel-power-2.6.28.new/drivers/dsp/bridge/pmgr/dev.c
---- kernel-power-2.6.28/drivers/dsp/bridge/pmgr/dev.c	2011-10-11 13:51:00.787165527 +0100
-+++ kernel-power-2.6.28.new/drivers/dsp/bridge/pmgr/dev.c	2011-10-23 08:22:37.637567000 +0100
+diff -urN kernel-cssu-2.6.28/drivers/dsp/bridge/pmgr/dev.c kernel-power-2.6.28.new/drivers/dsp/bridge/pmgr/dev.c
+--- kernel-cssu-2.6.28/drivers/dsp/bridge/pmgr/dev.c	2011-10-11 13:51:00.787165527 +0100
++++ kernel-cssu-2.6.28.new/drivers/dsp/bridge/pmgr/dev.c	2011-10-23 08:22:37.637567000 +0100
 @@ -3,6 +3,8 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -43674,9 +43674,9 @@ diff -urN kernel-power-2.6.28/drivers/dsp/bridge/pmgr/dev.c kernel-power-2.6.28.
 +#undef  STORE_FXN
  }
 -
-diff -urN kernel-power-2.6.28/drivers/dsp/bridge/pmgr/dmm.c kernel-power-2.6.28.new/drivers/dsp/bridge/pmgr/dmm.c
---- kernel-power-2.6.28/drivers/dsp/bridge/pmgr/dmm.c	2011-10-11 13:51:00.869490944 +0100
-+++ kernel-power-2.6.28.new/drivers/dsp/bridge/pmgr/dmm.c	2011-10-23 08:22:37.637567000 +0100
+diff -urN kernel-cssu-2.6.28/drivers/dsp/bridge/pmgr/dmm.c kernel-power-2.6.28.new/drivers/dsp/bridge/pmgr/dmm.c
+--- kernel-cssu-2.6.28/drivers/dsp/bridge/pmgr/dmm.c	2011-10-11 13:51:00.869490944 +0100
++++ kernel-cssu-2.6.28.new/drivers/dsp/bridge/pmgr/dmm.c	2011-10-23 08:22:37.637567000 +0100
 @@ -3,6 +3,13 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -44583,9 +44583,9 @@ diff -urN kernel-power-2.6.28/drivers/dsp/bridge/pmgr/dmm.c kernel-power-2.6.28.
  
  	return 0;
  }
-diff -urN kernel-power-2.6.28/drivers/dsp/bridge/pmgr/io.c kernel-power-2.6.28.new/drivers/dsp/bridge/pmgr/io.c
---- kernel-power-2.6.28/drivers/dsp/bridge/pmgr/io.c	2011-10-11 13:51:00.892608882 +0100
-+++ kernel-power-2.6.28.new/drivers/dsp/bridge/pmgr/io.c	2011-10-23 08:22:37.637567000 +0100
+diff -urN kernel-cssu-2.6.28/drivers/dsp/bridge/pmgr/io.c kernel-power-2.6.28.new/drivers/dsp/bridge/pmgr/io.c
+--- kernel-cssu-2.6.28/drivers/dsp/bridge/pmgr/io.c	2011-10-11 13:51:00.892608882 +0100
++++ kernel-cssu-2.6.28.new/drivers/dsp/bridge/pmgr/io.c	2011-10-23 08:22:37.637567000 +0100
 @@ -3,6 +3,8 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -44823,9 +44823,9 @@ diff -urN kernel-power-2.6.28/drivers/dsp/bridge/pmgr/io.c kernel-power-2.6.28.n
 -	return fRetval;
 +	return ret;
  }
-diff -urN kernel-power-2.6.28/drivers/dsp/bridge/pmgr/ioobj.h kernel-power-2.6.28.new/drivers/dsp/bridge/pmgr/ioobj.h
---- kernel-power-2.6.28/drivers/dsp/bridge/pmgr/ioobj.h	2011-10-11 13:51:00.892608882 +0100
-+++ kernel-power-2.6.28.new/drivers/dsp/bridge/pmgr/ioobj.h	2011-10-23 08:22:37.637567000 +0100
+diff -urN kernel-cssu-2.6.28/drivers/dsp/bridge/pmgr/ioobj.h kernel-power-2.6.28.new/drivers/dsp/bridge/pmgr/ioobj.h
+--- kernel-cssu-2.6.28/drivers/dsp/bridge/pmgr/ioobj.h	2011-10-11 13:51:00.892608882 +0100
++++ kernel-cssu-2.6.28.new/drivers/dsp/bridge/pmgr/ioobj.h	2011-10-23 08:22:37.637567000 +0100
 @@ -3,6 +3,9 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -44885,9 +44885,9 @@ diff -urN kernel-power-2.6.28/drivers/dsp/bridge/pmgr/ioobj.h kernel-power-2.6.2
  
 -#endif				/* IOOBJ_ */
 +#endif /* IOOBJ_ */
-diff -urN kernel-power-2.6.28/drivers/dsp/bridge/pmgr/msg.c kernel-power-2.6.28.new/drivers/dsp/bridge/pmgr/msg.c
---- kernel-power-2.6.28/drivers/dsp/bridge/pmgr/msg.c	2011-10-11 13:51:00.903354774 +0100
-+++ kernel-power-2.6.28.new/drivers/dsp/bridge/pmgr/msg.c	2011-10-23 08:22:37.637567000 +0100
+diff -urN kernel-cssu-2.6.28/drivers/dsp/bridge/pmgr/msg.c kernel-power-2.6.28.new/drivers/dsp/bridge/pmgr/msg.c
+--- kernel-cssu-2.6.28/drivers/dsp/bridge/pmgr/msg.c	2011-10-11 13:51:00.903354774 +0100
++++ kernel-cssu-2.6.28.new/drivers/dsp/bridge/pmgr/msg.c	2011-10-23 08:22:37.637567000 +0100
 @@ -3,6 +3,8 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -45094,9 +45094,9 @@ diff -urN kernel-power-2.6.28/drivers/dsp/bridge/pmgr/msg.c kernel-power-2.6.28.
  	return true;
  }
 -
-diff -urN kernel-power-2.6.28/drivers/dsp/bridge/pmgr/msgobj.h kernel-power-2.6.28.new/drivers/dsp/bridge/pmgr/msgobj.h
---- kernel-power-2.6.28/drivers/dsp/bridge/pmgr/msgobj.h	2011-10-11 13:51:00.903354774 +0100
-+++ kernel-power-2.6.28.new/drivers/dsp/bridge/pmgr/msgobj.h	2011-10-23 08:22:37.637567000 +0100
+diff -urN kernel-cssu-2.6.28/drivers/dsp/bridge/pmgr/msgobj.h kernel-power-2.6.28.new/drivers/dsp/bridge/pmgr/msgobj.h
+--- kernel-cssu-2.6.28/drivers/dsp/bridge/pmgr/msgobj.h	2011-10-11 13:51:00.903354774 +0100
++++ kernel-cssu-2.6.28.new/drivers/dsp/bridge/pmgr/msgobj.h	2011-10-23 08:22:37.637567000 +0100
 @@ -3,6 +3,9 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -45151,9 +45151,9 @@ diff -urN kernel-power-2.6.28/drivers/dsp/bridge/pmgr/msgobj.h kernel-power-2.6.
 -#endif				/* MSGOBJ_ */
 -
 +#endif /* MSGOBJ_ */
-diff -urN kernel-power-2.6.28/drivers/dsp/bridge/pmgr/wcd.c kernel-power-2.6.28.new/drivers/dsp/bridge/pmgr/wcd.c
---- kernel-power-2.6.28/drivers/dsp/bridge/pmgr/wcd.c	2011-10-11 13:51:01.127013126 +0100
-+++ kernel-power-2.6.28.new/drivers/dsp/bridge/pmgr/wcd.c	2011-10-23 08:22:37.641906000 +0100
+diff -urN kernel-cssu-2.6.28/drivers/dsp/bridge/pmgr/wcd.c kernel-power-2.6.28.new/drivers/dsp/bridge/pmgr/wcd.c
+--- kernel-cssu-2.6.28/drivers/dsp/bridge/pmgr/wcd.c	2011-10-11 13:51:01.127013126 +0100
++++ kernel-cssu-2.6.28.new/drivers/dsp/bridge/pmgr/wcd.c	2011-10-23 08:22:37.641906000 +0100
 @@ -3,6 +3,9 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -47874,9 +47874,9 @@ diff -urN kernel-power-2.6.28/drivers/dsp/bridge/pmgr/wcd.c kernel-power-2.6.28.
  
  	return status;
  }
-diff -urN kernel-power-2.6.28/drivers/dsp/bridge/rmgr/dbdcd.c kernel-power-2.6.28.new/drivers/dsp/bridge/rmgr/dbdcd.c
---- kernel-power-2.6.28/drivers/dsp/bridge/rmgr/dbdcd.c	2011-10-11 13:51:01.146523130 +0100
-+++ kernel-power-2.6.28.new/drivers/dsp/bridge/rmgr/dbdcd.c	2011-10-23 08:22:37.641906000 +0100
+diff -urN kernel-cssu-2.6.28/drivers/dsp/bridge/rmgr/dbdcd.c kernel-power-2.6.28.new/drivers/dsp/bridge/rmgr/dbdcd.c
+--- kernel-cssu-2.6.28/drivers/dsp/bridge/rmgr/dbdcd.c	2011-10-11 13:51:01.146523130 +0100
++++ kernel-cssu-2.6.28.new/drivers/dsp/bridge/rmgr/dbdcd.c	2011-10-23 08:22:37.641906000 +0100
 @@ -3,6 +3,15 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -50135,9 +50135,9 @@ diff -urN kernel-power-2.6.28/drivers/dsp/bridge/rmgr/dbdcd.c kernel-power-2.6.2
  	return status;
  }
 -
-diff -urN kernel-power-2.6.28/drivers/dsp/bridge/rmgr/disp.c kernel-power-2.6.28.new/drivers/dsp/bridge/rmgr/disp.c
---- kernel-power-2.6.28/drivers/dsp/bridge/rmgr/disp.c	2011-10-11 13:51:01.165108622 +0100
-+++ kernel-power-2.6.28.new/drivers/dsp/bridge/rmgr/disp.c	2011-10-23 08:22:37.646645000 +0100
+diff -urN kernel-cssu-2.6.28/drivers/dsp/bridge/rmgr/disp.c kernel-power-2.6.28.new/drivers/dsp/bridge/rmgr/disp.c
+--- kernel-cssu-2.6.28/drivers/dsp/bridge/rmgr/disp.c	2011-10-11 13:51:01.165108622 +0100
++++ kernel-cssu-2.6.28.new/drivers/dsp/bridge/rmgr/disp.c	2011-10-23 08:22:37.646645000 +0100
 @@ -3,6 +3,9 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -51396,9 +51396,9 @@ diff -urN kernel-power-2.6.28/drivers/dsp/bridge/rmgr/disp.c kernel-power-2.6.28
  	}
  func_end:
  	return status;
-diff -urN kernel-power-2.6.28/drivers/dsp/bridge/rmgr/drv.c kernel-power-2.6.28.new/drivers/dsp/bridge/rmgr/drv.c
---- kernel-power-2.6.28/drivers/dsp/bridge/rmgr/drv.c	2011-10-11 13:51:19.504787763 +0100
-+++ kernel-power-2.6.28.new/drivers/dsp/bridge/rmgr/drv.c	2011-10-23 08:22:37.646645000 +0100
+diff -urN kernel-cssu-2.6.28/drivers/dsp/bridge/rmgr/drv.c kernel-power-2.6.28.new/drivers/dsp/bridge/rmgr/drv.c
+--- kernel-cssu-2.6.28/drivers/dsp/bridge/rmgr/drv.c	2011-10-11 13:51:19.504787763 +0100
++++ kernel-cssu-2.6.28.new/drivers/dsp/bridge/rmgr/drv.c	2011-10-23 08:22:37.646645000 +0100
 @@ -3,6 +3,8 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -53905,9 +53905,9 @@ diff -urN kernel-power-2.6.28/drivers/dsp/bridge/rmgr/drv.c kernel-power-2.6.28.
  	}
  	/* End Mem alloc */
  	return status;
-diff -urN kernel-power-2.6.28/drivers/dsp/bridge/rmgr/drv_interface.c kernel-power-2.6.28.new/drivers/dsp/bridge/rmgr/drv_interface.c
---- kernel-power-2.6.28/drivers/dsp/bridge/rmgr/drv_interface.c	2011-10-11 13:51:01.294958226 +0100
-+++ kernel-power-2.6.28.new/drivers/dsp/bridge/rmgr/drv_interface.c	2011-10-29 20:22:02.350873000 +0100
+diff -urN kernel-cssu-2.6.28/drivers/dsp/bridge/rmgr/drv_interface.c kernel-power-2.6.28.new/drivers/dsp/bridge/rmgr/drv_interface.c
+--- kernel-cssu-2.6.28/drivers/dsp/bridge/rmgr/drv_interface.c	2011-10-11 13:51:01.294958226 +0100
++++ kernel-cssu-2.6.28.new/drivers/dsp/bridge/rmgr/drv_interface.c	2011-10-29 20:22:02.350873000 +0100
 @@ -3,6 +3,8 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -54890,9 +54890,9 @@ diff -urN kernel-power-2.6.28/drivers/dsp/bridge/rmgr/drv_interface.c kernel-pow
  module_init(bridge_init);
  module_exit(bridge_exit);
 -
-diff -urN kernel-power-2.6.28/drivers/dsp/bridge/rmgr/drv_interface.h kernel-power-2.6.28.new/drivers/dsp/bridge/rmgr/drv_interface.h
---- kernel-power-2.6.28/drivers/dsp/bridge/rmgr/drv_interface.h	2011-10-11 13:51:01.294958226 +0100
-+++ kernel-power-2.6.28.new/drivers/dsp/bridge/rmgr/drv_interface.h	2011-10-23 08:22:37.652582000 +0100
+diff -urN kernel-cssu-2.6.28/drivers/dsp/bridge/rmgr/drv_interface.h kernel-power-2.6.28.new/drivers/dsp/bridge/rmgr/drv_interface.h
+--- kernel-cssu-2.6.28/drivers/dsp/bridge/rmgr/drv_interface.h	2011-10-11 13:51:01.294958226 +0100
++++ kernel-cssu-2.6.28.new/drivers/dsp/bridge/rmgr/drv_interface.h	2011-10-23 08:22:37.652582000 +0100
 @@ -14,18 +14,6 @@
   * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
   */
@@ -54922,9 +54922,9 @@ diff -urN kernel-power-2.6.28/drivers/dsp/bridge/rmgr/drv_interface.h kernel-pow
  static int bridge_mmap(struct file *filp, struct vm_area_struct *vma);
 -#endif				/* ifndef _DRV_INTERFACE_H_ */
 +#endif /* ifndef _DRV_INTERFACE_H_ */
-diff -urN kernel-power-2.6.28/drivers/dsp/bridge/rmgr/dspdrv.c kernel-power-2.6.28.new/drivers/dsp/bridge/rmgr/dspdrv.c
---- kernel-power-2.6.28/drivers/dsp/bridge/rmgr/dspdrv.c	2011-10-11 13:51:01.294958226 +0100
-+++ kernel-power-2.6.28.new/drivers/dsp/bridge/rmgr/dspdrv.c	2011-10-23 08:22:37.652582000 +0100
+diff -urN kernel-cssu-2.6.28/drivers/dsp/bridge/rmgr/dspdrv.c kernel-power-2.6.28.new/drivers/dsp/bridge/rmgr/dspdrv.c
+--- kernel-cssu-2.6.28/drivers/dsp/bridge/rmgr/dspdrv.c	2011-10-11 13:51:01.294958226 +0100
++++ kernel-cssu-2.6.28.new/drivers/dsp/bridge/rmgr/dspdrv.c	2011-10-23 08:22:37.652582000 +0100
 @@ -3,6 +3,8 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -55222,9 +55222,9 @@ diff -urN kernel-power-2.6.28/drivers/dsp/bridge/rmgr/dspdrv.c kernel-power-2.6.
 -	return retVal;
 +	return ret;
  }
-diff -urN kernel-power-2.6.28/drivers/dsp/bridge/rmgr/mgr.c kernel-power-2.6.28.new/drivers/dsp/bridge/rmgr/mgr.c
---- kernel-power-2.6.28/drivers/dsp/bridge/rmgr/mgr.c	2011-10-11 13:51:01.294958226 +0100
-+++ kernel-power-2.6.28.new/drivers/dsp/bridge/rmgr/mgr.c	2011-10-23 08:22:37.652582000 +0100
+diff -urN kernel-cssu-2.6.28/drivers/dsp/bridge/rmgr/mgr.c kernel-power-2.6.28.new/drivers/dsp/bridge/rmgr/mgr.c
+--- kernel-cssu-2.6.28/drivers/dsp/bridge/rmgr/mgr.c	2011-10-11 13:51:01.294958226 +0100
++++ kernel-cssu-2.6.28.new/drivers/dsp/bridge/rmgr/mgr.c	2011-10-23 08:22:37.652582000 +0100
 @@ -3,6 +3,10 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -55903,9 +55903,9 @@ diff -urN kernel-power-2.6.28/drivers/dsp/bridge/rmgr/mgr.c kernel-power-2.6.28.
  
  }
 -
-diff -urN kernel-power-2.6.28/drivers/dsp/bridge/rmgr/nldr.c kernel-power-2.6.28.new/drivers/dsp/bridge/rmgr/nldr.c
---- kernel-power-2.6.28/drivers/dsp/bridge/rmgr/nldr.c	2011-10-11 13:51:01.429729815 +0100
-+++ kernel-power-2.6.28.new/drivers/dsp/bridge/rmgr/nldr.c	2011-10-23 08:22:37.652582000 +0100
+diff -urN kernel-cssu-2.6.28/drivers/dsp/bridge/rmgr/nldr.c kernel-power-2.6.28.new/drivers/dsp/bridge/rmgr/nldr.c
+--- kernel-cssu-2.6.28/drivers/dsp/bridge/rmgr/nldr.c	2011-10-11 13:51:01.429729815 +0100
++++ kernel-cssu-2.6.28.new/drivers/dsp/bridge/rmgr/nldr.c	2011-10-23 08:22:37.652582000 +0100
 @@ -3,6 +3,8 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -58781,9 +58781,9 @@ diff -urN kernel-power-2.6.28/drivers/dsp/bridge/rmgr/nldr.c kernel-power-2.6.28
  	return b;
  }
 -
-diff -urN kernel-power-2.6.28/drivers/dsp/bridge/rmgr/node.c kernel-power-2.6.28.new/drivers/dsp/bridge/rmgr/node.c
---- kernel-power-2.6.28/drivers/dsp/bridge/rmgr/node.c	2011-10-11 13:51:01.604518511 +0100
-+++ kernel-power-2.6.28.new/drivers/dsp/bridge/rmgr/node.c	2011-10-24 16:43:22.322361000 +0100
+diff -urN kernel-cssu-2.6.28/drivers/dsp/bridge/rmgr/node.c kernel-power-2.6.28.new/drivers/dsp/bridge/rmgr/node.c
+--- kernel-cssu-2.6.28/drivers/dsp/bridge/rmgr/node.c	2011-10-11 13:51:01.604518511 +0100
++++ kernel-cssu-2.6.28.new/drivers/dsp/bridge/rmgr/node.c	2011-10-24 16:43:22.322361000 +0100
 @@ -3,6 +3,8 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -64092,9 +64092,9 @@ diff -urN kernel-power-2.6.28/drivers/dsp/bridge/rmgr/node.c kernel-power-2.6.28
 +	return ul_num_bytes;
  }
 -
-diff -urN kernel-power-2.6.28/drivers/dsp/bridge/rmgr/policy.c kernel-power-2.6.28.new/drivers/dsp/bridge/rmgr/policy.c
---- kernel-power-2.6.28/drivers/dsp/bridge/rmgr/policy.c	1970-01-01 01:00:00.000000000 +0100
-+++ kernel-power-2.6.28.new/drivers/dsp/bridge/rmgr/policy.c	2011-10-23 08:22:37.664743000 +0100
+diff -urN kernel-cssu-2.6.28/drivers/dsp/bridge/rmgr/policy.c kernel-power-2.6.28.new/drivers/dsp/bridge/rmgr/policy.c
+--- kernel-cssu-2.6.28/drivers/dsp/bridge/rmgr/policy.c	1970-01-01 01:00:00.000000000 +0100
++++ kernel-cssu-2.6.28.new/drivers/dsp/bridge/rmgr/policy.c	2011-10-23 08:22:37.664743000 +0100
 @@ -0,0 +1,695 @@
 +/*
 + * policy.c - policy enforcement point for TI DSP bridge access
@@ -64791,9 +64791,9 @@ diff -urN kernel-power-2.6.28/drivers/dsp/bridge/rmgr/policy.c kernel-power-2.6.
 +
 +	return 0;
 +}
-diff -urN kernel-power-2.6.28/drivers/dsp/bridge/rmgr/policy.h kernel-power-2.6.28.new/drivers/dsp/bridge/rmgr/policy.h
---- kernel-power-2.6.28/drivers/dsp/bridge/rmgr/policy.h	1970-01-01 01:00:00.000000000 +0100
-+++ kernel-power-2.6.28.new/drivers/dsp/bridge/rmgr/policy.h	2011-10-23 08:22:37.664743000 +0100
+diff -urN kernel-cssu-2.6.28/drivers/dsp/bridge/rmgr/policy.h kernel-power-2.6.28.new/drivers/dsp/bridge/rmgr/policy.h
+--- kernel-cssu-2.6.28/drivers/dsp/bridge/rmgr/policy.h	1970-01-01 01:00:00.000000000 +0100
++++ kernel-cssu-2.6.28.new/drivers/dsp/bridge/rmgr/policy.h	2011-10-23 08:22:37.664743000 +0100
 @@ -0,0 +1,26 @@
 +/*
 + * policy.h - header file for policy enforcement point for TI DSP bridge access
@@ -64821,9 +64821,9 @@ diff -urN kernel-power-2.6.28/drivers/dsp/bridge/rmgr/policy.h kernel-power-2.6.
 +			   unsigned long args, int status);
 +int policy_mmap_hook(struct file *filp);
 +int policy_release_hook(struct inode *ip, struct file *filp);
-diff -urN kernel-power-2.6.28/drivers/dsp/bridge/rmgr/proc.c kernel-power-2.6.28.new/drivers/dsp/bridge/rmgr/proc.c
---- kernel-power-2.6.28/drivers/dsp/bridge/rmgr/proc.c	2011-10-11 13:51:19.504787763 +0100
-+++ kernel-power-2.6.28.new/drivers/dsp/bridge/rmgr/proc.c	2011-10-24 16:43:27.531433000 +0100
+diff -urN kernel-cssu-2.6.28/drivers/dsp/bridge/rmgr/proc.c kernel-power-2.6.28.new/drivers/dsp/bridge/rmgr/proc.c
+--- kernel-cssu-2.6.28/drivers/dsp/bridge/rmgr/proc.c	2011-10-11 13:51:19.504787763 +0100
++++ kernel-cssu-2.6.28.new/drivers/dsp/bridge/rmgr/proc.c	2011-10-24 16:43:27.531433000 +0100
 @@ -3,6 +3,8 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -67716,9 +67716,9 @@ diff -urN kernel-power-2.6.28/drivers/dsp/bridge/rmgr/proc.c kernel-power-2.6.28
  	return status;
  }
 -
-diff -urN kernel-power-2.6.28/drivers/dsp/bridge/rmgr/pwr.c kernel-power-2.6.28.new/drivers/dsp/bridge/rmgr/pwr.c
---- kernel-power-2.6.28/drivers/dsp/bridge/rmgr/pwr.c	2011-10-11 13:51:01.713900288 +0100
-+++ kernel-power-2.6.28.new/drivers/dsp/bridge/rmgr/pwr.c	2011-10-29 20:56:26.035037000 +0100
+diff -urN kernel-cssu-2.6.28/drivers/dsp/bridge/rmgr/pwr.c kernel-power-2.6.28.new/drivers/dsp/bridge/rmgr/pwr.c
+--- kernel-cssu-2.6.28/drivers/dsp/bridge/rmgr/pwr.c	2011-10-11 13:51:01.713900288 +0100
++++ kernel-cssu-2.6.28.new/drivers/dsp/bridge/rmgr/pwr.c	2011-10-29 20:56:26.035037000 +0100
 @@ -3,6 +3,8 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -67969,9 +67969,9 @@ diff -urN kernel-power-2.6.28/drivers/dsp/bridge/rmgr/pwr.c kernel-power-2.6.28.
  }
 -
 -
-diff -urN kernel-power-2.6.28/drivers/dsp/bridge/rmgr/rmm.c kernel-power-2.6.28.new/drivers/dsp/bridge/rmgr/rmm.c
---- kernel-power-2.6.28/drivers/dsp/bridge/rmgr/rmm.c	2011-10-11 13:51:01.726608762 +0100
-+++ kernel-power-2.6.28.new/drivers/dsp/bridge/rmgr/rmm.c	2011-10-23 08:22:37.673157000 +0100
+diff -urN kernel-cssu-2.6.28/drivers/dsp/bridge/rmgr/rmm.c kernel-power-2.6.28.new/drivers/dsp/bridge/rmgr/rmm.c
+--- kernel-cssu-2.6.28/drivers/dsp/bridge/rmgr/rmm.c	2011-10-11 13:51:01.726608762 +0100
++++ kernel-cssu-2.6.28.new/drivers/dsp/bridge/rmgr/rmm.c	2011-10-23 08:22:37.673157000 +0100
 @@ -14,11 +14,7 @@
   * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
   */
@@ -68718,9 +68718,9 @@ diff -urN kernel-power-2.6.28/drivers/dsp/bridge/rmgr/rmm.c kernel-power-2.6.28.
 +	return ret;
  }
 -
-diff -urN kernel-power-2.6.28/drivers/dsp/bridge/rmgr/strm.c kernel-power-2.6.28.new/drivers/dsp/bridge/rmgr/strm.c
---- kernel-power-2.6.28/drivers/dsp/bridge/rmgr/strm.c	2011-10-11 13:51:01.754958718 +0100
-+++ kernel-power-2.6.28.new/drivers/dsp/bridge/rmgr/strm.c	2011-10-23 08:22:37.673157000 +0100
+diff -urN kernel-cssu-2.6.28/drivers/dsp/bridge/rmgr/strm.c kernel-power-2.6.28.new/drivers/dsp/bridge/rmgr/strm.c
+--- kernel-cssu-2.6.28/drivers/dsp/bridge/rmgr/strm.c	2011-10-11 13:51:01.754958718 +0100
++++ kernel-cssu-2.6.28.new/drivers/dsp/bridge/rmgr/strm.c	2011-10-23 08:22:37.673157000 +0100
 @@ -3,6 +3,8 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -70163,9 +70163,9 @@ diff -urN kernel-power-2.6.28/drivers/dsp/bridge/rmgr/strm.c kernel-power-2.6.28
  	}
  }
 -
-diff -urN kernel-power-2.6.28/drivers/dsp/bridge/services/cfg.c kernel-power-2.6.28.new/drivers/dsp/bridge/services/cfg.c
---- kernel-power-2.6.28/drivers/dsp/bridge/services/cfg.c	2011-10-11 13:51:01.754958718 +0100
-+++ kernel-power-2.6.28.new/drivers/dsp/bridge/services/cfg.c	2011-10-23 08:22:37.673157000 +0100
+diff -urN kernel-cssu-2.6.28/drivers/dsp/bridge/services/cfg.c kernel-power-2.6.28.new/drivers/dsp/bridge/services/cfg.c
+--- kernel-cssu-2.6.28/drivers/dsp/bridge/services/cfg.c	2011-10-11 13:51:01.754958718 +0100
++++ kernel-cssu-2.6.28.new/drivers/dsp/bridge/services/cfg.c	2011-10-23 08:22:37.673157000 +0100
 @@ -3,6 +3,8 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -70790,9 +70790,9 @@ diff -urN kernel-power-2.6.28/drivers/dsp/bridge/services/cfg.c kernel-power-2.6
 +		pr_err("%s: Failed, status 0x%x\n", __func__, status);
  	return status;
  }
-diff -urN kernel-power-2.6.28/drivers/dsp/bridge/services/clk.c kernel-power-2.6.28.new/drivers/dsp/bridge/services/clk.c
---- kernel-power-2.6.28/drivers/dsp/bridge/services/clk.c	2011-10-11 13:51:01.761749946 +0100
-+++ kernel-power-2.6.28.new/drivers/dsp/bridge/services/clk.c	2011-10-23 08:22:37.677315000 +0100
+diff -urN kernel-cssu-2.6.28/drivers/dsp/bridge/services/clk.c kernel-power-2.6.28.new/drivers/dsp/bridge/services/clk.c
+--- kernel-cssu-2.6.28/drivers/dsp/bridge/services/clk.c	2011-10-11 13:51:01.761749946 +0100
++++ kernel-cssu-2.6.28.new/drivers/dsp/bridge/services/clk.c	2011-10-23 08:22:37.677315000 +0100
 @@ -3,6 +3,8 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -71269,9 +71269,9 @@ diff -urN kernel-power-2.6.28/drivers/dsp/bridge/services/clk.c kernel-power-2.6
 +	__raw_writel(value, ssi_base + OMAP_SSI_SYSCONFIG_OFFSET);
 +	iounmap(ssi_base);
  }
-diff -urN kernel-power-2.6.28/drivers/dsp/bridge/services/csl.c kernel-power-2.6.28.new/drivers/dsp/bridge/services/csl.c
---- kernel-power-2.6.28/drivers/dsp/bridge/services/csl.c	2011-10-11 13:51:01.774458423 +0100
-+++ kernel-power-2.6.28.new/drivers/dsp/bridge/services/csl.c	1970-01-01 01:00:00.000000000 +0100
+diff -urN kernel-cssu-2.6.28/drivers/dsp/bridge/services/csl.c kernel-power-2.6.28.new/drivers/dsp/bridge/services/csl.c
+--- kernel-cssu-2.6.28/drivers/dsp/bridge/services/csl.c	2011-10-11 13:51:01.774458423 +0100
++++ kernel-cssu-2.6.28.new/drivers/dsp/bridge/services/csl.c	1970-01-01 01:00:00.000000000 +0100
 @@ -1,173 +0,0 @@
 -/*
 - * csl.c
@@ -71446,9 +71446,9 @@ diff -urN kernel-power-2.6.28/drivers/dsp/bridge/services/csl.c kernel-power-2.6
 -
 -	return pstrToken;
 -}
-diff -urN kernel-power-2.6.28/drivers/dsp/bridge/services/dbg.c kernel-power-2.6.28.new/drivers/dsp/bridge/services/dbg.c
---- kernel-power-2.6.28/drivers/dsp/bridge/services/dbg.c	2011-10-11 13:51:01.774458423 +0100
-+++ kernel-power-2.6.28.new/drivers/dsp/bridge/services/dbg.c	1970-01-01 01:00:00.000000000 +0100
+diff -urN kernel-cssu-2.6.28/drivers/dsp/bridge/services/dbg.c kernel-power-2.6.28.new/drivers/dsp/bridge/services/dbg.c
+--- kernel-cssu-2.6.28/drivers/dsp/bridge/services/dbg.c	2011-10-11 13:51:01.774458423 +0100
++++ kernel-cssu-2.6.28.new/drivers/dsp/bridge/services/dbg.c	1970-01-01 01:00:00.000000000 +0100
 @@ -1,119 +0,0 @@
 -/*
 - * dbg.c
@@ -71569,9 +71569,9 @@ diff -urN kernel-power-2.6.28/drivers/dsp/bridge/services/dbg.c kernel-power-2.6
 -}
 -
 -#endif	/* (defined(DEBUG) || defined(DDSP_DEBUG_PRODUCT)) && GT_TRACE */
-diff -urN kernel-power-2.6.28/drivers/dsp/bridge/services/dpc.c kernel-power-2.6.28.new/drivers/dsp/bridge/services/dpc.c
---- kernel-power-2.6.28/drivers/dsp/bridge/services/dpc.c	2011-10-11 13:51:01.778321654 +0100
-+++ kernel-power-2.6.28.new/drivers/dsp/bridge/services/dpc.c	1970-01-01 01:00:00.000000000 +0100
+diff -urN kernel-cssu-2.6.28/drivers/dsp/bridge/services/dpc.c kernel-power-2.6.28.new/drivers/dsp/bridge/services/dpc.c
+--- kernel-cssu-2.6.28/drivers/dsp/bridge/services/dpc.c	2011-10-11 13:51:01.778321654 +0100
++++ kernel-cssu-2.6.28.new/drivers/dsp/bridge/services/dpc.c	1970-01-01 01:00:00.000000000 +0100
 @@ -1,274 +0,0 @@
 -/*
 - * dpc.c
@@ -71847,9 +71847,9 @@ diff -urN kernel-power-2.6.28/drivers/dsp/bridge/services/dpc.c kernel-power-2.6
 -		  " serviced %d\n", requested, serviced);
 -}
 -
-diff -urN kernel-power-2.6.28/drivers/dsp/bridge/services/kfile.c kernel-power-2.6.28.new/drivers/dsp/bridge/services/kfile.c
---- kernel-power-2.6.28/drivers/dsp/bridge/services/kfile.c	2011-10-11 13:51:01.784718101 +0100
-+++ kernel-power-2.6.28.new/drivers/dsp/bridge/services/kfile.c	1970-01-01 01:00:00.000000000 +0100
+diff -urN kernel-cssu-2.6.28/drivers/dsp/bridge/services/kfile.c kernel-power-2.6.28.new/drivers/dsp/bridge/services/kfile.c
+--- kernel-cssu-2.6.28/drivers/dsp/bridge/services/kfile.c	2011-10-11 13:51:01.784718101 +0100
++++ kernel-cssu-2.6.28.new/drivers/dsp/bridge/services/kfile.c	1970-01-01 01:00:00.000000000 +0100
 @@ -1,335 +0,0 @@
 -/*
 - * kfile.c
@@ -72186,9 +72186,9 @@ diff -urN kernel-power-2.6.28/drivers/dsp/bridge/services/kfile.c kernel-power-2
 -	return lRetVal;
 -}
 -
-diff -urN kernel-power-2.6.28/drivers/dsp/bridge/services/list.c kernel-power-2.6.28.new/drivers/dsp/bridge/services/list.c
---- kernel-power-2.6.28/drivers/dsp/bridge/services/list.c	2011-10-11 13:51:01.907299244 +0100
-+++ kernel-power-2.6.28.new/drivers/dsp/bridge/services/list.c	1970-01-01 01:00:00.000000000 +0100
+diff -urN kernel-cssu-2.6.28/drivers/dsp/bridge/services/list.c kernel-power-2.6.28.new/drivers/dsp/bridge/services/list.c
+--- kernel-cssu-2.6.28/drivers/dsp/bridge/services/list.c	2011-10-11 13:51:01.907299244 +0100
++++ kernel-cssu-2.6.28.new/drivers/dsp/bridge/services/list.c	1970-01-01 01:00:00.000000000 +0100
 @@ -1,285 +0,0 @@
 -/*
 - * list.c
@@ -72475,9 +72475,9 @@ diff -urN kernel-power-2.6.28/drivers/dsp/bridge/services/list.c kernel-power-2.
 -	}
 -}
 -
-diff -urN kernel-power-2.6.28/drivers/dsp/bridge/services/mem.c kernel-power-2.6.28.new/drivers/dsp/bridge/services/mem.c
---- kernel-power-2.6.28/drivers/dsp/bridge/services/mem.c	2011-10-11 13:51:01.913153003 +0100
-+++ kernel-power-2.6.28.new/drivers/dsp/bridge/services/mem.c	2011-10-23 08:22:37.677315000 +0100
+diff -urN kernel-cssu-2.6.28/drivers/dsp/bridge/services/mem.c kernel-power-2.6.28.new/drivers/dsp/bridge/services/mem.c
+--- kernel-cssu-2.6.28/drivers/dsp/bridge/services/mem.c	2011-10-11 13:51:01.913153003 +0100
++++ kernel-cssu-2.6.28.new/drivers/dsp/bridge/services/mem.c	2011-10-23 08:22:37.677315000 +0100
 @@ -3,6 +3,8 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -73209,9 +73209,9 @@ diff -urN kernel-power-2.6.28/drivers/dsp/bridge/services/mem.c kernel-power-2.6
 -
  	return true;
  }
-diff -urN kernel-power-2.6.28/drivers/dsp/bridge/services/ntfy.c kernel-power-2.6.28.new/drivers/dsp/bridge/services/ntfy.c
---- kernel-power-2.6.28/drivers/dsp/bridge/services/ntfy.c	2011-10-11 13:51:01.913153003 +0100
-+++ kernel-power-2.6.28.new/drivers/dsp/bridge/services/ntfy.c	2011-10-23 08:22:37.677315000 +0100
+diff -urN kernel-cssu-2.6.28/drivers/dsp/bridge/services/ntfy.c kernel-power-2.6.28.new/drivers/dsp/bridge/services/ntfy.c
+--- kernel-cssu-2.6.28/drivers/dsp/bridge/services/ntfy.c	2011-10-11 13:51:01.913153003 +0100
++++ kernel-cssu-2.6.28.new/drivers/dsp/bridge/services/ntfy.c	2011-10-23 08:22:37.677315000 +0100
 @@ -3,6 +3,8 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -73651,9 +73651,9 @@ diff -urN kernel-power-2.6.28/drivers/dsp/bridge/services/ntfy.c kernel-power-2.
 +	kfree(notifier_obj);
  }
 -
-diff -urN kernel-power-2.6.28/drivers/dsp/bridge/services/reg.c kernel-power-2.6.28.new/drivers/dsp/bridge/services/reg.c
---- kernel-power-2.6.28/drivers/dsp/bridge/services/reg.c	2011-10-11 13:51:01.950311149 +0100
-+++ kernel-power-2.6.28.new/drivers/dsp/bridge/services/reg.c	2011-10-23 08:22:37.677315000 +0100
+diff -urN kernel-cssu-2.6.28/drivers/dsp/bridge/services/reg.c kernel-power-2.6.28.new/drivers/dsp/bridge/services/reg.c
+--- kernel-cssu-2.6.28/drivers/dsp/bridge/services/reg.c	2011-10-11 13:51:01.950311149 +0100
++++ kernel-cssu-2.6.28.new/drivers/dsp/bridge/services/reg.c	2011-10-23 08:22:37.677315000 +0100
 @@ -3,6 +3,8 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -73896,9 +73896,9 @@ diff -urN kernel-power-2.6.28/drivers/dsp/bridge/services/reg.c kernel-power-2.6
  	return status;
  }
 -
-diff -urN kernel-power-2.6.28/drivers/dsp/bridge/services/regsup.c kernel-power-2.6.28.new/drivers/dsp/bridge/services/regsup.c
---- kernel-power-2.6.28/drivers/dsp/bridge/services/regsup.c	2011-10-11 13:51:01.979530505 +0100
-+++ kernel-power-2.6.28.new/drivers/dsp/bridge/services/regsup.c	2011-10-23 08:22:37.677315000 +0100
+diff -urN kernel-cssu-2.6.28/drivers/dsp/bridge/services/regsup.c kernel-power-2.6.28.new/drivers/dsp/bridge/services/regsup.c
+--- kernel-cssu-2.6.28/drivers/dsp/bridge/services/regsup.c	2011-10-11 13:51:01.979530505 +0100
++++ kernel-cssu-2.6.28.new/drivers/dsp/bridge/services/regsup.c	2011-10-23 08:22:37.677315000 +0100
 @@ -3,6 +3,8 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -74390,9 +74390,9 @@ diff -urN kernel-power-2.6.28/drivers/dsp/bridge/services/regsup.c kernel-power-
 +	return ret;
 +
 +}
-diff -urN kernel-power-2.6.28/drivers/dsp/bridge/services/regsup.h kernel-power-2.6.28.new/drivers/dsp/bridge/services/regsup.h
---- kernel-power-2.6.28/drivers/dsp/bridge/services/regsup.h	2011-10-11 13:51:02.004933770 +0100
-+++ kernel-power-2.6.28.new/drivers/dsp/bridge/services/regsup.h	2011-10-23 08:22:37.677315000 +0100
+diff -urN kernel-cssu-2.6.28/drivers/dsp/bridge/services/regsup.h kernel-power-2.6.28.new/drivers/dsp/bridge/services/regsup.h
+--- kernel-cssu-2.6.28/drivers/dsp/bridge/services/regsup.h	2011-10-11 13:51:02.004933770 +0100
++++ kernel-cssu-2.6.28.new/drivers/dsp/bridge/services/regsup.h	2011-10-23 08:22:37.677315000 +0100
 @@ -14,45 +14,35 @@
   * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
   */
@@ -74458,9 +74458,9 @@ diff -urN kernel-power-2.6.28/drivers/dsp/bridge/services/regsup.h kernel-power-
  
  #endif
 -
-diff -urN kernel-power-2.6.28/drivers/dsp/bridge/services/services.c kernel-power-2.6.28.new/drivers/dsp/bridge/services/services.c
---- kernel-power-2.6.28/drivers/dsp/bridge/services/services.c	2011-10-11 13:51:02.017445333 +0100
-+++ kernel-power-2.6.28.new/drivers/dsp/bridge/services/services.c	2011-10-23 08:22:37.677315000 +0100
+diff -urN kernel-cssu-2.6.28/drivers/dsp/bridge/services/services.c kernel-power-2.6.28.new/drivers/dsp/bridge/services/services.c
+--- kernel-cssu-2.6.28/drivers/dsp/bridge/services/services.c	2011-10-11 13:51:02.017445333 +0100
++++ kernel-cssu-2.6.28.new/drivers/dsp/bridge/services/services.c	2011-10-23 08:22:37.677315000 +0100
 @@ -3,6 +3,8 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -74691,9 +74691,9 @@ diff -urN kernel-power-2.6.28/drivers/dsp/bridge/services/services.c kernel-powe
 +	return ret;
  }
 -
-diff -urN kernel-power-2.6.28/drivers/dsp/bridge/services/sync.c kernel-power-2.6.28.new/drivers/dsp/bridge/services/sync.c
---- kernel-power-2.6.28/drivers/dsp/bridge/services/sync.c	2011-10-11 13:51:02.017445333 +0100
-+++ kernel-power-2.6.28.new/drivers/dsp/bridge/services/sync.c	2011-10-23 08:22:37.677315000 +0100
+diff -urN kernel-cssu-2.6.28/drivers/dsp/bridge/services/sync.c kernel-power-2.6.28.new/drivers/dsp/bridge/services/sync.c
+--- kernel-cssu-2.6.28/drivers/dsp/bridge/services/sync.c	2011-10-11 13:51:02.017445333 +0100
++++ kernel-cssu-2.6.28.new/drivers/dsp/bridge/services/sync.c	2011-10-23 08:22:37.677315000 +0100
 @@ -3,6 +3,8 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -75466,9 +75466,9 @@ diff -urN kernel-power-2.6.28/drivers/dsp/bridge/services/sync.c kernel-power-2.
  	}
  
  	return status;
-diff -urN kernel-power-2.6.28/drivers/dsp/bridge/wmd/chnl_sm.c kernel-power-2.6.28.new/drivers/dsp/bridge/wmd/chnl_sm.c
---- kernel-power-2.6.28/drivers/dsp/bridge/wmd/chnl_sm.c	2011-10-11 13:51:02.143630515 +0100
-+++ kernel-power-2.6.28.new/drivers/dsp/bridge/wmd/chnl_sm.c	2011-10-23 08:22:37.682749000 +0100
+diff -urN kernel-cssu-2.6.28/drivers/dsp/bridge/wmd/chnl_sm.c kernel-power-2.6.28.new/drivers/dsp/bridge/wmd/chnl_sm.c
+--- kernel-cssu-2.6.28/drivers/dsp/bridge/wmd/chnl_sm.c	2011-10-11 13:51:02.143630515 +0100
++++ kernel-cssu-2.6.28.new/drivers/dsp/bridge/wmd/chnl_sm.c	2011-10-23 08:22:37.682749000 +0100
 @@ -3,6 +3,8 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -77080,9 +77080,9 @@ diff -urN kernel-power-2.6.28/drivers/dsp/bridge/wmd/chnl_sm.c kernel-power-2.6.
  			status = DSP_SOK;
  			*pdwChnl = i;
  			break;
-diff -urN kernel-power-2.6.28/drivers/dsp/bridge/wmd/_cmm.h kernel-power-2.6.28.new/drivers/dsp/bridge/wmd/_cmm.h
---- kernel-power-2.6.28/drivers/dsp/bridge/wmd/_cmm.h	2011-10-11 13:51:02.017445333 +0100
-+++ kernel-power-2.6.28.new/drivers/dsp/bridge/wmd/_cmm.h	2011-10-23 08:22:37.682749000 +0100
+diff -urN kernel-cssu-2.6.28/drivers/dsp/bridge/wmd/_cmm.h kernel-power-2.6.28.new/drivers/dsp/bridge/wmd/_cmm.h
+--- kernel-cssu-2.6.28/drivers/dsp/bridge/wmd/_cmm.h	2011-10-11 13:51:02.017445333 +0100
++++ kernel-cssu-2.6.28.new/drivers/dsp/bridge/wmd/_cmm.h	2011-10-23 08:22:37.682749000 +0100
 @@ -3,6 +3,10 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -77125,9 +77125,9 @@ diff -urN kernel-power-2.6.28/drivers/dsp/bridge/wmd/_cmm.h kernel-power-2.6.28.
  
 -#endif				/* _CMM_ */
 +#endif /* _CMM_ */
-diff -urN kernel-power-2.6.28/drivers/dsp/bridge/wmd/_deh.h kernel-power-2.6.28.new/drivers/dsp/bridge/wmd/_deh.h
---- kernel-power-2.6.28/drivers/dsp/bridge/wmd/_deh.h	2011-10-11 13:51:02.017445333 +0100
-+++ kernel-power-2.6.28.new/drivers/dsp/bridge/wmd/_deh.h	2011-10-23 08:22:37.684782000 +0100
+diff -urN kernel-cssu-2.6.28/drivers/dsp/bridge/wmd/_deh.h kernel-power-2.6.28.new/drivers/dsp/bridge/wmd/_deh.h
+--- kernel-cssu-2.6.28/drivers/dsp/bridge/wmd/_deh.h	2011-10-11 13:51:02.017445333 +0100
++++ kernel-cssu-2.6.28.new/drivers/dsp/bridge/wmd/_deh.h	2011-10-23 08:22:37.684782000 +0100
 @@ -3,6 +3,8 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -77181,9 +77181,9 @@ diff -urN kernel-power-2.6.28/drivers/dsp/bridge/wmd/_deh.h kernel-power-2.6.28.
  
 -#endif				/* _DEH_ */
 +#endif /* _DEH_ */
-diff -urN kernel-power-2.6.28/drivers/dsp/bridge/wmd/io_sm.c kernel-power-2.6.28.new/drivers/dsp/bridge/wmd/io_sm.c
---- kernel-power-2.6.28/drivers/dsp/bridge/wmd/io_sm.c	2011-10-11 13:51:02.254976563 +0100
-+++ kernel-power-2.6.28.new/drivers/dsp/bridge/wmd/io_sm.c	2011-10-23 08:22:37.688551000 +0100
+diff -urN kernel-cssu-2.6.28/drivers/dsp/bridge/wmd/io_sm.c kernel-power-2.6.28.new/drivers/dsp/bridge/wmd/io_sm.c
+--- kernel-cssu-2.6.28/drivers/dsp/bridge/wmd/io_sm.c	2011-10-11 13:51:02.254976563 +0100
++++ kernel-cssu-2.6.28.new/drivers/dsp/bridge/wmd/io_sm.c	2011-10-23 08:22:37.688551000 +0100
 @@ -3,6 +3,8 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -80655,9 +80655,9 @@ diff -urN kernel-power-2.6.28/drivers/dsp/bridge/wmd/io_sm.c kernel-power-2.6.28
 +{
 +	/* Do nothing */
  }
-diff -urN kernel-power-2.6.28/drivers/dsp/bridge/wmd/mmu_fault.c kernel-power-2.6.28.new/drivers/dsp/bridge/wmd/mmu_fault.c
---- kernel-power-2.6.28/drivers/dsp/bridge/wmd/mmu_fault.c	2011-10-11 13:51:02.254976563 +0100
-+++ kernel-power-2.6.28.new/drivers/dsp/bridge/wmd/mmu_fault.c	2011-10-23 08:22:37.688551000 +0100
+diff -urN kernel-cssu-2.6.28/drivers/dsp/bridge/wmd/mmu_fault.c kernel-power-2.6.28.new/drivers/dsp/bridge/wmd/mmu_fault.c
+--- kernel-cssu-2.6.28/drivers/dsp/bridge/wmd/mmu_fault.c	2011-10-11 13:51:02.254976563 +0100
++++ kernel-cssu-2.6.28.new/drivers/dsp/bridge/wmd/mmu_fault.c	2011-10-23 08:22:37.688551000 +0100
 @@ -3,6 +3,8 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -80876,9 +80876,9 @@ diff -urN kernel-power-2.6.28/drivers/dsp/bridge/wmd/mmu_fault.c kernel-power-2.
 -	return retVal;
 +	return ret;
  }
-diff -urN kernel-power-2.6.28/drivers/dsp/bridge/wmd/mmu_fault.h kernel-power-2.6.28.new/drivers/dsp/bridge/wmd/mmu_fault.h
---- kernel-power-2.6.28/drivers/dsp/bridge/wmd/mmu_fault.h	2011-10-11 13:51:02.254976563 +0100
-+++ kernel-power-2.6.28.new/drivers/dsp/bridge/wmd/mmu_fault.h	2011-10-23 08:22:37.688551000 +0100
+diff -urN kernel-cssu-2.6.28/drivers/dsp/bridge/wmd/mmu_fault.h kernel-power-2.6.28.new/drivers/dsp/bridge/wmd/mmu_fault.h
+--- kernel-cssu-2.6.28/drivers/dsp/bridge/wmd/mmu_fault.h	2011-10-11 13:51:02.254976563 +0100
++++ kernel-cssu-2.6.28.new/drivers/dsp/bridge/wmd/mmu_fault.h	2011-10-23 08:22:37.688551000 +0100
 @@ -3,6 +3,8 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -80926,9 +80926,9 @@ diff -urN kernel-power-2.6.28/drivers/dsp/bridge/wmd/mmu_fault.h kernel-power-2.
 +irqreturn_t mmu_fault_isr(int irq, IN void *pRefData);
  
 +#endif /* MMU_FAULT_ */
-diff -urN kernel-power-2.6.28/drivers/dsp/bridge/wmd/msg_sm.c kernel-power-2.6.28.new/drivers/dsp/bridge/wmd/msg_sm.c
---- kernel-power-2.6.28/drivers/dsp/bridge/wmd/msg_sm.c	2011-10-11 13:51:02.265697500 +0100
-+++ kernel-power-2.6.28.new/drivers/dsp/bridge/wmd/msg_sm.c	2011-10-23 08:22:37.688551000 +0100
+diff -urN kernel-cssu-2.6.28/drivers/dsp/bridge/wmd/msg_sm.c kernel-power-2.6.28.new/drivers/dsp/bridge/wmd/msg_sm.c
+--- kernel-cssu-2.6.28/drivers/dsp/bridge/wmd/msg_sm.c	2011-10-11 13:51:02.265697500 +0100
++++ kernel-cssu-2.6.28.new/drivers/dsp/bridge/wmd/msg_sm.c	2011-10-23 08:22:37.688551000 +0100
 @@ -3,6 +3,8 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -81936,9 +81936,9 @@ diff -urN kernel-power-2.6.28/drivers/dsp/bridge/wmd/msg_sm.c kernel-power-2.6.2
 +	return;
  }
 -
-diff -urN kernel-power-2.6.28/drivers/dsp/bridge/wmd/_msg_sm.h kernel-power-2.6.28.new/drivers/dsp/bridge/wmd/_msg_sm.h
---- kernel-power-2.6.28/drivers/dsp/bridge/wmd/_msg_sm.h	2011-10-11 13:51:02.269540523 +0100
-+++ kernel-power-2.6.28.new/drivers/dsp/bridge/wmd/_msg_sm.h	2011-10-23 08:22:37.688551000 +0100
+diff -urN kernel-cssu-2.6.28/drivers/dsp/bridge/wmd/_msg_sm.h kernel-power-2.6.28.new/drivers/dsp/bridge/wmd/_msg_sm.h
+--- kernel-cssu-2.6.28/drivers/dsp/bridge/wmd/_msg_sm.h	2011-10-11 13:51:02.269540523 +0100
++++ kernel-cssu-2.6.28.new/drivers/dsp/bridge/wmd/_msg_sm.h	2011-10-23 08:22:37.688551000 +0100
 @@ -3,6 +3,9 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -82142,9 +82142,9 @@ diff -urN kernel-power-2.6.28/drivers/dsp/bridge/wmd/_msg_sm.h kernel-power-2.6.
 +};
  
 +#endif /* _MSG_SM_ */
-diff -urN kernel-power-2.6.28/drivers/dsp/bridge/wmd/tiomap3430.c kernel-power-2.6.28.new/drivers/dsp/bridge/wmd/tiomap3430.c
---- kernel-power-2.6.28/drivers/dsp/bridge/wmd/tiomap3430.c	2011-10-11 13:51:02.419241949 +0100
-+++ kernel-power-2.6.28.new/drivers/dsp/bridge/wmd/tiomap3430.c	2011-10-29 20:32:42.037395000 +0100
+diff -urN kernel-cssu-2.6.28/drivers/dsp/bridge/wmd/tiomap3430.c kernel-power-2.6.28.new/drivers/dsp/bridge/wmd/tiomap3430.c
+--- kernel-cssu-2.6.28/drivers/dsp/bridge/wmd/tiomap3430.c	2011-10-11 13:51:02.419241949 +0100
++++ kernel-cssu-2.6.28.new/drivers/dsp/bridge/wmd/tiomap3430.c	2011-10-29 20:32:42.037395000 +0100
 @@ -3,6 +3,8 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -85322,9 +85322,9 @@ diff -urN kernel-power-2.6.28/drivers/dsp/bridge/wmd/tiomap3430.c kernel-power-2
  		return FALSE;
  	}
  	return TRUE;
-diff -urN kernel-power-2.6.28/drivers/dsp/bridge/wmd/tiomap3430_pwr.c kernel-power-2.6.28.new/drivers/dsp/bridge/wmd/tiomap3430_pwr.c
---- kernel-power-2.6.28/drivers/dsp/bridge/wmd/tiomap3430_pwr.c	2011-10-11 13:51:02.421881294 +0100
-+++ kernel-power-2.6.28.new/drivers/dsp/bridge/wmd/tiomap3430_pwr.c	2011-10-29 20:31:41.353777000 +0100
+diff -urN kernel-cssu-2.6.28/drivers/dsp/bridge/wmd/tiomap3430_pwr.c kernel-power-2.6.28.new/drivers/dsp/bridge/wmd/tiomap3430_pwr.c
+--- kernel-cssu-2.6.28/drivers/dsp/bridge/wmd/tiomap3430_pwr.c	2011-10-11 13:51:02.421881294 +0100
++++ kernel-cssu-2.6.28.new/drivers/dsp/bridge/wmd/tiomap3430_pwr.c	2011-10-29 20:31:41.353777000 +0100
 @@ -3,6 +3,8 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -86590,9 +86590,9 @@ diff -urN kernel-power-2.6.28/drivers/dsp/bridge/wmd/tiomap3430_pwr.c kernel-pow
 +		break;
  	}
  }
-diff -urN kernel-power-2.6.28/drivers/dsp/bridge/wmd/_tiomap.h kernel-power-2.6.28.new/drivers/dsp/bridge/wmd/_tiomap.h
---- kernel-power-2.6.28/drivers/dsp/bridge/wmd/_tiomap.h	2011-10-11 13:51:02.269540523 +0100
-+++ kernel-power-2.6.28.new/drivers/dsp/bridge/wmd/_tiomap.h	2011-10-23 08:22:37.693701000 +0100
+diff -urN kernel-cssu-2.6.28/drivers/dsp/bridge/wmd/_tiomap.h kernel-power-2.6.28.new/drivers/dsp/bridge/wmd/_tiomap.h
+--- kernel-cssu-2.6.28/drivers/dsp/bridge/wmd/_tiomap.h	2011-10-11 13:51:02.269540523 +0100
++++ kernel-cssu-2.6.28.new/drivers/dsp/bridge/wmd/_tiomap.h	2011-10-23 08:22:37.693701000 +0100
 @@ -3,6 +3,8 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -86933,9 +86933,9 @@ diff -urN kernel-power-2.6.28/drivers/dsp/bridge/wmd/_tiomap.h kernel-power-2.6.
 +dsp_status sm_interrupt_dsp(struct wmd_dev_context *dev_context, u16 mb_val);
  
 +#endif /* _TIOMAP_ */
-diff -urN kernel-power-2.6.28/drivers/dsp/bridge/wmd/tiomap_io.c kernel-power-2.6.28.new/drivers/dsp/bridge/wmd/tiomap_io.c
---- kernel-power-2.6.28/drivers/dsp/bridge/wmd/tiomap_io.c	2011-10-11 13:51:02.269540523 +0100
-+++ kernel-power-2.6.28.new/drivers/dsp/bridge/wmd/tiomap_io.c	2011-10-23 08:22:37.693701000 +0100
+diff -urN kernel-cssu-2.6.28/drivers/dsp/bridge/wmd/tiomap_io.c kernel-power-2.6.28.new/drivers/dsp/bridge/wmd/tiomap_io.c
+--- kernel-cssu-2.6.28/drivers/dsp/bridge/wmd/tiomap_io.c	2011-10-11 13:51:02.269540523 +0100
++++ kernel-cssu-2.6.28.new/drivers/dsp/bridge/wmd/tiomap_io.c	2011-10-23 08:22:37.693701000 +0100
 @@ -3,6 +3,8 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -87633,9 +87633,9 @@ diff -urN kernel-power-2.6.28/drivers/dsp/bridge/wmd/tiomap_io.c kernel-power-2.
 +
 +	return DSP_SOK;
 +}
-diff -urN kernel-power-2.6.28/drivers/dsp/bridge/wmd/tiomap_io.h kernel-power-2.6.28.new/drivers/dsp/bridge/wmd/tiomap_io.h
---- kernel-power-2.6.28/drivers/dsp/bridge/wmd/tiomap_io.h	2011-10-11 13:51:02.269540523 +0100
-+++ kernel-power-2.6.28.new/drivers/dsp/bridge/wmd/tiomap_io.h	2011-10-23 08:22:37.693701000 +0100
+diff -urN kernel-cssu-2.6.28/drivers/dsp/bridge/wmd/tiomap_io.h kernel-power-2.6.28.new/drivers/dsp/bridge/wmd/tiomap_io.h
+--- kernel-cssu-2.6.28/drivers/dsp/bridge/wmd/tiomap_io.h	2011-10-11 13:51:02.269540523 +0100
++++ kernel-cssu-2.6.28.new/drivers/dsp/bridge/wmd/tiomap_io.h	2011-10-23 08:22:37.693701000 +0100
 @@ -3,6 +3,8 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -87771,9 +87771,9 @@ diff -urN kernel-power-2.6.28/drivers/dsp/bridge/wmd/tiomap_io.h kernel-power-2.
 -#endif				/* _TIOMAP_IO_ */
 -
 +#endif /* _TIOMAP_IO_ */
-diff -urN kernel-power-2.6.28/drivers/dsp/bridge/wmd/_tiomap_mmu.h kernel-power-2.6.28.new/drivers/dsp/bridge/wmd/_tiomap_mmu.h
---- kernel-power-2.6.28/drivers/dsp/bridge/wmd/_tiomap_mmu.h	2011-10-11 13:51:02.269540523 +0100
-+++ kernel-power-2.6.28.new/drivers/dsp/bridge/wmd/_tiomap_mmu.h	2011-10-23 08:22:37.693701000 +0100
+diff -urN kernel-cssu-2.6.28/drivers/dsp/bridge/wmd/_tiomap_mmu.h kernel-power-2.6.28.new/drivers/dsp/bridge/wmd/_tiomap_mmu.h
+--- kernel-cssu-2.6.28/drivers/dsp/bridge/wmd/_tiomap_mmu.h	2011-10-11 13:51:02.269540523 +0100
++++ kernel-cssu-2.6.28.new/drivers/dsp/bridge/wmd/_tiomap_mmu.h	2011-10-23 08:22:37.693701000 +0100
 @@ -3,6 +3,8 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -87834,9 +87834,9 @@ diff -urN kernel-power-2.6.28/drivers/dsp/bridge/wmd/_tiomap_mmu.h kernel-power-
  
 -#endif				/* _TIOMAP_MMU_ */
 +#endif /* _TIOMAP_MMU_ */
-diff -urN kernel-power-2.6.28/drivers/dsp/bridge/wmd/_tiomap_pwr.h kernel-power-2.6.28.new/drivers/dsp/bridge/wmd/_tiomap_pwr.h
---- kernel-power-2.6.28/drivers/dsp/bridge/wmd/_tiomap_pwr.h	2011-10-11 13:51:02.269540523 +0100
-+++ kernel-power-2.6.28.new/drivers/dsp/bridge/wmd/_tiomap_pwr.h	2011-10-29 20:32:38.512193043 +0100
+diff -urN kernel-cssu-2.6.28/drivers/dsp/bridge/wmd/_tiomap_pwr.h kernel-power-2.6.28.new/drivers/dsp/bridge/wmd/_tiomap_pwr.h
+--- kernel-cssu-2.6.28/drivers/dsp/bridge/wmd/_tiomap_pwr.h	2011-10-11 13:51:02.269540523 +0100
++++ kernel-cssu-2.6.28.new/drivers/dsp/bridge/wmd/_tiomap_pwr.h	2011-10-29 20:32:38.512193043 +0100
 @@ -3,6 +3,8 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -87963,9 +87963,9 @@ diff -urN kernel-power-2.6.28/drivers/dsp/bridge/wmd/_tiomap_pwr.h kernel-power-
 +void dsp_clk_wakeup_event_ctrl(u32 ClkId, bool enable);
  
 +#endif /* _TIOMAP_PWR_ */
-diff -urN kernel-power-2.6.28/drivers/dsp/bridge/wmd/tiomap_sm.c kernel-power-2.6.28.new/drivers/dsp/bridge/wmd/tiomap_sm.c
---- kernel-power-2.6.28/drivers/dsp/bridge/wmd/tiomap_sm.c	2011-10-11 13:51:02.352617853 +0100
-+++ kernel-power-2.6.28.new/drivers/dsp/bridge/wmd/tiomap_sm.c	1970-01-01 01:00:00.000000000 +0100
+diff -urN kernel-cssu-2.6.28/drivers/dsp/bridge/wmd/tiomap_sm.c kernel-power-2.6.28.new/drivers/dsp/bridge/wmd/tiomap_sm.c
+--- kernel-cssu-2.6.28/drivers/dsp/bridge/wmd/tiomap_sm.c	2011-10-11 13:51:02.352617853 +0100
++++ kernel-cssu-2.6.28.new/drivers/dsp/bridge/wmd/tiomap_sm.c	1970-01-01 01:00:00.000000000 +0100
 @@ -1,197 +0,0 @@
 -/*
 - * tiomap_sm.c
@@ -88164,9 +88164,9 @@ diff -urN kernel-power-2.6.28/drivers/dsp/bridge/wmd/tiomap_sm.c kernel-power-2.
 -	*pfSchedDPC = true;
 -	return true;
 -}
-diff -urN kernel-power-2.6.28/drivers/dsp/bridge/wmd/_tiomap_util.h kernel-power-2.6.28.new/drivers/dsp/bridge/wmd/_tiomap_util.h
---- kernel-power-2.6.28/drivers/dsp/bridge/wmd/_tiomap_util.h	2011-10-11 13:51:02.352617853 +0100
-+++ kernel-power-2.6.28.new/drivers/dsp/bridge/wmd/_tiomap_util.h	2011-10-23 08:22:37.693701000 +0100
+diff -urN kernel-cssu-2.6.28/drivers/dsp/bridge/wmd/_tiomap_util.h kernel-power-2.6.28.new/drivers/dsp/bridge/wmd/_tiomap_util.h
+--- kernel-cssu-2.6.28/drivers/dsp/bridge/wmd/_tiomap_util.h	2011-10-11 13:51:02.352617853 +0100
++++ kernel-cssu-2.6.28.new/drivers/dsp/bridge/wmd/_tiomap_util.h	2011-10-23 08:22:37.693701000 +0100
 @@ -3,6 +3,8 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -88222,9 +88222,9 @@ diff -urN kernel-power-2.6.28/drivers/dsp/bridge/wmd/_tiomap_util.h kernel-power
 +			   u32 dw_sync_addr);
  
 +#endif /* _TIOMAP_UTIL_ */
-diff -urN kernel-power-2.6.28/drivers/dsp/bridge/wmd/ue_deh.c kernel-power-2.6.28.new/drivers/dsp/bridge/wmd/ue_deh.c
---- kernel-power-2.6.28/drivers/dsp/bridge/wmd/ue_deh.c	2011-10-11 13:51:02.425778233 +0100
-+++ kernel-power-2.6.28.new/drivers/dsp/bridge/wmd/ue_deh.c	2011-10-23 08:22:37.693701000 +0100
+diff -urN kernel-cssu-2.6.28/drivers/dsp/bridge/wmd/ue_deh.c kernel-power-2.6.28.new/drivers/dsp/bridge/wmd/ue_deh.c
+--- kernel-cssu-2.6.28/drivers/dsp/bridge/wmd/ue_deh.c	2011-10-11 13:51:02.425778233 +0100
++++ kernel-cssu-2.6.28.new/drivers/dsp/bridge/wmd/ue_deh.c	2011-10-23 08:22:37.693701000 +0100
 @@ -3,6 +3,8 @@
   *
   * DSP-BIOS Bridge driver support functions for TI OMAP processors.
@@ -88755,9 +88755,9 @@ diff -urN kernel-power-2.6.28/drivers/dsp/bridge/wmd/ue_deh.c kernel-power-2.6.2
 -	}
  }
 -
-diff -urN kernel-power-2.6.28/drivers/dsp/bridge/wmd/wdt.c kernel-power-2.6.28.new/drivers/dsp/bridge/wmd/wdt.c
---- kernel-power-2.6.28/drivers/dsp/bridge/wmd/wdt.c	1970-01-01 01:00:00.000000000 +0100
-+++ kernel-power-2.6.28.new/drivers/dsp/bridge/wmd/wdt.c	2011-10-23 08:22:37.693701000 +0100
+diff -urN kernel-cssu-2.6.28/drivers/dsp/bridge/wmd/wdt.c kernel-power-2.6.28.new/drivers/dsp/bridge/wmd/wdt.c
+--- kernel-cssu-2.6.28/drivers/dsp/bridge/wmd/wdt.c	1970-01-01 01:00:00.000000000 +0100
++++ kernel-cssu-2.6.28.new/drivers/dsp/bridge/wmd/wdt.c	2011-10-23 08:22:37.693701000 +0100
 @@ -0,0 +1,147 @@
 +/*
 + * wdt.c

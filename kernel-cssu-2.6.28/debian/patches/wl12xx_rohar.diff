@@ -1,5 +1,5 @@
---- kernel-power-2.6.28.orig/drivers/net/wireless/wl12xx/wl1251_main.c
-+++ kernel-power-2.6.28/drivers/net/wireless/wl12xx/wl1251_main.c
+--- kernel-cssu-2.6.28.orig/drivers/net/wireless/wl12xx/wl1251_main.c
++++ kernel-cssu-2.6.28/drivers/net/wireless/wl12xx/wl1251_main.c
 @@ -1923,6 +1923,11 @@
  		IEEE80211_HW_NOISE_DBM |
  		IEEE80211_HW_BEACON_FILTER;

@@ -14,10 +14,10 @@
  drivers/block/ramzswap/xvmalloc_int.h   |   86 +
  13 files changed, 2534 insertions(+)
 
-Index: kernel-power-2.6.28/arch/arm/configs/rx51_defconfig
+Index: kernel-cssu-2.6.28/arch/arm/configs/rx51_defconfig
 ===================================================================
---- kernel-power-2.6.28.orig/arch/arm/configs/rx51_defconfig
-+++ kernel-power-2.6.28/arch/arm/configs/rx51_defconfig
+--- kernel-cssu-2.6.28.orig/arch/arm/configs/rx51_defconfig
++++ kernel-cssu-2.6.28/arch/arm/configs/rx51_defconfig
 @@ -830,6 +830,8 @@
  # CONFIG_BLK_DEV_XIP is not set
  # CONFIG_CDROM_PKTCDVD is not set
@@ -27,10 +27,10 @@ Index: kernel-power-2.6.28/arch/arm/configs/rx51_defconfig
  CONFIG_MISC_DEVICES=y
  # CONFIG_EEPROM_93CX6 is not set
  CONFIG_NOKIA_AV_DETECT=m
-Index: kernel-power-2.6.28/drivers/block/Kconfig
+Index: kernel-cssu-2.6.28/drivers/block/Kconfig
 ===================================================================
---- kernel-power-2.6.28.orig/drivers/block/Kconfig
-+++ kernel-power-2.6.28/drivers/block/Kconfig
+--- kernel-cssu-2.6.28.orig/drivers/block/Kconfig
++++ kernel-cssu-2.6.28/drivers/block/Kconfig
 @@ -446,4 +446,6 @@
  
  	  If unsure, say N.
@@ -38,10 +38,10 @@ Index: kernel-power-2.6.28/drivers/block/Kconfig
 +source "drivers/block/ramzswap/Kconfig"
 +
  endif # BLK_DEV
-Index: kernel-power-2.6.28/drivers/block/Makefile
+Index: kernel-cssu-2.6.28/drivers/block/Makefile
 ===================================================================
---- kernel-power-2.6.28.orig/drivers/block/Makefile
-+++ kernel-power-2.6.28/drivers/block/Makefile
+--- kernel-cssu-2.6.28.orig/drivers/block/Makefile
++++ kernel-cssu-2.6.28/drivers/block/Makefile
 @@ -30,5 +30,6 @@
  obj-$(CONFIG_BLK_DEV_SX8)	+= sx8.o
  obj-$(CONFIG_BLK_DEV_UB)	+= ub.o
@@ -49,10 +49,10 @@ Index: kernel-power-2.6.28/drivers/block/Makefile
 +obj-$(CONFIG_RAMZSWAP)		+= ramzswap/
  
  obj-$(CONFIG_XEN_BLKDEV_FRONTEND)	+= xen-blkfront.o
-Index: kernel-power-2.6.28/drivers/block/ramzswap/Kconfig
+Index: kernel-cssu-2.6.28/drivers/block/ramzswap/Kconfig
 ===================================================================
 --- /dev/null
-+++ kernel-power-2.6.28/drivers/block/ramzswap/Kconfig
++++ kernel-cssu-2.6.28/drivers/block/ramzswap/Kconfig
 @@ -0,0 +1,22 @@
 +
 +config RAMZSWAP
@@ -76,18 +76,18 @@ Index: kernel-power-2.6.28/drivers/block/ramzswap/Kconfig
 +	help
 +	  Enable statistics collection for ramzswap. This adds only a minimal
 +	  overhead. In unsure, say Y.
-Index: kernel-power-2.6.28/drivers/block/ramzswap/Makefile
+Index: kernel-cssu-2.6.28/drivers/block/ramzswap/Makefile
 ===================================================================
 --- /dev/null
-+++ kernel-power-2.6.28/drivers/block/ramzswap/Makefile
++++ kernel-cssu-2.6.28/drivers/block/ramzswap/Makefile
 @@ -0,0 +1,3 @@
 +ramzswap-objs	:=	ramzswap_drv.o xvmalloc.o
 +
 +obj-$(CONFIG_RAMZSWAP)	+=	ramzswap.o
-Index: kernel-power-2.6.28/drivers/block/ramzswap/compat.h
+Index: kernel-cssu-2.6.28/drivers/block/ramzswap/compat.h
 ===================================================================
 --- /dev/null
-+++ kernel-power-2.6.28/drivers/block/ramzswap/compat.h
++++ kernel-cssu-2.6.28/drivers/block/ramzswap/compat.h
 @@ -0,0 +1,13 @@
 +#ifndef _RAMZSWAP_COMPAT_H_
 +#define _RAMZSWAP_COMPAT_H_
@@ -102,10 +102,10 @@ Index: kernel-power-2.6.28/drivers/block/ramzswap/compat.h
 +#endif
 +
 +#endif
-Index: kernel-power-2.6.28/drivers/block/ramzswap/ramzswap.txt
+Index: kernel-cssu-2.6.28/drivers/block/ramzswap/ramzswap.txt
 ===================================================================
 --- /dev/null
-+++ kernel-power-2.6.28/drivers/block/ramzswap/ramzswap.txt
++++ kernel-cssu-2.6.28/drivers/block/ramzswap/ramzswap.txt
 @@ -0,0 +1,51 @@
 +ramzswap: Compressed RAM based swap device
 +-------------------------------------------
@@ -158,10 +158,10 @@ Index: kernel-power-2.6.28/drivers/block/ramzswap/ramzswap.txt
 +
 +Nitin Gupta
 +ngupta@vflare.org
-Index: kernel-power-2.6.28/drivers/block/ramzswap/ramzswap_drv.c
+Index: kernel-cssu-2.6.28/drivers/block/ramzswap/ramzswap_drv.c
 ===================================================================
 --- /dev/null
-+++ kernel-power-2.6.28/drivers/block/ramzswap/ramzswap_drv.c
++++ kernel-cssu-2.6.28/drivers/block/ramzswap/ramzswap_drv.c
 @@ -0,0 +1,1557 @@
 +/*
 + * Compressed RAM based swap device
@@ -1720,10 +1720,10 @@ Index: kernel-power-2.6.28/drivers/block/ramzswap/ramzswap_drv.c
 +MODULE_LICENSE("Dual BSD/GPL");
 +MODULE_AUTHOR("Nitin Gupta <ngupta@vflare.org>");
 +MODULE_DESCRIPTION("Compressed RAM Based Swap Device");
-Index: kernel-power-2.6.28/drivers/block/ramzswap/ramzswap_drv.h
+Index: kernel-cssu-2.6.28/drivers/block/ramzswap/ramzswap_drv.h
 ===================================================================
 --- /dev/null
-+++ kernel-power-2.6.28/drivers/block/ramzswap/ramzswap_drv.h
++++ kernel-cssu-2.6.28/drivers/block/ramzswap/ramzswap_drv.h
 @@ -0,0 +1,210 @@
 +/*
 + * Compressed RAM based swap device
@@ -1935,10 +1935,10 @@ Index: kernel-power-2.6.28/drivers/block/ramzswap/ramzswap_drv.h
 +#endif /* CONFIG_RAMZSWAP_STATS */
 +
 +#endif
-Index: kernel-power-2.6.28/drivers/block/ramzswap/ramzswap_ioctl.h
+Index: kernel-cssu-2.6.28/drivers/block/ramzswap/ramzswap_ioctl.h
 ===================================================================
 --- /dev/null
-+++ kernel-power-2.6.28/drivers/block/ramzswap/ramzswap_ioctl.h
++++ kernel-cssu-2.6.28/drivers/block/ramzswap/ramzswap_ioctl.h
 @@ -0,0 +1,50 @@
 +/*
 + * Compressed RAM based swap device
@@ -1990,10 +1990,10 @@ Index: kernel-power-2.6.28/drivers/block/ramzswap/ramzswap_ioctl.h
 +#define RZSIO_RESET		_IO('z', 5)
 +
 +#endif
-Index: kernel-power-2.6.28/drivers/block/ramzswap/xvmalloc.c
+Index: kernel-cssu-2.6.28/drivers/block/ramzswap/xvmalloc.c
 ===================================================================
 --- /dev/null
-+++ kernel-power-2.6.28/drivers/block/ramzswap/xvmalloc.c
++++ kernel-cssu-2.6.28/drivers/block/ramzswap/xvmalloc.c
 @@ -0,0 +1,507 @@
 +/*
 + * xvmalloc memory allocator
@@ -2502,10 +2502,10 @@ Index: kernel-power-2.6.28/drivers/block/ramzswap/xvmalloc.c
 +{
 +	return pool->total_pages << PAGE_SHIFT;
 +}
-Index: kernel-power-2.6.28/drivers/block/ramzswap/xvmalloc.h
+Index: kernel-cssu-2.6.28/drivers/block/ramzswap/xvmalloc.h
 ===================================================================
 --- /dev/null
-+++ kernel-power-2.6.28/drivers/block/ramzswap/xvmalloc.h
++++ kernel-cssu-2.6.28/drivers/block/ramzswap/xvmalloc.h
 @@ -0,0 +1,30 @@
 +/*
 + * xvmalloc memory allocator
@@ -2537,10 +2537,10 @@ Index: kernel-power-2.6.28/drivers/block/ramzswap/xvmalloc.h
 +u64 xv_get_total_size_bytes(struct xv_pool *pool);
 +
 +#endif
-Index: kernel-power-2.6.28/drivers/block/ramzswap/xvmalloc_int.h
+Index: kernel-cssu-2.6.28/drivers/block/ramzswap/xvmalloc_int.h
 ===================================================================
 --- /dev/null
-+++ kernel-power-2.6.28/drivers/block/ramzswap/xvmalloc_int.h
++++ kernel-cssu-2.6.28/drivers/block/ramzswap/xvmalloc_int.h
 @@ -0,0 +1,86 @@
 +/*
 + * xvmalloc memory allocator

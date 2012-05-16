@@ -1,5 +1,5 @@
---- kernel-power/drivers/usb/otg/twl4030-usb.c.orig	2012-04-29 17:15:00.195894587 +0200
-+++ kernel-power/drivers/usb/otg/twl4030-usb.c	2012-04-29 17:18:06.815889128 +0200
+--- kernel-cssu/drivers/usb/otg/twl4030-usb.c.orig	2012-04-29 17:15:00.195894587 +0200
++++ kernel-cssu/drivers/usb/otg/twl4030-usb.c	2012-04-29 17:18:06.815889128 +0200
 @@ -37,6 +37,8 @@
  #include <linux/regulator/consumer.h>
  #include <linux/err.h>
@@ -46,8 +46,8 @@
  	dev_info(&pdev->dev, "Initialized TWL4030 USB module\n");
  	return 0;
  }
---- kernel-power/drivers/usb/musb/omap2430.c.orig	2012-04-29 16:34:10.123966221 +0200
-+++ kernel-power/drivers/usb/musb/omap2430.c	2012-04-29 16:50:48.611937027 +0200
+--- kernel-cssu/drivers/usb/musb/omap2430.c.orig	2012-04-29 16:34:10.123966221 +0200
++++ kernel-cssu/drivers/usb/musb/omap2430.c	2012-04-29 16:50:48.611937027 +0200
 @@ -38,6 +38,8 @@
  #include <mach/hardware.h>
  #include <mach/mux.h>
@@ -83,8 +83,8 @@
  	/* clear constraints */
  	if (musb->board && musb->board->set_pm_limits)
  		musb->board->set_pm_limits(musb->controller, 0);
---- kernel-power/drivers/usb/musb/musb_core.c.orig	2012-04-29 16:57:27.407925369 +0200
-+++ kernel-power/drivers/usb/musb/musb_core.c	2012-04-29 17:13:39.083896956 +0200
+--- kernel-cssu/drivers/usb/musb/musb_core.c.orig	2012-04-29 16:57:27.407925369 +0200
++++ kernel-cssu/drivers/usb/musb/musb_core.c	2012-04-29 17:13:39.083896956 +0200
 @@ -105,6 +105,8 @@
  #include <asm/mach-types.h>
  #endif
@@ -129,8 +129,8 @@
  /*-------------------------------------------------------------------------*/
  
  static inline struct musb *dev_to_musb(struct device *dev)
---- kernel-power/arch/arm/plat-omap/include/mach/board-rx51.h.orig	2012-04-29 16:39:03.927957628 +0200
-+++ kernel-power/arch/arm/plat-omap/include/mach/board-rx51.h	2012-04-29 17:14:50.923894858 +0200
+--- kernel-cssu/arch/arm/plat-omap/include/mach/board-rx51.h.orig	2012-04-29 16:39:03.927957628 +0200
++++ kernel-cssu/arch/arm/plat-omap/include/mach/board-rx51.h	2012-04-29 17:14:50.923894858 +0200
 @@ -39,6 +39,12 @@ extern void rx51_usb_init(void);
  static inline void rx51_usb_init(void) { }
  #endif
@@ -144,8 +144,8 @@
  extern void omap_bt_init(struct omap_bluetooth_config *bt_config);
  
  struct omap_sdrc_params *rx51_get_sdram_timings(void);
---- kernel-power/arch/arm/mach-omap2/board-rx51-peripherals.c.orig	2012-04-29 17:18:56.995887664 +0200
-+++ kernel-power/arch/arm/mach-omap2/board-rx51-peripherals.c	2012-04-29 17:46:57.487838528 +0200
+--- kernel-cssu/arch/arm/mach-omap2/board-rx51-peripherals.c.orig	2012-04-29 17:18:56.995887664 +0200
++++ kernel-cssu/arch/arm/mach-omap2/board-rx51-peripherals.c	2012-04-29 17:46:57.487838528 +0200
 @@ -38,6 +38,8 @@
  #include <mach/omap-pm.h>
  

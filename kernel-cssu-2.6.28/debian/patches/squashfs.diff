@@ -1,5 +1,5 @@
---- kernel-power-2.6.28.orig/fs/Kconfig
-+++ kernel-power-2.6.28/fs/Kconfig
+--- kernel-cssu-2.6.28.orig/fs/Kconfig
++++ kernel-cssu-2.6.28/fs/Kconfig
 @@ -960,6 +960,56 @@
  
  	  If unsure, say N.
@@ -57,8 +57,8 @@
  config VXFS_FS
  	tristate "FreeVxFS file system support (VERITAS VxFS(TM) compatible)"
  	depends on BLOCK
---- kernel-power-2.6.28.orig/fs/Makefile
-+++ kernel-power-2.6.28/fs/Makefile
+--- kernel-cssu-2.6.28.orig/fs/Makefile
++++ kernel-cssu-2.6.28/fs/Makefile
 @@ -76,6 +76,7 @@
  obj-$(CONFIG_JBD2)		+= jbd2/
  obj-$(CONFIG_EXT2_FS)		+= ext2/
@@ -68,7 +68,7 @@
  obj-$(CONFIG_HUGETLBFS)		+= hugetlbfs/
  obj-$(CONFIG_CODA_FS)		+= coda/
 --- /dev/null
-+++ kernel-power-2.6.28/fs/squashfs/Makefile
++++ kernel-cssu-2.6.28/fs/squashfs/Makefile
 @@ -0,0 +1,7 @@
 +#
 +# Makefile for the linux squashfs routines.
@@ -78,7 +78,7 @@
 +squashfs-y += inode.o
 +squashfs-y += squashfs2_0.o
 --- /dev/null
-+++ kernel-power-2.6.28/fs/squashfs/inode.c
++++ kernel-cssu-2.6.28/fs/squashfs/inode.c
 @@ -0,0 +1,2157 @@
 +/*
 + * Squashfs - a compressed read only filesystem for Linux
@@ -2238,7 +2238,7 @@
 +MODULE_AUTHOR("Phillip Lougher <phillip@lougher.demon.co.uk>");
 +MODULE_LICENSE("GPL");
 --- /dev/null
-+++ kernel-power-2.6.28/fs/squashfs/squashfs.h
++++ kernel-cssu-2.6.28/fs/squashfs/squashfs.h
 @@ -0,0 +1,86 @@
 +/*
 + * Squashfs - a compressed read only filesystem for Linux
@@ -2327,7 +2327,7 @@
 +}
 +#endif
 --- /dev/null
-+++ kernel-power-2.6.28/fs/squashfs/squashfs2_0.c
++++ kernel-cssu-2.6.28/fs/squashfs/squashfs2_0.c
 @@ -0,0 +1,740 @@
 +/*
 + * Squashfs - a compressed read only filesystem for Linux
@@ -3070,7 +3070,7 @@
 +	return 1;
 +}
 --- /dev/null
-+++ kernel-power-2.6.28/include/linux/squashfs_fs.h
++++ kernel-cssu-2.6.28/include/linux/squashfs_fs.h
 @@ -0,0 +1,935 @@
 +#ifndef SQUASHFS_FS
 +#define SQUASHFS_FS
@@ -4008,7 +4008,7 @@
 +#endif
 +#endif
 --- /dev/null
-+++ kernel-power-2.6.28/include/linux/squashfs_fs_i.h
++++ kernel-cssu-2.6.28/include/linux/squashfs_fs_i.h
 @@ -0,0 +1,45 @@
 +#ifndef SQUASHFS_FS_I
 +#define SQUASHFS_FS_I
@@ -4056,7 +4056,7 @@
 +};
 +#endif
 --- /dev/null
-+++ kernel-power-2.6.28/include/linux/squashfs_fs_sb.h
++++ kernel-cssu-2.6.28/include/linux/squashfs_fs_sb.h
 @@ -0,0 +1,79 @@
 +#ifndef SQUASHFS_FS_SB
 +#define SQUASHFS_FS_SB
@@ -4137,8 +4137,8 @@
 +	int			(*read_fragment_index_table)(struct super_block *s);
 +};
 +#endif
---- kernel-power-2.6.28.orig/init/do_mounts_rd.c
-+++ kernel-power-2.6.28/init/do_mounts_rd.c
+--- kernel-cssu-2.6.28.orig/init/do_mounts_rd.c
++++ kernel-cssu-2.6.28/init/do_mounts_rd.c
 @@ -5,6 +5,7 @@
  #include <linux/ext2_fs.h>
  #include <linux/romfs_fs.h>

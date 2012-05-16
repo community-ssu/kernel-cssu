@@ -1,5 +1,5 @@
---- kernel-power-2.6.28.orig/drivers/usb/musb/musb_core.c
-+++ kernel-power-2.6.28/drivers/usb/musb/musb_core.c
+--- kernel-cssu-2.6.28.orig/drivers/usb/musb/musb_core.c
++++ kernel-cssu-2.6.28/drivers/usb/musb/musb_core.c
 @@ -297,28 +297,23 @@
  			break;
  	}

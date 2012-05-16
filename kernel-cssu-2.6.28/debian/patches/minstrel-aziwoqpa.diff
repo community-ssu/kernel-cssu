@@ -1,5 +1,5 @@
---- kernel-power-2.6.28.orig/net/mac80211/rc80211_minstrel.c.orig	2010-11-13 13:20:41.000000000 -0500
-+++ kernel-power-2.6.28/net/mac80211/rc80211_minstrel.c	2010-11-13 13:46:05.246025157 -0500
+--- kernel-cssu-2.6.28.orig/net/mac80211/rc80211_minstrel.c.orig	2010-11-13 13:20:41.000000000 -0500
++++ kernel-cssu-2.6.28/net/mac80211/rc80211_minstrel.c	2010-11-13 13:46:05.246025157 -0500
 @@ -228,7 +228,7 @@
  	unsigned int sample_ndx;
  	sample_ndx = SAMPLE_TBL(mi, mi->sample_idx, mi->sample_column);

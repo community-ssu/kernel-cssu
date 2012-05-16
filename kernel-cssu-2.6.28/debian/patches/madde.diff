@@ -1,5 +1,5 @@
---- kernel-power-2.6.28/Makefile	2011-07-09 10:24:38.656013905 +0200
-+++ kernel-power-2.6.28/Makefile	2011-07-09 10:24:40.536013905 +0200
+--- kernel-cssu-2.6.28/Makefile	2011-07-09 10:24:38.656013905 +0200
++++ kernel-cssu-2.6.28/Makefile	2011-07-09 10:24:40.536013905 +0200
 @@ -4,6 +4,8 @@ SUBLEVEL = 28
  EXTRAVERSION = .10
  NAME = Erotic Pickled Herring
@@ -18,8 +18,8 @@
  
  # Architecture as present in compile.h
  UTS_MACHINE 	:= $(ARCH)
---- kernel-power-2.6.28/scripts/unifdef.c	2011-01-23 18:22:03.000000000 +0100
-+++ kernel-power-2.6.28/scripts/unifdef.c	2011-01-23 18:22:17.000000000 +0100
+--- kernel-cssu-2.6.28/scripts/unifdef.c	2011-01-23 18:22:03.000000000 +0100
++++ kernel-cssu-2.6.28/scripts/unifdef.c	2011-01-23 18:22:17.000000000 +0100
 @@ -206,6 +206,7 @@
  static void             error(const char *);
  static int              findsym(const char *);

@@ -1,5 +1,5 @@
---- kernel-power-2.6.28.orig/drivers/media/radio/radio-bcm2048.c
-+++ kernel-power-2.6.28/drivers/media/radio/radio-bcm2048.c
+--- kernel-cssu-2.6.28.orig/drivers/media/radio/radio-bcm2048.c
++++ kernel-cssu-2.6.28/drivers/media/radio/radio-bcm2048.c
 @@ -6,6 +6,8 @@
   * Copyright (C) Nokia Corporation
   * Contact: Eero Nurkkala <ext-eero.nurkkala@nokia.com>
