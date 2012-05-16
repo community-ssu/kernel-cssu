@@ -1,7 +1,0 @@
-start on starting shutdown
-service
-console none
-script
-    rm -f /etc/kernel-power/.loaded
-    rm -f /etc/kernel-power/.notloaded
-end script

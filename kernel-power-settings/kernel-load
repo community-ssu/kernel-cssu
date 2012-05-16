@@ -1,4 +1,0 @@
-#!/bin/sh
-echo "warning: this command is deprecated. executing: kernel-config load $1"
-/usr/sbin/kernel-config load $1
-exit $?

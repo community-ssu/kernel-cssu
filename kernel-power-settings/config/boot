@@ -1,9 +1,0 @@
-# boot options for kernel-power-settings
-
-# fsck of /home partition before mounting?
-# 0=never, 1=if necessary, force=always check
-FSCK_HOME=0
-
-# start USB networking and sshd early during boot
-# 0=off, 1=on
-EARLY_SSH=0
