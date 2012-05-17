@@ -19,14 +19,15 @@ Package: kernel-cssu-bootimg
 Section: user/system
 Architecture: armel
 Depends: kernel-cssu-modules (= ${binary:Version})
-Conflicts: multiboot-kernel-cssu
-Recommends: multiboot, kernel-cssu-flasher, kernel-cssu-settings, usbip, iptables, mtd-utils, kexec-tools
+Conflicts: multiboot-kernel-power
+Recommends: multiboot, kernel-cssu-flasher, kernel-power-settings, usbip, iptables, mtd-utils, kexec-tools
 Provides: kernel-feature-netfilter, kernel-feature-ipv6, kernel-feature-ext4, kernel-feature-xfs, kernel-feature-reiserfs,
   kernel-feature-ntfs-read, kernel-feature-udf, kernel-feature-cifs, kernel-feature-automounter, kernel-feature-squashfs, 
   kernel-feature-unionfs, kernel-feature-crypto, kernel-feature-dmloop, kernel-feature-utf8, kernel-feature-mousejoy,
   kernel-feature-usbip, kernel-feature-ppp, kernel-feature-qos, kernel-feature-block2mtd, kernel-feature-kexec,
   kernel-feature-overclock, kernel-feature-joikuspot, kernel-feature-slip, kernel-feature-battery, kernel-feature-pptp,
-  kernel-feature-wlan-monitor, kernel-feature-radiords, kernel-feature-ioacct, kernel-feature-usbhost, kernel-feature-framebuffer
+  kernel-feature-wlan-monitor, kernel-feature-radiords, kernel-feature-ioacct, kernel-feature-usbhost, kernel-feature-framebuffer,
+  kernel-feature-errata-430973-workaround
 XB-Maemo-Display-Name: Linux kernel for Community SSU (boot image for u-boot and multiboot)
 Description: Linux kernel boot image (kernel cssu 2.6.28.10)
  This package provides a bootable kernel image and config files
@@ -109,13 +110,14 @@ Architecture: armel
 Pre-Depends: kernel-cssu (= ${binary:Version}), kernel-cssu-modules (= ${binary:Version}), softupd (>= 0.4.0), maemo-installer-utils
 Depends: sudo
 Conflicts: kernel-flasher-maemo (<= 2.6.28-maemo22), kernel-maemo, kernel-modules-maemo, kernel-headers-maemo, linux-kernel-headers-maemo
-Recommends: kernel-cssu-settings, usbip, iptables, mtd-utils, kexec-tools
+Recommends: kernel-power-settings, usbip, iptables, mtd-utils, kexec-tools
 Provides: kernel-feature-netfilter, kernel-feature-ipv6, kernel-feature-ext4, kernel-feature-xfs, kernel-feature-reiserfs,
   kernel-feature-ntfs-read, kernel-feature-udf, kernel-feature-cifs, kernel-feature-automounter, kernel-feature-squashfs, 
   kernel-feature-unionfs, kernel-feature-crypto, kernel-feature-dmloop, kernel-feature-utf8, kernel-feature-mousejoy,
   kernel-feature-usbip, kernel-feature-ppp, kernel-feature-qos, kernel-feature-block2mtd, kernel-feature-kexec,
   kernel-feature-overclock, kernel-feature-joikuspot, kernel-feature-slip, kernel-feature-battery, kernel-feature-pptp,
-  kernel-feature-wlan-monitor, kernel-feature-radiords, kernel-feature-ioacct, kernel-feature-usbhost, kernel-feature-framebuffer
+  kernel-feature-wlan-monitor, kernel-feature-radiords, kernel-feature-ioacct, kernel-feature-usbhost, kernel-feature-framebuffer,
+  kernel-feature-errata-430973-workaround
 XB-Maemo-Display-Name: Linux kernel for Community SSU
 Description: Linux kernel updater (kernel cssu 2.6.28.10)
  This package will flash the kernel image upon installation.
