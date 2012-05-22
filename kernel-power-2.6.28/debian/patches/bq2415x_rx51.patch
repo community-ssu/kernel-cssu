@@ -159,46 +159,46 @@
  	},
  };
  
-+static int rx51_charger_type;
++static int rx51_charger_mode;
 +static int rx51_charger_connected;
 +static int rx51_wallcharger_connected;
 +static int rx51_charger_detection = 1;
 +
 +static void *rx51_charger_hook_data;
-+static void (*rx51_charger_hook)(int type, void *data);
++static void (*rx51_charger_hook)(enum bq2415x_mode mode, void *data);
 +
-+static int rx51_charger_set_hook(void (*hook)(int type, void *data), void *data)
++static int rx51_charger_set_hook(void (*hook)(enum bq2415x_mode mode, void *data), void *data)
 +{
 +	rx51_charger_hook = hook;
 +	rx51_charger_hook_data = data;
 +	return 1;
 +}
 +
-+static void rx51_update_charger_type(void)
++static void rx51_update_charger_mode(void)
 +{
-+	int type;
++	enum bq2415x_mode mode;
 +	if (rx51_charger_connected && rx51_wallcharger_connected)
-+		type = 2; /* wallcharger */
++		mode = BQ2415X_MODE_DEDICATED_CHARGER; /* wallcharger */
 +	else if (rx51_charger_connected)
-+		type = 1; /* usb charger */
++		mode = BQ2415X_MODE_HOST_CHARGER; /* usb charger */
 +	else
-+		type = 0; /* no charger */
++		mode = BQ2415X_MODE_NONE; /* no charger */
 +
-+	if (rx51_charger_type == type)
++	if (rx51_charger_mode == mode)
 +		return;
 +
-+	printk("rx51_update_charger_type (type = %d)\n", type);
-+	rx51_charger_type = type;
++	printk("rx51_update_charger_mode (mode = %d)\n", mode);
++	rx51_charger_mode = mode;
 +
 +	if (rx51_charger_hook)
-+		rx51_charger_hook(rx51_charger_type, rx51_charger_hook_data);
++		rx51_charger_hook(rx51_charger_mode, rx51_charger_hook_data);
 +}
 +
 +void rx51_set_charger(int connected)
 +{
 +	printk("rx51_set_charger (connected = %d)\n", connected);
 +	rx51_charger_connected = connected;
-+	rx51_update_charger_type();
++	rx51_update_charger_mode();
 +}
 +EXPORT_SYMBOL(rx51_set_charger);
 +
@@ -206,7 +206,7 @@
 +{
 +	printk("rx51_set_wallcharger (connected = %d)\n", connected);
 +	rx51_wallcharger_connected = connected;
-+	rx51_update_charger_type();
++	rx51_update_charger_mode();
 +}
 +EXPORT_SYMBOL(rx51_set_wallcharger);
 +
@@ -230,7 +230,7 @@
 +	.charge_current = 950, /*1200*/		/* mA */
 +	.termination_current = 150, /*400*/	/* mA */
 +	.resistor_sense = 68,			/* m ohm */
-+	.set_charger_type_hook = &rx51_charger_set_hook,
++	.set_mode_hook = &rx51_charger_set_hook,
 +};
 +
  static struct i2c_board_info __initdata rx51_peripherals_i2c_board_info_2[] = {
