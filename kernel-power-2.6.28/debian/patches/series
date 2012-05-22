@@ -37,6 +37,7 @@ radio-bcm2048.diff
 #i2c-battery.diff
 usbhostmode.diff
 musb_sysfs_notify.diff
+musb_sysfs_hostdevice.diff
 bt-mice.diff
 power-supply-ignore-enodata.diff
 power-supply-no-verbose.diff

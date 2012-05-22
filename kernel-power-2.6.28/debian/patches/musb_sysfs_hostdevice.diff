@@ -1,0 +1,122 @@
+--- kernel-power/drivers/usb/musb/musb_core.h	2012-05-22 23:46:25.063372234 +0200
++++ kernel-power/drivers/usb/musb/musb_core.h	2012-05-22 23:58:04.727351773 +0200
+@@ -431,6 +431,8 @@ struct musb {
+ 
+ 	unsigned		power_draw;	/* current power draw, gadget only */
+ 
++	const char		*hostdevice;	/* type of usb host device */
++
+ 	bool			is_host;
+ 
+ 	int			a_wait_bcon;	/* VBUS timeout in msecs */
+--- kernel-power/drivers/usb/musb/musb_core.c	2012-05-22 23:36:45.795389167 +0200
++++ kernel-power/drivers/usb/musb/musb_core.c	2012-05-22 23:56:42.415354180 +0200
+@@ -1978,6 +1978,15 @@ musb_amp_show(struct device *dev, struct
+ static DEVICE_ATTR(mA, 0444, musb_amp_show, NULL);
+ 
+ static ssize_t
++musb_hostdevice_show(struct device *dev, struct device_attribute *attr, char *buf)
++{
++	struct musb *musb = dev_to_musb(dev);
++
++	return sprintf(buf, "%s\n", musb->hostdevice);
++}
++static DEVICE_ATTR(hostdevice, 0444, musb_hostdevice_show, NULL);
++
++static ssize_t
+ musb_mode_show(struct device *dev, struct device_attribute *attr, char *buf)
+ {
+ 	struct musb *musb = dev_to_musb(dev);
+@@ -2060,6 +2069,8 @@ musb_mode_store(struct device *dev, stru
+ 		status = -EINVAL;
+ 	mutex_unlock(&musb->mutex);
+ 
++	musb->hostdevice = "none";
++	sysfs_notify(&musb->controller->kobj, NULL, "hostdevice");
+ 	sysfs_notify(&musb->controller->kobj, NULL, "mode");
+ 	schedule_work(&musb->irq_work);
+ 
+@@ -2154,6 +2165,8 @@ static void musb_irq_work(struct work_st
+ 
+ 	if (musb->xceiv->state != old_state) {
+ 		old_state = musb->xceiv->state;
++		musb->hostdevice = "none";
++		sysfs_notify(&musb->controller->kobj, NULL, "hostdevice");
+ 		sysfs_notify(&musb->controller->kobj, NULL, "mode");
+ 	}
+ 	if (musb->power_draw != old_ma) {
+@@ -2240,6 +2240,7 @@ static void musb_free(struct musb *musb)
+ 	device_remove_file(musb->controller, &dev_attr_mA);
+ 	device_remove_file(musb->controller, &dev_attr_connect);
+ 	device_remove_file(musb->controller, &dev_attr_charger);
++	device_remove_file(musb->controller, &dev_attr_hostdevice);
+ 	device_remove_file(musb->controller, &dev_attr_mode);
+ 	device_remove_file(musb->controller, &dev_attr_vbus);
+ #ifdef CONFIG_USB_GADGET_MUSB_HDRC
+@@ -2346,6 +2346,7 @@ bad_config:
+ 	musb->set_clock = plat->set_clock;
+ 	musb->min_power = plat->min_power;
+ 	musb->use_dma = use_dma;
++	musb->hostdevice = "none";
+ 
+ 	/* Clock usage is chip-specific ... functional clock (DaVinci,
+ 	 * OMAP2430), or PHY ref (some TUSB6010 boards).  All this core
+@@ -2486,6 +2487,7 @@ bad_config:
+ 	status = device_create_file(dev, &dev_attr_mA);
+ 	status = device_create_file(dev, &dev_attr_connect);
+ 	status = device_create_file(dev, &dev_attr_charger);
++	status = device_create_file(dev, &dev_attr_hostdevice);
+ 	status = device_create_file(dev, &dev_attr_mode);
+ 	status = device_create_file(dev, &dev_attr_vbus);
+ #ifdef CONFIG_USB_GADGET_MUSB_HDRC
+@@ -2510,6 +2512,7 @@ fail2:
+ 	device_remove_file(dev, &dev_attr_mA);
+ 	device_remove_file(dev, &dev_attr_connect);
+ 	device_remove_file(dev, &dev_attr_charger);
++	device_remove_file(dev, &dev_attr_hostdevice);
+ 	device_remove_file(musb->controller, &dev_attr_mode);
+ 	device_remove_file(musb->controller, &dev_attr_vbus);
+ #ifdef CONFIG_USB_GADGET_MUSB_HDRC
+--- kernel-power/drivers/usb/musb/musb_procfs.c	2012-05-22 23:35:43.767390980 +0200
++++ kernel-power/drivers/usb/musb/musb_procfs.c	2012-05-22 23:57:28.355352837 +0200
+@@ -692,13 +692,16 @@ static int musb_proc_write(struct file *
+ 		case 1: /* pullup indicates a full/high-speed device */
+ 			if (!(testmode & (MUSB_TEST_FORCE_FS | MUSB_TEST_FORCE_HS)))
+ 				pr_err("Forced hostmode error: a full/high-speed device attached but low-speed mode selected\n"); 
++			musb->hostdevice = "full/high";
+ 			break;
+ 		case 2: /* pullup indicates a low-speed device */
+ 			if (testmode & (MUSB_TEST_FORCE_FS | MUSB_TEST_FORCE_HS))
+ 				pr_err("Forced hostmode error: a low-speed device attached but full/high-speed mode selected\n"); 
++			musb->hostdevice = "low";
+ 			break;
+ 		default:
+ 			pr_err("Forced hostmode error: no device attached\n");
++			musb->hostdevice = "none";
+ 		}
+  
+ 		if (!(testmode & (MUSB_TEST_FORCE_FS | MUSB_TEST_FORCE_HS)))
+@@ -721,6 +724,7 @@ static int musb_proc_write(struct file *
+ 		DBG(1, "CONNECT (%s) devctl %02x\n",
+ 				otg_state_string(musb), devctl);
+ 		}
++		sysfs_notify(&musb->controller->kobj, NULL, "hostdevice");
+ 		sysfs_notify(&musb->controller->kobj, NULL, "mode");
+ 		schedule_work(&musb->irq_work);
+ 		break;
+--- kernel-power/drivers/usb/musb/musb_virthub.c	2012-05-22 23:53:44.471359383 +0200
++++ kernel-power/drivers/usb/musb/musb_virthub.c	2012-05-22 23:57:34.791352649 +0200
+@@ -169,10 +169,13 @@ static void musb_port_reset(struct musb
+ 			musb->port1_status |= USB_PORT_STAT_HIGH_SPEED;
+ 			if (!(testmode & MUSB_TEST_FORCE_HS))
+ 				pr_err("Forced hostmode error: a high-speed device attached but not high-speed mode selected\n"); 
++			musb->hostdevice = "high";
+ 		} else {
+ 			if (testmode & MUSB_TEST_FORCE_HS)
+ 				pr_err("Forced hostmode error: a full/low-speed device attached but high-speed mode selected\n"); 
++			musb->hostdevice = "full/low";
+ 		}
++		sysfs_notify(&musb->controller->kobj, NULL, "hostdevice");
+ 
+ 		musb->port1_status &= ~USB_PORT_STAT_RESET;
+ 		musb->port1_status |= USB_PORT_STAT_ENABLE
