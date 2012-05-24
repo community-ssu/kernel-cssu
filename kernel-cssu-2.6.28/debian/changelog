@@ -4,7 +4,7 @@ kernel-cssu (1:2.6.28-10+cssu0) fremantle; urgency=low
    * Added  bq2415x driver
    * Workaround for ARM errata 430973 and sysfs entry to enable/disable it
 
-  -- Ivaylo Dimitrov <freemangordon@abv.bg>  Thu, 17 May 2012 15:58:23 +0300
+ -- Ivaylo Dimitrov <freemangordon@abv.bg>  Thu, 17 May 2012 15:58:23 +0300
 
 kernel-power (1:2.6.28-10power50) fremantle; urgency=low
 
