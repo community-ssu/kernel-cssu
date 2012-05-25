@@ -73,3 +73,4 @@ USB-fix-kernel-oops-with-g_ether-and-windows.diff
 #bq24150-charger.patch
 #bq24150-rx51.patch
 rx51_add_secure_ppa_api.diff
+rx51_arm_errata_430973.diff
