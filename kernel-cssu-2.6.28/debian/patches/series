@@ -70,5 +70,5 @@ support-non-page-aligned-buffers-in-iommu_vmap.diff
 videobuf-dma-sg-support-non-pagable-user-memory.diff
 bluetooth-fix-potential-bad-memory-access-with-sysfs-files.diff
 USB-fix-kernel-oops-with-g_ether-and-windows.diff
-bq24150-charger.patch
-bq24150-rx51.patch
+#bq24150-charger.patch
+#bq24150-rx51.patch
