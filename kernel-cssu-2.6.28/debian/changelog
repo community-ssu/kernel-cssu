@@ -1,4 +1,4 @@
-kernel-cssu (1:2.6.28-10cssu0) fremantle; urgency=low
+kernel-cssu (1:2.6.28-10cssu0) unstable; urgency=low
 
    * package renamed to kernel-cssu
    * disabled bq2415x driver
