@@ -37,6 +37,7 @@ radio-bcm2048.diff
 #i2c-battery.diff
 usbhostmode.diff
 musb_sysfs_notify.diff
+musb_sysfs_hostdevice.diff
 bt-mice.diff
 power-supply-ignore-enodata.diff
 power-supply-no-verbose.diff
@@ -70,7 +71,8 @@ support-non-page-aligned-buffers-in-iommu_vmap.diff
 videobuf-dma-sg-support-non-pagable-user-memory.diff
 bluetooth-fix-potential-bad-memory-access-with-sysfs-files.diff
 USB-fix-kernel-oops-with-g_ether-and-windows.diff
-#bq24150-charger.patch
-#bq24150-rx51.patch
+bq2415x_charger.patch
+bq2415x_kconfig.patch
+bq2415x_rx51.patch
 rx51_add_secure_ppa_api.diff
 rx51_arm_errata_430973.diff

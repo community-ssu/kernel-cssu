@@ -1,6 +1,6 @@
---- /dev/null	2012-04-29 08:55:34.366920721 +0200
-+++ kernel-cssu/drivers/power/bq2415x_charger.c	2012-04-29 17:53:57.799826239 +0200
-@@ -0,0 +1,1564 @@
+--- /dev/null
++++ kernel-power/drivers/power/bq2415x_charger.c
+@@ -0,0 +1,1543 @@
 +/*
 +    bq2415x_charger.c - bq2415x charger driver
 +    Copyright (C) 2011-2012  Pali Rohár <pali.rohar@gmail.com>
@@ -151,13 +151,6 @@
 +	BQ24158,
 +};
 +
-+enum bq2415x_mode {
-+	BQ2415X_MODE_NONE,
-+	BQ2415X_MODE_HOST_CHARGER,
-+	BQ2415X_MODE_DEDICATED_CHARGER,
-+	BQ2415X_MODE_BOOST,
-+};
-+
 +static char *bq2415x_chip_name[] = {
 +	"unknown",
 +	"bq24150",
@@ -178,8 +171,8 @@
 +	struct bq2415x_platform_data init_data;
 +	struct power_supply charger;
 +	struct delayed_work work;
-+	enum bq2415x_mode charger_mode;	/* mode reported by hook function */
-+	enum bq2415x_mode mode;		/* actual setted mode */
++	enum bq2415x_mode reported_mode;/* mode reported by hook function */
++	enum bq2415x_mode mode;		/* current configured mode */
 +	enum bq2415x_chip chip;
 +	char *model;
 +	char *name;
@@ -755,33 +748,19 @@
 +
 +}
 +
-+static void bq2415x_set_charger_type(int type, void *data)
++static void bq2415x_hook_function(enum bq2415x_mode mode, void *data)
 +{
 +	struct bq2415x_device *bq = data;
 +
 +	if (!bq)
 +		return;
 +
-+	switch (type) {
-+	case 0:
-+		bq->charger_mode = BQ2415X_MODE_NONE;
-+		break;
-+	case 1:
-+		bq->charger_mode = BQ2415X_MODE_HOST_CHARGER;
-+		break;
-+	case 2:
-+		bq->charger_mode = BQ2415X_MODE_DEDICATED_CHARGER;
-+		break;
-+	default:
-+		return;
-+	}
++	bq->reported_mode = mode;
 +
 +	if (bq->automode < 1)
 +		return;
 +
-+	/* TODO: Detect USB Host mode */
-+
-+	bq2415x_set_mode(bq, bq->charger_mode);
++	bq2415x_set_mode(bq, bq->reported_mode);
 +
 +}
 +
@@ -1075,7 +1054,7 @@
 +		if (bq->automode < 0)
 +			return -ENOSYS;
 +		bq->automode = 1;
-+		mode = bq->charger_mode;
++		mode = bq->reported_mode;
 +	} else if (strncmp(buf, "none", 4) == 0) {
 +		if (bq->automode > 0)
 +			bq->automode = 0;
@@ -1435,7 +1414,7 @@
 +	bq->chip = id->driver_data;
 +	bq->name = name;
 +	bq->mode = BQ2415X_MODE_NONE;
-+	bq->charger_mode = BQ2415X_MODE_NONE;
++	bq->reported_mode = BQ2415X_MODE_NONE;
 +	bq->autotimer = 0;
 +	bq->automode = 0;
 +
@@ -1462,14 +1441,14 @@
 +		goto error_5;
 +	}
 +
-+	if (bq->init_data.set_charger_type_hook) {
-+		if (bq->init_data.set_charger_type_hook(
-+				bq2415x_set_charger_type, bq)) {
++	if (bq->init_data.set_mode_hook) {
++		if (bq->init_data.set_mode_hook(
++				bq2415x_hook_function, bq)) {
 +			bq->automode = 1;
 +			dev_info(bq->dev, "automode enabled\n");
 +		} else {
 +			bq->automode = -1;
-+			dev_info(bq->dev, "automode not supported\n");
++			dev_info(bq->dev, "automode failed\n");
 +		}
 +	} else {
 +		bq->automode = -1;
@@ -1504,8 +1483,8 @@
 +{
 +	struct bq2415x_device *bq = i2c_get_clientdata(client);
 +
-+	if (bq->init_data.set_charger_type_hook)
-+		bq->init_data.set_charger_type_hook(NULL, NULL);
++	if (bq->init_data.set_mode_hook)
++		bq->init_data.set_mode_hook(NULL, NULL);
 +
 +	bq2415x_sysfs_exit(bq);
 +	bq2415x_power_supply_exit(bq);
@@ -1565,9 +1544,9 @@
 +MODULE_AUTHOR("Pali Rohár <pali.rohar@gmail.com>");
 +MODULE_DESCRIPTION("bq2415x charger driver");
 +MODULE_LICENSE("GPL");
---- /dev/null	2012-04-29 08:55:34.366920721 +0200
-+++ kernel-cssu/include/linux/power/bq2415x_charger.h	2012-01-27 15:47:45.689585447 +0100
-@@ -0,0 +1,78 @@
+--- /dev/null
++++ kernel-power/include/linux/power/bq2415x_charger.h
+@@ -0,0 +1,90 @@
 +/*
 +    bq2415x_charger.h - bq2415x charger driver
 +    Copyright (C) 2011-2012  Pali Rohár <pali.rohar@gmail.com>
@@ -1591,7 +1570,7 @@
 +#define BQ2415X_CHARGER_H
 +
 +/*
-+  This is platform data for bq2415x chip. It contains default board volatages
++  This is platform data for bq2415x chip. It contains default board voltages
 +  and currents which can be also later configured via sysfs. If value is -1
 +  then default chip value (specified in datasheet) will be used.
 +
@@ -1599,40 +1578,52 @@
 +  current. It it is less or equal to zero, configuring charge and termination
 +  current will not be possible.
 +
-+  Function set_charger_type_hook is needed for automode (setting correct
-+  current limit when charger is connected/disconnected). When is NULL,
++  Function set_mode_hook is needed for automode (setting correct current limit
++  when charger is connected/disconnected or setting boost mode). When is NULL,
 +  automode function is disabled. When is not NULL, it must have this prototype:
 +
-+    int (*set_charger_type_hook)(void (*hook)(int type, void *data), void *data)
++    int (*set_mode_hook)(
++      void (*hook)(enum bq2415x_mode mode, void *data),
++      void *data)
 +
-+  and bq2415x driver will call it as:
++  hook is hook function (see below) and data is pointer to driver private data
 +
-+    platform_data->set_charger_type_hook(bq_hook_function, bq_private_data);
++  bq2415x driver will call it as:
 +
-+  Board/platform function set_charger_type_hook return non zero when hook
++    platform_data->set_mode_hook(bq2415x_hook_function, bq2415x_device);
++
++  Board/platform function set_mode_hook return non zero value when hook
 +  function was successfull registred. Platform code should call that hook
 +  function (which get from pointer, with data) every time when charger was
-+  connected/disconnected. bq driver then set correct current limit.
++  connected/disconnected or require to enable boost mode. bq2415x driver then
++  will set correct current limit, enable/disable charger or boost mode.
 +
 +  Hook function has this prototype:
 +
-+    void hook(int type, void *data);
++    void hook(enum bq2415x_mode mode, void *data);
 +
-+  type is:
-+    0 - for unknown or none charger (max current limit is 100mA)
-+    1 - for usb host/hub charger (max current limit is 500mA)
-+    2 - for dedicated charger (unlimited)
-+
-+  data is pointer to bq_private_data (which get from set_charger_type_hook)
++  mode is bq2415x mode (charger or boost)
++  data is pointer to driver private data (which get from set_charger_type_hook)
 +
 +  When bq driver is being unloaded, it call function:
 +
-+    platform_data->set_charger_type_hook(NULL, NULL);
++    platform_data->set_mode_hook(NULL, NULL);
 +
-+  After thet board/platform code must not call bq hook function! It is
-+  possible that pointer to hook function will not be valid.
++  (hook function and driver private data are NULL)
++
++  After thet board/platform code must not call driver hook function! It is
++  possible that pointer to hook function will not be valid and calling will
++  cause undefined result.
 +
 +*/
++
++/* Supported modes with maximal current limit */
++enum bq2415x_mode {
++	BQ2415X_MODE_NONE,		/* unknown or no charger (100mA) */
++	BQ2415X_MODE_HOST_CHARGER,	/* usb host/hub charger (500mA) */
++	BQ2415X_MODE_DEDICATED_CHARGER, /* dedicated charger (unlimited) */
++	BQ2415X_MODE_BOOST,		/* boost mode (charging disabled) */
++};
 +
 +struct bq2415x_platform_data {
 +	int current_limit;		/* mA */
@@ -1641,28 +1632,8 @@
 +	int charge_current;		/* mA */
 +	int termination_current;	/* mA */
 +	int resistor_sense;		/* m ohm */
-+	int (*set_charger_type_hook)(void (*hook)(int type, void *data),
-+				     void *data);
++	int (*set_mode_hook)(void (*hook)(enum bq2415x_mode mode, void *data),
++			     void *data);
 +};
 +
 +#endif
---- kernel-cssu/drivers/power/Makefile.orig	2012-04-29 18:03:10.751810073 +0200
-+++ kernel-cssu/drivers/power/Makefile	2012-04-29 18:03:52.207808860 +0200
-@@ -25,3 +25,4 @@ obj-$(CONFIG_TWL4030_BCI_BATTERY)	+= twl
- obj-$(CONFIG_BATTERY_TOSA)	+= tosa_battery.o
- obj-$(CONFIG_BATTERY_WM97XX)	+= wm97xx_battery.o
- obj-$(CONFIG_BATTERY_BQ27x00)	+= bq27x00_battery.o
-+obj-$(CONFIG_CHARGER_BQ2415X)	+= bq2415x_charger.o
---- kernel-cssu/drivers/power/Kconfig.orig	2012-04-29 18:01:48.819812466 +0200
-+++ kernel-cssu/drivers/power/Kconfig	2012-04-29 18:03:06.043810209 +0200
-@@ -75,4 +75,10 @@ config BATTERY_BQ27x00
- 	help
- 	  Say Y here to enable support for batteries with BQ27200(I2C) chip.
- 
-+config CHARGER_BQ2415X
-+	tristate "BQ2415X charger driver"
-+	depends on I2C
-+	help
-+	  Say Y here to enable support for chargers with BQ2415X(I2C) chip.
-+
- endif # POWER_SUPPLY
