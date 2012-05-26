@@ -1,2 +1,3 @@
 blacklist mousedev
 blacklist bq27x00_battery
+blacklist bq2415x_charger
