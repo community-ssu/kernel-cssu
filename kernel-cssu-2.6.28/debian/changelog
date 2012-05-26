@@ -1,3 +1,13 @@
+kernel-cssu (1:2.6.28-10cssu0.1) unstable; urgency=low
+
+   * added bq2415x driver
+   * Fix generating bootmenu file, use ITEM_REUSEATAGS
+   * Reorganized bq2415x patches
+   * Add patch musb_sysfs_hostdevice.diff
+   * Blacklist bq2415x_charger driver by default
+
+ -- Ivaylo Dimitrov <freemangordon@abv.bg>  Thu, 17 May 2012 15:58:23 +0300
+
 kernel-cssu (1:2.6.28-10cssu0) unstable; urgency=low
 
    * package renamed to kernel-cssu
