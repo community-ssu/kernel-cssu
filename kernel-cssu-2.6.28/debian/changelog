@@ -1,4 +1,4 @@
-kernel-cssu (1:2.6.28-10cssu0.1) unstable; urgency=low
+kernel-cssu (1:2.6.28-10cssu1) unstable; urgency=low
 
    * added bq2415x driver
    * Fix generating bootmenu file, use ITEM_REUSEATAGS
