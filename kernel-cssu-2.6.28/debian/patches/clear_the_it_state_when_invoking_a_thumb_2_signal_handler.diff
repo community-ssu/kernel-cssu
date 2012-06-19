@@ -1,0 +1,38 @@
+Index: kernel-cssu-2.6.28/arch/arm/include/asm/ptrace.h
+===================================================================
+--- kernel-cssu-2.6.28.orig/arch/arm/include/asm/ptrace.h	2012-06-18 17:42:46.279853899 -0400
++++ kernel-cssu-2.6.28/arch/arm/include/asm/ptrace.h	2012-06-18 17:45:47.075328476 -0400
+@@ -65,6 +65,13 @@
+ #define PSR_x		0x0000ff00	/* Extension		*/
+ #define PSR_c		0x000000ff	/* Control		*/
+ 
++/*
++ * ARMv7 groups of APSR bits
++ */
++#define PSR_ISET_MASK	0x01000010	/* ISA state (J, T) mask */
++#define PSR_IT_MASK	0x0600fc00	/* If-Then execution state mask */
++#define PSR_ENDIAN_MASK	0x00000200	/* Endianness state mask */
++
+ #ifndef __ASSEMBLY__
+ 
+ /*
+Index: kernel-cssu-2.6.28/arch/arm/kernel/signal.c
+===================================================================
+--- kernel-cssu-2.6.28.orig/arch/arm/kernel/signal.c	2012-06-18 17:43:06.354996651 -0400
++++ kernel-cssu-2.6.28/arch/arm/kernel/signal.c	2012-06-18 17:48:41.731936840 -0400
+@@ -487,9 +487,13 @@
+ 		 */
+ 		thumb = handler & 1;
+ 
+-		if (thumb)
++		if (thumb) {
+ 			cpsr |= PSR_T_BIT;
+-		else
++#if __LINUX_ARM_ARCH__ >= 7
++			/* clear the If-Then Thumb-2 execution state */
++			cpsr &= ~PSR_IT_MASK;
++#endif
++		} else
+ 			cpsr &= ~PSR_T_BIT;
+ 	}
+ #endif

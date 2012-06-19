@@ -76,3 +76,4 @@ bq2415x_kconfig.patch
 bq2415x_rx51.patch
 rx51_add_secure_ppa_api.diff
 rx51_arm_errata_430973.diff
+clear_the_it_state_when_invoking_a_thumb_2_signal_handler.diff
