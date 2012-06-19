@@ -1,3 +1,10 @@
+kernel-cssu (1:2.6.28-10cssu2) unstable; urgency=low
+
+   * Clear the IT state when invoking a Thumb-2 signal handler
+     http://git.et.redhat.com/?p=kernel-kraxel.git;a=commitdiff_plain;h=d71e1352e240dea32d481ad8d662e8de4406ac7e
+
+ -- Ivaylo Dimitrov <freemangordon@abv.bg>  Tue, 19 Jun 2012 11:28:31 +0300
+
 kernel-cssu (1:2.6.28-10cssu1) unstable; urgency=low
 
    * added bq2415x driver
