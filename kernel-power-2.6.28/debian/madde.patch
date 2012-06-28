@@ -1,5 +1,5 @@
 diff --git a/kernel-power-2.6.28/debian/control b/kernel-power-2.6.28/debian/control
-index ac43331..ec1431c 100644
+index b4f0406..cd80594 100644
 --- a/kernel-power-2.6.28/debian/control
 +++ b/kernel-power-2.6.28/debian/control
 @@ -3,7 +3,7 @@ Section: utils
@@ -12,10 +12,10 @@ index ac43331..ec1431c 100644
  Standards-Version: 3.8.0
  
 diff --git a/kernel-power-2.6.28/debian/patches/series b/kernel-power-2.6.28/debian/patches/series
-index f4f3d98..74a1598 100644
+index 469626f..43e30ca 100644
 --- a/kernel-power-2.6.28/debian/patches/series
 +++ b/kernel-power-2.6.28/debian/patches/series
-@@ -6,6 +6,7 @@ nokia-20101501+0m5.diff
+@@ -9,6 +9,7 @@ nokia-20101501+0m5.diff
  nokia-20103103+0m5.diff
  #nokia-20103103+0m5_usb.diff
  2.6.28.10.diff
@@ -24,19 +24,20 @@ index f4f3d98..74a1598 100644
  unionfs-2.5.3.diff
  dm-loop.diff
 diff --git a/kernel-power-2.6.28/debian/rules b/kernel-power-2.6.28/debian/rules
-index 6510f9e..51515ac 100755
+index 934fb67..2298d52 100755
 --- a/kernel-power-2.6.28/debian/rules
 +++ b/kernel-power-2.6.28/debian/rules
-@@ -1,6 +1,8 @@
+@@ -1,6 +1,9 @@
  #!/usr/bin/make -f
  #
  
-+export PATH := $(HOME)/.madde/0.7.48/toolchains/arm-2007q3-51sb6-gdb71-arm-none-linux-gnueabi_linux_x86_64/bin:$(PATH)
++MADDE := $(shell ls $(HOME)/.madde/ | sort -n -r | head -n1)
++export PATH := $(HOME)/.madde/$(MADDE)/toolchains/arm-2007q3-51sb6-gdb71-arm-none-linux-gnueabi_linux_x86_64/bin:$(PATH)
 +
  RELEASE := $(shell dpkg-parsechangelog | sed -ne 's/^Version: 1:\(.*\)/\1/p' | sed 's/-10/.10-/')
  REVISION := $(shell echo "$(RELEASE)" | sed 's/.*\./\./')
  EXTRAVERSION := EXTRAVERSION=$(REVISION)
-@@ -78,7 +80,10 @@ install-kernel:
+@@ -80,7 +83,10 @@ install-kernel:
  	dh_testdir
  	dh_testroot
  	mkdir -p $(CURDIR)/debian/$(KERNEL_PACKAGE)/boot
@@ -48,7 +49,7 @@ index 6510f9e..51515ac 100755
  	chmod 644 $(CURDIR)/debian/$(KERNEL_PACKAGE)/boot/zImage-$(RELEASE).fiasco
  
  install-bootimg:
-@@ -107,9 +112,9 @@ install-debug: install-modules
+@@ -112,9 +118,9 @@ install-debug: install-modules
  	mkdir -p $(CURDIR)/debian/$(DEBUG_PACKAGE)/lib/modules/$(RELEASE)
  	install -m644 $(KSRC)/vmlinux $(CURDIR)/debian/$(DEBUG_PACKAGE)/usr/lib/debug/vmlinux-$(RELEASE)
  	for f in $$(find $(CURDIR)/debian/$(MODULES_PACKAGE) -name "*.ko"); do \
@@ -61,16 +62,16 @@ index 6510f9e..51515ac 100755
  	done
  
  install-modules-debug: install-debug
-@@ -126,7 +131,7 @@ install-modules:
+@@ -131,7 +137,7 @@ install-modules:
  	mkdir -p $(CURDIR)/debian/$(MODULES_PACKAGE)/etc/modprobe.d
  	for f in $$(find $(KSRC) -name "*.ko"); do \
  		install -c -m644 $$f $(CURDIR)/debian/$(MODULES_PACKAGE)/lib/modules/$(RELEASE)/$$(basename $$f); \
 -		strip --remove-section=.comment --remove-section=.note --strip-unneeded  $(CURDIR)/debian/$(MODULES_PACKAGE)/lib/modules/$(RELEASE)/$$(basename $$f); \
 +		arm-none-linux-gnueabi-strip --remove-section=.comment --remove-section=.note --strip-unneeded  $(CURDIR)/debian/$(MODULES_PACKAGE)/lib/modules/$(RELEASE)/$$(basename $$f); \
  	done
- 	install -m644 $(CURDIR)/debian/blacklist $(CURDIR)/debian/$(MODULES_PACKAGE)/etc/modprobe.d
+ 	install -m644 $(CURDIR)/debian/kernel-power.blacklist $(CURDIR)/debian/$(MODULES_PACKAGE)/etc/modprobe.d
  
-@@ -219,9 +224,6 @@ endif
+@@ -224,9 +230,6 @@ endif
  	dh_testroot
  	dh_installchangelogs -s
  	dh_installdocs -s
