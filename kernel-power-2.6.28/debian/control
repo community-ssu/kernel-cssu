@@ -3,7 +3,7 @@ Section: utils
 Priority: optional
 Maintainer: Pali Rohár <pali.rohar@gmail.com>
 XSBC-Bugtracker: https://garage.maemo.org/tracker/?group_id=1528
-Build-Depends: debhelper (>= 4.0.0), quilt, sdk-fiasco-gen, libncurses5-dev, sharutils
+Build-Depends: debhelper (>= 4.0.0), quilt, sdk-fiasco-gen, libncurses5-dev, sharutils, wl1251-maemo-source
 Build-Depends-Indep: bzip2
 Standards-Version: 3.8.0
 

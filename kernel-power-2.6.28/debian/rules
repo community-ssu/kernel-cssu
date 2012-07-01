@@ -25,6 +25,10 @@ BOOTMENUFILE := $(BOOTMENUDIR)/20-Maemo5-$(PACKAGE)-$(RELEASE).item
 BUILDTMP := $(CURDIR)/debian/build
 KSRC := $(BUILDTMP)/$(PACKAGE)
 
+WIRELESS_TESTING_TREE := $(BUILDTMP)/wireless-testing
+COMPAT_TREE := $(BUILDTMP)/compat
+COMPAT_WIRELESS_TREE := $(BUILDTMP)/compat-wireless-2.6
+
 DEFCONFIG := rx51_defconfig
 ARCH = $(shell dpkg-architecture -qDEB_HOST_ARCH_CPU)
 INCLUDE_HEADERS_ARCH = asm-$(ARCH) config linux
@@ -66,14 +70,32 @@ modules-stamp: configure-stamp
 	$(MAKE) -C $(KSRC) $(NJOBS) $(EXTRAVERSION) modules
 	touch $@
 
-headers: kernel-stamp modules-stamp
+packet-injection-source-stamp:
+	dh_testdir
+	mkdir -p $(BUILDTMP)
+	cd $(BUILDTMP) && tar -xf /usr/src/compat-wireless-2.6.tar.bz2
+	cd $(BUILDTMP) && tar -xf /usr/src/compat.tar.bz2
+	cd $(BUILDTMP) && tar -xf /usr/src/wireless-testing.tar.bz2
+	touch $@
+
+packet-injection-configure-stamp: packet-injection-source-stamp
+	touch $(COMPAT_WIRELESS_TREE)/compat_version
+	cd $(COMPAT_WIRELESS_TREE) && GIT_TREE=$(WIRELESS_TESTING_TREE) GIT_COMPAT_TREE=$(COMPAT_TREE) GIT_COMPAT_WIRELESS_TREE=$(COMPAT_WIRELESS_TREE) ./scripts/admin-update.sh
+	cd $(COMPAT_WIRELESS_TREE) && ./scripts/driver-select wl12xx
+	touch $@
+
+packet-injection-build-stamp: packet-injection-configure-stamp
+	$(MAKE) -C $(COMPAT_WIRELESS_TREE) $(NJOBS) KLIB_BUILD=$(KSRC)
+	touch compat-wireless-build-stamp
+
+headers: kernel-stamp modules-stamp packet-injection-build-stamp
 
 clean:
 	dh_testdir
 	dh_testroot
 	rm -rf $(BUILDTMP)
 	rm -f debian/files debian/$(FLASHER_PACKAGE).postinst debian/$(MODULES_PACKAGE).postinst debian/$(MODULES_PACKAGE).postrm
-	rm -f source-stamp configure-stamp kernel-stamp modules-stamp
+	rm -f source-stamp configure-stamp kernel-stamp modules-stamp packet-injection-source-stamp packet-injection-configure-stamp packet-injection-build-stamp
 	dh_clean
 
 install-kernel:
@@ -129,9 +151,14 @@ install-modules:
 	dh_testroot
 	mkdir -p $(CURDIR)/debian/$(MODULES_PACKAGE)/lib/modules/$(RELEASE)
 	mkdir -p $(CURDIR)/debian/$(MODULES_PACKAGE)/etc/modprobe.d
+	mkdir -p $(CURDIR)/debian/$(MODULES_PACKAGE)/opt/packet-injection-modules/$(RELEASE)
 	for f in $$(find $(KSRC) -name "*.ko"); do \
 		install -c -m644 $$f $(CURDIR)/debian/$(MODULES_PACKAGE)/lib/modules/$(RELEASE)/$$(basename $$f); \
 		strip --remove-section=.comment --remove-section=.note --strip-unneeded  $(CURDIR)/debian/$(MODULES_PACKAGE)/lib/modules/$(RELEASE)/$$(basename $$f); \
+	done
+	for f in $$(find $(COMPAT_WIRELESS_TREE) -name "*.ko"); do \
+		install -c -m644 $$f $(CURDIR)/debian/$(MODULES_PACKAGE)/opt/packet-injection-modules/$(RELEASE)/$$(basename $$f); \
+		strip --remove-section=.comment --remove-section=.note --strip-unneeded  $(CURDIR)/debian/$(MODULES_PACKAGE)/opt/packet-injection-modules/$(RELEASE)/$$(basename $$f); \
 	done
 	install -m644 $(CURDIR)/debian/kernel-power.blacklist $(CURDIR)/debian/$(MODULES_PACKAGE)/etc/modprobe.d
 
