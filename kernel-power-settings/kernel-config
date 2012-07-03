@@ -183,6 +183,10 @@ load|loaddef)
             test -z "$minfreq" -o "$freq" -lt "$minfreq" && minfreq=$freq
             test -z "$maxfreq" -o "$freq" -gt "$maxfreq" && maxfreq=$freq
             freq=$((freq*1000))
+            if test "$freq" = "750000"; then
+                echo warning: $freq was changed to 720000;
+                freq=720000
+            fi
             case " $allfreq " in *" $freq "*) ;;
             *)  echo warning: $freq not supported; continue ;;
             esac
