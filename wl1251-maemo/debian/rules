@@ -1,0 +1,21 @@
+#!/usr/bin/make -f
+# -*- makefile -*-
+
+build:
+
+clean:
+	dh_testdir
+	dh_clean
+
+binary:
+	dh_testdir
+	dh_clean
+	mkdir -p debian/wl1251-maemo-source/usr/src
+	cp *.tar.bz2 debian/wl1251-maemo-source/usr/src/
+	dh_fixperms
+	dh_installdeb
+	dh_gencontrol
+	dh_md5sums
+	dh_builddeb
+
+.PHONY: build clean binary

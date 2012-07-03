@@ -1,0 +1,20 @@
+Source: wl1251-maemo
+Section: devel
+Priority: optional
+Maintainer: Pali Rohár <pali.rohar@gmail.com>
+Build-Depends: debhelper (>= 5)
+Standards-Version: 3.9.2
+Homepage: http://david.gnedt.eu/blog/wl1251/
+
+Package: wl1251-maemo-source
+Architecture: all
+Description: Source code of bleeding-edge wl1251 driver
+ This package contains a bleeding-edge wl1251 driver for use with Maemo
+ Fremantle on the Nokia N900.
+ .
+ It incorporates nearly all features found in the stock wl12xx driver used
+ in Maemo Fremantle, adds some bugfixes to wl1251 and also provides some
+ unique features like packet injection.
+ .
+ This package contains only source code of driver. Package is used by
+ source kernel packages which build driver at kernel compile time.
