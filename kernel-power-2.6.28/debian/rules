@@ -156,9 +156,11 @@ install-modules:
 		install -c -m644 $$f $(CURDIR)/debian/$(MODULES_PACKAGE)/lib/modules/$(RELEASE)/$$(basename $$f); \
 		strip --remove-section=.comment --remove-section=.note --strip-unneeded  $(CURDIR)/debian/$(MODULES_PACKAGE)/lib/modules/$(RELEASE)/$$(basename $$f); \
 	done
-	for f in $$(find $(COMPAT_WIRELESS_TREE) -name "*.ko"); do \
-		install -c -m644 $$f $(CURDIR)/debian/$(MODULES_PACKAGE)/opt/packet-injection-modules/$(RELEASE)/$$(basename $$f); \
-		strip --remove-section=.comment --remove-section=.note --strip-unneeded  $(CURDIR)/debian/$(MODULES_PACKAGE)/opt/packet-injection-modules/$(RELEASE)/$$(basename $$f); \
+	for ko in wl1251_spi.ko wl1251.ko cfg80211.ko compat.ko rfkill_backport.ko mac80211.ko; do \
+		for f in $$(find $(COMPAT_WIRELESS_TREE) -name $$ko); do \
+			install -c -m644 $$f $(CURDIR)/debian/$(MODULES_PACKAGE)/opt/packet-injection-modules/$(RELEASE)/$$(basename $$f); \
+			strip --remove-section=.comment --remove-section=.note --strip-unneeded  $(CURDIR)/debian/$(MODULES_PACKAGE)/opt/packet-injection-modules/$(RELEASE)/$$(basename $$f); \
+		done; \
 	done
 	install -m644 $(CURDIR)/debian/kernel-power.blacklist $(CURDIR)/debian/$(MODULES_PACKAGE)/etc/modprobe.d
 
