@@ -86,7 +86,7 @@ packet-injection-configure-stamp: packet-injection-source-stamp
 
 packet-injection-build-stamp: packet-injection-configure-stamp
 	$(MAKE) -C $(COMPAT_WIRELESS_TREE) $(NJOBS) KLIB_BUILD=$(KSRC)
-	touch compat-wireless-build-stamp
+	touch $@
 
 headers: kernel-stamp modules-stamp packet-injection-build-stamp
 
