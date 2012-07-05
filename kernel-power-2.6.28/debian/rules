@@ -114,7 +114,7 @@ install-bootimg:
 	install -m644 $(KSRC)/arch/arm/boot/zImage $(CURDIR)/debian/$(BOOTIMG_PACKAGE)/boot/zImage-$(RELEASE)
 	echo "ITEM_NAME=\"Maemo 5 with $(PACKAGE) $(RELEASE) (Internal Nand)\"" > $(CURDIR)/debian/$(BOOTIMG_PACKAGE)/$(MULTIBOOTFILE)
 	echo "ITEM_KERNEL=\"$(RELEASE)\"" >> $(CURDIR)/debian/$(BOOTIMG_PACKAGE)/$(MULTIBOOTFILE)
-	echo "ITEM_REUSEATAGS=\"1\"" >> $(CURDIR)/debian/$(BOOTIMG_PACKAGE)/$(MULTIBOOTFILE)
+	echo "ITEM_OMAPATAG=\"1\"" >> $(CURDIR)/debian/$(BOOTIMG_PACKAGE)/$(MULTIBOOTFILE)
 	cp $(CURDIR)/debian/$(BOOTIMG_PACKAGE)/$(MULTIBOOTFILE) $(CURDIR)/debian/$(BOOTIMG_PACKAGE)/$(BOOTMENUFILE)
 	chmod 644 $(CURDIR)/debian/$(BOOTIMG_PACKAGE)/$(MULTIBOOTFILE)
 	chmod 644 $(CURDIR)/debian/$(BOOTIMG_PACKAGE)/$(BOOTMENUFILE)
