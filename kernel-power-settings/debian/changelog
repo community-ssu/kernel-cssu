@@ -1,3 +1,10 @@
+kernel-power-settings (0.15) fremantle; urgency=low
+
+  * Depends on kernel-power >= v49 or kernel-feature-smartreflex
+  * Change freq 750000 to 720000
+
+ -- Pali Rohár <pali.rohar@gmail.com>  Thu, 05 Jul 2012 15:55:57 +0200
+
 kernel-power-settings (0.14) fremantle; urgency=low
 
   * Increase version due to repository bug
