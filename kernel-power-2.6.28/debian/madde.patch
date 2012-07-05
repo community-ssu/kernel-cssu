@@ -6,7 +6,7 @@ index b4f0406..cd80594 100644
  Priority: optional
  Maintainer: Pali Rohár <pali.rohar@gmail.com>
  XSBC-Bugtracker: https://garage.maemo.org/tracker/?group_id=1528
--Build-Depends: debhelper (>= 4.0.0), quilt, sdk-fiasco-gen, libncurses5-dev, sharutils
+-Build-Depends: debhelper (>= 4.0.0), quilt, sdk-fiasco-gen, libncurses5-dev, sharutils, wl1251-maemo-source
 +Build-Depends: debhelper (>= 4.0.0), quilt, libncurses5-dev, sharutils
  Build-Depends-Indep: bzip2
  Standards-Version: 3.8.0
@@ -24,32 +24,22 @@ index 469626f..43e30ca 100644
  unionfs-2.5.3.diff
  dm-loop.diff
 diff --git a/kernel-power-2.6.28/debian/rules b/kernel-power-2.6.28/debian/rules
-index 934fb67..2298d52 100755
+index a78394b..25397d5 100755
 --- a/kernel-power-2.6.28/debian/rules
 +++ b/kernel-power-2.6.28/debian/rules
-@@ -1,6 +1,9 @@
+@@ -1,6 +1,11 @@
  #!/usr/bin/make -f
  #
  
-+MADDE := $(shell ls $(HOME)/.madde/ | sort -n -r | head -n1)
-+export PATH := $(HOME)/.madde/$(MADDE)/toolchains/arm-2007q3-51sb6-gdb71-arm-none-linux-gnueabi_linux_x86_64/bin:$(PATH)
++MADDE_VERSION := $(shell ls $(HOME)/.madde/ | sort -n -r | head -n1)
++MADDE_TOOLCHAIN := $(shell ls $(HOME)/.madde/$(MADDE_VERSION)/toolchains/ | sort -n -r | head -n1)
++MADDE_PATH := $(HOME)/.madde/$(MADDE_VERSION)/toolchains/$(MADDE_TOOLCHAIN)/bin
++export PATH := $(MADDE_PATH):$(PATH)
 +
  RELEASE := $(shell dpkg-parsechangelog | sed -ne 's/^Version: 1:\(.*\)/\1/p' | sed 's/-10/.10-/')
  REVISION := $(shell echo "$(RELEASE)" | sed 's/.*\./\./')
  EXTRAVERSION := EXTRAVERSION=$(REVISION)
-@@ -80,7 +83,10 @@ install-kernel:
- 	dh_testdir
- 	dh_testroot
- 	mkdir -p $(CURDIR)/debian/$(KERNEL_PACKAGE)/boot
--	fiasco-gen -o $(CURDIR)/debian/$(KERNEL_PACKAGE)/boot/zImage-$(RELEASE).fiasco -g -k $(KSRC)/arch/arm/boot/zImage -v $(RELEASE)
-+	test -f sdk-fiasco-gen_2.8.2.0.1+0m5_i386.deb || wget http://repository.maemo.org/pool/fremantle/non-free/s/sdk-fiasco-gen/sdk-fiasco-gen_2.8.2.0.1+0m5_i386.deb
-+	ar x sdk-fiasco-gen_2.8.2.0.1+0m5_i386.deb data.tar.gz
-+	tar -xf data.tar.gz ./usr/bin/fiasco-gen -O > fiasco-gen && chmod +x fiasco-gen
-+	./fiasco-gen -o $(CURDIR)/debian/$(KERNEL_PACKAGE)/boot/zImage-$(RELEASE).fiasco -g -k $(KSRC)/arch/arm/boot/zImage -v $(RELEASE)
- 	chmod 644 $(CURDIR)/debian/$(KERNEL_PACKAGE)/boot/zImage-$(RELEASE).fiasco
- 
- install-bootimg:
-@@ -112,9 +118,9 @@ install-debug: install-modules
+@@ -134,9 +139,9 @@ install-debug: install-modules
  	mkdir -p $(CURDIR)/debian/$(DEBUG_PACKAGE)/lib/modules/$(RELEASE)
  	install -m644 $(KSRC)/vmlinux $(CURDIR)/debian/$(DEBUG_PACKAGE)/usr/lib/debug/vmlinux-$(RELEASE)
  	for f in $$(find $(CURDIR)/debian/$(MODULES_PACKAGE) -name "*.ko"); do \
@@ -62,16 +52,22 @@ index 934fb67..2298d52 100755
  	done
  
  install-modules-debug: install-debug
-@@ -131,7 +137,7 @@ install-modules:
- 	mkdir -p $(CURDIR)/debian/$(MODULES_PACKAGE)/etc/modprobe.d
+@@ -154,12 +159,12 @@ install-modules:
+ 	mkdir -p $(CURDIR)/debian/$(MODULES_PACKAGE)/opt/packet-injection-modules/$(RELEASE)
  	for f in $$(find $(KSRC) -name "*.ko"); do \
  		install -c -m644 $$f $(CURDIR)/debian/$(MODULES_PACKAGE)/lib/modules/$(RELEASE)/$$(basename $$f); \
 -		strip --remove-section=.comment --remove-section=.note --strip-unneeded  $(CURDIR)/debian/$(MODULES_PACKAGE)/lib/modules/$(RELEASE)/$$(basename $$f); \
 +		arm-none-linux-gnueabi-strip --remove-section=.comment --remove-section=.note --strip-unneeded  $(CURDIR)/debian/$(MODULES_PACKAGE)/lib/modules/$(RELEASE)/$$(basename $$f); \
  	done
+ 	for ko in wl1251_spi.ko wl1251.ko cfg80211.ko compat.ko rfkill_backport.ko mac80211.ko; do \
+ 		for f in $$(find $(COMPAT_WIRELESS_TREE) -name $$ko); do \
+ 			install -c -m644 $$f $(CURDIR)/debian/$(MODULES_PACKAGE)/opt/packet-injection-modules/$(RELEASE)/$$(basename $$f); \
+-			strip --remove-section=.comment --remove-section=.note --strip-unneeded  $(CURDIR)/debian/$(MODULES_PACKAGE)/opt/packet-injection-modules/$(RELEASE)/$$(basename $$f); \
++			arm-none-linux-gnueabi-strip --remove-section=.comment --remove-section=.note --strip-unneeded  $(CURDIR)/debian/$(MODULES_PACKAGE)/opt/packet-injection-modules/$(RELEASE)/$$(basename $$f); \
+ 		done; \
+ 	done
  	install -m644 $(CURDIR)/debian/kernel-power.blacklist $(CURDIR)/debian/$(MODULES_PACKAGE)/etc/modprobe.d
- 
-@@ -224,9 +230,6 @@ endif
+@@ -253,9 +258,6 @@ endif
  	dh_testroot
  	dh_installchangelogs -s
  	dh_installdocs -s
