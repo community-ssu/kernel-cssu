@@ -44,6 +44,7 @@ power-supply-no-verbose.diff
 bq27x00-rx51-board.diff
 bq27x00-upstream.diff
 bq27x00-maemo.diff
+bq27x00-sysfs-registers.diff
 l2cap_parent.diff
 wl12xx-rx-fix.diff
 anti-io-stalling.diff
