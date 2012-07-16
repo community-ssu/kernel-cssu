@@ -84,7 +84,7 @@ packet-injection-configure-stamp: packet-injection-source-stamp
 	cd $(COMPAT_WIRELESS_TREE) && ./scripts/driver-select wl12xx
 	touch $@
 
-packet-injection-build-stamp: packet-injection-configure-stamp
+packet-injection-build-stamp: kernel-stamp modules-stamp packet-injection-configure-stamp
 	$(MAKE) -C $(COMPAT_WIRELESS_TREE) $(NJOBS) KLIB_BUILD=$(KSRC)
 	touch $@
 
@@ -133,7 +133,7 @@ install-debug: install-modules
 	mkdir -p $(CURDIR)/debian/$(DEBUG_PACKAGE)/usr/lib/debug/lib/modules/$(RELEASE)
 	mkdir -p $(CURDIR)/debian/$(DEBUG_PACKAGE)/lib/modules/$(RELEASE)
 	install -m644 $(KSRC)/vmlinux $(CURDIR)/debian/$(DEBUG_PACKAGE)/usr/lib/debug/vmlinux-$(RELEASE)
-	for f in $$(find $(CURDIR)/debian/$(MODULES_PACKAGE) -name "*.ko"); do \
+	for f in $$(find $(CURDIR)/debian/$(MODULES_PACKAGE)/lib/modules/$(RELEASE) -name "*.ko"); do \
 		objcopy --only-keep-debug $$f $(CURDIR)/debian/$(DEBUG_PACKAGE)/usr/lib/debug/lib/modules/$(RELEASE)/$$(basename $$f); \
 		strip --remove-section=.comment --remove-section=.note --strip-unneeded  $(CURDIR)/debian/$(MODULES_PACKAGE)/lib/modules/$(RELEASE)/$$(basename $$f); \
 		objcopy --add-gnu-debuglink $(CURDIR)/debian/$(DEBUG_PACKAGE)/usr/lib/debug/lib/modules/$(RELEASE)/$$(basename $$f) $(CURDIR)/debian/$(MODULES_PACKAGE)/lib/modules/$(RELEASE)/$$(basename $$f); \
