@@ -155,7 +155,7 @@
  
  #define RX51_DEBUG_BASE			0x08000000  /* debug board */
  #define RX51_ETHR_START			RX51_DEBUG_BASE
-@@ -563,6 +565,81 @@ static struct i2c_board_info __initdata
+@@ -563,6 +565,82 @@ static struct i2c_board_info __initdata
  	},
  };
  
@@ -171,7 +171,8 @@
 +{
 +	rx51_charger_hook = hook;
 +	rx51_charger_hook_data = data;
-+	rx51_charger_hook(rx51_charger_mode, rx51_charger_hook_data);
++	if (rx51_charger_hook)
++		rx51_charger_hook(rx51_charger_mode, rx51_charger_hook_data);
 +	return 1;
 +}
 +
@@ -237,7 +238,7 @@
  static struct i2c_board_info __initdata rx51_peripherals_i2c_board_info_2[] = {
  	{
  		I2C_BOARD_INFO("lp5523", 0x32),
-@@ -575,6 +637,10 @@ static struct i2c_board_info __initdata
+@@ -575,6 +638,10 @@ static struct i2c_board_info __initdata
  	{
  		I2C_BOARD_INFO("bq27200", 0x55),
  	},

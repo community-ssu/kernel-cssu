@@ -1,3 +1,9 @@
+kernel-power (1:2.6.28-10power51r1) fremantle; urgency=low
+
+  * Fix bug in bq2415x_charger driver which cause reboot when driver is unloaded
+
+ -- Pali Rohár <pali.rohar@gmail.com>  Mon, 23 Jul 2012 13:36:02 +0200
+
 kernel-power (1:2.6.28-10power51) fremantle; urgency=low
 
   * Added bq2415x charger driver (blacklisted by default)
