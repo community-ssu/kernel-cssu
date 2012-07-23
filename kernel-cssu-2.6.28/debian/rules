@@ -126,8 +126,6 @@ install-flasher:
 	mkdir -p $(CURDIR)/debian/$(FLASHER_PACKAGE)/usr/sbin
 	mkdir -p $(CURDIR)/debian/$(FLASHER_PACKAGE)/usr/share/applications/hildon
 	install -m644 $(CURDIR)/debian/kernel-cssu-flasher.sudoers $(CURDIR)/debian/$(FLASHER_PACKAGE)/etc/sudoers.d
-	install -m755 $(CURDIR)/debian/kernel-cssu-uninstall $(CURDIR)/debian/$(FLASHER_PACKAGE)/usr/sbin
-	install -m644 $(CURDIR)/debian/kernel-cssu-uninstall.desktop $(CURDIR)/debian/$(FLASHER_PACKAGE)/usr/share/applications/hildon
 
 install-debug: install-modules
 	mkdir -p $(CURDIR)/debian/$(DEBUG_PACKAGE)/usr/lib/debug/lib/modules/$(RELEASE)

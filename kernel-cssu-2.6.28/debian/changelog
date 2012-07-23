@@ -1,4 +1,4 @@
-kernel-power (1:2.6.28-10cssu2) fremantle; urgency=low
+kernel-cssu (1:2.6.28-10cssu3) fremantle; urgency=low
 
   * Pull latest patches from kernel-power:
     - Fix bug in bq2415x_charger driver which cause reboot when driver is unloaded
@@ -9,6 +9,8 @@ kernel-power (1:2.6.28-10cssu2) fremantle; urgency=low
     - Added wl1251 packet injection modules
     - Use ITEM_OMAPATAG in u-boot bootmenu entry
     - Added patch for bq27x00 which export registers to file /sys/class/power_supply/bq27200-0/registers
+  * Remove warning that a new kernel will be flashed (kernel-cssu-flasher.preinst)
+  * removed uninstaller
 
  -- Ivaylo Dimitrov <freemangordon@abv.bg>  Mon, 23 Jul 2012 18:24:44 +0300
 
