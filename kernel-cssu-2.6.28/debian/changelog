@@ -1,46 +1,41 @@
+kernel-power (1:2.6.28-10cssu2) fremantle; urgency=low
+
+  * Pull latest patches from kernel-power:
+    - Fix bug in bq2415x_charger driver which cause reboot when driver is unloaded
+    - Added bq2415x charger driver (blacklisted by default)
+    - Show speed of connected usb device in /sys/devices/platform/musb_hdrc/hostdevice
+    - Fix radio-si4713 driver which caused using 100% CPU
+    - Provides: kernel-feature-smartreflex, kernel-feature-video720p, kernel-feature-packet-injection, kernel-feature-charger, kernel-feature-usbhost-new
+    - Added wl1251 packet injection modules
+    - Use ITEM_OMAPATAG in u-boot bootmenu entry
+    - Added patch for bq27x00 which export registers to file /sys/class/power_supply/bq27200-0/registers
+
+ -- Ivaylo Dimitrov <freemangordon@abv.bg>  Mon, 23 Jul 2012 18:24:44 +0300
+
 kernel-cssu (1:2.6.28-10cssu2) unstable; urgency=low
 
-   * Clear the IT state when invoking a Thumb-2 signal handler
-     http://git.et.redhat.com/?p=kernel-kraxel.git;a=commitdiff_plain;h=d71e1352e240dea32d481ad8d662e8de4406ac7e
+  * Clear the IT state when invoking a Thumb-2 signal handler
+    http://git.et.redhat.com/?p=kernel-kraxel.git;a=commitdiff_plain;h=d71e1352e240dea32d481ad8d662e8de4406ac7e
 
  -- Ivaylo Dimitrov <freemangordon@abv.bg>  Tue, 19 Jun 2012 11:28:31 +0300
 
 kernel-cssu (1:2.6.28-10cssu1) unstable; urgency=low
 
-   * added bq2415x driver
-   * Fix generating bootmenu file, use ITEM_REUSEATAGS
-   * Reorganized bq2415x patches
-   * Add patch musb_sysfs_hostdevice.diff
-   * Blacklist bq2415x_charger driver by default
+  * added bq2415x driver
+  * Fix generating bootmenu file, use ITEM_REUSEATAGS
+  * Reorganized bq2415x patches
+  * Add patch musb_sysfs_hostdevice.diff
+  * Blacklist bq2415x_charger driver by default
 
  -- Ivaylo Dimitrov <freemangordon@abv.bg>  Thu, 17 May 2012 15:58:23 +0300
 
 kernel-cssu (1:2.6.28-10cssu0) unstable; urgency=low
 
-   * package renamed to kernel-cssu
-   * disabled bq2415x driver
-   * Workaround for ARM errata 430973 and sysfs entry to enable/disable it
+  * package renamed to kernel-cssu
+  * disabled bq2415x driver
+  * Workaround for ARM errata 430973 and sysfs entry to enable/disable it
 
  -- Ivaylo Dimitrov <freemangordon@abv.bg>  Thu, 17 May 2012 15:58:23 +0300
-
-kernel-power (1:2.6.28-10power51r1) fremantle; urgency=low
-
-  * Fix bug in bq2415x_charger driver which cause reboot when driver is unloaded
-
- -- Pali Rohár <pali.rohar@gmail.com>  Mon, 23 Jul 2012 13:36:02 +0200
-
-kernel-power (1:2.6.28-10power51) fremantle; urgency=low
-
-  * Added bq2415x charger driver (blacklisted by default)
-  * Show speed of connected usb device in /sys/devices/platform/musb_hdrc/hostdevice
-  * Fix radio-si4713 driver which caused using 100% CPU
-  * Provides: kernel-feature-smartreflex, kernel-feature-video720p, kernel-feature-packet-injection, kernel-feature-charger, kernel-feature-usbhost-new
-  * Added wl1251 packet injection modules
-  * Use ITEM_OMAPATAG in u-boot bootmenu entry
-  * Added thumb patches from kernel-cssu, enable thumb support and provides: kernel-feature-errata-430973-workaround
-  * Added patch for bq27x00 which export registers to file /sys/class/power_supply/bq27200-0/registers
-
- -- Pali Rohár <pali.rohar@gmail.com>  Mon, 23 Jul 2012 11:36:29 +0200
 
 kernel-power (1:2.6.28-10power50) fremantle; urgency=low
 
