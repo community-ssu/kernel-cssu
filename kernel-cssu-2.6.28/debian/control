@@ -3,7 +3,7 @@ Section: utils
 Priority: optional
 Maintainer: Pali Rohár <pali.rohar@gmail.com>
 XSBC-Bugtracker: https://garage.maemo.org/tracker/?group_id=1528
-Build-Depends: debhelper (>= 4.0.0), quilt, sdk-fiasco-gen, libncurses5-dev, sharutils
+Build-Depends: debhelper (>= 4.0.0), quilt, sdk-fiasco-gen, libncurses5-dev, sharutils, wl1251-maemo-source
 Build-Depends-Indep: bzip2
 Standards-Version: 3.8.0
 
@@ -27,7 +27,8 @@ Provides: kernel-feature-netfilter, kernel-feature-ipv6, kernel-feature-ext4, ke
   kernel-feature-usbip, kernel-feature-ppp, kernel-feature-qos, kernel-feature-block2mtd, kernel-feature-kexec,
   kernel-feature-overclock, kernel-feature-joikuspot, kernel-feature-slip, kernel-feature-battery, kernel-feature-pptp,
   kernel-feature-wlan-monitor, kernel-feature-radiords, kernel-feature-ioacct, kernel-feature-usbhost, kernel-feature-framebuffer,
-  kernel-feature-errata-430973-workaround
+  kernel-feature-smartreflex, kernel-feature-video720p, kernel-feature-packet-injection, kernel-feature-charger,
+  kernel-feature-errata-430973-workaround, kernel-feature-usbhost-new
 XB-Maemo-Display-Name: Linux kernel for Community SSU (boot image for u-boot and multiboot)
 Description: Linux kernel boot image (kernel cssu 2.6.28.10)
  This package provides a bootable kernel image and config files
@@ -117,7 +118,8 @@ Provides: kernel-feature-netfilter, kernel-feature-ipv6, kernel-feature-ext4, ke
   kernel-feature-usbip, kernel-feature-ppp, kernel-feature-qos, kernel-feature-block2mtd, kernel-feature-kexec,
   kernel-feature-overclock, kernel-feature-joikuspot, kernel-feature-slip, kernel-feature-battery, kernel-feature-pptp,
   kernel-feature-wlan-monitor, kernel-feature-radiords, kernel-feature-ioacct, kernel-feature-usbhost, kernel-feature-framebuffer,
-  kernel-feature-errata-430973-workaround
+  kernel-feature-smartreflex, kernel-feature-video720p, kernel-feature-packet-injection, kernel-feature-charger,
+  kernel-feature-errata-430973-workaround, kernel-feature-usbhost-new
 XB-Maemo-Display-Name: Linux kernel for Community SSU
 Description: Linux kernel updater (kernel cssu 2.6.28.10)
  This package will flash the kernel image upon installation.
@@ -236,7 +238,7 @@ Description: Linux kernel modules (kernel cssu 2.6.28.10)
 
 Package: kernel-cssu-modules-debug
 Architecture: armel
-Depends: module-init-tools (>= 3.3), kernel-cssu-modules
+Depends: module-init-tools (>= 3.3), kernel-cssu-modules (= ${binary:Version})
 Description: Linux kernel modules for debugging (kernel cssu 2.6.28.10)
  This package provides kernel modules needed for debugging and profiling.
 

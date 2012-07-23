@@ -1,7 +1,7 @@
 #!/usr/bin/make -f
 #
 
-RELEASE := $(shell dpkg-parsechangelog | sed -ne 's/^Version: 1:\(.*\)/\1/p' | sed 's/-10/.10-/')
+RELEASE := $(shell dpkg-parsechangelog | sed -ne 's/^Version: 1:\(.*\)/\1/p' | sed 's/-10/.10-/' | sed 's/r[0-9]*$$//')
 REVISION := $(shell echo "$(RELEASE)" | sed 's/.*\./\./')
 EXTRAVERSION := EXTRAVERSION=$(REVISION)
 
@@ -24,6 +24,10 @@ BOOTMENUFILE := $(BOOTMENUDIR)/20-Maemo5-$(PACKAGE)-$(RELEASE).item
 
 BUILDTMP := $(CURDIR)/debian/build
 KSRC := $(BUILDTMP)/$(PACKAGE)
+
+WIRELESS_TESTING_TREE := $(BUILDTMP)/wireless-testing
+COMPAT_TREE := $(BUILDTMP)/compat
+COMPAT_WIRELESS_TREE := $(BUILDTMP)/compat-wireless-2.6
 
 DEFCONFIG := rx51_defconfig
 ARCH = $(shell dpkg-architecture -qDEB_HOST_ARCH_CPU)
@@ -66,14 +70,32 @@ modules-stamp: configure-stamp
 	$(MAKE) -C $(KSRC) $(NJOBS) $(EXTRAVERSION) modules
 	touch $@
 
-headers: kernel-stamp modules-stamp
+packet-injection-source-stamp:
+	dh_testdir
+	mkdir -p $(BUILDTMP)
+	cd $(BUILDTMP) && tar -xf /usr/src/compat-wireless-2.6.tar.bz2
+	cd $(BUILDTMP) && tar -xf /usr/src/compat.tar.bz2
+	cd $(BUILDTMP) && tar -xf /usr/src/wireless-testing.tar.bz2
+	touch $@
+
+packet-injection-configure-stamp: packet-injection-source-stamp
+	touch $(COMPAT_WIRELESS_TREE)/compat_version
+	cd $(COMPAT_WIRELESS_TREE) && GIT_TREE=$(WIRELESS_TESTING_TREE) GIT_COMPAT_TREE=$(COMPAT_TREE) GIT_COMPAT_WIRELESS_TREE=$(COMPAT_WIRELESS_TREE) ./scripts/admin-update.sh
+	cd $(COMPAT_WIRELESS_TREE) && ./scripts/driver-select wl12xx
+	touch $@
+
+packet-injection-build-stamp: kernel-stamp modules-stamp packet-injection-configure-stamp
+	$(MAKE) -C $(COMPAT_WIRELESS_TREE) $(NJOBS) KLIB_BUILD=$(KSRC)
+	touch $@
+
+headers: kernel-stamp modules-stamp packet-injection-build-stamp
 
 clean:
 	dh_testdir
 	dh_testroot
 	rm -rf $(BUILDTMP)
 	rm -f debian/files debian/$(FLASHER_PACKAGE).postinst debian/$(MODULES_PACKAGE).postinst debian/$(MODULES_PACKAGE).postrm
-	rm -f source-stamp configure-stamp kernel-stamp modules-stamp
+	rm -f source-stamp configure-stamp kernel-stamp modules-stamp packet-injection-source-stamp packet-injection-configure-stamp packet-injection-build-stamp
 	dh_clean
 
 install-kernel:
@@ -92,7 +114,7 @@ install-bootimg:
 	install -m644 $(KSRC)/arch/arm/boot/zImage $(CURDIR)/debian/$(BOOTIMG_PACKAGE)/boot/zImage-$(RELEASE)
 	echo "ITEM_NAME=\"Maemo 5 with $(PACKAGE) $(RELEASE) (Internal Nand)\"" > $(CURDIR)/debian/$(BOOTIMG_PACKAGE)/$(MULTIBOOTFILE)
 	echo "ITEM_KERNEL=\"$(RELEASE)\"" >> $(CURDIR)/debian/$(BOOTIMG_PACKAGE)/$(MULTIBOOTFILE)
-	echo "ITEM_REUSEATAGS=\"1\"" >> $(CURDIR)/debian/$(BOOTIMG_PACKAGE)/$(MULTIBOOTFILE)
+	echo "ITEM_OMAPATAG=\"1\"" >> $(CURDIR)/debian/$(BOOTIMG_PACKAGE)/$(MULTIBOOTFILE)
 	cp $(CURDIR)/debian/$(BOOTIMG_PACKAGE)/$(MULTIBOOTFILE) $(CURDIR)/debian/$(BOOTIMG_PACKAGE)/$(BOOTMENUFILE)
 	chmod 644 $(CURDIR)/debian/$(BOOTIMG_PACKAGE)/$(MULTIBOOTFILE)
 	chmod 644 $(CURDIR)/debian/$(BOOTIMG_PACKAGE)/$(BOOTMENUFILE)
@@ -111,7 +133,7 @@ install-debug: install-modules
 	mkdir -p $(CURDIR)/debian/$(DEBUG_PACKAGE)/usr/lib/debug/lib/modules/$(RELEASE)
 	mkdir -p $(CURDIR)/debian/$(DEBUG_PACKAGE)/lib/modules/$(RELEASE)
 	install -m644 $(KSRC)/vmlinux $(CURDIR)/debian/$(DEBUG_PACKAGE)/usr/lib/debug/vmlinux-$(RELEASE)
-	for f in $$(find $(CURDIR)/debian/$(MODULES_PACKAGE) -name "*.ko"); do \
+	for f in $$(find $(CURDIR)/debian/$(MODULES_PACKAGE)/lib/modules/$(RELEASE) -name "*.ko"); do \
 		objcopy --only-keep-debug $$f $(CURDIR)/debian/$(DEBUG_PACKAGE)/usr/lib/debug/lib/modules/$(RELEASE)/$$(basename $$f); \
 		strip --remove-section=.comment --remove-section=.note --strip-unneeded  $(CURDIR)/debian/$(MODULES_PACKAGE)/lib/modules/$(RELEASE)/$$(basename $$f); \
 		objcopy --add-gnu-debuglink $(CURDIR)/debian/$(DEBUG_PACKAGE)/usr/lib/debug/lib/modules/$(RELEASE)/$$(basename $$f) $(CURDIR)/debian/$(MODULES_PACKAGE)/lib/modules/$(RELEASE)/$$(basename $$f); \
@@ -129,9 +151,16 @@ install-modules:
 	dh_testroot
 	mkdir -p $(CURDIR)/debian/$(MODULES_PACKAGE)/lib/modules/$(RELEASE)
 	mkdir -p $(CURDIR)/debian/$(MODULES_PACKAGE)/etc/modprobe.d
+	mkdir -p $(CURDIR)/debian/$(MODULES_PACKAGE)/opt/packet-injection-modules/$(RELEASE)
 	for f in $$(find $(KSRC) -name "*.ko"); do \
 		install -c -m644 $$f $(CURDIR)/debian/$(MODULES_PACKAGE)/lib/modules/$(RELEASE)/$$(basename $$f); \
 		strip --remove-section=.comment --remove-section=.note --strip-unneeded  $(CURDIR)/debian/$(MODULES_PACKAGE)/lib/modules/$(RELEASE)/$$(basename $$f); \
+	done
+	for ko in wl1251_spi.ko wl1251.ko cfg80211.ko compat.ko rfkill_backport.ko mac80211.ko; do \
+		for f in $$(find $(COMPAT_WIRELESS_TREE) -name $$ko); do \
+			install -c -m644 $$f $(CURDIR)/debian/$(MODULES_PACKAGE)/opt/packet-injection-modules/$(RELEASE)/$$(basename $$f); \
+			strip --remove-section=.comment --remove-section=.note --strip-unneeded  $(CURDIR)/debian/$(MODULES_PACKAGE)/opt/packet-injection-modules/$(RELEASE)/$$(basename $$f); \
+		done; \
 	done
 	install -m644 $(CURDIR)/debian/kernel-cssu.blacklist $(CURDIR)/debian/$(MODULES_PACKAGE)/etc/modprobe.d
 

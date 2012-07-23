@@ -23,6 +23,25 @@ kernel-cssu (1:2.6.28-10cssu0) unstable; urgency=low
 
  -- Ivaylo Dimitrov <freemangordon@abv.bg>  Thu, 17 May 2012 15:58:23 +0300
 
+kernel-power (1:2.6.28-10power51r1) fremantle; urgency=low
+
+  * Fix bug in bq2415x_charger driver which cause reboot when driver is unloaded
+
+ -- Pali Rohár <pali.rohar@gmail.com>  Mon, 23 Jul 2012 13:36:02 +0200
+
+kernel-power (1:2.6.28-10power51) fremantle; urgency=low
+
+  * Added bq2415x charger driver (blacklisted by default)
+  * Show speed of connected usb device in /sys/devices/platform/musb_hdrc/hostdevice
+  * Fix radio-si4713 driver which caused using 100% CPU
+  * Provides: kernel-feature-smartreflex, kernel-feature-video720p, kernel-feature-packet-injection, kernel-feature-charger, kernel-feature-usbhost-new
+  * Added wl1251 packet injection modules
+  * Use ITEM_OMAPATAG in u-boot bootmenu entry
+  * Added thumb patches from kernel-cssu, enable thumb support and provides: kernel-feature-errata-430973-workaround
+  * Added patch for bq27x00 which export registers to file /sys/class/power_supply/bq27200-0/registers
+
+ -- Pali Rohár <pali.rohar@gmail.com>  Mon, 23 Jul 2012 11:36:29 +0200
+
 kernel-power (1:2.6.28-10power50) fremantle; urgency=low
 
    * Fixed reboot problem

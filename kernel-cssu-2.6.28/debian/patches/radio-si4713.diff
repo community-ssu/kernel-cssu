@@ -27,22 +27,24 @@
  
  /*
   * Sysfs properties
-@@ -193,17 +180,7 @@ static ssize_t si4713_lock_write(struct
+@@ -193,17 +180,15 @@ static ssize_t si4713_lock_write(struct
  				const char *buf,
  				size_t count)
  {
--	int l;
--
+ 	int l;
+ 
 -	if (config_locked)
 -		return -EPERM;
 -
--	sscanf(buf, "%d", &l);
--
+ 	sscanf(buf, "%d", &l);
+ 
 -	if (l != 0)
 -		config_locked = 1;
--
--	return count;
-+	return sscanf(buf, "%d", &config_locked);
++	if (l != 0 && l != 1)
++		return -EINVAL;
+ 
++	config_locked = l;
+ 	return count;
  }
  
  static ssize_t si4713_lock_read(struct device *dev,

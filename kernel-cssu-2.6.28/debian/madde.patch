@@ -1,4 +1,4 @@
-diff --git a/kernel-cssu-2.6.28/debian/control b/kernel-power-2.6.28/debian/control
+diff --git a/kernel-cssu-2.6.28/debian/control b/kernel-cssu-2.6.28/debian/control
 index ac43331..ec1431c 100644
 --- a/kernel-cssu-2.6.28/debian/control
 +++ b/kernel-cssu-2.6.28/debian/control
@@ -6,12 +6,12 @@ index ac43331..ec1431c 100644
  Priority: optional
  Maintainer: Pali Rohár <pali.rohar@gmail.com>
  XSBC-Bugtracker: https://garage.maemo.org/tracker/?group_id=1528
--Build-Depends: debhelper (>= 4.0.0), quilt, sdk-fiasco-gen, libncurses5-dev, sharutils
+-Build-Depends: debhelper (>= 4.0.0), quilt, sdk-fiasco-gen, libncurses5-dev, sharutils, wl1251-maemo-source
 +Build-Depends: debhelper (>= 4.0.0), quilt, libncurses5-dev, sharutils
  Build-Depends-Indep: bzip2
  Standards-Version: 3.8.0
  
-diff --git a/kernel-cssu-2.6.28/debian/patches/series b/kernel-power-2.6.28/debian/patches/series
+diff --git a/kernel-cssu-2.6.28/debian/patches/series b/kernel-cssu-2.6.28/debian/patches/series
 index f4f3d98..74a1598 100644
 --- a/kernel-cssu-2.6.28/debian/patches/series
 +++ b/kernel-cssu-2.6.28/debian/patches/series
@@ -23,7 +23,7 @@ index f4f3d98..74a1598 100644
  rx51_defconfig.diff
  unionfs-2.5.3.diff
  dm-loop.diff
-diff --git a/kernel-cssu-2.6.28/debian/rules b/kernel-power-2.6.28/debian/rules
+diff --git a/kernel-cssu-2.6.28/debian/rules b/kernel-cssu-2.6.28/debian/rules
 index 6510f9e..51515ac 100755
 --- a/kernel-cssu-2.6.28/debian/rules
 +++ b/kernel-cssu-2.6.28/debian/rules
@@ -31,27 +31,18 @@ index 6510f9e..51515ac 100755
  #!/usr/bin/make -f
  #
  
-+export PATH := $(HOME)/.madde/0.7.48/toolchains/arm-2007q3-51sb6-gdb71-arm-none-linux-gnueabi_linux_x86_64/bin:$(PATH)
++MADDE_VERSION := $(shell ls $(HOME)/.madde/ | sort -n -r | head -n1)
++MADDE_TOOLCHAIN := $(shell ls $(HOME)/.madde/$(MADDE_VERSION)/toolchains/ | sort -n -r | head -n1)
++MADDE_PATH := $(HOME)/.madde/$(MADDE_VERSION)/toolchains/$(MADDE_TOOLCHAIN)/bin
++export PATH := $(MADDE_PATH):$(PATH)
 +
- RELEASE := $(shell dpkg-parsechangelog | sed -ne 's/^Version: 1:\(.*\)/\1/p' | sed 's/-10/.10-/')
+ RELEASE := $(shell dpkg-parsechangelog | sed -ne 's/^Version: 1:\(.*\)/\1/p' | sed 's/-10/.10-/' | sed 's/r[0-9]*$$//')
  REVISION := $(shell echo "$(RELEASE)" | sed 's/.*\./\./')
  EXTRAVERSION := EXTRAVERSION=$(REVISION)
-@@ -78,7 +80,10 @@ install-kernel:
- 	dh_testdir
- 	dh_testroot
- 	mkdir -p $(CURDIR)/debian/$(KERNEL_PACKAGE)/boot
--	fiasco-gen -o $(CURDIR)/debian/$(KERNEL_PACKAGE)/boot/zImage-$(RELEASE).fiasco -g -k $(KSRC)/arch/arm/boot/zImage -v $(RELEASE)
-+	test -f sdk-fiasco-gen_2.8.2.0.1+0m5_i386.deb || wget http://repository.maemo.org/pool/fremantle/non-free/s/sdk-fiasco-gen/sdk-fiasco-gen_2.8.2.0.1+0m5_i386.deb
-+	ar x sdk-fiasco-gen_2.8.2.0.1+0m5_i386.deb data.tar.gz
-+	tar -xf data.tar.gz ./usr/bin/fiasco-gen -O > fiasco-gen && chmod +x fiasco-gen
-+	./fiasco-gen -o $(CURDIR)/debian/$(KERNEL_PACKAGE)/boot/zImage-$(RELEASE).fiasco -g -k $(KSRC)/arch/arm/boot/zImage -v $(RELEASE)
- 	chmod 644 $(CURDIR)/debian/$(KERNEL_PACKAGE)/boot/zImage-$(RELEASE).fiasco
- 
- install-bootimg:
-@@ -107,9 +112,9 @@ install-debug: install-modules
+@@ -134,9 +139,9 @@ install-debug: install-modules
  	mkdir -p $(CURDIR)/debian/$(DEBUG_PACKAGE)/lib/modules/$(RELEASE)
  	install -m644 $(KSRC)/vmlinux $(CURDIR)/debian/$(DEBUG_PACKAGE)/usr/lib/debug/vmlinux-$(RELEASE)
- 	for f in $$(find $(CURDIR)/debian/$(MODULES_PACKAGE) -name "*.ko"); do \
+ 	for f in $$(find $(CURDIR)/debian/$(MODULES_PACKAGE)/lib/modules/$(RELEASE) -name "*.ko"); do \
 -		objcopy --only-keep-debug $$f $(CURDIR)/debian/$(DEBUG_PACKAGE)/usr/lib/debug/lib/modules/$(RELEASE)/$$(basename $$f); \
 -		strip --remove-section=.comment --remove-section=.note --strip-unneeded  $(CURDIR)/debian/$(MODULES_PACKAGE)/lib/modules/$(RELEASE)/$$(basename $$f); \
 -		objcopy --add-gnu-debuglink $(CURDIR)/debian/$(DEBUG_PACKAGE)/usr/lib/debug/lib/modules/$(RELEASE)/$$(basename $$f) $(CURDIR)/debian/$(MODULES_PACKAGE)/lib/modules/$(RELEASE)/$$(basename $$f); \
@@ -61,16 +52,22 @@ index 6510f9e..51515ac 100755
  	done
  
  install-modules-debug: install-debug
-@@ -126,7 +131,7 @@ install-modules:
- 	mkdir -p $(CURDIR)/debian/$(MODULES_PACKAGE)/etc/modprobe.d
+@@ -154,12 +159,12 @@ install-modules:
+ 	mkdir -p $(CURDIR)/debian/$(MODULES_PACKAGE)/opt/packet-injection-modules/$(RELEASE)
  	for f in $$(find $(KSRC) -name "*.ko"); do \
  		install -c -m644 $$f $(CURDIR)/debian/$(MODULES_PACKAGE)/lib/modules/$(RELEASE)/$$(basename $$f); \
 -		strip --remove-section=.comment --remove-section=.note --strip-unneeded  $(CURDIR)/debian/$(MODULES_PACKAGE)/lib/modules/$(RELEASE)/$$(basename $$f); \
 +		arm-none-linux-gnueabi-strip --remove-section=.comment --remove-section=.note --strip-unneeded  $(CURDIR)/debian/$(MODULES_PACKAGE)/lib/modules/$(RELEASE)/$$(basename $$f); \
  	done
- 	install -m644 $(CURDIR)/debian/blacklist $(CURDIR)/debian/$(MODULES_PACKAGE)/etc/modprobe.d
- 
-@@ -219,9 +224,6 @@ endif
+ 	for ko in wl1251_spi.ko wl1251.ko cfg80211.ko compat.ko rfkill_backport.ko mac80211.ko; do \
+ 		for f in $$(find $(COMPAT_WIRELESS_TREE) -name $$ko); do \
+ 			install -c -m644 $$f $(CURDIR)/debian/$(MODULES_PACKAGE)/opt/packet-injection-modules/$(RELEASE)/$$(basename $$f); \
+-			strip --remove-section=.comment --remove-section=.note --strip-unneeded  $(CURDIR)/debian/$(MODULES_PACKAGE)/opt/packet-injection-modules/$(RELEASE)/$$(basename $$f); \
++			arm-none-linux-gnueabi-strip --remove-section=.comment --remove-section=.note --strip-unneeded  $(CURDIR)/debian/$(MODULES_PACKAGE)/opt/packet-injection-modules/$(RELEASE)/$$(basename $$f); \
+ 		done; \
+ 	done
+ 	install -m644 $(CURDIR)/debian/kernel-power.blacklist $(CURDIR)/debian/$(MODULES_PACKAGE)/etc/modprobe.d
+@@ -253,9 +258,6 @@ endif
  	dh_testroot
  	dh_installchangelogs -s
  	dh_installdocs -s
