@@ -1,0 +1,11 @@
+--- kernel-power/include/linux/kernel.h	2012-08-08 10:22:54.676618794 +0200
++++ kernel-power/include/linux/kernel.h	2012-08-08 10:23:55.148617030 +0200
+@@ -191,6 +191,8 @@ extern int kernel_text_address(unsigned
+ struct pid;
+ extern struct pid *session_of_pgrp(struct pid *pgrp);
+ 
++#define kstrtol strict_strtol
++
+ /*
+  * FW_BUG
+  * Add this to a message where you are sure the firmware is buggy or behaves

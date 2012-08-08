@@ -10,6 +10,7 @@ nokia-20103103+0m5.diff
 #nokia-20103103+0m5_usb.diff
 2.6.28.10.diff
 rx51_defconfig.diff
+kstrtol.diff
 unionfs-2.5.3.diff
 dm-loop.diff
 usbip.diff
