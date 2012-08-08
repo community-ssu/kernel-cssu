@@ -1,6 +1,6 @@
 --- /dev/null
 +++ kernel-power/drivers/power/bq2415x_charger.c
-@@ -0,0 +1,1569 @@
+@@ -0,0 +1,1572 @@
 +/*
 +    bq2415x_charger.c - bq2415x charger driver
 +    Copyright (C) 2011-2012  Pali Rohár <pali.rohar@gmail.com>
@@ -31,6 +31,7 @@
 +*/
 +
 +#include <linux/version.h>
++#include <linux/kernel.h>
 +#include <linux/module.h>
 +#include <linux/param.h>
 +#include <linux/err.h>
@@ -716,19 +717,19 @@
 +
 +	switch (mode) {
 +	case BQ2415X_MODE_NONE:
-+		dev_info(bq->dev, "mode: N/A\n");
++		dev_dbg(bq->dev, "changing mode to: N/A\n");
 +		ret = bq2415x_set_current_limit(bq, 100);
 +		break;
 +	case BQ2415X_MODE_HOST_CHARGER:
-+		dev_info(bq->dev, "mode: Host/HUB charger\n");
++		dev_dbg(bq->dev, "changing mode to: Host/HUB charger\n");
 +		ret = bq2415x_set_current_limit(bq, 500);
 +		break;
 +	case BQ2415X_MODE_DEDICATED_CHARGER:
-+		dev_info(bq->dev, "mode: Dedicated charger\n");
++		dev_dbg(bq->dev, "changing mode to: Dedicated charger\n");
 +		ret = bq2415x_set_current_limit(bq, 1800);
 +		break;
 +	case BQ2415X_MODE_BOOST: /* Boost mode */
-+		dev_info(bq->dev, "mode: Boost\n");
++		dev_dbg(bq->dev, "changing mode to: Boost\n");
 +		ret = bq2415x_set_current_limit(bq, 100);
 +		break;
 +	}
@@ -745,6 +746,8 @@
 +		return ret;
 +
 +	bq->mode = mode;
++	sysfs_notify(&bq->charger.dev->kobj, NULL, "mode");
++
 +	return 0;
 +
 +}
@@ -756,7 +759,10 @@
 +	if (!bq)
 +		return;
 +
++	dev_dbg(bq->dev, "hook function was called\n");
++
 +	bq->reported_mode = mode;
++	sysfs_notify(&bq->charger.dev->kobj, NULL, "reported_mode");
 +
 +	if (bq->automode < 1)
 +		return;
@@ -814,13 +820,13 @@
 +
 +	boost = bq2415x_exec_command(bq, BQ2415X_BOOST_MODE_STATUS);
 +	if (boost < 0) {
-+		bq2415x_timer_error(bq, "Unknow error");
++		bq2415x_timer_error(bq, "Unknown error");
 +		return;
 +	}
 +
 +	error = bq2415x_exec_command(bq, BQ2415X_FAULT_STATUS);
 +	if (error < 0) {
-+		bq2415x_timer_error(bq, "Unknow error");
++		bq2415x_timer_error(bq, "Unknown error");
 +		return;
 +	}
 +
@@ -1149,16 +1155,13 @@
 +	struct bq2415x_device *bq = container_of(psy, struct bq2415x_device,
 +						charger);
 +	ssize_t ret = 0;
-+	char *end;
-+	int reg;
-+	int val;
++	unsigned int reg;
++	unsigned int val;
 +
-+	reg = simple_strtol(buf, &end, 16);
-+	if (reg < 0 || reg > 4)
++	if (sscanf(buf, "%x %x", &reg, &val) != 2)
 +		return -EINVAL;
 +
-+	val = simple_strtol(end+1, NULL, 16);
-+	if (val < 0 || val > 255)
++	if (reg > 4 || val > 255)
 +		return -EINVAL;
 +
 +	ret = bq2415x_i2c_write(bq, reg, val);
@@ -1205,7 +1208,7 @@
 +	long val;
 +	int ret;
 +
-+	if (strict_strtol(buf, 10, &val) < 0)
++	if (kstrtol(buf, 10, &val) < 0)
 +		return -EINVAL;
 +
 +	if (strcmp(attr->attr.name, "current_limit") == 0)
@@ -1264,7 +1267,7 @@
 +	long val;
 +	int ret;
 +
-+	if (strict_strtol(buf, 10, &val) < 0)
++	if (kstrtol(buf, 10, &val) < 0)
 +		return -EINVAL;
 +
 +	if (strcmp(attr->attr.name, "charge_termination_enable") == 0)
