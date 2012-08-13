@@ -28,15 +28,15 @@ diff --git a/fs/udf/super.c b/fs/udf/super.c
 index 36a467c..f8fece4 100644
 --- a/fs/udf/super.c
 +++ b/fs/udf/super.c
-@@ -86,7 +86,6 @@ static int udf_remount_fs(struct super_block *, int *, char *);
+@@ -86,7 +86,6 @@ static int udf_remount_fs(struct super_b
  static int udf_check_valid(struct super_block *, int, int);
  static int udf_vrs(struct super_block *sb, int silent);
- static void udf_load_logicalvolint(struct super_block *, struct kernel_extent_ad);
+ static void udf_load_logicalvolint(struct super_block *, kernel_extent_ad);
 -static void udf_find_anchor(struct super_block *);
- static int udf_find_fileset(struct super_block *, struct kernel_lb_addr *,
- 			    struct kernel_lb_addr *);
+ static int udf_find_fileset(struct super_block *, kernel_lb_addr *,
+ 			    kernel_lb_addr *);
  static void udf_load_fileset(struct super_block *, struct buffer_head *,
-@@ -260,7 +259,7 @@ static int udf_show_options(struct seq_file *seq, struct vfsmount *mnt)
+@@ -258,7 +257,7 @@ static int udf_show_options(struct seq_f
  
  	if (!UDF_QUERY_FLAG(sb, UDF_FLAG_STRICT))
  		seq_puts(seq, ",nostrict");
@@ -45,7 +45,7 @@ index 36a467c..f8fece4 100644
  		seq_printf(seq, ",bs=%lu", sb->s_blocksize);
  	if (UDF_QUERY_FLAG(sb, UDF_FLAG_UNHIDE))
  		seq_puts(seq, ",unhide");
-@@ -416,7 +415,6 @@ static int udf_parse_options(char *options, struct udf_options *uopt,
+@@ -405,7 +404,6 @@ static int udf_parse_options(char *optio
  	int option;
  
  	uopt->novrs = 0;
@@ -53,7 +53,7 @@ index 36a467c..f8fece4 100644
  	uopt->partition = 0xFFFF;
  	uopt->session = 0xFFFFFFFF;
  	uopt->lastblock = 0;
-@@ -444,6 +442,7 @@ static int udf_parse_options(char *options, struct udf_options *uopt,
+@@ -432,6 +430,7 @@ static int udf_parse_options(char *optio
  			if (match_int(&args[0], &option))
  				return 0;
  			uopt->blocksize = option;
@@ -61,7 +61,7 @@ index 36a467c..f8fece4 100644
  			break;
  		case Opt_unhide:
  			uopt->flags |= (1 << UDF_FLAG_UNHIDE);
-@@ -789,12 +788,13 @@ static sector_t udf_scan_anchors(struct super_block *sb, sector_t lastblock)
+@@ -760,12 +759,13 @@ static sector_t udf_scan_anchors(struct
   * Return 1 if not found, 0 if ok
   *
   */
@@ -76,7 +76,7 @@ index 36a467c..f8fece4 100644
  	struct udf_sb_info *sbi = UDF_SB(sb);
  
  	lastblock = udf_scan_anchors(sb, sbi->s_last_block);
-@@ -832,10 +832,13 @@ check_anchor:
+@@ -803,10 +803,13 @@ check_anchor:
  			brelse(bh);
  			if (ident != TAG_IDENT_AVDP)
  				sbi->s_anchor[i] = 0;
@@ -90,7 +90,7 @@ index 36a467c..f8fece4 100644
  }
  
  static int udf_find_fileset(struct super_block *sb,
-@@ -1721,6 +1724,32 @@ static int udf_check_valid(struct super_block *sb, int novrs, int silent)
+@@ -1678,6 +1681,32 @@ static int udf_check_valid(struct super_
  	return !block;
  }
  
@@ -120,19 +120,19 @@ index 36a467c..f8fece4 100644
 +	return 1;
 +}
 +
- static int udf_load_sequence(struct super_block *sb, struct kernel_lb_addr *fileset)
+ static int udf_load_sequence(struct super_block *sb, kernel_lb_addr *fileset)
  {
  	struct anchorVolDescPtr *anchor;
-@@ -1889,6 +1918,7 @@ static void udf_free_partition(struct udf_part_map *map)
+@@ -1846,6 +1875,7 @@ static void udf_free_partition(struct ud
  static int udf_fill_super(struct super_block *sb, void *options, int silent)
  {
  	int i;
 +	int found_anchor;
  	struct inode *inode = NULL;
  	struct udf_options uopt;
- 	struct kernel_lb_addr rootdir, fileset;
-@@ -1941,13 +1971,6 @@ static int udf_fill_super(struct super_block *sb, void *options, int silent)
- 	sbi->s_dmode = uopt.dmode;
+ 	kernel_lb_addr rootdir, fileset;
+@@ -1894,13 +1924,6 @@ static int udf_fill_super(struct super_b
+ 	sbi->s_umask = uopt.umask;
  	sbi->s_nls_map = uopt.nls_map;
  
 -	/* Set the block size for all transfers */
@@ -145,7 +145,7 @@ index 36a467c..f8fece4 100644
  	if (uopt.session == 0xFFFFFFFF)
  		sbi->s_session = udf_get_last_session(sb);
  	else
-@@ -1955,17 +1978,22 @@ static int udf_fill_super(struct super_block *sb, void *options, int silent)
+@@ -1908,17 +1931,22 @@ static int udf_fill_super(struct super_b
  
  	udf_debug("Multi-session=%d\n", sbi->s_session);
  
