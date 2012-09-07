@@ -1,6 +1,6 @@
 --- /dev/null
 +++ kernel-power/drivers/power/bq2415x_charger.c
-@@ -0,0 +1,1572 @@
+@@ -0,0 +1,1579 @@
 +/*
 +    bq2415x_charger.c - bq2415x charger driver
 +    Copyright (C) 2011-2012  Pali Rohár <pali.rohar@gmail.com>
@@ -94,11 +94,11 @@
 +#define BQ2415X_SHIFT_REVISION		0
 +
 +/* current register */
-+/* RESET				BIT(7) */
-+#define BQ2415X_MASK_VI_CHRG		(BIT(4)|BIT(5)|BIT(6)|BIT(7))
++#define BQ2415X_MASK_RESET		BIT(7)
++#define BQ2415X_MASK_VI_CHRG		(BIT(4)|BIT(5)|BIT(6))
 +#define BQ2415X_SHIFT_VI_CHRG		4
 +/* N/A					BIT(3) */
-+#define BQ2415X_MASK_VI_TERM		(BIT(0)|BIT(1)|BIT(2)|BIT(7))
++#define BQ2415X_MASK_VI_TERM		(BIT(0)|BIT(1)|BIT(2))
 +#define BQ2415X_SHIFT_VI_TERM		0
 +
 +
@@ -620,7 +620,8 @@
 +		val = 7;
 +
 +	return bq2415x_i2c_write_mask(bq, BQ2415X_REG_CURRENT, val,
-+			BQ2415X_MASK_VI_CHRG, BQ2415X_SHIFT_VI_CHRG);
++			BQ2415X_MASK_VI_CHRG | BQ2415X_MASK_RESET,
++			BQ2415X_SHIFT_VI_CHRG);
 +}
 +
 +static int bq2415x_get_charge_current(struct bq2415x_device *bq)
@@ -651,7 +652,8 @@
 +		val = 7;
 +
 +	return bq2415x_i2c_write_mask(bq, BQ2415X_REG_CURRENT, val,
-+			BQ2415X_MASK_VI_TERM, BQ2415X_SHIFT_VI_TERM);
++			BQ2415X_MASK_VI_TERM | BQ2415X_MASK_RESET,
++			BQ2415X_SHIFT_VI_TERM);
 +}
 +
 +static int bq2415x_get_termination_current(struct bq2415x_device *bq)
@@ -693,24 +695,26 @@
 +	return 0;
 +}
 +
-+#undef bq2415x_set_default_value
-+
 +/* charger mode functions */
 +
 +static int bq2415x_set_mode(struct bq2415x_device *bq, enum bq2415x_mode mode)
 +{
 +	int ret = 0;
 +	int charger = 0;
++	int boost = 0;
 +
-+	if (mode == BQ2415X_MODE_NONE ||
-+		mode == BQ2415X_MODE_HOST_CHARGER ||
++	if (mode == BQ2415X_MODE_HOST_CHARGER ||
 +		mode == BQ2415X_MODE_DEDICATED_CHARGER)
 +			charger = 1;
 +
-+	if (charger)
-+		ret = bq2415x_exec_command(bq, BQ2415X_BOOST_MODE_DISABLE);
-+	else
++	if (mode == BQ2415X_MODE_BOOST)
++		boost = 1;
++
++	if (!charger)
 +		ret = bq2415x_exec_command(bq, BQ2415X_CHARGER_DISABLE);
++
++	if (!boost)
++		ret = bq2415x_exec_command(bq, BQ2415X_BOOST_MODE_DISABLE);
 +
 +	if (ret < 0)
 +		return ret;
@@ -739,11 +743,14 @@
 +
 +	if (charger)
 +		ret = bq2415x_exec_command(bq, BQ2415X_CHARGER_ENABLE);
-+	else
++	else if (boost)
 +		ret = bq2415x_exec_command(bq, BQ2415X_BOOST_MODE_ENABLE);
 +
 +	if (ret < 0)
 +		return ret;
++
++	bq2415x_set_default_value(bq, weak_battery_voltage);
++	bq2415x_set_default_value(bq, battery_regulation_voltage);
 +
 +	bq->mode = mode;
 +	sysfs_notify(&bq->charger.dev->kobj, NULL, "mode");
