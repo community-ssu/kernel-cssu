@@ -1,7 +1,7 @@
 #!/usr/bin/make -f
 #
 
-RELEASE := $(shell dpkg-parsechangelog | sed -ne 's/^Version: 1:\(.*\)/\1/p' | sed 's/-10/.10-/' | sed 's/r[0-9]*$$//')
+RELEASE := $(shell dpkg-parsechangelog | sed -ne 's/^Version: 1:\(.*\)/\1/p' | sed 's/-10/.10-/' | sed 's/\([0-9]\)r[0-9]*$$/\1/')
 REVISION := $(shell echo "$(RELEASE)" | sed 's/.*\./\./')
 EXTRAVERSION := EXTRAVERSION=$(REVISION)
 

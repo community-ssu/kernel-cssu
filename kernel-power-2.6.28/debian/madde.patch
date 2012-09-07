@@ -36,7 +36,7 @@ index a78394b..25397d5 100755
 +MADDE_PATH := $(HOME)/.madde/$(MADDE_VERSION)/toolchains/$(MADDE_TOOLCHAIN)/bin
 +export PATH := $(MADDE_PATH):$(PATH)
 +
- RELEASE := $(shell dpkg-parsechangelog | sed -ne 's/^Version: 1:\(.*\)/\1/p' | sed 's/-10/.10-/' | sed 's/r[0-9]*$$//')
+ RELEASE := $(shell dpkg-parsechangelog | sed -ne 's/^Version: 1:\(.*\)/\1/p' | sed 's/-10/.10-/' | sed 's/\([0-9]\)r[0-9]*$$/\1/')
  REVISION := $(shell echo "$(RELEASE)" | sed 's/.*\./\./')
  EXTRAVERSION := EXTRAVERSION=$(REVISION)
 @@ -134,9 +139,9 @@ install-debug: install-modules
