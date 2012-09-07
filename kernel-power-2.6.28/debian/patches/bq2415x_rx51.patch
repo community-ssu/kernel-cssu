@@ -19,14 +19,13 @@
  };
  
  /* internal define on top of container_of */
-@@ -365,6 +367,14 @@ static enum linkstat twl4030_usb_linksta
+@@ -365,6 +367,13 @@ static enum linkstat twl4030_usb_linksta
  	dev_dbg(twl->dev, "HW_CONDITIONS 0x%02x/%d; link %d\n",
  			status, status, linkstat);
  
 +	if (machine_is_nokia_rx51() && rx51_with_charger_detection()) {
 +		rx51_set_charger(linkstat == USB_LINK_VBUS);
 +		if (twl->work_inited && linkstat == USB_LINK_VBUS) {
-+			printk("rx51 - schedule delayed work in 2 seconds - rx51_detect_wallcharger\n");
 +			schedule_delayed_work(&twl->work, 2 * HZ); /* 2 seconds should be enought */
 +		}
 +	}
@@ -94,11 +93,10 @@
  #include "musb_core.h"
  
  
-@@ -223,6 +224,10 @@ static int musb_charger_detect(struct mu
+@@ -223,6 +224,9 @@ static int musb_charger_detect(struct mu
  	u8              vdat = 0;
  	u8              r;
  
-+	printk("musb_charger_detect (enabled = %d)\n", rx51_with_charger_detection());
 +	if (machine_is_nokia_rx51() && !rx51_with_charger_detection())
 +		return 0;
 +
@@ -114,13 +112,12 @@
  	} else {
  		/* enable interrupts */
  		musb_writeb(musb->mregs, MUSB_INTRUSBE, ctx.intrusbe);
-@@ -330,6 +330,14 @@ static int musb_charger_detect(struct mu
+@@ -330,6 +330,13 @@ static int musb_charger_detect(struct mu
  	return vdat;
  }
  
 +void rx51_detect_wallcharger(void *work)
 +{
-+	printk("rx51_detect_wallcharger (the_musb = %p)\n", the_musb);
 +	if (the_musb)
 +		musb_charger_detect(the_musb);
 +}
@@ -155,7 +152,7 @@
  
  #define RX51_DEBUG_BASE			0x08000000  /* debug board */
  #define RX51_ETHR_START			RX51_DEBUG_BASE
-@@ -563,6 +565,82 @@ static struct i2c_board_info __initdata
+@@ -563,6 +565,79 @@ static struct i2c_board_info __initdata
  	},
  };
  
@@ -198,7 +195,6 @@
 +
 +void rx51_set_charger(int connected)
 +{
-+	printk("rx51_set_charger (connected = %d)\n", connected);
 +	rx51_charger_connected = connected;
 +	rx51_update_charger_mode();
 +}
@@ -206,7 +202,6 @@
 +
 +void rx51_set_wallcharger(int connected)
 +{
-+	printk("rx51_set_wallcharger (connected = %d)\n", connected);
 +	rx51_wallcharger_connected = connected;
 +	rx51_update_charger_mode();
 +}
@@ -214,7 +209,6 @@
 +
 +void rx51_enable_charger_detection(int enable)
 +{
-+	printk("rx51_enable_charger_detection (enable = %d)\n", enable);
 +	rx51_charger_detection = enable;
 +}
 +EXPORT_SYMBOL(rx51_enable_charger_detection);
