@@ -90,3 +90,4 @@ dm9601-ethernet.patch
 asix-ethernet.patch
 nokia-av_key.patch
 resume_use_rtc_clock.diff
+resume_no_time_warn.diff
