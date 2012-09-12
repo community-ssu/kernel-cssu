@@ -1,0 +1,19 @@
+--- kernel-power/arch/arm/mach-omap2/board-rx51-peripherals.c.orig	2012-09-12 13:34:39.219423454 +0200
++++ kernel-power/arch/arm/mach-omap2/board-rx51-peripherals.c	2012-09-12 13:33:59.979424767 +0200
+@@ -267,10 +267,16 @@ static struct platform_device rx51_lirc_
+ 	},
+ };
+ 
++static struct platform_device rx51_battery = {
++	.name		= "rx51-battery",
++	.id		= -1,
++};
++
+ static struct platform_device *rx51_peripherals_devices[] = {
+ 	&rx51_smc91x_device,
+ 	&rx51_camera_button_device,
+ 	&rx51_lirc_device,
++	&rx51_battery,
+ };
+ 
+ static void __init rx51_init_smc91x(void)

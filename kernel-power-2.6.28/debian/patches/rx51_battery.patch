@@ -1,0 +1,220 @@
+--- /dev/null
++++ kernel-power/drivers/power/rx51_battery.c
+@@ -0,0 +1,217 @@
++/*
++    rx51_battery.c - Nokia RX-51 battery driver
++    Copyright (C) 2012  Pali Rohár <pali.rohar@gmail.com>
++
++    This program is free software; you can redistribute it and/or modify
++    it under the terms of the GNU General Public License as published by
++    the Free Software Foundation; either version 2 of the License, or
++    (at your option) any later version.
++
++    This program is distributed in the hope that it will be useful,
++    but WITHOUT ANY WARRANTY; without even the implied warranty of
++    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++    GNU General Public License for more details.
++
++    You should have received a copy of the GNU General Public License along
++    with this program; if not, write to the Free Software Foundation, Inc.,
++    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
++*/
++
++#include <linux/module.h>
++#include <linux/param.h>
++#include <linux/platform_device.h>
++#include <linux/power_supply.h>
++#include <linux/slab.h>
++#include <linux/i2c/twl4030-madc.h>
++
++struct rx51_device_info {
++	struct device *dev;
++	struct power_supply bat;
++};
++
++/* Read ADCIN channel value, code copied from maemo kernel */
++static int rx51_battery_read_adc(int channel)
++{
++	struct twl4030_madc_request req;
++
++	req.channels = (1 << channel);
++	req.do_avg = 1;
++	req.method = TWL4030_MADC_SW1;
++	req.func_cb = NULL;
++	req.type = TWL4030_MADC_WAIT;
++
++	if (twl4030_madc_conversion(&req) > 0)
++		return (u16)req.rbuf[channel];
++	else
++		return -ENODATA;
++}
++
++/* Read ADCIN channel 12 (voltage) and convert RAW value to micro voltage */
++/* This conversion formula was extracted from maemo program bsi-read */
++static int rx51_battery_read_voltage(struct rx51_device_info *di)
++{
++	int voltage = rx51_battery_read_adc(12);
++	if (voltage < 0)
++		return voltage;
++	return (((((2099203 - (1LL<<31)) * voltage * 6000) >> 32) -
++		((voltage * 6000LL << 1) >> 32) + (voltage * 6000)) >> 9)*1000;
++}
++
++/* Conversation table based on experimental data */
++/* Usage: rx51_temp_table[rx51_temp_first - Celsius value] = lowest RAW value */
++static int rx51_temp_first = 48;
++static int rx51_temp_table[] = {
++	 30,  31,  32,  33,  34,  35,  36,  38,  39,  40,  42,  43,  45,  47,
++	 48,  50,  51,  53,  55,  57,  59,  61,  63,  66,  69,  72,  74,  76,
++	 80,  83,  86,  90,  93,  96, 100, 105, 109, 114, 119, 124, 130, 136,
++	142, 148, 155, 161, 166, 177, 184, 193, 202, 213, 222, 230, 243, 255,
++	268, 280
++};
++
++/* Read ADCIN channel 0 (battery temp) and convert value to tenths of Celsius */
++/* Try to find lowest temperature value for raw value in table */
++static int rx51_battery_read_temperature(struct rx51_device_info *di)
++{
++	int min = 0;
++	int max = ARRAY_SIZE(rx51_temp_table)-1;
++	int temperature = rx51_battery_read_adc(0);
++
++	if (temperature < 0)
++		return temperature;
++	if (temperature < rx51_temp_table[min])
++		return rx51_temp_first-min+1;
++	if (temperature > rx51_temp_table[max])
++		return rx51_temp_first-max-1;
++
++	while (max-min > 1) {
++		int mid = (max+min)/2;
++		if (rx51_temp_table[mid] <= temperature)
++			min = mid;
++		else if (rx51_temp_table[mid] > temperature)
++			max = mid;
++		if (rx51_temp_table[mid] == temperature)
++			break;
++	}
++
++	return (rx51_temp_first - min) * 100;
++}
++
++/* Read ADCIN channel 4 (BSI) and convert RAW value to micro Ah */
++/* This conversion formula was extracted from maemo program bsi-read */
++static int rx51_battery_read_capacity(struct rx51_device_info *di)
++{
++	int capacity = rx51_battery_read_adc(4);
++	if (capacity < 0)
++		return capacity;
++	return 1280 * (1200 * capacity)/(1024 - capacity);
++}
++
++/* Return power_supply property */
++static int rx51_battery_get_property(struct power_supply *psy,
++					enum power_supply_property psp,
++					union power_supply_propval *val)
++{
++	struct rx51_device_info *di = container_of((psy),
++				struct rx51_device_info, bat);
++
++	switch (psp) {
++	case POWER_SUPPLY_PROP_TECHNOLOGY:
++		val->intval = POWER_SUPPLY_TECHNOLOGY_LION;
++		break;
++	case POWER_SUPPLY_PROP_VOLTAGE_MAX_DESIGN:
++		val->intval = 4200000;
++		break;
++	case POWER_SUPPLY_PROP_PRESENT:
++		val->intval = rx51_battery_read_voltage(di) ? 1 : 0;
++		break;
++	case POWER_SUPPLY_PROP_VOLTAGE_NOW:
++		val->intval = rx51_battery_read_voltage(di);
++		break;
++	case POWER_SUPPLY_PROP_TEMP:
++		val->intval = rx51_battery_read_temperature(di);
++		break;
++	case POWER_SUPPLY_PROP_CHARGE_FULL_DESIGN:
++		val->intval = rx51_battery_read_capacity(di);
++		break;
++	default:
++		return -EINVAL;
++	}
++
++	if (val->intval < 0)
++		return val->intval;
++
++	return 0;
++}
++
++static enum power_supply_property rx51_battery_props[] = {
++	POWER_SUPPLY_PROP_TECHNOLOGY,
++	POWER_SUPPLY_PROP_VOLTAGE_MAX_DESIGN,
++	POWER_SUPPLY_PROP_PRESENT,
++	POWER_SUPPLY_PROP_VOLTAGE_NOW,
++	POWER_SUPPLY_PROP_TEMP,
++	POWER_SUPPLY_PROP_CHARGE_FULL_DESIGN,
++};
++
++static int __devinit rx51_battery_probe(struct platform_device *pdev)
++{
++	struct rx51_device_info *di;
++	int ret;
++
++	di = kzalloc(sizeof(*di), GFP_KERNEL);
++	if (!di)
++		return -ENOMEM;
++
++	platform_set_drvdata(pdev, di);
++
++	di->bat.name = dev_name(&pdev->dev);
++	di->bat.type = POWER_SUPPLY_TYPE_BATTERY;
++	di->bat.properties = rx51_battery_props;
++	di->bat.num_properties = ARRAY_SIZE(rx51_battery_props);
++	di->bat.get_property = rx51_battery_get_property;
++
++	ret = power_supply_register(di->dev, &di->bat);
++	if (ret) {
++		platform_set_drvdata(pdev, NULL);
++		kfree(di);
++		return ret;
++	}
++
++	return 0;
++}
++
++static int __devexit rx51_battery_remove(struct platform_device *pdev)
++{
++	struct rx51_device_info *di = platform_get_drvdata(pdev);
++
++	power_supply_unregister(&di->bat);
++	platform_set_drvdata(pdev, NULL);
++	kfree(di);
++
++	return 0;
++}
++
++static struct platform_driver rx51_battery_driver = {
++	.probe = rx51_battery_probe,
++	.remove = __devexit_p(rx51_battery_remove),
++	.driver = {
++		.name = "rx51-battery",
++		.owner = THIS_MODULE,
++	},
++};
++
++static int __init rx51_battery_init(void)
++{
++	return platform_driver_register(&rx51_battery_driver);
++}
++module_init(rx51_battery_init);
++
++static void __exit rx51_battery_exit(void)
++{
++	platform_driver_unregister(&rx51_battery_driver);
++}
++module_exit(rx51_battery_exit);
++
++MODULE_ALIAS("platform:rx51-battery");
++MODULE_AUTHOR("Pali Rohár <pali.rohar@gmail.com>");
++MODULE_DESCRIPTION("Nokia RX-51 battery driver");
++MODULE_LICENSE("GPL");
