@@ -83,3 +83,4 @@ rx51_add_secure_ppa_api.diff
 rx51_arm_errata_430973.diff
 clear_the_it_state_when_invoking_a_thumb_2_signal_handler.diff
 udf-use-hw-sector-size.diff
+tif_restore_sigmask-syscalls-arm.patch
