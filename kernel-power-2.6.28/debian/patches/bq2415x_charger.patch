@@ -1,6 +1,6 @@
 --- /dev/null
 +++ kernel-power/drivers/power/bq2415x_charger.c
-@@ -0,0 +1,1637 @@
+@@ -0,0 +1,1636 @@
 +/*
 +    bq2415x_charger.c - bq2415x charger driver
 +    Copyright (C) 2011-2012  Pali Rohár <pali.rohar@gmail.com>
@@ -792,15 +792,14 @@
 +	if (!bq)
 +		return;
 +
-+	/* this should not happen, hook function is called only in automode */
++	dev_dbg(bq->dev, "hook function was called\n");
++	bq->reported_mode = mode;
++
++	/* if automode is not enabled do not tell about reported_mode */
 +	if (bq->automode < 1)
 +		return;
 +
-+	dev_dbg(bq->dev, "hook function was called\n");
-+
-+	bq->reported_mode = mode;
 +	sysfs_notify(&bq->charger.dev->kobj, NULL, "reported_mode");
-+
 +	bq2415x_set_mode(bq, bq->reported_mode);
 +
 +}
