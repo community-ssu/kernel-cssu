@@ -56,7 +56,7 @@
 +	int voltage = rx51_battery_read_adc(12);
 +	if (voltage < 0)
 +		return voltage;
-+	return 1000 * 10000 * voltage / 1705;
++	return 1000 * (10000 * voltage / 1705);
 +}
 +
 +/* Conversation table based on experimental data */
