@@ -20,6 +20,7 @@ Section: user/system
 Architecture: armel
 Depends: kernel-power-modules (= ${binary:Version})
 Conflicts: multiboot-kernel-power
+Replaces: kernel-power-bootimg
 Recommends: u-boot-flasher | multiboot, kernel-power-flasher, kernel-power-settings, usbip, iptables, mtd-utils, kexec-tools
 XB-Maemo-Display-Name: Linux kernel for power user (boot image for U-Boot and Multiboot)
 Description: Linux kernel boot image (kernel power 2.6.28.10)
