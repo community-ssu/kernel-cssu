@@ -1,6 +1,6 @@
 --- /dev/null
 +++ kernel-power/drivers/power/rx51_battery.c
-@@ -0,0 +1,217 @@
+@@ -0,0 +1,216 @@
 +/*
 +    rx51_battery.c - Nokia RX-51 battery driver
 +    Copyright (C) 2012  Pali Rohár <pali.rohar@gmail.com>
@@ -56,8 +56,7 @@
 +	int voltage = rx51_battery_read_adc(12);
 +	if (voltage < 0)
 +		return voltage;
-+	return (((((2099203 - (1LL<<31)) * voltage * 6000) >> 32) -
-+		((voltage * 6000LL << 1) >> 32) + (voltage * 6000)) >> 9)*1000;
++	return 1000 * 10000 * voltage / 1705;
 +}
 +
 +/* Conversation table based on experimental data */
