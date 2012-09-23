@@ -112,7 +112,7 @@ Provides: kernel-feature-netfilter, kernel-feature-ipv6, kernel-feature-ext4, ke
   kernel-feature-overclock, kernel-feature-joikuspot, kernel-feature-slip, kernel-feature-battery, kernel-feature-pptp,
   kernel-feature-wlan-monitor, kernel-feature-radiords, kernel-feature-ioacct, kernel-feature-usbhost, kernel-feature-framebuffer,
   kernel-feature-smartreflex, kernel-feature-video720p, kernel-feature-packet-injection, kernel-feature-charger,
-  kernel-feature-errata-430973-workaround, kernel-feature-usbhost-new, kernel-feature-sigmask
+  kernel-feature-errata-430973-workaround, kernel-feature-usbhost-new, kernel-feature-sigmask, kernel-feature-rx51-battery
 XB-Maemo-Display-Name: Linux kernel for power user
 Description: Linux kernel updater (kernel power 2.6.28.10)
  This package will flash the kernel image upon installation.
