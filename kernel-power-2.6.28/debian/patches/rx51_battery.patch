@@ -1,6 +1,6 @@
 --- /dev/null
 +++ kernel-power/drivers/power/rx51_battery.c
-@@ -0,0 +1,263 @@
+@@ -0,0 +1,257 @@
 +/*
 +    rx51_battery.c - Nokia RX-51 battery driver
 +    Copyright (C) 2012  Pali Rohár <pali.rohar@gmail.com>
@@ -88,7 +88,7 @@
 +     TEMP is between 53 C and -32 C
 +     RAW is between 25 and 993
 + */
-+static u8 rx51_temp_table2_first = 53;
++#define rx51_temp_table2_first 53
 +static u16 rx51_temp_table2[] = {
 +	 25,  26,  27,  28,  29,  30,  31,  32,  33,  34,  35,  36,  37,  39,
 +	 40,  41,  43,  44,  46,  48,  49,  51,  53,  55,  57,  59,  61,  64,
@@ -96,7 +96,7 @@
 +	115, 119, 125, 130, 136, 141, 148, 154, 161, 168, 176, 184, 202, 211,
 +	221, 231, 242, 254, 266, 279, 293, 308, 323, 340, 357, 375, 395, 415,
 +	437, 460, 485, 511, 539, 568, 600, 633, 669, 706, 747, 790, 836, 885,
-+	937, 993
++	937, 993, 1024
 +};
 +
 +/*
@@ -119,13 +119,7 @@
 +
 +	/* First check for temperature in first direct table */
 +	if (raw < ARRAY_SIZE(rx51_temp_table1))
-+		return rx51_temp_table1[raw];
-+
-+	/* Possible correct values which are not in tables */
-+	if (raw < rx51_temp_table2[min])
-+		return rx51_temp_table2_first-min;
-+	if (raw > rx51_temp_table2[max])
-+		return rx51_temp_table2_first-max;
++		return rx51_temp_table1[raw] * 100;
 +
 +	/* Binary search RAW value in second inverse table */
 +	while (max-min > 1) {
