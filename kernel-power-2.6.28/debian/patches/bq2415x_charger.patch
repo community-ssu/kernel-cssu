@@ -1,6 +1,6 @@
 --- /dev/null
 +++ kernel-power/drivers/power/bq2415x_charger.c
-@@ -0,0 +1,1636 @@
+@@ -0,0 +1,1644 @@
 +/*
 +    bq2415x_charger.c - bq2415x charger driver
 +    Copyright (C) 2011-2012  Pali Rohár <pali.rohar@gmail.com>
@@ -176,6 +176,7 @@
 +	enum bq2415x_mode reported_mode;/* mode reported by hook function */
 +	enum bq2415x_mode mode;		/* current configured mode */
 +	enum bq2415x_chip chip;
++	const char *timer_error;
 +	char *model;
 +	char *name;
 +	int autotimer;	/* 1 - if driver automatically reset timer, 0 - not */
@@ -530,6 +531,7 @@
 +	bq2415x_i2c_write(bq, BQ2415X_REG_VOLTAGE, BQ2415X_RESET_VOLTAGE);
 +	bq2415x_i2c_write(bq, BQ2415X_REG_CONTROL, BQ2415X_RESET_CONTROL);
 +	bq2415x_i2c_write(bq, BQ2415X_REG_STATUS, BQ2415X_RESET_STATUS);
++	bq->timer_error = NULL;
 +}
 +
 +/**** properties functions ****/
@@ -821,6 +823,7 @@
 +	if (state) {
 +		schedule_delayed_work(&bq->work, BQ2415X_TIMER_TIMEOUT * HZ);
 +		bq2415x_exec_command(bq, BQ2415X_TIMER_RESET);
++		bq->timer_error = NULL;
 +	} else {
 +		cancel_delayed_work_sync(&bq->work);
 +	}
@@ -831,6 +834,8 @@
 +/* called by bq2415x_timer_work on timer error */
 +static void bq2415x_timer_error(struct bq2415x_device *bq, const char *msg)
 +{
++	bq->timer_error = msg;
++	sysfs_notify(&bq->charger.dev->kobj, NULL, "timer");
 +	dev_err(bq->dev, "%s\n", msg);
 +	if (bq->automode > 0)
 +		bq->automode = 0;
@@ -1088,6 +1093,9 @@
 +	struct power_supply *psy = dev_get_drvdata(dev);
 +	struct bq2415x_device *bq = container_of(psy, struct bq2415x_device,
 +						charger);
++
++	if (bq->timer_error)
++		return sprintf(buf, "%s\n", bq->timer_error);
 +
 +	if (bq->autotimer)
 +		return sprintf(buf, "auto\n");
