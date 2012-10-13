@@ -9,7 +9,6 @@ Standards-Version: 3.8.0
 
 Package: kernel-power
 Architecture: armel
-Conflicts: kernel-maemo
 Description: Flashable Linux kernel (kernel power 2.6.28.10)
  This package provides a flashable kernel image.
  .
@@ -102,7 +101,6 @@ Section: user/system
 Architecture: armel
 Pre-Depends: kernel-power (= ${binary:Version}), kernel-power-modules (= ${binary:Version}), softupd (>= 0.4.0), hildon-application-manager
 Depends: sudo
-Conflicts: kernel-flasher-maemo (<= 2.6.28-maemo22), kernel-maemo, kernel-modules-maemo, kernel-headers-maemo, linux-kernel-headers-maemo
 Recommends: kernel-power-settings, usbip, iptables, mtd-utils, kexec-tools
 Provides: kernel-feature-netfilter, kernel-feature-ipv6, kernel-feature-ext4, kernel-feature-xfs, kernel-feature-reiserfs,
   kernel-feature-ntfs-read, kernel-feature-udf, kernel-feature-cifs, kernel-feature-automounter, kernel-feature-squashfs, 
@@ -210,21 +208,18 @@ XB-Maemo-Icon-26:
 Package: kernel-power-headers
 Architecture: armel
 Depends: ${shlibs:Depends}
-Conflicts: kernel-headers-maemo
 Description: Linux kernel headers (kernel power 2.6.28.10)
  This package provides kernel headers.
 
 Package: linux-kernel-power-headers
 Architecture: any
 Depends: ${shlibs:Depends}
-Conflicts: linux-kernel-headers-maemo, linux-kernel-headers
 Description: Linux Kernel headers for development (kernel power 2.6.28.10)
  This package provides headers from the Linux kernel. These headers
  are used by the installed headers for GNU glibc and other system libraries.
 
 Package: kernel-power-modules
 Architecture: armel
-Conflicts: kernel-modules-maemo
 Depends: module-init-tools (>= 3.3), kernel-power (= ${binary:Version}) | kernel-power-bootimg (= ${binary:Version})
 Description: Linux kernel modules (kernel power 2.6.28.10)
  This package provides kernel modules.
