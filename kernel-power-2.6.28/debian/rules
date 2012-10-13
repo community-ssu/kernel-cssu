@@ -17,8 +17,6 @@ DEBUG_PACKAGE := $(PACKAGE)-debug
 DEBUG_MODULES_PACKAGE := $(PACKAGE)-modules-debug
 LIBC_PACKAGE := linux-$(PACKAGE)-headers
 
-MULTIBOOTDIR := etc/multiboot.d
-MULTIBOOTFILE := $(MULTIBOOTDIR)/20-Maemo5-$(PACKAGE)-$(RELEASE).item
 BOOTMENUDIR := etc/bootmenu.d
 BOOTMENUFILE := $(BOOTMENUDIR)/20-Maemo5-$(PACKAGE)-$(RELEASE).item
 
@@ -109,14 +107,11 @@ install-bootimg:
 	dh_testdir
 	dh_testroot
 	mkdir -p $(CURDIR)/debian/$(BOOTIMG_PACKAGE)/boot
-	mkdir -p $(CURDIR)/debian/$(BOOTIMG_PACKAGE)/$(MULTIBOOTDIR)
 	mkdir -p $(CURDIR)/debian/$(BOOTIMG_PACKAGE)/$(BOOTMENUDIR)
 	install -m644 $(KSRC)/arch/arm/boot/zImage $(CURDIR)/debian/$(BOOTIMG_PACKAGE)/boot/zImage-$(RELEASE)
-	echo "ITEM_NAME=\"Maemo 5 with $(PACKAGE) $(RELEASE) (Internal Nand)\"" > $(CURDIR)/debian/$(BOOTIMG_PACKAGE)/$(MULTIBOOTFILE)
-	echo "ITEM_KERNEL=\"$(RELEASE)\"" >> $(CURDIR)/debian/$(BOOTIMG_PACKAGE)/$(MULTIBOOTFILE)
-	echo "ITEM_OMAPATAG=\"1\"" >> $(CURDIR)/debian/$(BOOTIMG_PACKAGE)/$(MULTIBOOTFILE)
-	cp $(CURDIR)/debian/$(BOOTIMG_PACKAGE)/$(MULTIBOOTFILE) $(CURDIR)/debian/$(BOOTIMG_PACKAGE)/$(BOOTMENUFILE)
-	chmod 644 $(CURDIR)/debian/$(BOOTIMG_PACKAGE)/$(MULTIBOOTFILE)
+	echo "ITEM_NAME=\"Maemo 5 with $(PACKAGE) $(RELEASE) (Internal Nand)\"" > $(CURDIR)/debian/$(BOOTIMG_PACKAGE)/$(BOOTMENUFILE)
+	echo "ITEM_KERNEL=\"$(RELEASE)\"" >> $(CURDIR)/debian/$(BOOTIMG_PACKAGE)/$(BOOTMENUFILE)
+	echo "ITEM_OMAPATAG=\"1\"" >> $(CURDIR)/debian/$(BOOTIMG_PACKAGE)/$(BOOTMENUFILE)
 	chmod 644 $(CURDIR)/debian/$(BOOTIMG_PACKAGE)/$(BOOTMENUFILE)
 
 install-flasher:

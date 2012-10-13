@@ -19,16 +19,15 @@ Package: kernel-power-bootimg
 Section: user/system
 Architecture: armel
 Depends: kernel-power-modules (= ${binary:Version})
-Conflicts: multiboot-kernel-power
 Replaces: kernel-power-bootimg
-Recommends: u-boot-flasher | multiboot, kernel-power-flasher, kernel-power-settings, usbip, iptables, mtd-utils, kexec-tools
-XB-Maemo-Display-Name: Linux kernel for power user (boot image for U-Boot and Multiboot)
+Recommends: u-boot-flasher, kernel-power-flasher, kernel-power-settings, usbip, iptables, mtd-utils, kexec-tools
+XB-Maemo-Display-Name: Linux kernel for power user (boot image for U-Boot)
 Description: Linux kernel boot image (kernel power 2.6.28.10)
- This package provides a bootable kernel image and config files
- for U-Boot Bootmenu and Multiboot.
+ This package provides a bootable kernel image and config file
+ for U-Boot Bootmenu.
  .
  This package does not flash kernel image. Instead it install
- config files for proper Bootmenu entry in U-Boot and Multiboot
+ config files for proper Bootmenu entry in U-Boot.
 XB-Maemo-Icon-26:
  iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAABmJLR0QAAAAA
  AAD5Q7t/AAAACXBIWXMAAABIAAAASABGyWs+AAAACXZwQWcAAAAwAAAAMADO
