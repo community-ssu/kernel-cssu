@@ -101,7 +101,7 @@ XB-Maemo-Icon-26:
 Package: kernel-power-flasher
 Section: user/system
 Architecture: armel
-Pre-Depends: kernel-power (= ${binary:Version}), kernel-power-modules (= ${binary:Version}), softupd (>= 0.4.0), maemo-installer-utils
+Pre-Depends: kernel-power (= ${binary:Version}), kernel-power-modules (= ${binary:Version}), softupd (>= 0.4.0), hildon-application-manager
 Depends: sudo
 Conflicts: kernel-flasher-maemo (<= 2.6.28-maemo22), kernel-maemo, kernel-modules-maemo, kernel-headers-maemo, linux-kernel-headers-maemo
 Recommends: kernel-power-settings, usbip, iptables, mtd-utils, kexec-tools
