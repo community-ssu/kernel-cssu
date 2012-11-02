@@ -9,8 +9,9 @@ Standards-Version: 3.8.0
 
 Package: kernel-cssu
 Architecture: armel
-Conflicts: kernel-maemo
+Conflicts: kernel-maemo, kernel
 Replaces: kernel
+Provides: kernel
 Description: Flashable Linux kernel (kernel cssu 2.6.28.10)
  This package provides a flashable kernel image.
  .
@@ -111,10 +112,10 @@ Section: user/system
 Architecture: armel
 Pre-Depends: kernel-cssu (= ${binary:Version}), kernel-cssu-modules (= ${binary:Version}), softupd (>= 0.4.0), maemo-installer-utils
 Depends: sudo
-Conflicts: kernel-flasher-maemo (<= 2.6.28-maemo22), kernel-maemo, kernel-modules-maemo, kernel-headers-maemo, linux-kernel-headers-maemo
+Conflicts: kernel-flasher, kernel-flasher-maemo (<= 2.6.28-maemo22), kernel-maemo, kernel-modules-maemo, kernel-headers-maemo, linux-kernel-headers-maemo
 Recommends: kernel-power-settings, usbip, iptables, mtd-utils, kexec-tools
 Replaces: kernel-flasher
-Provides: kernel-feature-netfilter, kernel-feature-ipv6, kernel-feature-ext4, kernel-feature-xfs, kernel-feature-reiserfs,
+Provides: kernel-flasher, kernel-feature-netfilter, kernel-feature-ipv6, kernel-feature-ext4, kernel-feature-xfs, kernel-feature-reiserfs,
   kernel-feature-ntfs-read, kernel-feature-udf, kernel-feature-cifs, kernel-feature-automounter, kernel-feature-squashfs, 
   kernel-feature-unionfs, kernel-feature-crypto, kernel-feature-dmloop, kernel-feature-utf8, kernel-feature-mousejoy,
   kernel-feature-usbip, kernel-feature-ppp, kernel-feature-qos, kernel-feature-block2mtd, kernel-feature-kexec,
@@ -233,8 +234,9 @@ Description: Linux Kernel headers for development (kernel cssu 2.6.28.10)
 
 Package: kernel-cssu-modules
 Architecture: armel
-Conflicts: kernel-modules-maemo
+Conflicts: kernel-modules,kernel-modules-maemo
 Replaces: kernel-modules
+Provides: kernel-modules
 Depends: module-init-tools (>= 3.3), kernel-cssu (= ${binary:Version}) | kernel-cssu-bootimg (= ${binary:Version})
 Description: Linux kernel modules (kernel cssu 2.6.28.10)
  This package provides kernel modules.

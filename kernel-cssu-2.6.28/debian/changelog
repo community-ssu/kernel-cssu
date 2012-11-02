@@ -11,6 +11,7 @@ kernel-cssu (1:2.6.28-10cssu3) fremantle; urgency=low
     - Added patch for bq27x00 which export registers to file /sys/class/power_supply/bq27200-0/registers
   * Remove warning that a new kernel will be flashed (kernel-cssu-flasher.preinst)
   * removed uninstaller
+  * replace stock kernel
 
  -- Ivaylo Dimitrov <freemangordon@abv.bg>  Mon, 23 Jul 2012 18:24:44 +0300
 
