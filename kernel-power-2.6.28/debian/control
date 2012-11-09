@@ -18,7 +18,6 @@ Package: kernel-power-bootimg
 Section: user/system
 Architecture: armel
 Depends: kernel-power-modules (= ${binary:Version})
-Replaces: kernel-power-bootimg
 Recommends: u-boot-flasher, kernel-power-flasher, kernel-power-settings, usbip, iptables, mtd-utils, kexec-tools
 XB-Maemo-Display-Name: Linux kernel for power user (boot image for U-Boot)
 Description: Linux kernel boot image (kernel power 2.6.28.10)
@@ -220,7 +219,7 @@ Description: Linux Kernel headers for development (kernel power 2.6.28.10)
 
 Package: kernel-power-modules
 Architecture: armel
-Depends: module-init-tools (>= 3.3), kernel-power (= ${binary:Version}) | kernel-power-bootimg (= ${binary:Version})
+Depends: module-init-tools (>= 3.3), kernel-power (= ${binary:Version})
 Description: Linux kernel modules (kernel power 2.6.28.10)
  This package provides kernel modules.
 
