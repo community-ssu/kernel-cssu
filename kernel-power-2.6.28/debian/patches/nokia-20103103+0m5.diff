@@ -1,5 +1,6 @@
---- kernel-power-2.6.28.orig/arch/arm/include/asm/cacheflush.h
-+++ kernel-power-2.6.28/arch/arm/include/asm/cacheflush.h
+diff -Nurp kernel-2.6.28-20101501+0m5/arch/arm/include/asm/cacheflush.h kernel-2.6.28-20103103+0m5/arch/arm/include/asm/cacheflush.h
+--- kernel-2.6.28-20101501+0m5/arch/arm/include/asm/cacheflush.h	2008-12-25 00:26:37.000000000 +0100
++++ kernel-2.6.28-20103103+0m5/arch/arm/include/asm/cacheflush.h	2012-12-16 13:35:56.024308851 +0100
 @@ -138,16 +138,16 @@
   *	Please note that the implementation of these, and the required
   *	effects are cache-type (VIVT/VIPT/PIPT) specific.
@@ -41,7 +42,7 @@
   *	DMA Cache Coherency
   *	===================
   *
-@@ -375,7 +389,7 @@
+@@ -375,7 +389,7 @@ extern void flush_ptrace_access(struct v
   * Harvard caches are synchronised for the user space address range.
   * This is used for the ARM private sys_cacheflush system call.
   */
@@ -50,9 +51,10 @@
  	__cpuc_coherent_user_range((start) & PAGE_MASK, PAGE_ALIGN(end))
  
  /*
---- kernel-power-2.6.28.orig/arch/arm/kernel/traps.c
-+++ kernel-power-2.6.28/arch/arm/kernel/traps.c
-@@ -418,7 +418,9 @@
+diff -Nurp kernel-2.6.28-20101501+0m5/arch/arm/kernel/traps.c kernel-2.6.28-20103103+0m5/arch/arm/kernel/traps.c
+--- kernel-2.6.28-20101501+0m5/arch/arm/kernel/traps.c	2012-12-16 13:28:45.468315523 +0100
++++ kernel-2.6.28-20103103+0m5/arch/arm/kernel/traps.c	2012-12-16 13:35:56.024308851 +0100
+@@ -418,7 +418,9 @@ do_cache_op(unsigned long start, unsigne
  		if (end > vma->vm_end)
  			end = vma->vm_end;
  
@@ -63,9 +65,10 @@
  	}
  	up_read(&mm->mmap_sem);
  }
---- kernel-power-2.6.28.orig/arch/arm/mach-omap2/smartreflex.c
-+++ kernel-power-2.6.28/arch/arm/mach-omap2/smartreflex.c
-@@ -890,7 +890,7 @@
+diff -Nurp kernel-2.6.28-20101501+0m5/arch/arm/mach-omap2/smartreflex.c kernel-2.6.28-20103103+0m5/arch/arm/mach-omap2/smartreflex.c
+--- kernel-2.6.28-20101501+0m5/arch/arm/mach-omap2/smartreflex.c	2012-12-16 13:30:17.084314106 +0100
++++ kernel-2.6.28-20103103+0m5/arch/arm/mach-omap2/smartreflex.c	2012-12-16 13:35:56.024308851 +0100
+@@ -890,7 +890,7 @@ int sr_voltagescale_vcbypass(u32 target_
  		return SR_FAIL;
  	}
  
@@ -74,9 +77,10 @@
  		WARN(1, "SR: Must not transmit VCBYPASS command while SR is "
  		     "active");
  		return SR_FAIL;
---- kernel-power-2.6.28.orig/arch/arm/mm/fault.c
-+++ kernel-power-2.6.28/arch/arm/mm/fault.c
-@@ -387,6 +387,9 @@
+diff -Nurp kernel-2.6.28-20101501+0m5/arch/arm/mm/fault.c kernel-2.6.28-20103103+0m5/arch/arm/mm/fault.c
+--- kernel-2.6.28-20101501+0m5/arch/arm/mm/fault.c	2012-12-16 13:28:45.472315523 +0100
++++ kernel-2.6.28-20103103+0m5/arch/arm/mm/fault.c	2012-12-16 13:35:56.024308851 +0100
+@@ -387,6 +387,9 @@ do_translation_fault(unsigned long addr,
  	if (addr < TASK_SIZE)
  		return do_page_fault(addr, fsr, regs);
  
@@ -86,7 +90,7 @@
  	index = pgd_index(addr);
  
  	/*
-@@ -449,7 +452,12 @@
+@@ -449,7 +452,12 @@ static struct fsr_info {
  	{ do_bad,		SIGILL,	 BUS_ADRALN,	"alignment exception"		   },
  	{ do_bad,		SIGKILL, 0,		"terminal exception"		   },
  	{ do_bad,		SIGILL,	 BUS_ADRALN,	"alignment exception"		   },
@@ -99,18 +103,20 @@
  	{ do_translation_fault,	SIGSEGV, SEGV_MAPERR,	"section translation fault"	   },
  	{ do_bad,		SIGBUS,	 0,		"external abort on linefetch"	   },
  	{ do_page_fault,	SIGSEGV, SEGV_MAPERR,	"page translation fault"	   },
---- kernel-power-2.6.28.orig/arch/arm/mm/mmu.c
-+++ kernel-power-2.6.28/arch/arm/mm/mmu.c
-@@ -953,4 +953,6 @@
+diff -Nurp kernel-2.6.28-20101501+0m5/arch/arm/mm/mmu.c kernel-2.6.28-20103103+0m5/arch/arm/mm/mmu.c
+--- kernel-2.6.28-20101501+0m5/arch/arm/mm/mmu.c	2012-12-16 13:28:30.840315752 +0100
++++ kernel-2.6.28-20103103+0m5/arch/arm/mm/mmu.c	2012-12-16 13:35:56.028308851 +0100
+@@ -953,4 +953,6 @@ void setup_mm_for_reboot(char mode)
  		pmd[1] = __pmd(pmdval + (1 << (PGDIR_SHIFT - 1)));
  		flush_pmd_entry(pmd);
  	}
 +
 +	local_flush_tlb_all();
  }
---- kernel-power-2.6.28.orig/arch/arm/mm/proc-v6.S
-+++ kernel-power-2.6.28/arch/arm/mm/proc-v6.S
-@@ -56,8 +56,6 @@
+diff -Nurp kernel-2.6.28-20101501+0m5/arch/arm/mm/proc-v6.S kernel-2.6.28-20103103+0m5/arch/arm/mm/proc-v6.S
+--- kernel-2.6.28-20101501+0m5/arch/arm/mm/proc-v6.S	2008-12-25 00:26:37.000000000 +0100
++++ kernel-2.6.28-20103103+0m5/arch/arm/mm/proc-v6.S	2012-12-16 13:35:56.028308851 +0100
+@@ -56,8 +56,6 @@ ENTRY(cpu_v6_proc_fin)
   *	to what would be the reset vector.
   *
   *	- loc   - location to jump to for soft reset
@@ -119,9 +125,10 @@
   */
  	.align	5
  ENTRY(cpu_v6_reset)
---- kernel-power-2.6.28.orig/arch/arm/mm/proc-v7.S
-+++ kernel-power-2.6.28/arch/arm/mm/proc-v7.S
-@@ -28,7 +28,14 @@
+diff -Nurp kernel-2.6.28-20101501+0m5/arch/arm/mm/proc-v7.S kernel-2.6.28-20103103+0m5/arch/arm/mm/proc-v7.S
+--- kernel-2.6.28-20101501+0m5/arch/arm/mm/proc-v7.S	2008-12-25 00:26:37.000000000 +0100
++++ kernel-2.6.28-20103103+0m5/arch/arm/mm/proc-v7.S	2012-12-16 13:35:56.028308851 +0100
+@@ -28,7 +28,14 @@ ENTRY(cpu_v7_proc_init)
  ENDPROC(cpu_v7_proc_init)
  
  ENTRY(cpu_v7_proc_fin)
@@ -137,7 +144,7 @@
  ENDPROC(cpu_v7_proc_fin)
  
  /*
-@@ -39,8 +46,6 @@
+@@ -39,8 +46,6 @@ ENDPROC(cpu_v7_proc_fin)
   *	to what would be the reset vector.
   *
   *	- loc   - location to jump to for soft reset
@@ -146,9 +153,10 @@
   */
  	.align	5
  ENTRY(cpu_v7_reset)
---- kernel-power-2.6.28.orig/block/cfq-iosched.c
-+++ kernel-power-2.6.28/block/cfq-iosched.c
-@@ -84,6 +84,11 @@
+diff -Nurp kernel-2.6.28-20101501+0m5/block/cfq-iosched.c kernel-2.6.28-20103103+0m5/block/cfq-iosched.c
+--- kernel-2.6.28-20101501+0m5/block/cfq-iosched.c	2008-12-25 00:26:37.000000000 +0100
++++ kernel-2.6.28-20103103+0m5/block/cfq-iosched.c	2012-12-16 13:35:56.028308851 +0100
+@@ -84,6 +84,11 @@ struct cfq_data {
  	 */
  	struct cfq_rb_root service_tree;
  	unsigned int busy_queues;
@@ -160,7 +168,7 @@
  
  	int rq_in_driver;
  	int sync_flight;
-@@ -155,6 +160,7 @@
+@@ -155,6 +160,7 @@ struct cfq_queue {
  
  	unsigned long slice_end;
  	long slice_resid;
@@ -168,7 +176,7 @@
  
  	/* pending metadata requests */
  	int meta_pending;
-@@ -171,13 +177,12 @@
+@@ -171,13 +177,12 @@ struct cfq_queue {
  enum cfqq_state_flags {
  	CFQ_CFQQ_FLAG_on_rr = 0,	/* on round-robin busy list */
  	CFQ_CFQQ_FLAG_wait_request,	/* waiting for a request */
@@ -183,7 +191,7 @@
  	CFQ_CFQQ_FLAG_slice_new,	/* no requests dispatched in slice */
  	CFQ_CFQQ_FLAG_sync,		/* synchronous queue */
  };
-@@ -198,13 +203,12 @@
+@@ -198,13 +203,12 @@ static inline int cfq_cfqq_##name(const
  
  CFQ_CFQQ_FNS(on_rr);
  CFQ_CFQQ_FNS(wait_request);
@@ -198,7 +206,7 @@
  CFQ_CFQQ_FNS(slice_new);
  CFQ_CFQQ_FNS(sync);
  #undef CFQ_CFQQ_FNS
-@@ -562,6 +566,8 @@
+@@ -562,6 +566,8 @@ static void cfq_add_cfqq_rr(struct cfq_d
  	BUG_ON(cfq_cfqq_on_rr(cfqq));
  	cfq_mark_cfqq_on_rr(cfqq);
  	cfqd->busy_queues++;
@@ -207,7 +215,7 @@
  
  	cfq_resort_rr_list(cfqd, cfqq);
  }
-@@ -581,6 +587,8 @@
+@@ -581,6 +587,8 @@ static void cfq_del_cfqq_rr(struct cfq_d
  
  	BUG_ON(!cfqd->busy_queues);
  	cfqd->busy_queues--;
@@ -216,7 +224,7 @@
  }
  
  /*
-@@ -765,10 +773,15 @@
+@@ -765,10 +773,15 @@ static void __cfq_set_active_queue(struc
  	if (cfqq) {
  		cfq_log_cfqq(cfqd, cfqq, "set_active");
  		cfqq->slice_end = 0;
@@ -233,7 +241,7 @@
  	}
  
  	cfqd->active_queue = cfqq;
-@@ -786,7 +799,6 @@
+@@ -786,7 +799,6 @@ __cfq_slice_expired(struct cfq_data *cfq
  	if (cfq_cfqq_wait_request(cfqq))
  		del_timer(&cfqd->idle_slice_timer);
  
@@ -241,7 +249,7 @@
  	cfq_clear_cfqq_wait_request(cfqq);
  
  	/*
-@@ -915,7 +927,6 @@
+@@ -915,7 +927,6 @@ static void cfq_arm_slice_timer(struct c
  	    (sample_valid(cic->ttime_samples) && cic->ttime_mean > 2))
  		return;
  
@@ -249,7 +257,7 @@
  	cfq_mark_cfqq_wait_request(cfqq);
  
  	/*
-@@ -1001,10 +1012,24 @@
+@@ -1001,10 +1012,24 @@ static struct cfq_queue *cfq_select_queu
  	/*
  	 * The active queue has run out of time, expire it and select new.
  	 */
@@ -275,7 +283,7 @@
  	 * The active queue has requests and isn't expired, allow it to
  	 * dispatch.
  	 */
-@@ -1030,59 +1055,6 @@
+@@ -1030,59 +1055,6 @@ keep_queue:
  	return cfqq;
  }
  
@@ -335,7 +343,7 @@
  static int __cfq_forced_dispatch_cfqq(struct cfq_queue *cfqq)
  {
  	int dispatched = 0;
-@@ -1116,11 +1088,45 @@
+@@ -1116,11 +1088,45 @@ static int cfq_forced_dispatch(struct cf
  	return dispatched;
  }
  
@@ -382,7 +390,7 @@
  
  	if (!cfqd->busy_queues)
  		return 0;
-@@ -1128,33 +1134,63 @@
+@@ -1128,33 +1134,63 @@ static int cfq_dispatch_requests(struct
  	if (unlikely(force))
  		return cfq_forced_dispatch(cfqd);
  
@@ -392,7 +400,8 @@
 +	cfqq = cfq_select_queue(cfqd);
 +	if (!cfqq)
 +		return 0;
-+
+ 
+-		max_dispatch = cfqd->cfq_quantum;
 +	/*
 +	 * If this is an async queue and we have sync IO in flight, let it wait
 +	 */
@@ -402,8 +411,7 @@
 +	max_dispatch = cfqd->cfq_quantum;
 +	if (cfq_class_idle(cfqq))
 +		max_dispatch = 1;
- 
--		max_dispatch = cfqd->cfq_quantum;
++
 +	/*
 +	 * Does this cfqq already have too much IO in flight?
 +	 */
@@ -465,7 +473,7 @@
  }
  
  /*
-@@ -1318,7 +1354,15 @@
+@@ -1318,7 +1354,15 @@ static void cfq_exit_single_io_context(s
  		unsigned long flags;
  
  		spin_lock_irqsave(q->queue_lock, flags);
@@ -482,7 +490,7 @@
  		spin_unlock_irqrestore(q->queue_lock, flags);
  	}
  }
-@@ -1472,7 +1516,6 @@
+@@ -1472,7 +1516,6 @@ retry:
  		cfqq->cfqd = cfqd;
  
  		cfq_mark_cfqq_prio_changed(cfqq);
@@ -490,7 +498,7 @@
  
  		cfq_init_prio_data(cfqq, ioc);
  
-@@ -1797,6 +1840,12 @@
+@@ -1797,6 +1840,12 @@ cfq_should_preempt(struct cfq_data *cfqd
  	if (rq_is_meta(rq) && !cfqq->meta_pending)
  		return 1;
  
@@ -503,7 +511,7 @@
  	if (!cfqd->active_cic || !cfq_cfqq_wait_request(cfqq))
  		return 0;
  
-@@ -1853,23 +1902,28 @@
+@@ -1853,23 +1902,28 @@ cfq_rq_enqueued(struct cfq_data *cfqd, s
  
  	if (cfqq == cfqd->active_queue) {
  		/*
@@ -539,7 +547,7 @@
  		blk_start_queueing(cfqd->queue);
  	}
  }
-@@ -2129,6 +2183,12 @@
+@@ -2129,6 +2183,12 @@ static void cfq_idle_slice_timer(unsigne
  		timed_out = 0;
  
  		/*
@@ -552,7 +560,7 @@
  		 * expired
  		 */
  		if (cfq_slice_used(cfqq))
-@@ -2144,10 +2204,8 @@
+@@ -2144,10 +2204,8 @@ static void cfq_idle_slice_timer(unsigne
  		/*
  		 * not expired and it has a request pending, let it dispatch
  		 */
@@ -564,9 +572,10 @@
  	}
  expire:
  	cfq_slice_expired(cfqd, timed_out);
---- kernel-power-2.6.28.orig/drivers/dsp/bridge/rmgr/drv.c
-+++ kernel-power-2.6.28/drivers/dsp/bridge/rmgr/drv.c
-@@ -517,11 +517,12 @@
+diff -Nurp kernel-2.6.28-20101501+0m5/drivers/dsp/bridge/rmgr/drv.c kernel-2.6.28-20103103+0m5/drivers/dsp/bridge/rmgr/drv.c
+--- kernel-2.6.28-20101501+0m5/drivers/dsp/bridge/rmgr/drv.c	2012-12-16 13:29:16.884315037 +0100
++++ kernel-2.6.28-20103103+0m5/drivers/dsp/bridge/rmgr/drv.c	2012-12-16 13:35:56.028308851 +0100
+@@ -517,11 +517,12 @@ DSP_STATUS DRV_ProcFreeDMMRes(HANDLE hPC
  		pDMMRes = pDMMList;
  		pDMMList = pDMMList->next;
  		if (pDMMRes->dmmAllocated) {
@@ -584,9 +593,10 @@
  		}
  	}
  	return status;
---- kernel-power-2.6.28.orig/drivers/dsp/bridge/rmgr/proc.c
-+++ kernel-power-2.6.28/drivers/dsp/bridge/rmgr/proc.c
-@@ -750,6 +750,7 @@
+diff -Nurp kernel-2.6.28-20101501+0m5/drivers/dsp/bridge/rmgr/proc.c kernel-2.6.28-20103103+0m5/drivers/dsp/bridge/rmgr/proc.c
+--- kernel-2.6.28-20101501+0m5/drivers/dsp/bridge/rmgr/proc.c	2012-12-16 13:29:16.888315037 +0100
++++ kernel-2.6.28-20103103+0m5/drivers/dsp/bridge/rmgr/proc.c	2012-12-16 13:35:56.032308853 +0100
+@@ -750,6 +750,7 @@ static int memory_sync_vma(unsigned long
  			break;
  
  		start = vma->vm_end;
@@ -594,8 +604,9 @@
  	}
  
  	if (!vma)
---- kernel-power-2.6.28.orig/drivers/i2c/chips/lis302dl.c
-+++ kernel-power-2.6.28/drivers/i2c/chips/lis302dl.c
+diff -Nurp kernel-2.6.28-20101501+0m5/drivers/i2c/chips/lis302dl.c kernel-2.6.28-20103103+0m5/drivers/i2c/chips/lis302dl.c
+--- kernel-2.6.28-20101501+0m5/drivers/i2c/chips/lis302dl.c	2012-12-16 13:29:16.928315036 +0100
++++ kernel-2.6.28-20103103+0m5/drivers/i2c/chips/lis302dl.c	2012-12-16 13:35:56.032308853 +0100
 @@ -44,6 +44,7 @@
  #	define LIS302_CTRL1_Y		(1 << 1)
  #	define LIS302_CTRL1_X		(1 << 0)
@@ -604,7 +615,7 @@
  #define LIS302_CTRL_3			0x22
  #	define	LIS302_CTRL3_GND	0x00
  #	define	LIS302_CTRL3_FF_WU_1	0x01
-@@ -161,8 +162,13 @@
+@@ -161,8 +162,13 @@ static int lis302dl_configure(struct i2c
  	if (ret < 0)
  		goto out;
  
@@ -620,8 +631,9 @@
  
  	/* REG 3
  	 * Interrupt CTRL register. One interrupt pin is used for
---- kernel-power-2.6.28.orig/drivers/leds/leds-lp5523.c
-+++ kernel-power-2.6.28/drivers/leds/leds-lp5523.c
+diff -Nurp kernel-2.6.28-20101501+0m5/drivers/leds/leds-lp5523.c kernel-2.6.28-20103103+0m5/drivers/leds/leds-lp5523.c
+--- kernel-2.6.28-20101501+0m5/drivers/leds/leds-lp5523.c	2012-12-16 13:28:34.784315691 +0100
++++ kernel-2.6.28-20103103+0m5/drivers/leds/leds-lp5523.c	2012-12-16 13:35:56.032308853 +0100
 @@ -32,6 +32,7 @@
  #include <linux/wait.h>
  #include <linux/leds.h>
@@ -630,7 +642,7 @@
  
  #define LP5523_DRIVER_NAME		"lp5523"
  #define LP5523_REG_ENABLE		0x00
-@@ -120,6 +121,8 @@
+@@ -120,6 +121,8 @@ struct lp5523_led {
  	u8			led_nr;
  	u8			led_current;
  	struct led_classdev     cdev;
@@ -639,7 +651,7 @@
  };
  
  struct lp5523_chip {
-@@ -161,6 +164,8 @@
+@@ -161,6 +164,8 @@ static int lp5523_load_program(struct lp
  static void lp5523_work(struct work_struct  *work);
  static irqreturn_t lp5523_irq(int irq, void *_chip);
  
@@ -648,7 +660,7 @@
  
  static int lp5523_write(struct i2c_client *client, u8 reg, u8 value)
  {
-@@ -476,6 +481,16 @@
+@@ -476,6 +481,16 @@ static void lp5523_set_brightness(struct
  			     enum led_brightness brightness)
  {
  	struct lp5523_led *led = cdev_to_led(cdev);
@@ -665,7 +677,7 @@
  	struct lp5523_chip *chip = led_to_lp5523(led);
  	struct i2c_client *client = chip->client;
  
-@@ -483,7 +498,7 @@
+@@ -483,7 +498,7 @@ static void lp5523_set_brightness(struct
  
  	lp5523_write(client,
  		     LP5523_REG_LED_PWM_BASE + led->led_nr,
@@ -674,7 +686,7 @@
  
  	mutex_unlock(&chip->lock);
  }
-@@ -907,6 +922,8 @@
+@@ -907,6 +922,8 @@ static int lp5523_probe(struct i2c_clien
  			dev_err(&client->dev, "error initializing leds\n");
  			goto fail2;
  		}
@@ -683,7 +695,7 @@
  	}
  
  	ret = lp5523_register_sysfs(client);
-@@ -916,8 +933,10 @@
+@@ -916,8 +933,10 @@ static int lp5523_probe(struct i2c_clien
  	}
  	return ret;
  fail2:
@@ -695,7 +707,7 @@
  
  fail1:
  	kfree(chip);
-@@ -931,8 +950,10 @@
+@@ -931,8 +950,10 @@ static int lp5523_remove(struct i2c_clie
  
  	lp5523_unregister_sysfs(client);
  
@@ -707,8 +719,9 @@
  
  	kfree(chip);
  
---- kernel-power-2.6.28.orig/drivers/media/radio/radio-si4713.c
-+++ kernel-power-2.6.28/drivers/media/radio/radio-si4713.c
+diff -Nurp kernel-2.6.28-20101501+0m5/drivers/media/radio/radio-si4713.c kernel-2.6.28-20103103+0m5/drivers/media/radio/radio-si4713.c
+--- kernel-2.6.28-20101501+0m5/drivers/media/radio/radio-si4713.c	2012-12-16 13:28:34.784315691 +0100
++++ kernel-2.6.28-20103103+0m5/drivers/media/radio/radio-si4713.c	2012-12-16 13:35:56.032308853 +0100
 @@ -54,6 +54,25 @@
  /* module parameters */
  static int radio_nr = -1;	/* radio device minor (-1 ==> auto assign) */
@@ -735,7 +748,7 @@
  /*
   * Sysfs properties
   * Read and write functions
-@@ -167,6 +186,37 @@
+@@ -167,6 +186,37 @@ static DEVICE_ATTR(prop, S_IRUGO | S_IWU
  					si4713_##prop##_write);
  
  /*
@@ -773,7 +786,7 @@
   * Power level property
   */
  /* power_level (rw) 88 - 115 or 0 */
-@@ -179,6 +229,9 @@
+@@ -179,6 +229,9 @@ static ssize_t si4713_power_level_write(
  	unsigned int p;
  	int rval, pl;
  
@@ -783,7 +796,7 @@
  	if (!sdev) {
  		rval = -ENODEV;
  		goto exit;
-@@ -320,6 +373,7 @@
+@@ -320,6 +373,7 @@ DEFINE_SYSFS_PROPERTY(tone_off_time, uns
  			value > MAX_TONE_OFF_TIME)
  
  static struct attribute *attrs[] = {
@@ -791,7 +804,7 @@
  	&dev_attr_power_level.attr,
  	&dev_attr_antenna_capacitor.attr,
  	&dev_attr_rds_pi.attr,
-@@ -366,13 +420,118 @@
+@@ -366,13 +420,118 @@ static irqreturn_t si4713_handler(int ir
  	return IRQ_HANDLED;
  }
  
@@ -911,7 +924,7 @@
  	.compat_ioctl	= v4l_compat_ioctl32,
  };
  
-@@ -747,6 +906,9 @@
+@@ -747,6 +906,9 @@ static int si4713_i2c_driver_probe(struc
  		goto free_sysfs;
  	}
  
@@ -921,8 +934,9 @@
  	return 0;
  
  free_sysfs:
---- kernel-power-2.6.28.orig/drivers/media/radio/radio-si4713.h
-+++ kernel-power-2.6.28/drivers/media/radio/radio-si4713.h
+diff -Nurp kernel-2.6.28-20101501+0m5/drivers/media/radio/radio-si4713.h kernel-2.6.28-20103103+0m5/drivers/media/radio/radio-si4713.h
+--- kernel-2.6.28-20101501+0m5/drivers/media/radio/radio-si4713.h	2012-12-16 13:28:30.960315749 +0100
++++ kernel-2.6.28-20103103+0m5/drivers/media/radio/radio-si4713.h	2012-12-16 13:35:56.032308853 +0100
 @@ -21,6 +21,9 @@
  #define SI4713_I2C_ADDR_BUSEN_HIGH	0x63
  #define SI4713_I2C_ADDR_BUSEN_LOW	0x11
@@ -933,9 +947,10 @@
  /*
   * Platform dependent definition
   */
---- kernel-power-2.6.28.orig/drivers/media/video/omap34xxcam.c
-+++ kernel-power-2.6.28/drivers/media/video/omap34xxcam.c
-@@ -1833,6 +1833,7 @@
+diff -Nurp kernel-2.6.28-20101501+0m5/drivers/media/video/omap34xxcam.c kernel-2.6.28-20103103+0m5/drivers/media/video/omap34xxcam.c
+--- kernel-2.6.28-20101501+0m5/drivers/media/video/omap34xxcam.c	2012-12-16 13:29:16.928315036 +0100
++++ kernel-2.6.28-20103103+0m5/drivers/media/video/omap34xxcam.c	2012-12-16 13:35:56.032308853 +0100
+@@ -1833,6 +1833,7 @@ static int omap34xxcam_release(struct in
  	struct omap34xxcam_videodev *vdev = fh->vdev;
  	struct device *isp = vdev->cam->isp;
  	int i;
@@ -943,7 +958,7 @@
  
  	if (omap34xxcam_daemon_release(vdev, file))
  		goto daemon_out;
-@@ -1844,6 +1845,7 @@
+@@ -1844,6 +1845,7 @@ static int omap34xxcam_release(struct in
  		omap34xxcam_slave_power_set(vdev, V4L2_POWER_STANDBY,
  					    OMAP34XXCAM_SLAVE_POWER_ALL);
  		vdev->streaming = NULL;
@@ -951,7 +966,7 @@
  	}
  
  	if (atomic_dec_return(&vdev->users) == 0) {
-@@ -1853,6 +1855,10 @@
+@@ -1853,6 +1855,10 @@ static int omap34xxcam_release(struct in
  	}
  	mutex_unlock(&vdev->mutex);
  
@@ -962,8 +977,9 @@
  daemon_out:
  	file->private_data = NULL;
  
---- kernel-power-2.6.28.orig/drivers/mmc/host/omap_hsmmc.c
-+++ kernel-power-2.6.28/drivers/mmc/host/omap_hsmmc.c
+diff -Nurp kernel-2.6.28-20101501+0m5/drivers/mmc/host/omap_hsmmc.c kernel-2.6.28-20103103+0m5/drivers/mmc/host/omap_hsmmc.c
+--- kernel-2.6.28-20101501+0m5/drivers/mmc/host/omap_hsmmc.c	2012-12-16 13:30:14.172314148 +0100
++++ kernel-2.6.28-20103103+0m5/drivers/mmc/host/omap_hsmmc.c	2012-12-16 13:35:56.036308854 +0100
 @@ -115,6 +115,7 @@
  /* Timeouts for entering power saving states on inactivity, msec */
  #define OMAP_MMC_DISABLED_TIMEOUT	100
@@ -972,7 +988,7 @@
  #define OMAP_MMC_OFF_TIMEOUT		8000
  
  /*
-@@ -1249,21 +1250,21 @@
+@@ -1249,21 +1250,21 @@ static void omap_hsmmc_conf_bus_power(st
  
  /*
   * Dynamic power saving handling, FSM:
@@ -1003,7 +1019,7 @@
  
  /* Handler for [ENABLED -> DISABLED] transition */
  static int omap_hsmmc_enabled_to_disabled(struct omap_hsmmc_host *host)
-@@ -1300,7 +1301,21 @@
+@@ -1300,7 +1301,21 @@ static int omap_hsmmc_full_sleep(struct
  	return 1;
  }
  
@@ -1026,7 +1042,7 @@
  static int omap_hsmmc_disabled_to_sleep(struct omap_hsmmc_host *host)
  {
  	int err, new_state, sleep;
-@@ -1319,12 +1334,12 @@
+@@ -1319,12 +1334,12 @@ static int omap_hsmmc_disabled_to_sleep(
  		}
  		new_state = CARDSLEEP;
  	} else {
@@ -1041,7 +1057,7 @@
  		mmc_slot(host).set_sleep(host->dev, host->slot_id, 1, 0,
  					sleep);
  	/* FIXME: turn off bus power and perhaps interrupts too */
-@@ -1334,18 +1349,20 @@
+@@ -1334,18 +1349,20 @@ static int omap_hsmmc_disabled_to_sleep(
  	mmc_release_host(host->mmc);
  
  	dev_dbg(mmc_dev(host->mmc), "DISABLED -> %s\n",
@@ -1065,7 +1081,7 @@
  static int omap_hsmmc_sleep_to_off(struct omap_hsmmc_host *host)
  {
  	if (!mmc_try_claim_host(host->mmc))
-@@ -1364,7 +1381,8 @@
+@@ -1364,7 +1381,8 @@ static int omap_hsmmc_sleep_to_off(struc
  	host->power_mode = MMC_POWER_OFF;
  
  	dev_dbg(mmc_dev(host->mmc), "%s -> OFF\n",
@@ -1075,7 +1091,7 @@
  
  	host->dpm_state = OFF;
  
-@@ -1405,14 +1423,15 @@
+@@ -1405,14 +1423,15 @@ static int omap_hsmmc_sleep_to_enabled(s
  	omap_hsmmc_context_restore(host);
  	asleep = omap_hsmmc_full_sleep(host->mmc->card) &&
  		(host->dpm_state == CARDSLEEP);
@@ -1093,7 +1109,7 @@
  
  	if (host->pdata->set_pm_constraints)
  		host->pdata->set_pm_constraints(host->dev, 1);
-@@ -1454,6 +1473,7 @@
+@@ -1454,6 +1473,7 @@ static int omap_hsmmc_enable(struct mmc_
  	switch (host->dpm_state) {
  	case DISABLED:
  		return omap_hsmmc_disabled_to_enabled(host);
@@ -1101,7 +1117,7 @@
  	case CARDSLEEP:
  	case REGSLEEP:
  		return omap_hsmmc_sleep_to_enabled(host);
-@@ -1484,6 +1504,7 @@
+@@ -1484,6 +1504,7 @@ static int omap_hsmmc_disable(struct mmc
  	}
  	case DISABLED:
  		return omap_hsmmc_disabled_to_sleep(host);
@@ -1109,9 +1125,10 @@
  	case CARDSLEEP:
  	case REGSLEEP:
  		return omap_hsmmc_sleep_to_off(host);
---- kernel-power-2.6.28.orig/drivers/net/wireless/wl12xx/wl1251_acx.c
-+++ kernel-power-2.6.28/drivers/net/wireless/wl12xx/wl1251_acx.c
-@@ -910,7 +910,7 @@
+diff -Nurp kernel-2.6.28-20101501+0m5/drivers/net/wireless/wl12xx/wl1251_acx.c kernel-2.6.28-20103103+0m5/drivers/net/wireless/wl12xx/wl1251_acx.c
+--- kernel-2.6.28-20101501+0m5/drivers/net/wireless/wl12xx/wl1251_acx.c	2012-12-16 13:29:16.928315036 +0100
++++ kernel-2.6.28-20103103+0m5/drivers/net/wireless/wl12xx/wl1251_acx.c	2012-12-16 13:35:56.036308854 +0100
+@@ -910,7 +910,7 @@ int wl1251_acx_tsf_info(struct wl1251 *w
  	}
  
  	*mactime = tsf_info->current_tsf_lsb |
@@ -1120,9 +1137,10 @@
  
  out:
  	kfree(tsf_info);
---- kernel-power-2.6.28.orig/drivers/net/wireless/wl12xx/wl1251_cmd.c
-+++ kernel-power-2.6.28/drivers/net/wireless/wl12xx/wl1251_cmd.c
-@@ -242,7 +242,7 @@
+diff -Nurp kernel-2.6.28-20101501+0m5/drivers/net/wireless/wl12xx/wl1251_cmd.c kernel-2.6.28-20103103+0m5/drivers/net/wireless/wl12xx/wl1251_cmd.c
+--- kernel-2.6.28-20101501+0m5/drivers/net/wireless/wl12xx/wl1251_cmd.c	2012-12-16 13:28:34.812315688 +0100
++++ kernel-2.6.28-20103103+0m5/drivers/net/wireless/wl12xx/wl1251_cmd.c	2012-12-16 13:35:56.036308854 +0100
+@@ -242,7 +242,7 @@ int wl1251_cmd_data_path(struct wl1251 *
  	if (ret < 0) {
  		wl1251_error("tx %s cmd for channel %d failed",
  			     enable ? "start" : "stop", channel);
@@ -1131,9 +1149,54 @@
  	}
  
  	wl1251_debug(DEBUG_BOOT, "tx %s cmd channel %d",
---- kernel-power-2.6.28.orig/include/linux/sched.h
-+++ kernel-power-2.6.28/include/linux/sched.h
-@@ -1665,11 +1665,11 @@
+diff -Nurp kernel-2.6.28-20101501+0m5/drivers/usb/musb/musb_core.c kernel-2.6.28-20103103+0m5/drivers/usb/musb/musb_core.c
+--- kernel-2.6.28-20101501+0m5/drivers/usb/musb/musb_core.c	2012-12-16 13:29:04.852315222 +0100
++++ kernel-2.6.28-20103103+0m5/drivers/usb/musb/musb_core.c	2012-12-16 13:35:59.224308804 +0100
+@@ -297,28 +297,23 @@ static int musb_charger_detect(struct mu
+ 			break;
+ 	}
+ 
+-	if (vdat) {
+-		/* REVISIT: This code works only with dedicated chargers!
+-		 * When support for HOST/HUB chargers is added, don't
+-		 * forget this.
+-		 */
++	/* enable interrupts */
++	musb_writeb(musb->mregs, MUSB_INTRUSBE, ctx.intrusbe);
++
++	/* Make sure the communication starts normally */
++	r = musb_readb(musb->mregs, MUSB_POWER);
++	musb_writeb(musb->mregs, MUSB_POWER,
++			r | MUSB_POWER_RESUME);
++	msleep(10);
++	musb_writeb(musb->mregs, MUSB_POWER,
++			r & ~MUSB_POWER_RESUME);
++	if (vdat && musb->xceiv->state != OTG_STATE_B_IDLE) {
+ 		musb_stop(musb);
+ 		/* Regulators off */
+ 		otg_set_suspend(musb->xceiv, 1);
+-		musb->is_charger = 1;
+-	} else {
+-		/* enable interrupts */
+-		musb_writeb(musb->mregs, MUSB_INTRUSBE, ctx.intrusbe);
+-
+-		/* Make sure the communication starts normally */
+-		r = musb_readb(musb->mregs, MUSB_POWER);
+-		musb_writeb(musb->mregs, MUSB_POWER,
+-				r | MUSB_POWER_RESUME);
+-		msleep(10);
+-		musb_writeb(musb->mregs, MUSB_POWER,
+-				r & ~MUSB_POWER_RESUME);
+ 	}
+ 
++	musb->is_charger = vdat;
+ 	check_charger = 0;
+ 
+ 	return vdat;
+diff -Nurp kernel-2.6.28-20101501+0m5/include/linux/sched.h kernel-2.6.28-20103103+0m5/include/linux/sched.h
+--- kernel-2.6.28-20101501+0m5/include/linux/sched.h	2012-12-16 13:28:34.848315688 +0100
++++ kernel-2.6.28-20103103+0m5/include/linux/sched.h	2012-12-16 13:35:56.036308854 +0100
+@@ -1665,11 +1665,11 @@ extern void wake_up_idle_cpu(int cpu);
  static inline void wake_up_idle_cpu(int cpu) { }
  #endif
  
@@ -1146,9 +1209,10 @@
  extern unsigned int sysctl_sched_features;
  extern unsigned int sysctl_sched_migration_cost;
  extern unsigned int sysctl_sched_nr_migrate;
---- kernel-power-2.6.28.orig/include/linux/swap.h
-+++ kernel-power-2.6.28/include/linux/swap.h
-@@ -130,6 +130,17 @@
+diff -Nurp kernel-2.6.28-20101501+0m5/include/linux/swap.h kernel-2.6.28-20103103+0m5/include/linux/swap.h
+--- kernel-2.6.28-20101501+0m5/include/linux/swap.h	2012-12-16 13:28:34.848315688 +0100
++++ kernel-2.6.28-20103103+0m5/include/linux/swap.h	2012-12-16 13:35:56.036308854 +0100
+@@ -130,6 +130,17 @@ enum {
  #define SWAP_MAP_MAX	0x7fff
  #define SWAP_MAP_BAD	0x8000
  
@@ -1166,7 +1230,7 @@
  /*
   * The in-memory structure used to track swap areas.
   */
-@@ -157,6 +168,9 @@
+@@ -157,6 +168,9 @@ struct swap_info_struct {
  	unsigned int gap_next;
  	unsigned int gap_end;
  	unsigned int gaps_exist;
@@ -1176,8 +1240,9 @@
  	unsigned int lowest_bit;
  	unsigned int highest_bit;
  	unsigned int cluster_next;
---- kernel-power-2.6.28.orig/include/net/bluetooth/sco.h
-+++ kernel-power-2.6.28/include/net/bluetooth/sco.h
+diff -Nurp kernel-2.6.28-20101501+0m5/include/net/bluetooth/sco.h kernel-2.6.28-20103103+0m5/include/net/bluetooth/sco.h
+--- kernel-2.6.28-20101501+0m5/include/net/bluetooth/sco.h	2008-12-25 00:26:37.000000000 +0100
++++ kernel-2.6.28-20103103+0m5/include/net/bluetooth/sco.h	2012-12-16 13:35:56.036308854 +0100
 @@ -29,7 +29,7 @@
  #define SCO_DEFAULT_MTU		500
  #define SCO_DEFAULT_FLUSH_TO	0xFFFF
@@ -1187,9 +1252,10 @@
  #define SCO_DISCONN_TIMEOUT	(HZ * 2)
  #define SCO_CONN_IDLE_TIMEOUT	(HZ * 60)
  
---- kernel-power-2.6.28.orig/kernel/sched_fair.c
-+++ kernel-power-2.6.28/kernel/sched_fair.c
-@@ -48,10 +48,10 @@
+diff -Nurp kernel-2.6.28-20101501+0m5/kernel/sched_fair.c kernel-2.6.28-20103103+0m5/kernel/sched_fair.c
+--- kernel-2.6.28-20101501+0m5/kernel/sched_fair.c	2008-12-25 00:26:37.000000000 +0100
++++ kernel-2.6.28-20103103+0m5/kernel/sched_fair.c	2012-12-16 13:35:56.036308854 +0100
+@@ -48,10 +48,10 @@ unsigned int sysctl_sched_min_granularit
  static unsigned int sched_nr_latency = 5;
  
  /*
@@ -1202,9 +1268,10 @@
  
  /*
   * sys_sched_yield() compat mode
---- kernel-power-2.6.28.orig/kernel/sysctl.c
-+++ kernel-power-2.6.28/kernel/sysctl.c
-@@ -235,6 +235,14 @@
+diff -Nurp kernel-2.6.28-20101501+0m5/kernel/sysctl.c kernel-2.6.28-20103103+0m5/kernel/sysctl.c
+--- kernel-2.6.28-20101501+0m5/kernel/sysctl.c	2008-12-25 00:26:37.000000000 +0100
++++ kernel-2.6.28-20103103+0m5/kernel/sysctl.c	2012-12-16 13:35:56.036308854 +0100
+@@ -235,6 +235,14 @@ static int max_wakeup_granularity_ns = N
  #endif
  
  static struct ctl_table kern_table[] = {
@@ -1219,7 +1286,7 @@
  #ifdef CONFIG_SCHED_DEBUG
  	{
  		.ctl_name	= CTL_UNNUMBERED,
-@@ -289,14 +297,6 @@
+@@ -289,14 +297,6 @@ static struct ctl_table kern_table[] = {
  	},
  	{
  		.ctl_name	= CTL_UNNUMBERED,
@@ -1234,9 +1301,10 @@
  		.procname	= "sched_features",
  		.data		= &sysctl_sched_features,
  		.maxlen		= sizeof(unsigned int),
---- kernel-power-2.6.28.orig/mm/swapfile.c
-+++ kernel-power-2.6.28/mm/swapfile.c
-@@ -996,11 +996,55 @@
+diff -Nurp kernel-2.6.28-20101501+0m5/mm/swapfile.c kernel-2.6.28-20103103+0m5/mm/swapfile.c
+--- kernel-2.6.28-20101501+0m5/mm/swapfile.c	2012-12-16 13:29:04.852315222 +0100
++++ kernel-2.6.28-20103103+0m5/mm/swapfile.c	2012-12-16 13:35:56.036308854 +0100
+@@ -996,11 +996,55 @@ static void drain_mmlist(void)
  	spin_unlock(&mmlist_lock);
  }
  
@@ -1293,7 +1361,7 @@
  	int in_gap = 0;
  
  	spin_unlock(&sis->remap_lock);
-@@ -1017,6 +1061,11 @@
+@@ -1017,6 +1061,11 @@ int find_gap(struct swap_info_struct *si
  		mutex_unlock(&sis->remap_mutex);
  		return -1;
  	}
@@ -1305,7 +1373,7 @@
  	spin_unlock(&sis->remap_lock);
  
  	/*
-@@ -1028,11 +1077,7 @@
+@@ -1028,11 +1077,7 @@ int find_gap(struct swap_info_struct *si
  		if (in_gap) {
  			if (!(sis->swap_remap[i] & 0x80000000))
  				continue;
@@ -1318,7 +1386,7 @@
  			in_gap = 0;
  		} else {
  			if (sis->swap_remap[i] & 0x80000000)
-@@ -1043,13 +1088,14 @@
+@@ -1043,13 +1088,14 @@ int find_gap(struct swap_info_struct *si
  		cond_resched();
  	}
  	spin_lock(&sis->remap_lock);
@@ -1340,7 +1408,7 @@
  	mutex_unlock(&sis->remap_mutex);
  	return 0;
  }
-@@ -1471,6 +1517,7 @@
+@@ -1471,6 +1517,7 @@ asmlinkage long sys_swapoff(const char _
  	p->flags = 0;
  	spin_unlock(&swap_lock);
  	mutex_unlock(&swapon_mutex);
@@ -1348,7 +1416,7 @@
  	vfree(p->swap_remap);
  	vfree(swap_map);
  	inode = mapping->host;
-@@ -1825,6 +1872,14 @@
+@@ -1825,6 +1872,14 @@ asmlinkage long sys_swapon(const char __
  		goto bad_swap;
  	}
  
@@ -1363,9 +1431,10 @@
  	mutex_lock(&swapon_mutex);
  	spin_lock(&swap_lock);
  	if (swap_flags & SWAP_FLAG_PREFER)
---- kernel-power-2.6.28.orig/net/bluetooth/hci_conn.c
-+++ kernel-power-2.6.28/net/bluetooth/hci_conn.c
-@@ -375,6 +375,9 @@
+diff -Nurp kernel-2.6.28-20101501+0m5/net/bluetooth/hci_conn.c kernel-2.6.28-20103103+0m5/net/bluetooth/hci_conn.c
+--- kernel-2.6.28-20101501+0m5/net/bluetooth/hci_conn.c	2012-12-16 13:29:04.852315222 +0100
++++ kernel-2.6.28-20103103+0m5/net/bluetooth/hci_conn.c	2012-12-16 13:35:56.036308854 +0100
+@@ -375,6 +375,9 @@ struct hci_conn *hci_connect(struct hci_
  
  	if (acl->state == BT_CONNECTED &&
  			(sco->state == BT_OPEN || sco->state == BT_CLOSED)) {
@@ -1375,9 +1444,10 @@
  		if (lmp_esco_capable(hdev))
  			hci_setup_sync(sco, acl->handle);
  		else
---- kernel-power-2.6.28.orig/net/bluetooth/hci_event.c
-+++ kernel-power-2.6.28/net/bluetooth/hci_event.c
-@@ -1056,6 +1056,8 @@
+diff -Nurp kernel-2.6.28-20101501+0m5/net/bluetooth/hci_event.c kernel-2.6.28-20103103+0m5/net/bluetooth/hci_event.c
+--- kernel-2.6.28-20101501+0m5/net/bluetooth/hci_event.c	2012-12-16 13:28:34.852315687 +0100
++++ kernel-2.6.28-20103103+0m5/net/bluetooth/hci_event.c	2012-12-16 13:35:56.036308854 +0100
+@@ -1056,6 +1056,8 @@ static inline void hci_auth_complete_evt
  	if (conn) {
  		if (!ev->status)
  			conn->link_mode |= HCI_LM_AUTH;
@@ -1386,7 +1456,7 @@
  
  		clear_bit(HCI_CONN_AUTH_PEND, &conn->pend);
  
-@@ -1709,6 +1711,7 @@
+@@ -1709,6 +1711,7 @@ static inline void hci_sync_conn_complet
  		break;
  
  	case 0x1c:	/* SCO interval rejected */

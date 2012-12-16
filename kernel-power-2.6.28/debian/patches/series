@@ -7,7 +7,6 @@ nokia-20094803.3+0m5.diff
 nokia-20100903+0m5.diff
 nokia-20101501+0m5.diff
 nokia-20103103+0m5.diff
-#nokia-20103103+0m5_usb.diff
 2.6.28.10.diff
 rx51_defconfig.diff
 kstrtol.diff
@@ -36,6 +35,7 @@ wl12xx_rohar.diff
 #fmtx.unlock.diff
 radio-bcm2048.diff
 #i2c-battery.diff
+musb_core_revert_20103103+0m5.diff
 usbhostmode.diff
 musb_sysfs_notify.diff
 musb_sysfs_hostdevice.diff
