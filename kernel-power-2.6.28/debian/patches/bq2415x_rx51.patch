@@ -224,7 +224,7 @@
 +	.weak_battery_voltage = 3400,		/* mV */
 +	.battery_regulation_voltage = 4200,	/* mV */
 +	.charge_current = 950, /*1200*/		/* mA */
-+	.termination_current = 150, /*400*/	/* mA */
++	.termination_current = 100, /*400*/	/* mA */
 +	.resistor_sense = 68,			/* m ohm */
 +	.set_mode_hook = &rx51_charger_set_hook,
 +};
