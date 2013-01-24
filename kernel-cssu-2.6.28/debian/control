@@ -9,9 +9,6 @@ Standards-Version: 3.8.0
 
 Package: kernel-cssu
 Architecture: armel
-Conflicts: kernel-maemo, kernel
-Replaces: kernel
-Provides: kernel
 Description: Flashable Linux kernel (kernel cssu 2.6.28.10)
  This package provides a flashable kernel image.
  .
@@ -21,23 +18,14 @@ Package: kernel-cssu-bootimg
 Section: user/system
 Architecture: armel
 Depends: kernel-cssu-modules (= ${binary:Version})
-Conflicts: multiboot-kernel-power
-Recommends: multiboot, kernel-cssu-flasher, kernel-power-settings, usbip, iptables, mtd-utils, kexec-tools
-Provides: kernel-feature-netfilter, kernel-feature-ipv6, kernel-feature-ext4, kernel-feature-xfs, kernel-feature-reiserfs,
-  kernel-feature-ntfs-read, kernel-feature-udf, kernel-feature-cifs, kernel-feature-automounter, kernel-feature-squashfs, 
-  kernel-feature-unionfs, kernel-feature-crypto, kernel-feature-dmloop, kernel-feature-utf8, kernel-feature-mousejoy,
-  kernel-feature-usbip, kernel-feature-ppp, kernel-feature-qos, kernel-feature-block2mtd, kernel-feature-kexec,
-  kernel-feature-overclock, kernel-feature-joikuspot, kernel-feature-slip, kernel-feature-battery, kernel-feature-pptp,
-  kernel-feature-wlan-monitor, kernel-feature-radiords, kernel-feature-ioacct, kernel-feature-usbhost, kernel-feature-framebuffer,
-  kernel-feature-smartreflex, kernel-feature-video720p, kernel-feature-packet-injection, kernel-feature-charger,
-  kernel-feature-usbhost-new
-XB-Maemo-Display-Name: Linux kernel for Community SSU (boot image for u-boot and multiboot)
+Recommends: u-boot-flasher, kernel-cssu-flasher, kernel-power-settings, usbip, iptables, mtd-utils, kexec-tools
+XB-Maemo-Display-Name: Linux kernel for Community SSU (boot image for U-Boot)
 Description: Linux kernel boot image (kernel cssu 2.6.28.10)
- This package provides a bootable kernel image and config files
- for U-Boot Bootmenu and Multiboot.
+ This package provides a bootable kernel image and config file
+ for U-Boot Bootmenu.
  .
  This package does not flash kernel image. Instead it install
- config files for proper Bootmenu entry in U-Boot and Multiboot
+ config files for proper Bootmenu entry in U-Boot.
 XB-Maemo-Icon-26:
  iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAABmJLR0QAAAAA
  AAD5Q7t/AAAACXBIWXMAAABIAAAASABGyWs+AAAACXZwQWcAAAAwAAAAMADO
@@ -110,9 +98,8 @@ XB-Maemo-Icon-26:
 Package: kernel-cssu-flasher
 Section: user/system
 Architecture: armel
-Pre-Depends: kernel-cssu (= ${binary:Version}), kernel-cssu-modules (= ${binary:Version}), softupd (>= 0.4.0), maemo-installer-utils
+Pre-Depends: kernel-cssu (= ${binary:Version}), kernel-cssu-modules (= ${binary:Version}), softupd (>= 0.4.0), hildon-application-manager
 Depends: sudo
-Conflicts: kernel-flasher, kernel-flasher-maemo (<= 2.6.28-maemo22), kernel-maemo, kernel-modules-maemo, kernel-headers-maemo, linux-kernel-headers-maemo
 Recommends: kernel-power-settings, usbip, iptables, mtd-utils, kexec-tools
 Replaces: kernel-flasher
 Provides: kernel-flasher, kernel-feature-netfilter, kernel-feature-ipv6, kernel-feature-ext4, kernel-feature-xfs, kernel-feature-reiserfs,
@@ -122,7 +109,8 @@ Provides: kernel-flasher, kernel-feature-netfilter, kernel-feature-ipv6, kernel-
   kernel-feature-overclock, kernel-feature-joikuspot, kernel-feature-slip, kernel-feature-battery, kernel-feature-pptp,
   kernel-feature-wlan-monitor, kernel-feature-radiords, kernel-feature-ioacct, kernel-feature-usbhost, kernel-feature-framebuffer,
   kernel-feature-smartreflex, kernel-feature-video720p, kernel-feature-packet-injection, kernel-feature-charger,
-  kernel-feature-errata-430973-workaround, kernel-feature-usbhost-new
+  kernel-feature-errata-430973-workaround, kernel-feature-usbhost-new, kernel-feature-sigmask, kernel-feature-rx51-battery,
+  kernel-feature-bridge
 XB-Maemo-Display-Name: Linux kernel for Community SSU
 Description: Linux kernel updater (kernel cssu 2.6.28.10)
  This package will flash the kernel image upon installation.
@@ -220,24 +208,19 @@ XB-Maemo-Icon-26:
 Package: kernel-cssu-headers
 Architecture: armel
 Depends: ${shlibs:Depends}
-Conflicts: kernel-headers-maemo
 Description: Linux kernel headers (kernel cssu 2.6.28.10)
  This package provides kernel headers.
 
 Package: linux-kernel-cssu-headers
 Architecture: any
 Depends: ${shlibs:Depends}
-Conflicts: linux-kernel-headers-maemo, linux-kernel-headers
 Description: Linux Kernel headers for development (kernel cssu 2.6.28.10)
  This package provides headers from the Linux kernel. These headers
  are used by the installed headers for GNU glibc and other system libraries.
 
 Package: kernel-cssu-modules
 Architecture: armel
-Conflicts: kernel-modules,kernel-modules-maemo
-Replaces: kernel-modules
-Provides: kernel-modules
-Depends: module-init-tools (>= 3.3), kernel-cssu (= ${binary:Version}) | kernel-cssu-bootimg (= ${binary:Version})
+Depends: module-init-tools (>= 3.3), kernel-cssu (= ${binary:Version})
 Description: Linux kernel modules (kernel cssu 2.6.28.10)
  This package provides kernel modules.
 

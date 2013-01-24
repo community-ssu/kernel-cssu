@@ -1,6 +1,7 @@
---- kernel-cssu-2.6.28.orig/arch/arm/mach-omap2/board-rx51-camera.c
-+++ kernel-cssu-2.6.28/arch/arm/mach-omap2/board-rx51-camera.c
-@@ -561,7 +561,7 @@
+diff -Nurp kernel-2.6.28-20100903+0m5/arch/arm/mach-omap2/board-rx51-camera.c kernel-2.6.28-20101501+0m5/arch/arm/mach-omap2/board-rx51-camera.c
+--- kernel-2.6.28-20100903+0m5/arch/arm/mach-omap2/board-rx51-camera.c	2012-12-16 13:28:34.748315692 +0100
++++ kernel-2.6.28-20101501+0m5/arch/arm/mach-omap2/board-rx51-camera.c	2012-12-16 13:30:14.168314148 +0100
+@@ -561,7 +561,7 @@ static int rx51_adp1653_power_on(struct
  	gpio_set_value(ADP1653_GPIO_ENABLE, 1);
  
  	/* Some delay is apparently required. */
@@ -9,8 +10,9 @@
  
  	return 0;
  }
---- kernel-cssu-2.6.28.orig/arch/arm/mach-omap2/pm34xx.c
-+++ kernel-cssu-2.6.28/arch/arm/mach-omap2/pm34xx.c
+diff -Nurp kernel-2.6.28-20100903+0m5/arch/arm/mach-omap2/pm34xx.c kernel-2.6.28-20101501+0m5/arch/arm/mach-omap2/pm34xx.c
+--- kernel-2.6.28-20100903+0m5/arch/arm/mach-omap2/pm34xx.c	2012-12-16 13:29:04.844315224 +0100
++++ kernel-2.6.28-20101501+0m5/arch/arm/mach-omap2/pm34xx.c	2012-12-16 13:30:14.172314148 +0100
 @@ -45,6 +45,7 @@
  #include <mach/dma.h>
  #include <mach/vrfb.h>
@@ -28,7 +30,7 @@
  static u16 ssi_rx_rdy;
  static u16 ssi_tx_dat;
  static u16 ssi_tx_flag;
-@@ -520,6 +523,7 @@
+@@ -520,6 +523,7 @@ void omap_sram_idle(void)
  	u32 sdrc_pwr = 0;
  	int per_state_modified = 0;
  	int core_saved_state = PWRDM_POWER_ON;
@@ -36,7 +38,7 @@
  
  	if (!_omap_sram_idle)
  		return;
-@@ -551,7 +555,7 @@
+@@ -551,7 +555,7 @@ void omap_sram_idle(void)
  	if (pwrdm_read_pwrst(neon_pwrdm) == PWRDM_POWER_ON) {
  		pwrdm_set_next_pwrst(neon_pwrdm, mpu_next_state);
  		neon_next_state = mpu_next_state;
@@ -45,7 +47,7 @@
  			omap3_save_neon_context();
  	}
  
-@@ -562,6 +566,12 @@
+@@ -562,6 +566,12 @@ void omap_sram_idle(void)
  	usb_state = pwrdm_read_pwrst(usb_pwrdm);
  	per_next_state = pwrdm_read_next_pwrst(per_pwrdm);
  
@@ -58,7 +60,7 @@
  	/* Check if PER domain can enter OFF or not */
  	if (per_next_state == PWRDM_POWER_OFF) {
  		if ((cm_read_mod_reg(OMAP3430_PER_MOD, CM_IDLEST) &
-@@ -679,6 +689,33 @@
+@@ -679,6 +689,33 @@ void omap_sram_idle(void)
  				  OMAP3_PRM_CLKSETUP_OFFSET);
  	}
  
@@ -92,7 +94,7 @@
  	memcpy(save_sdrc_counters, _sdrc_counters, sizeof(save_sdrc_counters));
  
  	/*
-@@ -701,6 +738,51 @@
+@@ -701,6 +738,51 @@ void omap_sram_idle(void)
  	if (neon_next_state == PWRDM_POWER_OFF)
  		omap3_restore_neon_context();
  
@@ -144,7 +146,7 @@
  	/* CORE */
  	if (core_next_state < PWRDM_POWER_ON) {
  		core_prev_state = pwrdm_read_prev_pwrst(core_pwrdm);
-@@ -1136,7 +1218,7 @@
+@@ -1136,7 +1218,7 @@ static void __init prcm_setup_regs(void)
  			 MPU_MOD,
  			 CM_AUTOIDLE2);
  	cm_write_mod_reg((1 << OMAP3430_AUTO_PERIPH_DPLL_SHIFT) |
@@ -153,9 +155,25 @@
  			 PLL_MOD,
  			 CM_AUTOIDLE);
  	cm_write_mod_reg(1 << OMAP3430ES2_AUTO_PERIPH2_DPLL_SHIFT,
---- kernel-cssu-2.6.28.orig/arch/arm/mach-omap2/ssi.c
-+++ kernel-cssu-2.6.28/arch/arm/mach-omap2/ssi.c
-@@ -378,7 +378,7 @@
+diff -Nurp kernel-2.6.28-20100903+0m5/arch/arm/mach-omap2/smartreflex.c kernel-2.6.28-20101501+0m5/arch/arm/mach-omap2/smartreflex.c
+--- kernel-2.6.28-20100903+0m5/arch/arm/mach-omap2/smartreflex.c	2012-12-16 13:28:45.472315523 +0100
++++ kernel-2.6.28-20101501+0m5/arch/arm/mach-omap2/smartreflex.c	2012-12-16 13:30:17.084314106 +0100
+@@ -1004,6 +1004,11 @@ static ssize_t omap_sr_vdd2_autocomp_sto
+ 		return -EINVAL;
+ 	}
+ 
++	if (value != 0) {
++		pr_warning("VDD2 smartreflex is broken\n");
++		return -EINVAL;
++	}
++
+ 	mutex_lock(&dvfs_mutex);
+ 
+ 	current_vdd2opp_no = resource_get_level("vdd2_opp");
+diff -Nurp kernel-2.6.28-20100903+0m5/arch/arm/mach-omap2/ssi.c kernel-2.6.28-20101501+0m5/arch/arm/mach-omap2/ssi.c
+--- kernel-2.6.28-20100903+0m5/arch/arm/mach-omap2/ssi.c	2012-12-16 13:28:34.756315692 +0100
++++ kernel-2.6.28-20101501+0m5/arch/arm/mach-omap2/ssi.c	2012-12-16 13:30:14.172314148 +0100
+@@ -378,7 +378,7 @@ static void enable_dpll3_autoidle(void)
  	u32 v;
  
  	v = cm_read_mod_reg(PLL_MOD, CM_AUTOIDLE);
@@ -164,8 +182,9 @@
  	cm_write_mod_reg(v, PLL_MOD, CM_AUTOIDLE);
  }
  
---- kernel-cssu-2.6.28.orig/drivers/mmc/host/omap_hsmmc.c
-+++ kernel-cssu-2.6.28/drivers/mmc/host/omap_hsmmc.c
+diff -Nurp kernel-2.6.28-20100903+0m5/drivers/mmc/host/omap_hsmmc.c kernel-2.6.28-20101501+0m5/drivers/mmc/host/omap_hsmmc.c
+--- kernel-2.6.28-20100903+0m5/drivers/mmc/host/omap_hsmmc.c	2012-12-16 13:29:04.852315222 +0100
++++ kernel-2.6.28-20101501+0m5/drivers/mmc/host/omap_hsmmc.c	2012-12-16 13:30:14.172314148 +0100
 @@ -28,6 +28,7 @@
  #include <linux/clk.h>
  #include <linux/mmc/host.h>
@@ -183,7 +202,7 @@
  /*
   * FIXME: Most likely all the data using these _DEVID defines should come
   * from the platform_data, or implemented in controller and slot specific
-@@ -1283,10 +1286,24 @@
+@@ -1283,10 +1286,24 @@ static int omap_hsmmc_enabled_to_disable
  	return msecs_to_jiffies(OMAP_MMC_SLEEP_TIMEOUT);
  }
  
@@ -209,7 +228,7 @@
  
  	if (!mmc_try_claim_host(host->mmc))
  		return 0;
-@@ -1304,9 +1321,12 @@
+@@ -1304,9 +1321,12 @@ static int omap_hsmmc_disabled_to_sleep(
  	} else {
  		new_state = REGSLEEP;
  	}
@@ -223,7 +242,7 @@
  	/* FIXME: turn off bus power and perhaps interrupts too */
  	clk_disable(host->fclk);
  	host->dpm_state = new_state;
-@@ -1376,14 +1396,18 @@
+@@ -1376,14 +1396,18 @@ static int omap_hsmmc_disabled_to_enable
  
  static int omap_hsmmc_sleep_to_enabled(struct omap_hsmmc_host *host)
  {
@@ -243,9 +262,10 @@
  	if (mmc_card_can_sleep(host->mmc))
  		mmc_card_awake(host->mmc);
  
---- kernel-cssu-2.6.28.orig/drivers/net/wireless/wl12xx/wl1251_main.c
-+++ kernel-cssu-2.6.28/drivers/net/wireless/wl12xx/wl1251_main.c
-@@ -1611,6 +1611,7 @@
+diff -Nurp kernel-2.6.28-20100903+0m5/drivers/net/wireless/wl12xx/wl1251_main.c kernel-2.6.28-20101501+0m5/drivers/net/wireless/wl12xx/wl1251_main.c
+--- kernel-2.6.28-20100903+0m5/drivers/net/wireless/wl12xx/wl1251_main.c	2012-12-16 13:29:16.932315035 +0100
++++ kernel-2.6.28-20101501+0m5/drivers/net/wireless/wl12xx/wl1251_main.c	2012-12-16 13:30:14.172314148 +0100
+@@ -1611,6 +1611,7 @@ static int wl1251_hw_scan(struct wl1251
  	}
  
  out:
@@ -253,9 +273,10 @@
  	kfree(params);
  	return ret;
  
---- kernel-cssu-2.6.28.orig/drivers/net/wireless/wl12xx/wl1251_spi.c
-+++ kernel-cssu-2.6.28/drivers/net/wireless/wl12xx/wl1251_spi.c
-@@ -92,6 +92,8 @@
+diff -Nurp kernel-2.6.28-20100903+0m5/drivers/net/wireless/wl12xx/wl1251_spi.c kernel-2.6.28-20101501+0m5/drivers/net/wireless/wl12xx/wl1251_spi.c
+--- kernel-2.6.28-20100903+0m5/drivers/net/wireless/wl12xx/wl1251_spi.c	2012-12-16 13:28:34.816315688 +0100
++++ kernel-2.6.28-20101501+0m5/drivers/net/wireless/wl12xx/wl1251_spi.c	2012-12-16 13:30:14.172314148 +0100
+@@ -92,6 +92,8 @@ void wl1251_spi_reset(struct wl1251 *wl)
  	spi_sync(wl->spi, &m);
  
  	wl1251_dump(DEBUG_SPI, "spi reset -> ", cmd, WSPI_INIT_CMD_LEN);
@@ -264,7 +285,7 @@
  }
  
  void wl1251_spi_init(struct wl1251 *wl)
-@@ -146,6 +148,8 @@
+@@ -146,6 +148,8 @@ void wl1251_spi_init(struct wl1251 *wl)
  	spi_sync(wl->spi, &m);
  
  	wl1251_dump(DEBUG_SPI, "spi init -> ", cmd, WSPI_INIT_CMD_LEN);
@@ -273,9 +294,10 @@
  }
  
  /* Set the SPI partitions to access the chip addresses
---- kernel-cssu-2.6.28.orig/net/mac80211/mlme.c
-+++ kernel-cssu-2.6.28/net/mac80211/mlme.c
-@@ -1624,6 +1624,7 @@
+diff -Nurp kernel-2.6.28-20100903+0m5/net/mac80211/mlme.c kernel-2.6.28-20101501+0m5/net/mac80211/mlme.c
+--- kernel-2.6.28-20100903+0m5/net/mac80211/mlme.c	2012-12-16 13:29:04.852315222 +0100
++++ kernel-2.6.28-20101501+0m5/net/mac80211/mlme.c	2012-12-16 13:30:14.172314148 +0100
+@@ -1624,6 +1624,7 @@ static int ieee80211_sta_join_ibss(struc
  			memcpy(pos, &bss->supp_rates[8], rates);
  		}
  

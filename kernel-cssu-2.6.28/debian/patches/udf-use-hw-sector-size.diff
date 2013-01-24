@@ -1,0 +1,195 @@
+From 1197e4dfcf4ac17d763a59e5de1d4d4b9781a555 Mon Sep 17 00:00:00 2001
+From: Clemens Ladisch <clemens@ladisch.de>
+Date: Wed, 11 Mar 2009 15:57:47 +0100
+Subject: [PATCH] udf: use hardware sector size
+
+This patch makes the UDF FS driver use the hardware sector size as the
+default logical block size, which is required by the UDF specifications.
+While the previous default of 2048 bytes was correct for optical disks,
+it was not for hard disks or USB storage devices, and made it impossible
+to use such a device with the default mount options.  (The Linux mkudffs
+tool uses a default block size of 2048 bytes even on devices with
+smaller hardware sectors, so this bug is unlikely to be noticed unless
+UDF-formatted USB storage devices are exchanged with other OSs.)
+
+To avoid regressions for people who use loopback optical disk images or
+who used the (sometimes wrong) defaults of mkudffs, we also try with
+a block size of 2048 bytes if no anchor was found with the hardware
+sector size.
+
+Signed-off-by: Clemens Ladisch <clemens@ladisch.de>
+Signed-off-by: Jan Kara <jack@suse.cz>
+---
+ fs/udf/super.c  |   70 ++++++++++++++++++++++++++++++++++++++----------------
+ fs/udf/udf_sb.h |    1 +
+ 2 files changed, 50 insertions(+), 21 deletions(-)
+
+diff --git a/fs/udf/super.c b/fs/udf/super.c
+index 36a467c..f8fece4 100644
+--- a/fs/udf/super.c
++++ b/fs/udf/super.c
+@@ -86,7 +86,6 @@ static int udf_remount_fs(struct super_b
+ static int udf_check_valid(struct super_block *, int, int);
+ static int udf_vrs(struct super_block *sb, int silent);
+ static void udf_load_logicalvolint(struct super_block *, kernel_extent_ad);
+-static void udf_find_anchor(struct super_block *);
+ static int udf_find_fileset(struct super_block *, kernel_lb_addr *,
+ 			    kernel_lb_addr *);
+ static void udf_load_fileset(struct super_block *, struct buffer_head *,
+@@ -258,7 +257,7 @@ static int udf_show_options(struct seq_f
+ 
+ 	if (!UDF_QUERY_FLAG(sb, UDF_FLAG_STRICT))
+ 		seq_puts(seq, ",nostrict");
+-	if (sb->s_blocksize != UDF_DEFAULT_BLOCKSIZE)
++	if (UDF_QUERY_FLAG(sb, UDF_FLAG_BLOCKSIZE_SET))
+ 		seq_printf(seq, ",bs=%lu", sb->s_blocksize);
+ 	if (UDF_QUERY_FLAG(sb, UDF_FLAG_UNHIDE))
+ 		seq_puts(seq, ",unhide");
+@@ -405,7 +404,6 @@ static int udf_parse_options(char *optio
+ 	int option;
+ 
+ 	uopt->novrs = 0;
+-	uopt->blocksize = UDF_DEFAULT_BLOCKSIZE;
+ 	uopt->partition = 0xFFFF;
+ 	uopt->session = 0xFFFFFFFF;
+ 	uopt->lastblock = 0;
+@@ -432,6 +430,7 @@ static int udf_parse_options(char *optio
+ 			if (match_int(&args[0], &option))
+ 				return 0;
+ 			uopt->blocksize = option;
++			uopt->flags |= (1 << UDF_FLAG_BLOCKSIZE_SET);
+ 			break;
+ 		case Opt_unhide:
+ 			uopt->flags |= (1 << UDF_FLAG_UNHIDE);
+@@ -760,12 +759,13 @@ static sector_t udf_scan_anchors(struct
+  * Return 1 if not found, 0 if ok
+  *
+  */
+-static void udf_find_anchor(struct super_block *sb)
++static int udf_find_anchor(struct super_block *sb)
+ {
+ 	sector_t lastblock;
+ 	struct buffer_head *bh = NULL;
+ 	uint16_t ident;
+ 	int i;
++	int anchor_found = 0;
+ 	struct udf_sb_info *sbi = UDF_SB(sb);
+ 
+ 	lastblock = udf_scan_anchors(sb, sbi->s_last_block);
+@@ -803,10 +803,13 @@ check_anchor:
+ 			brelse(bh);
+ 			if (ident != TAG_IDENT_AVDP)
+ 				sbi->s_anchor[i] = 0;
++			else
++				anchor_found = 1;
+ 		}
+ 	}
+ 
+ 	sbi->s_last_block = lastblock;
++	return anchor_found;
+ }
+ 
+ static int udf_find_fileset(struct super_block *sb,
+@@ -1678,6 +1681,32 @@ static int udf_check_valid(struct super_
+ 	return !block;
+ }
+ 
++static int udf_check_volume(struct super_block *sb,
++			    struct udf_options *uopt, int silent)
++{
++	struct udf_sb_info *sbi = UDF_SB(sb);
++
++	if (!sb_set_blocksize(sb, uopt->blocksize)) {
++		if (!silent)
++			printk(KERN_WARNING "UDF-fs: Bad block size\n");
++		return 0;
++	}
++	sbi->s_last_block = uopt->lastblock;
++	if (udf_check_valid(sb, uopt->novrs, silent)) {
++		if (!silent)
++			printk(KERN_WARNING "UDF-fs: No VRS found\n");
++		return 0;
++	}
++	sbi->s_anchor[0] = sbi->s_anchor[1] = 0;
++	sbi->s_anchor[2] = uopt->anchor;
++	if (!udf_find_anchor(sb)) {
++		if (!silent)
++			printk(KERN_WARNING "UDF-fs: No anchor found\n");
++		return 0;
++	}
++	return 1;
++}
++
+ static int udf_load_sequence(struct super_block *sb, kernel_lb_addr *fileset)
+ {
+ 	struct anchorVolDescPtr *anchor;
+@@ -1846,6 +1875,7 @@ static void udf_free_partition(struct ud
+ static int udf_fill_super(struct super_block *sb, void *options, int silent)
+ {
+ 	int i;
++	int found_anchor;
+ 	struct inode *inode = NULL;
+ 	struct udf_options uopt;
+ 	kernel_lb_addr rootdir, fileset;
+@@ -1894,13 +1924,6 @@ static int udf_fill_super(struct super_b
+ 	sbi->s_umask = uopt.umask;
+ 	sbi->s_nls_map = uopt.nls_map;
+ 
+-	/* Set the block size for all transfers */
+-	if (!sb_min_blocksize(sb, uopt.blocksize)) {
+-		udf_debug("Bad block size (%d)\n", uopt.blocksize);
+-		printk(KERN_ERR "udf: bad block size (%d)\n", uopt.blocksize);
+-		goto error_out;
+-	}
+-
+ 	if (uopt.session == 0xFFFFFFFF)
+ 		sbi->s_session = udf_get_last_session(sb);
+ 	else
+@@ -1908,17 +1931,22 @@ static int udf_fill_super(struct super_b
+ 
+ 	udf_debug("Multi-session=%d\n", sbi->s_session);
+ 
+-	sbi->s_last_block = uopt.lastblock;
+-	sbi->s_anchor[0] = sbi->s_anchor[1] = 0;
+-	sbi->s_anchor[2] = uopt.anchor;
+-
+-	if (udf_check_valid(sb, uopt.novrs, silent)) {
+-		/* read volume recognition sequences */
+-		printk(KERN_WARNING "UDF-fs: No VRS found\n");
+-		goto error_out;
++	if (uopt.flags & (1 << UDF_FLAG_BLOCKSIZE_SET)) {
++		found_anchor = udf_check_volume(sb, &uopt, silent);
++	} else {
++		uopt.blocksize = bdev_hardsect_size(sb->s_bdev);
++		found_anchor = udf_check_volume(sb, &uopt, silent);
++		if (!found_anchor && uopt.blocksize != UDF_DEFAULT_BLOCKSIZE) {
++			if (!silent)
++				printk(KERN_NOTICE
++				       "UDF-fs: Rescanning with blocksize "
++				       "%d\n", UDF_DEFAULT_BLOCKSIZE);
++			uopt.blocksize = UDF_DEFAULT_BLOCKSIZE;
++			found_anchor = udf_check_volume(sb, &uopt, silent);
++		}
+ 	}
+-
+-	udf_find_anchor(sb);
++	if (!found_anchor)
++		goto error_out;
+ 
+ 	/* Fill in the rest of the superblock */
+ 	sb->s_op = &udf_sb_ops;
+diff --git a/fs/udf/udf_sb.h b/fs/udf/udf_sb.h
+index 158221e..2dd9219 100644
+--- a/fs/udf/udf_sb.h
++++ b/fs/udf/udf_sb.h
+@@ -30,6 +30,7 @@
+ #define UDF_FLAG_GID_SET	16
+ #define UDF_FLAG_SESSION_SET	17
+ #define UDF_FLAG_LASTBLOCK_SET	18
++#define UDF_FLAG_BLOCKSIZE_SET	19
+ 
+ #define UDF_PART_FLAG_UNALLOC_BITMAP	0x0001
+ #define UDF_PART_FLAG_UNALLOC_TABLE	0x0002
+-- 
+1.7.7.6
+

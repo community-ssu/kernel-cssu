@@ -1,6 +1,6 @@
 --- /dev/null
 +++ kernel-power/drivers/power/bq2415x_charger.c
-@@ -0,0 +1,1569 @@
+@@ -0,0 +1,1644 @@
 +/*
 +    bq2415x_charger.c - bq2415x charger driver
 +    Copyright (C) 2011-2012  Pali Rohár <pali.rohar@gmail.com>
@@ -31,6 +31,7 @@
 +*/
 +
 +#include <linux/version.h>
++#include <linux/kernel.h>
 +#include <linux/module.h>
 +#include <linux/param.h>
 +#include <linux/err.h>
@@ -44,7 +45,8 @@
 +
 +#include <linux/power/bq2415x_charger.h>
 +
-+#define BQ2415X_TIMER_TIMEOUT	10
++/* timeout for resetting chip timer */
++#define BQ2415X_TIMER_TIMEOUT		10
 +
 +#define BQ2415X_REG_STATUS		0x00
 +#define BQ2415X_REG_CONTROL		0x01
@@ -93,11 +95,11 @@
 +#define BQ2415X_SHIFT_REVISION		0
 +
 +/* current register */
-+/* RESET				BIT(7) */
-+#define BQ2415X_MASK_VI_CHRG		(BIT(4)|BIT(5)|BIT(6)|BIT(7))
++#define BQ2415X_MASK_RESET		BIT(7)
++#define BQ2415X_MASK_VI_CHRG		(BIT(4)|BIT(5)|BIT(6))
 +#define BQ2415X_SHIFT_VI_CHRG		4
 +/* N/A					BIT(3) */
-+#define BQ2415X_MASK_VI_TERM		(BIT(0)|BIT(1)|BIT(2)|BIT(7))
++#define BQ2415X_MASK_VI_TERM		(BIT(0)|BIT(1)|BIT(2))
 +#define BQ2415X_SHIFT_VI_TERM		0
 +
 +
@@ -174,6 +176,7 @@
 +	enum bq2415x_mode reported_mode;/* mode reported by hook function */
 +	enum bq2415x_mode mode;		/* current configured mode */
 +	enum bq2415x_chip chip;
++	const char *timer_error;
 +	char *model;
 +	char *name;
 +	int autotimer;	/* 1 - if driver automatically reset timer, 0 - not */
@@ -181,14 +184,16 @@
 +	int id;
 +};
 +
++/* each registered chip must have unique id */
 +static DEFINE_IDR(bq2415x_id);
 +
 +static DEFINE_MUTEX(bq2415x_id_mutex);
 +static DEFINE_MUTEX(bq2415x_timer_mutex);
 +static DEFINE_MUTEX(bq2415x_i2c_mutex);
 +
-+/* i2c read functions */
++/**** i2c read functions ****/
 +
++/* read value from register */
 +static int bq2415x_i2c_read(struct bq2415x_device *bq, u8 reg)
 +{
 +	struct i2c_client *client = to_i2c_client(bq->dev);
@@ -218,6 +223,7 @@
 +	return val;
 +}
 +
++/* read value from register, apply mask and right shift it */
 +static int bq2415x_i2c_read_mask(struct bq2415x_device *bq, u8 reg,
 +				u8 mask, u8 shift)
 +{
@@ -233,6 +239,7 @@
 +		return (ret & mask) >> shift;
 +}
 +
++/* read value from register and return one specified bit */
 +static int bq2415x_i2c_read_bit(struct bq2415x_device *bq, u8 reg, u8 bit)
 +{
 +	if (bit > 8)
@@ -241,8 +248,9 @@
 +		return bq2415x_i2c_read_mask(bq, reg, BIT(bit), bit);
 +}
 +
-+/* i2c write functions */
++/**** i2c write functions ****/
 +
++/* write value to register */
 +static int bq2415x_i2c_write(struct bq2415x_device *bq, u8 reg, u8 val)
 +{
 +	struct i2c_client *client = to_i2c_client(bq->dev);
@@ -271,6 +279,7 @@
 +	return 0;
 +}
 +
++/* read value from register, change it with mask left shifted and write back */
 +static int bq2415x_i2c_write_mask(struct bq2415x_device *bq, u8 reg, u8 val,
 +				u8 mask, u8 shift)
 +{
@@ -289,6 +298,7 @@
 +	return bq2415x_i2c_write(bq, reg, ret);
 +}
 +
++/* change only one bit in register */
 +static int bq2415x_i2c_write_bit(struct bq2415x_device *bq, u8 reg,
 +				bool val, u8 bit)
 +{
@@ -298,8 +308,9 @@
 +		return bq2415x_i2c_write_mask(bq, reg, val, BIT(bit), bit);
 +}
 +
-+/* global exec command function */
++/**** global functions ****/
 +
++/* exec command function */
 +static int bq2415x_exec_command(struct bq2415x_device *bq,
 +				enum bq2415x_command command)
 +{
@@ -405,8 +416,7 @@
 +	}
 +}
 +
-+/* global detect chip */
-+
++/* detect chip type */
 +static enum bq2415x_chip bq2415x_detect_chip(struct bq2415x_device *bq)
 +{
 +	struct i2c_client *client = to_i2c_client(bq->dev);
@@ -458,6 +468,7 @@
 +	return BQUNKNOWN;
 +}
 +
++/* detect chip revision */
 +static int bq2415x_detect_revision(struct bq2415x_device *bq)
 +{
 +	int ret = bq2415x_exec_command(bq, BQ2415X_REVISION);
@@ -501,6 +512,7 @@
 +	return -1;
 +}
 +
++/* return chip vender code */
 +static int bq2415x_get_vender_code(struct bq2415x_device *bq)
 +{
 +	int ret = bq2415x_exec_command(bq, BQ2415X_VENDER_CODE);
@@ -512,16 +524,19 @@
 +			((ret >> 2) & 0x1) * 100;
 +}
 +
-+/* global other functions */
-+
++/* reset all chip registers to default state */
 +static void bq2415x_reset_chip(struct bq2415x_device *bq)
 +{
 +	bq2415x_i2c_write(bq, BQ2415X_REG_CURRENT, BQ2415X_RESET_CURRENT);
 +	bq2415x_i2c_write(bq, BQ2415X_REG_VOLTAGE, BQ2415X_RESET_VOLTAGE);
 +	bq2415x_i2c_write(bq, BQ2415X_REG_CONTROL, BQ2415X_RESET_CONTROL);
 +	bq2415x_i2c_write(bq, BQ2415X_REG_STATUS, BQ2415X_RESET_STATUS);
++	bq->timer_error = NULL;
 +}
 +
++/**** properties functions ****/
++
++/* set current limit in mA */
 +static int bq2415x_set_current_limit(struct bq2415x_device *bq, int mA)
 +{
 +	int val;
@@ -537,6 +552,7 @@
 +			BQ2415X_MASK_LIMIT, BQ2415X_SHIFT_LIMIT);
 +}
 +
++/* get current limit in mA */
 +static int bq2415x_get_current_limit(struct bq2415x_device *bq)
 +{
 +	int ret = bq2415x_i2c_read_mask(bq, BQ2415X_REG_CONTROL,
@@ -555,6 +571,7 @@
 +		return -EINVAL;
 +}
 +
++/* set weak battery voltage in mV */
 +static int bq2415x_set_weak_battery_voltage(struct bq2415x_device *bq, int mV)
 +{
 +	/* round to 100mV */
@@ -571,6 +588,7 @@
 +			BQ2415X_MASK_VLOWV, BQ2415X_SHIFT_VLOWV);
 +}
 +
++/* get weak battery voltage in mV */
 +static int bq2415x_get_weak_battery_voltage(struct bq2415x_device *bq)
 +{
 +	int ret = bq2415x_i2c_read_mask(bq, BQ2415X_REG_CONTROL,
@@ -581,6 +599,7 @@
 +		return 100 * (34 + ret);
 +}
 +
++/* set battery regulation voltage in mV */
 +static int bq2415x_set_battery_regulation_voltage(struct bq2415x_device *bq,
 +						int mV)
 +{
@@ -595,6 +614,7 @@
 +			BQ2415X_MASK_VO, BQ2415X_SHIFT_VO);
 +}
 +
++/* get battery regulation voltage in mV */
 +static int bq2415x_get_battery_regulation_voltage(struct bq2415x_device *bq)
 +{
 +	int ret = bq2415x_i2c_read_mask(bq, BQ2415X_REG_VOLTAGE,
@@ -605,6 +625,7 @@
 +		return 10 * (350 + 2*ret);
 +}
 +
++/* set charge current in mA (platform data must provide resistor sense) */
 +static int bq2415x_set_charge_current(struct bq2415x_device *bq, int mA)
 +{
 +	int val;
@@ -619,9 +640,11 @@
 +		val = 7;
 +
 +	return bq2415x_i2c_write_mask(bq, BQ2415X_REG_CURRENT, val,
-+			BQ2415X_MASK_VI_CHRG, BQ2415X_SHIFT_VI_CHRG);
++			BQ2415X_MASK_VI_CHRG | BQ2415X_MASK_RESET,
++			BQ2415X_SHIFT_VI_CHRG);
 +}
 +
++/* get charge current in mA (platform data must provide resistor sense) */
 +static int bq2415x_get_charge_current(struct bq2415x_device *bq)
 +{
 +	int ret;
@@ -636,6 +659,7 @@
 +		return (37400 + 6800*ret) / bq->init_data.resistor_sense;
 +}
 +
++/* set termination current in mA (platform data must provide resistor sense) */
 +static int bq2415x_set_termination_current(struct bq2415x_device *bq, int mA)
 +{
 +	int val;
@@ -650,9 +674,11 @@
 +		val = 7;
 +
 +	return bq2415x_i2c_write_mask(bq, BQ2415X_REG_CURRENT, val,
-+			BQ2415X_MASK_VI_TERM, BQ2415X_SHIFT_VI_TERM);
++			BQ2415X_MASK_VI_TERM | BQ2415X_MASK_RESET,
++			BQ2415X_SHIFT_VI_TERM);
 +}
 +
++/* get termination current in mA (platform data must provide resistor sense) */
 +static int bq2415x_get_termination_current(struct bq2415x_device *bq)
 +{
 +	int ret;
@@ -667,19 +693,22 @@
 +		return (3400 + 3400*ret) / bq->init_data.resistor_sense;
 +}
 +
-+#define bq2415x_set_default_value(bq, value) \
++/* set default value of property */
++#define bq2415x_set_default_value(bq, prop) \
 +	do { \
 +		int ret = 0; \
-+		if (bq->init_data.value != -1) \
-+			ret = bq2415x_set_##value(bq, bq->init_data.value); \
++		if (bq->init_data.prop != -1) \
++			ret = bq2415x_set_##prop(bq, bq->init_data.prop); \
 +		if (ret < 0) \
 +			return ret; \
 +	} while (0)
 +
++/* set default values of all properties */
 +static int bq2415x_set_defaults(struct bq2415x_device *bq)
 +{
 +	bq2415x_exec_command(bq, BQ2415X_BOOST_MODE_DISABLE);
 +	bq2415x_exec_command(bq, BQ2415X_CHARGER_DISABLE);
++	bq2415x_exec_command(bq, BQ2415X_CHARGE_TERMINATION_DISABLE);
 +	bq2415x_set_default_value(bq, current_limit);
 +	bq2415x_set_default_value(bq, weak_battery_voltage);
 +	bq2415x_set_default_value(bq, battery_regulation_voltage);
@@ -692,43 +721,46 @@
 +	return 0;
 +}
 +
-+#undef bq2415x_set_default_value
++/**** charger mode functions ****/
 +
-+/* charger mode functions */
-+
++/* set charger mode */
 +static int bq2415x_set_mode(struct bq2415x_device *bq, enum bq2415x_mode mode)
 +{
 +	int ret = 0;
 +	int charger = 0;
++	int boost = 0;
 +
-+	if (mode == BQ2415X_MODE_NONE ||
-+		mode == BQ2415X_MODE_HOST_CHARGER ||
++	if (mode == BQ2415X_MODE_HOST_CHARGER ||
 +		mode == BQ2415X_MODE_DEDICATED_CHARGER)
 +			charger = 1;
 +
-+	if (charger)
-+		ret = bq2415x_exec_command(bq, BQ2415X_BOOST_MODE_DISABLE);
-+	else
++	if (mode == BQ2415X_MODE_BOOST)
++		boost = 1;
++
++	if (!charger)
 +		ret = bq2415x_exec_command(bq, BQ2415X_CHARGER_DISABLE);
++
++	if (!boost)
++		ret = bq2415x_exec_command(bq, BQ2415X_BOOST_MODE_DISABLE);
 +
 +	if (ret < 0)
 +		return ret;
 +
 +	switch (mode) {
 +	case BQ2415X_MODE_NONE:
-+		dev_info(bq->dev, "mode: N/A\n");
++		dev_dbg(bq->dev, "changing mode to: N/A\n");
 +		ret = bq2415x_set_current_limit(bq, 100);
 +		break;
 +	case BQ2415X_MODE_HOST_CHARGER:
-+		dev_info(bq->dev, "mode: Host/HUB charger\n");
++		dev_dbg(bq->dev, "changing mode to: Host/HUB charger\n");
 +		ret = bq2415x_set_current_limit(bq, 500);
 +		break;
 +	case BQ2415X_MODE_DEDICATED_CHARGER:
-+		dev_info(bq->dev, "mode: Dedicated charger\n");
++		dev_dbg(bq->dev, "changing mode to: Dedicated charger\n");
 +		ret = bq2415x_set_current_limit(bq, 1800);
 +		break;
 +	case BQ2415X_MODE_BOOST: /* Boost mode */
-+		dev_info(bq->dev, "mode: Boost\n");
++		dev_dbg(bq->dev, "changing mode to: Boost\n");
 +		ret = bq2415x_set_current_limit(bq, 100);
 +		break;
 +	}
@@ -738,17 +770,23 @@
 +
 +	if (charger)
 +		ret = bq2415x_exec_command(bq, BQ2415X_CHARGER_ENABLE);
-+	else
++	else if (boost)
 +		ret = bq2415x_exec_command(bq, BQ2415X_BOOST_MODE_ENABLE);
 +
 +	if (ret < 0)
 +		return ret;
 +
++	bq2415x_set_default_value(bq, weak_battery_voltage);
++	bq2415x_set_default_value(bq, battery_regulation_voltage);
++
 +	bq->mode = mode;
++	sysfs_notify(&bq->charger.dev->kobj, NULL, "mode");
++
 +	return 0;
 +
 +}
 +
++/* hook function called by other driver which set reported mode */
 +static void bq2415x_hook_function(enum bq2415x_mode mode, void *data)
 +{
 +	struct bq2415x_device *bq = data;
@@ -756,17 +794,21 @@
 +	if (!bq)
 +		return;
 +
++	dev_dbg(bq->dev, "hook function was called\n");
 +	bq->reported_mode = mode;
 +
++	/* if automode is not enabled do not tell about reported_mode */
 +	if (bq->automode < 1)
 +		return;
 +
++	sysfs_notify(&bq->charger.dev->kobj, NULL, "reported_mode");
 +	bq2415x_set_mode(bq, bq->reported_mode);
 +
 +}
 +
-+/* timer functions */
++/**** timer functions ****/
 +
++/* enable/disable auto resetting chip timer */
 +static void bq2415x_set_autotimer(struct bq2415x_device *bq, int state)
 +{
 +	mutex_lock(&bq2415x_timer_mutex);
@@ -781,6 +823,7 @@
 +	if (state) {
 +		schedule_delayed_work(&bq->work, BQ2415X_TIMER_TIMEOUT * HZ);
 +		bq2415x_exec_command(bq, BQ2415X_TIMER_RESET);
++		bq->timer_error = NULL;
 +	} else {
 +		cancel_delayed_work_sync(&bq->work);
 +	}
@@ -788,8 +831,11 @@
 +	mutex_unlock(&bq2415x_timer_mutex);
 +}
 +
++/* called by bq2415x_timer_work on timer error */
 +static void bq2415x_timer_error(struct bq2415x_device *bq, const char *msg)
 +{
++	bq->timer_error = msg;
++	sysfs_notify(&bq->charger.dev->kobj, NULL, "timer");
 +	dev_err(bq->dev, "%s\n", msg);
 +	if (bq->automode > 0)
 +		bq->automode = 0;
@@ -797,6 +843,7 @@
 +	bq2415x_set_autotimer(bq, 0);
 +}
 +
++/* delayed work function for auto resetting chip timer */
 +static void bq2415x_timer_work(struct work_struct *work)
 +{
 +	struct bq2415x_device *bq = container_of(work, struct bq2415x_device,
@@ -808,24 +855,25 @@
 +
 +	ret = bq2415x_exec_command(bq, BQ2415X_TIMER_RESET);
 +	if (ret < 0) {
-+		bq2415x_timer_error(bq, "Reseting timer failed");
++		bq2415x_timer_error(bq, "Resetting timer failed");
 +		return;
 +	}
 +
 +	boost = bq2415x_exec_command(bq, BQ2415X_BOOST_MODE_STATUS);
 +	if (boost < 0) {
-+		bq2415x_timer_error(bq, "Unknow error");
++		bq2415x_timer_error(bq, "Unknown error");
 +		return;
 +	}
 +
 +	error = bq2415x_exec_command(bq, BQ2415X_FAULT_STATUS);
 +	if (error < 0) {
-+		bq2415x_timer_error(bq, "Unknow error");
++		bq2415x_timer_error(bq, "Unknown error");
 +		return;
 +	}
 +
 +	if (boost) {
 +		switch (error) {
++		/* Non fatal errors, chip is OK */
 +		case 0: /* No error */
 +			break;
 +		case 6: /* Timer expired */
@@ -835,9 +883,10 @@
 +			dev_err(bq->dev, "Battery voltage to low\n");
 +			break;
 +
++		/* Fatal errors, disable and reset chip */
 +		case 1: /* Overvoltage protection (chip fried) */
 +			bq2415x_timer_error(bq,
-+				"Overvolatge protection (chip fried)");
++				"Overvoltage protection (chip fried)");
 +			return;
 +		case 2: /* Overload */
 +			bq2415x_timer_error(bq, "Overload");
@@ -856,6 +905,7 @@
 +		}
 +	} else {
 +		switch (error) {
++		/* Non fatal errors, chip is OK */
 +		case 0: /* No error */
 +			break;
 +		case 2: /* Sleep mode */
@@ -871,9 +921,10 @@
 +			dev_err(bq->dev, "No battery\n");
 +			break;
 +
++		/* Fatal errors, disable and reset chip */
 +		case 1: /* Overvoltage protection (chip fried) */
 +			bq2415x_timer_error(bq,
-+				"Overvolatge protection (chip fried)");
++				"Overvoltage protection (chip fried)");
 +			return;
 +		case 4: /* Battery overvoltage protection */
 +			bq2415x_timer_error(bq,
@@ -889,10 +940,10 @@
 +	schedule_delayed_work(&bq->work, BQ2415X_TIMER_TIMEOUT * HZ);
 +}
 +
-+/* power supply */
++/**** power supply interface code ****/
 +
 +static enum power_supply_property bq2415x_power_supply_props[] = {
-+	/* TODO: more power supply properties */
++	/* TODO: maybe add more power supply properties */
 +	POWER_SUPPLY_PROP_STATUS,
 +	POWER_SUPPLY_PROP_MODEL_NAME,
 +};
@@ -979,8 +1030,9 @@
 +	kfree(bq->model);
 +}
 +
-+/* sysfs files */
++/**** additional sysfs entries for power supply interface ****/
 +
++/* show *_status entries */
 +static ssize_t bq2415x_sysfs_show_status(struct device *dev,
 +		struct device_attribute *attr, char *buf)
 +{
@@ -1008,6 +1060,11 @@
 +		return sprintf(buf, "%d\n", ret);
 +}
 +
++/* set timer entry:
++     auto - enable auto mode
++     off - disable auto mode
++     (other values) - reset chip timer
++*/
 +static ssize_t bq2415x_sysfs_set_timer(struct device *dev,
 +		struct device_attribute *attr, const char *buf, size_t count)
 +{
@@ -1029,6 +1086,7 @@
 +		return count;
 +}
 +
++/* show timer entry (auto or off) */
 +static ssize_t bq2415x_sysfs_show_timer(struct device *dev,
 +		struct device_attribute *attr, char *buf)
 +{
@@ -1036,12 +1094,22 @@
 +	struct bq2415x_device *bq = container_of(psy, struct bq2415x_device,
 +						charger);
 +
++	if (bq->timer_error)
++		return sprintf(buf, "%s\n", bq->timer_error);
++
 +	if (bq->autotimer)
 +		return sprintf(buf, "auto\n");
 +	else
 +		return sprintf(buf, "off\n");
 +}
 +
++/* set mode entry:
++     auto - if automode is supported, enable it and set mode to reported
++     none - disable charger and boost mode
++     host - charging mode for host/hub chargers (current limit 500mA)
++     dedicated - charging mode for dedicated chargers (unlimited current limit)
++     boost - disable charger and enable boost mode
++*/
 +static ssize_t bq2415x_sysfs_set_mode(struct device *dev,
 +		struct device_attribute *attr, const char *buf, size_t count)
 +{
@@ -1075,9 +1143,10 @@
 +	} else if (strncmp(buf, "reset", 5) == 0) {
 +		bq2415x_reset_chip(bq);
 +		bq2415x_set_defaults(bq);
-+		if (bq->automode > 0)
-+			bq->automode = 1;
-+		return count;
++		if (bq->automode <= 0)
++			return count;
++		bq->automode = 1;
++		mode = bq->reported_mode;
 +	} else
 +		return -EINVAL;
 +
@@ -1088,6 +1157,7 @@
 +		return count;
 +}
 +
++/* show mode entry (auto, none, host, dedicated or boost) */
 +static ssize_t bq2415x_sysfs_show_mode(struct device *dev,
 +		struct device_attribute *attr, char *buf)
 +{
@@ -1121,12 +1191,16 @@
 +	return ret;
 +}
 +
++/* show reported_mode entry (none, host, dedicated or boost) */
 +static ssize_t bq2415x_sysfs_show_reported_mode(struct device *dev,
 +		struct device_attribute *attr, char *buf)
 +{
 +	struct power_supply *psy = dev_get_drvdata(dev);
 +	struct bq2415x_device *bq = container_of(psy, struct bq2415x_device,
 +						charger);
++
++	if (bq->automode < 0)
++		return -EINVAL;
 +
 +	switch (bq->reported_mode) {
 +	case BQ2415X_MODE_NONE:
@@ -1142,6 +1216,7 @@
 +	return -EINVAL;
 +}
 +
++/* directly set raw value to chip register, format: 'register value' */
 +static ssize_t bq2415x_sysfs_set_registers(struct device *dev,
 +		struct device_attribute *attr, const char *buf, size_t count)
 +{
@@ -1149,16 +1224,13 @@
 +	struct bq2415x_device *bq = container_of(psy, struct bq2415x_device,
 +						charger);
 +	ssize_t ret = 0;
-+	char *end;
-+	int reg;
-+	int val;
++	unsigned int reg;
++	unsigned int val;
 +
-+	reg = simple_strtol(buf, &end, 16);
-+	if (reg < 0 || reg > 4)
++	if (sscanf(buf, "%x %x", &reg, &val) != 2)
 +		return -EINVAL;
 +
-+	val = simple_strtol(end+1, NULL, 16);
-+	if (val < 0 || val > 255)
++	if (reg > 4 || val > 255)
 +		return -EINVAL;
 +
 +	ret = bq2415x_i2c_write(bq, reg, val);
@@ -1168,6 +1240,7 @@
 +		return count;
 +}
 +
++/* print value of chip register, format: 'register=value' */
 +static ssize_t bq2415x_sysfs_print_reg(struct bq2415x_device *bq,
 +					u8 reg, char *buf)
 +{
@@ -1178,6 +1251,7 @@
 +		return sprintf(buf, "%#.2x=%#.2x\n", reg, ret);
 +}
 +
++/* show all raw values of chip register, format per line: 'register=value' */
 +static ssize_t bq2415x_sysfs_show_registers(struct device *dev,
 +		struct device_attribute *attr, char *buf)
 +{
@@ -1194,8 +1268,7 @@
 +	return ret;
 +}
 +
-+/* Current & Volatage settings */
-+
++/* set current and voltage limit entries (in mA or mV) */
 +static ssize_t bq2415x_sysfs_set_limit(struct device *dev,
 +		struct device_attribute *attr, const char *buf, size_t count)
 +{
@@ -1205,7 +1278,7 @@
 +	long val;
 +	int ret;
 +
-+	if (strict_strtol(buf, 10, &val) < 0)
++	if (kstrtol(buf, 10, &val) < 0)
 +		return -EINVAL;
 +
 +	if (strcmp(attr->attr.name, "current_limit") == 0)
@@ -1227,6 +1300,7 @@
 +		return count;
 +}
 +
++/* show current and voltage limit entries (in mA or mV) */
 +static ssize_t bq2415x_sysfs_show_limit(struct device *dev,
 +		struct device_attribute *attr, char *buf)
 +{
@@ -1254,6 +1328,7 @@
 +		return sprintf(buf, "%d\n", ret);
 +}
 +
++/* set *_enable entries */
 +static ssize_t bq2415x_sysfs_set_enable(struct device *dev,
 +		struct device_attribute *attr, const char *buf, size_t count)
 +{
@@ -1264,7 +1339,7 @@
 +	long val;
 +	int ret;
 +
-+	if (strict_strtol(buf, 10, &val) < 0)
++	if (kstrtol(buf, 10, &val) < 0)
 +		return -EINVAL;
 +
 +	if (strcmp(attr->attr.name, "charge_termination_enable") == 0)
@@ -1289,6 +1364,7 @@
 +		return count;
 +}
 +
++/* show *_enable entries */
 +static ssize_t bq2415x_sysfs_show_enable(struct device *dev,
 +		struct device_attribute *attr, char *buf)
 +{
@@ -1391,8 +1467,7 @@
 +	sysfs_remove_group(&bq->charger.dev->kobj, &bq2415x_sysfs_attr_group);
 +}
 +
-+/* bq2415x register */
-+
++/* main bq2415x probe function */
 +static int bq2415x_probe(struct i2c_client *client,
 +		const struct i2c_device_id *id)
 +{
@@ -1484,7 +1559,7 @@
 +	INIT_DELAYED_WORK(&bq->work, bq2415x_timer_work);
 +	bq2415x_set_autotimer(bq, 1);
 +
-+	dev_info(bq->dev, "driver registred\n");
++	dev_info(bq->dev, "driver registered\n");
 +	return 0;
 +
 +error_5:
@@ -1503,7 +1578,7 @@
 +	return ret;
 +}
 +
-+/* bq2415x unregister */
++/* main bq2415x remove function */
 +
 +static int bq2415x_remove(struct i2c_client *client)
 +{
@@ -1521,7 +1596,7 @@
 +	idr_remove(&bq2415x_id, bq->id);
 +	mutex_unlock(&bq2415x_id_mutex);
 +
-+	dev_info(bq->dev, "driver unregistred\n");
++	dev_info(bq->dev, "driver unregistered\n");
 +
 +	kfree(bq->name);
 +	kfree(bq);
@@ -1619,7 +1694,7 @@
 +    platform_data->set_mode_hook(bq2415x_hook_function, bq2415x_device);
 +
 +  Board/platform function set_mode_hook return non zero value when hook
-+  function was successfull registred. Platform code should call that hook
++  function was successful registered. Platform code should call that hook
 +  function (which get from pointer, with data) every time when charger was
 +  connected/disconnected or require to enable boost mode. bq2415x driver then
 +  will set correct current limit, enable/disable charger or boost mode.
@@ -1637,7 +1712,7 @@
 +
 +  (hook function and driver private data are NULL)
 +
-+  After thet board/platform code must not call driver hook function! It is
++  After that board/platform code must not call driver hook function! It is
 +  possible that pointer to hook function will not be valid and calling will
 +  cause undefined result.
 +

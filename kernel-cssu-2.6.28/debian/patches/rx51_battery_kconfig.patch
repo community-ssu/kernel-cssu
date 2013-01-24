@@ -1,0 +1,20 @@
+--- kernel-power/drivers/power/Kconfig.orig	2012-09-12 13:56:16.891379993 +0200
++++ kernel-power/drivers/power/Kconfig	2012-09-12 13:59:44.455373042 +0200
+@@ -81,4 +81,10 @@ config CHARGER_BQ2415X
+ 	help
+ 	  Say Y here to enable support for chargers with BQ2415X(I2C) chip.
+ 
++config BATTERY_RX51
++	tristate "Nokia RX-51 battery driver"
++	depends on TWL4030_MADC
++	help
++	  Say Y here to enable support for battery information on Nokia RX-51.
++
+ endif # POWER_SUPPLY
+--- kernel-power/drivers/power/Makefile.orig	2012-09-12 13:56:21.735379832 +0200
++++ kernel-power/drivers/power/Makefile	2012-09-12 14:00:14.171372046 +0200
+@@ -26,3 +26,4 @@ obj-$(CONFIG_BATTERY_TOSA)	+= tosa_batte
+ obj-$(CONFIG_BATTERY_WM97XX)	+= wm97xx_battery.o
+ obj-$(CONFIG_BATTERY_BQ27x00)	+= bq27x00_battery.o
+ obj-$(CONFIG_CHARGER_BQ2415X)	+= bq2415x_charger.o
++obj-$(CONFIG_BATTERY_RX51)	+= rx51_battery.o

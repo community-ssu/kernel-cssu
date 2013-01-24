@@ -1,15 +1,15 @@
 2.6.28-omap1.diff
+nokia-20091602+0m5.diff
 nokia-20093908+0m5.diff
 nokia-20094102.3+0m5.diff
 nokia-20094102.6+0m5.diff
 nokia-20094803.3+0m5.diff
 nokia-20100903+0m5.diff
 nokia-20101501+0m5.diff
-#nokia-20101501+0m5-nosmart.diff
 nokia-20103103+0m5.diff
-#nokia-20103103+0m5_usb.diff
 2.6.28.10.diff
 rx51_defconfig.diff
+kstrtol.diff
 unionfs-2.5.3.diff
 dm-loop.diff
 usbip.diff
@@ -35,6 +35,7 @@ wl12xx_rohar.diff
 #fmtx.unlock.diff
 radio-bcm2048.diff
 #i2c-battery.diff
+musb_core_revert_20103103+0m5.diff
 usbhostmode.diff
 musb_sysfs_notify.diff
 musb_sysfs_hostdevice.diff
@@ -43,6 +44,7 @@ power-supply-ignore-enodata.diff
 power-supply-no-verbose.diff
 bq27x00-rx51-board.diff
 bq27x00-upstream.diff
+bq27x00-fix-nac.diff
 bq27x00-maemo.diff
 bq27x00-sysfs-registers.diff
 l2cap_parent.diff
@@ -57,6 +59,7 @@ adding-ramzswap-driver.diff
 patch_swap_notify_core_support_2_2.6.28.diff
 update_mmu_cache_arm.diff
 radio-si4713.diff
+enable_smartreflex.diff
 overclock_smartreflex_900.diff
 dspbridge.diff
 shutdown-reboot-patch.diff
@@ -75,7 +78,11 @@ USB-fix-kernel-oops-with-g_ether-and-windows.diff
 bq2415x_charger.patch
 bq2415x_kconfig.patch
 bq2415x_rx51.patch
+rx51_battery.patch
+rx51_battery_board.patch
+rx51_battery_kconfig.patch
 rx51_add_secure_ppa_api.diff
 rx51_arm_errata_430973.diff
 clear_the_it_state_when_invoking_a_thumb_2_signal_handler.diff
+udf-use-hw-sector-size.diff
 tif_restore_sigmask-syscalls-arm.patch

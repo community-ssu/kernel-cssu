@@ -1,3 +1,21 @@
+kernel-power (1:2.6.28-10power52) fremantle; urgency=low
+
+  * Backport upstream patch: udf-use-hw-sector-size.diff (This fix UDF FS support on SD cards and USB disks)
+  * Update bq2415x_charger patch: (use kstrtol, use dev_dbg, call sysfs_notify, rename N900 charger to bq24150a, fix reporting bad values, disable charging when charger disconnected, report errors)
+  * Added patch kstrtol.diff which define macro kstrtol as strict_strtol
+  * Update into about kernel-power-bootimg package
+  * Package kernel-power-bootimg does not provide any features
+  * Enable more netfilter and ipv6 modules
+  * Added driver rx51_battery which export battery temperature, design capacity and voltage to sysfs, provides: kernel-feature-rx51-battery
+  * Added patch tif_restore_sigmask-syscalls-arm.patch which fix pselect bug, added provides: kernel-feature-sigmask
+  * Enable bridge module, provides kernel-feature-bridge
+  * bq27x00_battery: Do not report nominal available capaciy if battery is not calibrated
+  * Add sysfs entry hostdevice2 which show host device speed detected by musb_virthub.c
+  * Optify bootimg package
+  * Enable vlan (8021q) module
+
+ -- Pali Rohár <pali.rohar@gmail.com>  Fri, 18 Jan 2013 17:31:40 +0100
+
 kernel-cssu (1:2.6.28-10cssu3) fremantle; urgency=low
 
   * Pull latest patches from kernel-power:

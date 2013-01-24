@@ -1,7 +1,7 @@
 #!/usr/bin/make -f
 #
 
-RELEASE := $(shell dpkg-parsechangelog | sed -ne 's/^Version: 1:\(.*\)/\1/p' | sed 's/-10/.10-/' | sed 's/r[0-9]*$$//')
+RELEASE := $(shell dpkg-parsechangelog | sed -ne 's/^Version: 1:\(.*\)/\1/p' | sed 's/-10/.10-/' | sed 's/\([0-9]\)r[0-9]*$$/\1/')
 REVISION := $(shell echo "$(RELEASE)" | sed 's/.*\./\./')
 EXTRAVERSION := EXTRAVERSION=$(REVISION)
 
@@ -17,8 +17,6 @@ DEBUG_PACKAGE := $(PACKAGE)-debug
 DEBUG_MODULES_PACKAGE := $(PACKAGE)-modules-debug
 LIBC_PACKAGE := linux-$(PACKAGE)-headers
 
-MULTIBOOTDIR := etc/multiboot.d
-MULTIBOOTFILE := $(MULTIBOOTDIR)/20-Maemo5-$(PACKAGE)-$(RELEASE).item
 BOOTMENUDIR := etc/bootmenu.d
 BOOTMENUFILE := $(BOOTMENUDIR)/20-Maemo5-$(PACKAGE)-$(RELEASE).item
 
@@ -109,14 +107,13 @@ install-bootimg:
 	dh_testdir
 	dh_testroot
 	mkdir -p $(CURDIR)/debian/$(BOOTIMG_PACKAGE)/boot
-	mkdir -p $(CURDIR)/debian/$(BOOTIMG_PACKAGE)/$(MULTIBOOTDIR)
+	mkdir -p $(CURDIR)/debian/$(BOOTIMG_PACKAGE)/opt/boot
 	mkdir -p $(CURDIR)/debian/$(BOOTIMG_PACKAGE)/$(BOOTMENUDIR)
-	install -m644 $(KSRC)/arch/arm/boot/zImage $(CURDIR)/debian/$(BOOTIMG_PACKAGE)/boot/zImage-$(RELEASE)
-	echo "ITEM_NAME=\"Maemo 5 with $(PACKAGE) $(RELEASE) (Internal Nand)\"" > $(CURDIR)/debian/$(BOOTIMG_PACKAGE)/$(MULTIBOOTFILE)
-	echo "ITEM_KERNEL=\"$(RELEASE)\"" >> $(CURDIR)/debian/$(BOOTIMG_PACKAGE)/$(MULTIBOOTFILE)
-	echo "ITEM_OMAPATAG=\"1\"" >> $(CURDIR)/debian/$(BOOTIMG_PACKAGE)/$(MULTIBOOTFILE)
-	cp $(CURDIR)/debian/$(BOOTIMG_PACKAGE)/$(MULTIBOOTFILE) $(CURDIR)/debian/$(BOOTIMG_PACKAGE)/$(BOOTMENUFILE)
-	chmod 644 $(CURDIR)/debian/$(BOOTIMG_PACKAGE)/$(MULTIBOOTFILE)
+	install -m644 $(KSRC)/arch/arm/boot/zImage $(CURDIR)/debian/$(BOOTIMG_PACKAGE)/opt/boot/zImage-$(RELEASE)
+	ln -sf /opt/boot/zImage-$(RELEASE) $(CURDIR)/debian/$(BOOTIMG_PACKAGE)/boot/zImage-$(RELEASE)
+	echo "ITEM_NAME=\"Maemo 5 with $(PACKAGE) $(RELEASE) (Internal Nand)\"" > $(CURDIR)/debian/$(BOOTIMG_PACKAGE)/$(BOOTMENUFILE)
+	echo "ITEM_KERNEL=\"$(RELEASE)\"" >> $(CURDIR)/debian/$(BOOTIMG_PACKAGE)/$(BOOTMENUFILE)
+	echo "ITEM_OMAPATAG=\"1\"" >> $(CURDIR)/debian/$(BOOTIMG_PACKAGE)/$(BOOTMENUFILE)
 	chmod 644 $(CURDIR)/debian/$(BOOTIMG_PACKAGE)/$(BOOTMENUFILE)
 
 install-flasher:
@@ -257,6 +254,7 @@ endif
 	dh_compress -s
 	dh_fixperms -s --exclude /usr/src/kernel-headers
 	dh_installdeb -s
+	rm -f $(CURDIR)/debian/$(BOOTIMG_PACKAGE)/DEBIAN/conffiles
 	dh_shlibdeps -s
 	dh_gencontrol -s
 	dh_md5sums -s
