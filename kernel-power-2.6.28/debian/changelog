@@ -13,6 +13,7 @@ kernel-power (1:2.6.28-10power52) fremantle; urgency=low
   * Add sysfs entry hostdevice2 which show host device speed detected by musb_virthub.c
   * Optify bootimg package
   * Enable vlan (8021q) module
+  * Fix reporting temperature in rx51_battery driver (driver should export temperature in 1/10 °C)
 
  -- Pali Rohár <pali.rohar@gmail.com>  Fri, 18 Jan 2013 17:31:40 +0100
 
