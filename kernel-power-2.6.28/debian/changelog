@@ -14,8 +14,9 @@ kernel-power (1:2.6.28-10power52) fremantle; urgency=low
   * Optify bootimg package
   * Enable vlan (8021q) module
   * Fix reporting temperature in rx51_battery driver (driver should export temperature in 1/10 °C)
+  * Add support for offline mode in bq2415x_charger driver
 
- -- Pali Rohár <pali.rohar@gmail.com>  Fri, 18 Jan 2013 17:31:40 +0100
+ -- Pali Rohár <pali.rohar@gmail.com>  Thu, 14 Feb 2013 17:34:58 +0100
 
 kernel-power (1:2.6.28-10power51r1) fremantle; urgency=low
 
