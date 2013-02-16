@@ -10,10 +10,7 @@ cd /etc
 test -f lastboot && rm lastboot
 test -f lastreboot && rm lastreboot
 
-# install premount hook
-if ! grep -q "# KERNEL-POWER-HOOK" /etc/default/mount-opts; then
-	echo "sh /etc/kernel-power/pre-mount || true # KERNEL-POWER-HOOK" >> /etc/default/mount-opts
-fi
+rm -f /etc/kernel-power/pre-mount
 
 bootcfg=/etc/default/kernel-boot
 test -f $bootcfg || cp /usr/share/kernel-power-settings/boot $bootcfg
