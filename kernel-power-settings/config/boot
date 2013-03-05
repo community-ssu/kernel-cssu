@@ -1,5 +1,0 @@
-# boot options for kernel-power-settings
-
-# start USB networking and sshd early during boot
-# 0=off, 1=on
-EARLY_SSH=0

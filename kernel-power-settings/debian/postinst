@@ -11,9 +11,7 @@ test -f lastboot && rm lastboot
 test -f lastreboot && rm lastreboot
 
 rm -f /etc/kernel-power/pre-mount
-
-bootcfg=/etc/default/kernel-boot
-test -f $bootcfg || cp /usr/share/kernel-power-settings/boot $bootcfg
+rm -f /etc/default/kernel-boot
 
 update-sudoers
 
