@@ -9,7 +9,7 @@ Standards-Version: 3.8.0
 Package: kernel-power-settings
 Section: user/system
 Architecture: armel
-Depends: kernel-power-flasher (>= 1:2.6.28-10power49) | kernel-power-bootimg (>= 1:2.6.28-10power49) | kernel-feature-smartreflex, sudo
+Depends: kernel-feature-overclock, kernel-feature-smartreflex, sudo
 XB-Maemo-Display-Name: Linux kernel for power user (settings and overclock)
 Description: Tools for the customization and overclock Linux kernel
  Installing this package will automatically also install Linux kernel
@@ -19,9 +19,6 @@ Description: Tools for the customization and overclock Linux kernel
  show CPU frequency, voltage and DSP settings.
  It can also set defaults which are loaded during boot.
  Different profiles can be stored in the user's home directory.
- .
- This package contains boot options to enable file system checks
- of /home before mounting or to start a SSH server with USB networking.
  .
  Kernel modules specified in /etc/modules are loaded during boot.
  .
