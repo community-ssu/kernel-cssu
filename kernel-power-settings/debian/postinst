@@ -2,16 +2,18 @@
 
 set -e
 
-# move old upstart scripts out of the way
-cd /etc/event.d
-test -f kernel && mv kernel /root/kernel.upstart.old
-test -f kernel-maemo && mv kernel-maemo /root/kernel-maemo.upstart.old
-cd /etc
-test -f lastboot && rm lastboot
-test -f lastreboot && rm lastreboot
-
+# remove old files
+rm -f /etc/event.d/kernel
+rm -f /etc/event.d/kernel-maemo
+rm -f /etc/lastboot
+rm -f /etc/lastreboot
 rm -f /etc/kernel-power/pre-mount
 rm -f /etc/default/kernel-boot
+
+# remove old hook
+if grep -q '# KERNEL-POWER-HOOK' /etc/default/mount-opts; then
+    sed '/# KERNEL-POWER-HOOK/d' -i /etc/default/mount-opts
+fi
 
 update-sudoers
 
