@@ -181,7 +181,7 @@
 +	else if (rx51_charger_connected)
 +		mode = BQ2415X_MODE_HOST_CHARGER; /* usb charger */
 +	else
-+		mode = BQ2415X_MODE_NONE; /* no charger */
++		mode = BQ2415X_MODE_OFF; /* no charger */
 +
 +	if (rx51_charger_mode == mode)
 +		return;
