@@ -1,0 +1,220 @@
+From a96cab2a7a2afdaf8b895c53f98498d67fa8c563 Mon Sep 17 00:00:00 2001
+From: David Fries <David@Fries.net>
+Date: Wed, 5 Sep 2012 19:28:04 -0500
+Subject: [PATCH 1/4] musb resume fix, don't store context when suspending
+
+The hardware register context in suspend are in such a state that
+restoring it later will prevent talking to a computer USB port (or
+charging).  However leaving the register context as stored previously
+will allow it to work after a suspend to memory operation.
+---
+ drivers/usb/musb/musb_core.c |    9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/usb/musb/musb_core.c b/drivers/usb/musb/musb_core.c
+index cc10f5c..42f8499 100644
+--- a/drivers/usb/musb/musb_core.c
++++ b/drivers/usb/musb/musb_core.c
+@@ -2665,8 +2665,13 @@ static int musb_suspend(struct platform_device *pdev, pm_message_t message)
+ 		 */
+ 	}
+ 
+-	/* save context */
+-	musb_save_ctx(musb);
++	/* save context, actually don't, the hardware register context 'now'
++	 * is in such a state that restoring it later will prevent talking to
++	 * a computer USB port (or charging).  However leaving the register
++	 * context as stored previously will allow it to work.
++	 *
++	 * musb_save_ctx(musb);
++	 */
+ 
+ 	if (musb->set_clock)
+ 		musb->set_clock(musb->clock, 0);
+-- 
+1.7.10.4
+
+
+From 85abd671c5dad36dffe6071c4a37619b7396096e Mon Sep 17 00:00:00 2001
+From: David Fries <David@Fries.net>
+Date: Mon, 27 Aug 2012 23:25:42 -0500
+Subject: [PATCH 2/4] twl4030-usb add suggested delay between voltage power on
+
+---
+ drivers/usb/otg/twl4030-usb.c |    4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/drivers/usb/otg/twl4030-usb.c b/drivers/usb/otg/twl4030-usb.c
+index f9ca548..dd44457 100644
+--- a/drivers/usb/otg/twl4030-usb.c
++++ b/drivers/usb/otg/twl4030-usb.c
+@@ -473,6 +473,10 @@ static void twl4030_phy_power(struct twl4030_usb *twl, int on)
+ 	if (on) {
+ 		twl4030_usb3v1_sleep(false);
+ 		regulator_enable(twl->usb1v8);
++		/* recommened 10 to 20 usec delay to "avoid simultaneous large
++		 * incrush current" or 450 mA*2*4.5 V = 4.05 W for 2 usec
++		 */
++		udelay(20);
+ 		regulator_enable(twl->usb1v5);
+ 		pwr &= ~PHY_PWR_PHYPWD;
+ 		WARN_ON(twl4030_usb_write_verify(twl, PHY_PWR_CTRL, pwr) < 0);
+-- 
+1.7.10.4
+
+
+From 42440912e1e9c2897835c6e374645612d7a55785 Mon Sep 17 00:00:00 2001
+From: David Fries <David@Fries.net>
+Date: Sat, 8 Sep 2012 19:34:29 -0500
+Subject: [PATCH 3/4] sleep while detecting charger
+
+Add a 1ms sleep between charger detect reads as it is reading for
+300ms and most likely already being interrupted in that time.
+---
+ drivers/usb/musb/musb_core.c |    1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/usb/musb/musb_core.c b/drivers/usb/musb/musb_core.c
+index 42f8499..dee8251 100644
+--- a/drivers/usb/musb/musb_core.c
++++ b/drivers/usb/musb/musb_core.c
+@@ -289,6 +289,7 @@ static int musb_charger_detect(struct musb *musb)
+ 							& ISP1704_PWR_CTRL_VDAT_DET);
+ 				if (vdat)
+ 					break;
++				msleep(1);
+ 			}
+ 			if (vdat)
+ 				vdat = musb_verify_charger(musb->mregs);
+-- 
+1.7.10.4
+
+
+From 11587f1250450ac711706ca68d7161171674fa0a Mon Sep 17 00:00:00 2001
+From: David Fries <David@Fries.net>
+Date: Fri, 24 Aug 2012 21:07:28 -0500
+Subject: [PATCH 4/4] add musb_start/musb_stop to suspend/resume
+
+---
+ drivers/usb/musb/musb_core.c   |   35 +++++++++++++++++++++++------------
+ drivers/usb/musb/musb_core.h   |    1 +
+ drivers/usb/musb/musb_gadget.c |    5 +++--
+ 3 files changed, 27 insertions(+), 14 deletions(-)
+
+diff --git a/drivers/usb/musb/musb_core.c b/drivers/usb/musb/musb_core.c
+index dee8251..efd1eed 100644
+--- a/drivers/usb/musb/musb_core.c
++++ b/drivers/usb/musb/musb_core.c
+@@ -2651,8 +2651,6 @@ static int musb_suspend(struct platform_device *pdev, pm_message_t message)
+ 	unsigned long	flags;
+ 	struct musb	*musb = dev_to_musb(&pdev->dev);
+ 
+-	if (!musb->clock)
+-		return 0;
+ 
+ 	spin_lock_irqsave(&musb->lock, flags);
+ 
+@@ -2674,12 +2672,18 @@ static int musb_suspend(struct platform_device *pdev, pm_message_t message)
+ 	 * musb_save_ctx(musb);
+ 	 */
+ 
+-	if (musb->set_clock)
+-		musb->set_clock(musb->clock, 0);
+-	else
+-		clk_disable(musb->clock);
++	if (!musb->clock) {
++		if (musb->set_clock)
++			musb->set_clock(musb->clock, 0);
++		else
++			clk_disable(musb->clock);
++	}
+ 
+ 	spin_unlock_irqrestore(&musb->lock, flags);
++
++	musb_hnp_stop(musb);
++	musb_pullup(musb, 0);
++	musb_stop(musb);
+ 	return 0;
+ }
+ 
+@@ -2688,15 +2692,15 @@ static int musb_resume(struct platform_device *pdev)
+ 	unsigned long	flags;
+ 	struct musb	*musb = dev_to_musb(&pdev->dev);
+ 
+-	if (!musb->clock)
+-		return 0;
+ 
+ 	spin_lock_irqsave(&musb->lock, flags);
+ 
+-	if (musb->set_clock)
+-		musb->set_clock(musb->clock, 1);
+-	else
+-		clk_enable(musb->clock);
++	if (!musb->clock) {
++		if (musb->set_clock)
++			musb->set_clock(musb->clock, 1);
++		else
++			clk_enable(musb->clock);
++	}
+ 
+ 	/* restore context */
+ 	musb_restore_ctx(musb);
+@@ -2706,6 +2710,8 @@ static int musb_resume(struct platform_device *pdev)
+ 	 * not treating that as a whole-system restart (e.g. swsusp)
+ 	 */
+ 	spin_unlock_irqrestore(&musb->lock, flags);
++	if(musb->xceiv && musb->xceiv->gadget)
++		musb_start(musb);
+ 	return 0;
+ }
+ 
+@@ -2767,6 +2773,11 @@ subsys_initcall(musb_init);
+ 
+ static void __exit musb_cleanup(void)
+ {
++	if(the_musb) {
++		musb_hnp_stop(the_musb);
++		musb_pullup(the_musb, 0);
++		musb_stop(the_musb);
++	}
+ 	platform_driver_unregister(&musb_driver);
+ }
+ module_exit(musb_cleanup);
+diff --git a/drivers/usb/musb/musb_core.h b/drivers/usb/musb/musb_core.h
+index 9ede3ab..7a38d15 100644
+--- a/drivers/usb/musb/musb_core.h
++++ b/drivers/usb/musb/musb_core.h
+@@ -117,6 +117,7 @@ extern void musb_g_suspend(struct musb *);
+ extern void musb_g_resume(struct musb *);
+ extern void musb_g_wakeup(struct musb *);
+ extern void musb_g_disconnect(struct musb *);
++extern void musb_pullup(struct musb *musb, int is_on);
+ 
+ #else
+ 
+diff --git a/drivers/usb/musb/musb_gadget.c b/drivers/usb/musb/musb_gadget.c
+index abd80d3..f19f834 100644
+--- a/drivers/usb/musb/musb_gadget.c
++++ b/drivers/usb/musb/musb_gadget.c
+@@ -1393,7 +1393,7 @@ musb_gadget_set_self_powered(struct usb_gadget *gadget, int is_selfpowered)
+ 	return 0;
+ }
+ 
+-static void musb_pullup(struct musb *musb, int is_on)
++void musb_pullup(struct musb *musb, int is_on)
+ {
+ 	u8 power;
+ 
+@@ -1435,7 +1435,8 @@ static void musb_pullup(struct musb *musb, int is_on)
+ 	/* FIXME if on, HdrcStart; if off, HdrcStop */
+ 
+ 	DBG(3, "gadget %s D+ pullup %s\n",
+-		musb->gadget_driver->function, is_on ? "on" : "off");
++		musb->gadget_driver ? musb->gadget_driver->function : NULL,
++		is_on ? "on" : "off");
+ 	musb_writeb(musb->mregs, MUSB_POWER, power);
+ }
+ 
+-- 
+1.7.10.4
+
