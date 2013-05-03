@@ -1,3 +1,15 @@
+kernel-power-settings (0.17) fremante; urgency=low
+
+  * Remove EARLY_SSH support because calling getbootstate
+    getbootstate increasing rebooot counter which can cause MALF state and unbootable device
+  * Remove pre-mount script from /etc/kernel-power/pre-mount
+    This is horible hack which can cause unbootable device with CSSU
+    CSSU will have better solution for fsck
+  * Remove old files and hooks in postinst/postrm scripts
+  * Update debian/control
+
+ -- Pali Rohár <pali.rohar@gmail.com>  Fri, 03 May 2013 23:27:15 +0200
+
 kernel-power-settings (0.16) fremantle; urgency=low
 
   * Increase version due to repository bug
