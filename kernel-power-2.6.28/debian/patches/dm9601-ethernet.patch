@@ -1,0 +1,14 @@
+--- kernel-power-2.6.28/drivers/net/usb/dm9601.c	2008-12-25 00:26:37.000000000 +0100
++++ kernel-power-2.6.28/drivers/net/usb/dm9601.c	2013-04-15 13:33:38.178295095 +0200
+@@ -590,6 +590,10 @@ static const struct driver_info dm9601_i
+ 
+ static const struct usb_device_id products[] = {
+ 	{
++	 USB_DEVICE(0x0fe6, 0x9700),	/* DM9601 USB to Fast Ethernet Adapter */
++	 .driver_info = (unsigned long)&dm9601_info,
++	 },
++	{
+ 	 USB_DEVICE(0x07aa, 0x9601),	/* Corega FEther USB-TXC */
+ 	 .driver_info = (unsigned long)&dm9601_info,
+ 	 },
+
