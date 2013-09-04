@@ -1,13 +1,16 @@
 --- kernel-power/drivers/power/power_supply_sysfs.c	2012-01-28 02:03:53.273467047 +0100
 +++ kernel-power/drivers/power/power_supply_sysfs.c	2012-01-28 02:04:20.085466262 +0100
-@@ -60,8 +60,8 @@ static ssize_t power_supply_show_propert
+@@ -58,12 +58,8 @@ static ssize_t power_supply_show_property(struct device *dev,
  
- 	if (ret < 0) {
- 		if (ret != -ENODEV)
+ 	ret = psy->get_property(psy, off, &value);
+ 
+-	if (ret < 0) {
+-		if (ret != -ENODEV)
 -			dev_err(dev, "driver failed to report `%s' property\n",
 -				attr->attr.name);
-+/*			dev_err(dev, "driver failed to report `%s' property\n",
-+				attr->attr.name);*/
++	if (ret < 0)
  		return ret;
- 	}
+-	}
  
+ 	if (off == POWER_SUPPLY_PROP_STATUS)
+ 		return sprintf(buf, "%s\n", status_text[value.intval]);
