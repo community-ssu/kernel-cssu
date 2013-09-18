@@ -1,0 +1,21 @@
+--- kernel-power-2.6.28/drivers/misc/nokia-av.c	2013-08-08 01:06:58.603133117 +0200
++++ kernel-power-2.6.28/drivers/misc/nokia-av.c	2013-08-08 01:18:39.367656481 +0200
+@@ -152,6 +152,10 @@
+ 	int pressed, timeout;
+ 
+ 	pressed = !gpio_get_value(drvdata->eci0_gpio);
++
++	input_report_key(drvdata->input, KEY_PROG1, pressed);
++	input_sync(drvdata->input);
++
+ 	if (drvdata->hs_btn_pressed == pressed)
+ 		return IRQ_HANDLED;
+ 
+@@ -185,6 +189,7 @@
+ 		return ret;
+ 	}
+ 
++	input_set_capability(drvdata->input, EV_KEY, KEY_PROG1);
+ 	input_set_capability(drvdata->input, EV_KEY, HS_BTN_KEY);
+ 	drvdata->input->name = "headset button";
+ 

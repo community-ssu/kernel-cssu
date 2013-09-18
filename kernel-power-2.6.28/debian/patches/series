@@ -88,3 +88,4 @@ udf-use-hw-sector-size.diff
 tif_restore_sigmask-syscalls-arm.patch
 dm9601-ethernet.patch
 asix-ethernet.patch
+nokia-av_key.patch
