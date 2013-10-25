@@ -54102,7 +54102,7 @@ diff -urN kernel-power-2.6.28/drivers/dsp/bridge/rmgr/drv_interface.c kernel-pow
  
  module_param(shm_size, int, 0);
 -MODULE_PARM_DESC(shm_size, "SHM size, default = 4 MB, minimum = 64 KB");
-+MODULE_PARM_DESC(shm_size, "shm size, default = 4 MB, minimum = 64 KB");
++MODULE_PARM_DESC(shm_size, "shm size, default = 5 MB, minimum = 64 KB");
  
  module_param(phys_mempool_base, uint, 0);
  MODULE_PARM_DESC(phys_mempool_base,
