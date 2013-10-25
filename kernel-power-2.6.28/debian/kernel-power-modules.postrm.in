@@ -10,8 +10,4 @@ if test "$1" != "upgrade" && grep -q 'MODULE_PATH=/lib/modules/`uname -r`' /sbin
     sed 's%MODULE_PATH=/lib/modules/`uname -r` #fixed by kernel-power%MODULE_PATH=/lib/modules/current%' -i /sbin/preinit
 fi
 
-if test "$1" != "upgrade" && grep -q '#fixed by kernel-power' /etc/modprobe.d/bridgedriver; then
-    echo -e "options bridgedriver shm_size=0x400000 phys_mempool_base=0 base_img=/lib/dsp/baseimage.dof\n" > /etc/modprobe.d/bridgedriver
-fi
-
 #DEBHELPER#
