@@ -1,4 +1,4 @@
-start on started dsme
+start on MOUNTS_OK
 stop on starting shutdown
 service
 console none
