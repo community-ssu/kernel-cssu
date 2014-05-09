@@ -34,6 +34,7 @@ armthumb.diff
 wl12xx_rohar.diff
 #fmtx.unlock.diff
 radio-bcm2048.diff
+radio-bcm2048-security.patch
 #i2c-battery.diff
 musb_core_revert_20103103+0m5.diff
 usbhostmode.diff
