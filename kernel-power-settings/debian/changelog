@@ -1,3 +1,10 @@
+kernel-power-settings (0.18) fremantle; urgency=low
+
+  * start upstart script after mounting /home and /opt
+  * upstart kernel-modules file is service
+
+ -- Pali Rohár <pali.rohar@gmail.com>  Fri, 09 May 2014 17:58:06 +0200
+
 kernel-power-settings (0.17) fremante; urgency=low
 
   * Remove EARLY_SSH support because calling getbootstate
