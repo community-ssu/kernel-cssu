@@ -1,3 +1,9 @@
+wl1251-maemo (0.3) unstable; urgency=low
+
+  * Include IBSS fixes patches
+
+ -- Pali Rohár <pali.rohar@gmail.com>  Fri, 09 May 2014 19:58:51 +0200
+
 wl1251-maemo (0.2) unstable; urgency=low
 
   * Initial release
