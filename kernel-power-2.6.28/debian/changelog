@@ -1,3 +1,23 @@
+kernel-power (1:2.6.28-10power53) fremantle; urgency=low
+
+  * Backport security fixes from upstream kernel for radio driver in patch radio-bcm2048-security.patch
+    * fix sign of value in bcm2048_##prop##_read()
+    * fix missing unlock on error in bcm2048_rds_fifo_receive()
+    * fix coccinelle warnings: Replace memcpy with struct assignment
+    * fix unneeded semicolon in bcm2048_fops_read()
+  * Fix dangling if statement in patch power-supply-no-verbose.diff
+  * Backport usb ids from upstream kernel for dm9601.ko and asix.ko drivers
+  * Add patch nokia-av_key.patch for immediately headset button press event as KEY_PROG1
+  * Remove shm_size=0x400000 from /etc/modprobe.d/bridgedriver because it is not needed
+  * Update patch overclock_smartreflex_900.diff to improve the stability on some rare devices
+  * Fix suspend to memory problems, generally only useful in offline mode
+    use /sys/power/state to enter (not used by Mameo5, just less broken now)
+    * advance system clock after resume using RTC time
+    * computer USB port now is able to be detected and charge after resume
+    * disable WARN_ON in getnstimeofday when timing system suspended
+
+ -- Pali Rohár <pali.rohar@gmail.com>  Sat, 10 May 2014 22:17:57 +0200
+
 kernel-power (1:2.6.28-10power52) fremantle; urgency=low
 
   * Backport upstream patch: udf-use-hw-sector-size.diff (This fix UDF FS support on SD cards and USB disks)
