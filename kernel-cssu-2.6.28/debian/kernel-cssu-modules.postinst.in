@@ -7,11 +7,17 @@ rm -f /lib/modules/current
 ln -s @RELEASE@ /lib/modules/current
 
 if grep -q "MODULE_PATH=/lib/modules/current" /sbin/preinit; then
-    sed 's%MODULE_PATH=/lib/modules/current%MODULE_PATH=/lib/modules/`uname -r` #fixed by kernel-cssu%' -i /sbin/preinit
+    sed 's%MODULE_PATH=/lib/modules/current%MODULE_PATH=/lib/modules/`uname -r` #fixed by kernel-power%' -i /sbin/preinit
 fi
 
-if ! grep -q '#fixed by kernel-cssu' /etc/modprobe.d/bridgedriver; then
-    echo -e "options bridgedriver phys_mempool_base=0 base_img=/lib/dsp/baseimage.dof\n#fixed by kernel-cssu" > /etc/modprobe.d/bridgedriver
+# Remove param shm_size for bridgedriver
+if grep -q 'shm_size=' /etc/modprobe.d/bridgedriver; then
+    sed 's/shm_size=[^\s*] //' -i /etc/modprobe.d/bridgedriver
+fi
+
+# Remove comment set by previous kernel-power versions
+if grep -q '#fixed by kernel-power' /etc/modprobe.d/bridgedriver; then
+    sed 's/#fixed by kernel-power//;/^$/d' -i /etc/modprobe.d/bridgedriver
 fi
 
 #DEBHELPER#

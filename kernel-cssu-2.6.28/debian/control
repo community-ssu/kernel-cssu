@@ -3,7 +3,7 @@ Section: utils
 Priority: optional
 Maintainer: Pali Rohár <pali.rohar@gmail.com>
 XSBC-Bugtracker: https://garage.maemo.org/tracker/?group_id=1528
-Build-Depends: debhelper (>= 4.0.0), quilt, sdk-fiasco-gen, libncurses5-dev, sharutils, wl1251-maemo-source
+Build-Depends: debhelper (>= 4.0.0), sdk-fiasco-gen, quilt, libncurses5-dev, sharutils, wl1251-maemo-source
 Build-Depends-Indep: bzip2
 Standards-Version: 3.8.0
 
@@ -98,7 +98,7 @@ XB-Maemo-Icon-26:
 Package: kernel-cssu-flasher
 Section: user/system
 Architecture: armel
-Pre-Depends: kernel-cssu (= ${binary:Version}), kernel-cssu-modules (= ${binary:Version}), softupd (>= 0.4.0), hildon-application-manager
+Pre-Depends: kernel-cssu (= ${binary:Version}), kernel-cssu-modules (= ${binary:Version}), softupd (>= 0.4.0), hildon-application-manager, fiasco-image-update-ask
 Depends: sudo
 Recommends: kernel-power-settings, usbip, iptables, mtd-utils, kexec-tools
 Replaces: kernel-flasher

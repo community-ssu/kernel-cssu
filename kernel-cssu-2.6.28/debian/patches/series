@@ -34,6 +34,7 @@ armthumb.diff
 wl12xx_rohar.diff
 #fmtx.unlock.diff
 radio-bcm2048.diff
+radio-bcm2048-security.patch
 #i2c-battery.diff
 musb_core_revert_20103103+0m5.diff
 usbhostmode.diff
@@ -86,3 +87,9 @@ rx51_arm_errata_430973.diff
 clear_the_it_state_when_invoking_a_thumb_2_signal_handler.diff
 udf-use-hw-sector-size.diff
 tif_restore_sigmask-syscalls-arm.patch
+dm9601-ethernet.patch
+asix-ethernet.patch
+nokia-av_key.patch
+resume_use_rtc_clock.diff
+resume_no_time_warn.diff
+musb_suspend_and_fixes.diff

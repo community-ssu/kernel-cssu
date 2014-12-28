@@ -160,7 +160,7 @@ diff -urN kernel-cssu-2.6.28/arch/arm/mach-omap2/smartreflex.c kernel-power-2.6.
 + * adjust them with a constant
 + */
 +#define SR_NVALUE_ADJUST_LOWOPP   -150000 /* For 125 and 250 MHz */
-+#define SR_NVALUE_ADJUST_HIGHOPP  -125000 /* For 500+ MHz */
++#define SR_NVALUE_ADJUST_HIGHOPP  -100000 /* For 500+ MHz */
 +
 +/* Boost voltage with the bellow value(in uV) when DSP frequency is >430 MHz and 
 + * twice that value when DSP frequency is > 520 Mhz

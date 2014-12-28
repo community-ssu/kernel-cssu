@@ -7,11 +7,7 @@ rm -f /lib/modules/current
 ln -s 2.6.28-omap1 /lib/modules/current
 
 if test "$1" != "upgrade" && grep -q 'MODULE_PATH=/lib/modules/`uname -r`' /sbin/preinit; then
-    sed 's%MODULE_PATH=/lib/modules/`uname -r` #fixed by kernel-cssu%MODULE_PATH=/lib/modules/current%' -i /sbin/preinit
-fi
-
-if test "$1" != "upgrade" && grep -q '#fixed by kernel-cssu' /etc/modprobe.d/bridgedriver; then
-    echo -e "options bridgedriver shm_size=0x400000 phys_mempool_base=0 base_img=/lib/dsp/baseimage.dof\n" > /etc/modprobe.d/bridgedriver
+    sed 's%MODULE_PATH=/lib/modules/`uname -r` #fixed by kernel-power%MODULE_PATH=/lib/modules/current%' -i /sbin/preinit
 fi
 
 #DEBHELPER#
