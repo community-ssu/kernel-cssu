@@ -53,15 +53,6 @@
  	  6stack	6-jack
 --- kernel-power-2.6.28.orig/Makefile
 +++ kernel-power-2.6.28/Makefile
-@@ -1,7 +1,7 @@
- VERSION = 2
- PATCHLEVEL = 6
- SUBLEVEL = 28
--EXTRAVERSION =
-+EXTRAVERSION = .10
- NAME = Erotic Pickled Herring
- 
- # *DOCUMENTATION*
 @@ -560,6 +560,9 @@
  # disable pointer signed / unsigned warnings in gcc 4.0
  KBUILD_CFLAGS += $(call cc-option,-Wno-pointer-sign,)
