@@ -16,6 +16,8 @@ KBUILD_PACKAGE := $(PACKAGE)-kbuild
 DEBUG_PACKAGE := $(PACKAGE)-debug
 DEBUG_MODULES_PACKAGE := $(PACKAGE)-modules-debug
 LIBC_PACKAGE := linux-$(PACKAGE)-headers
+UBOOT_PACKAGE := u-boot-flasher
+UBOOT_VERSION := $(shell ls -r /opt/boot 2>/dev/null | sed -n 's/^u-boot-\(.*\)\.bin$$/\1/p' | head -1)
 
 BOOTMENUDIR := etc/bootmenu.d
 BOOTMENUFILE := $(BOOTMENUDIR)/20-Maemo5-$(PACKAGE)-$(RELEASE).item
@@ -95,9 +97,18 @@ clean:
 	dh_testdir
 	dh_testroot
 	rm -rf $(BUILDTMP)
-	rm -f debian/files debian/$(FLASHER_PACKAGE).postinst debian/$(MODULES_PACKAGE).postinst debian/$(MODULES_PACKAGE).postrm
+	rm -f debian/files debian/$(UBOOT_PACKAGE).postinst debian/$(FLASHER_PACKAGE).postinst debian/$(MODULES_PACKAGE).postinst debian/$(MODULES_PACKAGE).postrm
 	rm -f source-stamp configure-stamp kernel-stamp modules-stamp packet-injection-source-stamp packet-injection-configure-stamp packet-injection-build-stamp
 	dh_clean
+
+install-u-boot:
+	dh_testdir
+	dh_testroot
+	mkdir -p $(CURDIR)/debian/$(UBOOT_PACKAGE)/boot
+	mkimage -A arm -O linux -T kernel -C none -a 80008000 -e 80008000 -n zImage-$(RELEASE) -d $(KSRC)/arch/arm/boot/zImage $(BUILDTMP)/uImage
+	u-boot-gen-combined /opt/boot/u-boot-$(UBOOT_VERSION).bin $(BUILDTMP)/uImage $(BUILDTMP)/combined.bin
+	fiasco-gen -o $(CURDIR)/debian/$(UBOOT_PACKAGE)/boot/u-boot-$(UBOOT_VERSION)+zImage-$(RELEASE).fiasco -g -k $(BUILDTMP)/combined.bin -v u-boot-$(UBOOT_VERSION)
+	chmod 644 $(CURDIR)/debian/$(UBOOT_PACKAGE)/boot/u-boot-$(UBOOT_VERSION)+zImage-$(RELEASE).fiasco
 
 install-kernel:
 	dh_testdir
@@ -205,7 +216,7 @@ install-indep:
 	mkdir -p debian/$(SOURCE_PACKAGE)/usr/src
 	install -m 644 $(BUILDTMP)/$(SOURCE_PACKAGE)-$(RELEASE).tar.bz2 debian/$(SOURCE_PACKAGE)/usr/src
 
-install-arch: build-arch install-kernel install-bootimg install-flasher install-modules install-debug install-modules-debug install-headers install-libc-headers
+install-arch: build-arch install-u-boot install-kernel install-bootimg install-flasher install-modules install-debug install-modules-debug install-headers install-libc-headers
 
 ifeq ($(ARCH),arm)
 build-arch: kernel-stamp modules-stamp headers
@@ -232,6 +243,10 @@ binary-arch: build-arch install-arch
 else
 binary-arch: install-libc-headers
 endif
+	sed \
+		-e 's,@IMAGE@,/boot/u-boot-$(UBOOT_VERSION)+zImage-$(RELEASE).fiasco,g' \
+		< $(CURDIR)/debian/$(UBOOT_PACKAGE).postinst.in \
+		> $(CURDIR)/debian/$(UBOOT_PACKAGE).postinst
 	sed \
 		-e 's,@RELEASE@,$(RELEASE),g' \
 		< $(CURDIR)/debian/$(FLASHER_PACKAGE).postinst.in \

@@ -1,0 +1,25 @@
+#!/bin/sh
+
+set -e
+
+IMAGE=@IMAGE@
+FLASHER=/sbin/fiasco-image-update
+BOOTMENU=/usr/sbin/u-boot-update-bootmenu
+
+# they say this is The Right Way (tm) to check for
+# scratchbox environment
+if [ -L /targets/links/scratchbox.config ]; then
+	# hehe
+	true
+else
+	if [ -f $IMAGE -a -x $FLASHER ]; then
+		$FLASHER $IMAGE
+	fi
+fi
+
+if [ -x $BOOTMENU ]; then
+	$BOOTMENU || true
+fi
+
+#DEBHELPER#
+
