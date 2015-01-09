@@ -5,7 +5,7 @@ RELEASE := $(shell dpkg-parsechangelog | sed -ne 's/^Version: 1:\(.*\)/\1/p' | s
 REVISION := $(shell echo "$(RELEASE)" | sed 's/.*\./\./')
 EXTRAVERSION := EXTRAVERSION=$(REVISION)
 
-PACKAGE := kernel-cssu
+PACKAGE := kernel
 FLASHER_PACKAGE := $(PACKAGE)-flasher
 SOURCE_PACKAGE := $(PACKAGE)-source
 KERNEL_PACKAGE := $(PACKAGE)
@@ -46,7 +46,7 @@ ifneq (,$(findstring parallel,$(DEB_BUILD_OPTIONS)))
 endif
 
 get-orig-source:
-	wget http://repository.maemo.org/pool/maemo5.0/free/k/kernel/kernel_2.6.28.orig.tar.gz -O kernel-cssu_2.6.28.orig.tar.gz
+	wget http://repository.maemo.org/pool/maemo5.0/free/k/kernel/kernel_2.6.28.orig.tar.gz -O kernel_2.6.28.orig.tar.gz
 
 source-stamp:
 	dh_testdir
@@ -119,10 +119,6 @@ install-bootimg:
 install-flasher:
 	dh_testdir
 	dh_testroot
-	mkdir -p $(CURDIR)/debian/$(FLASHER_PACKAGE)/etc/sudoers.d
-	mkdir -p $(CURDIR)/debian/$(FLASHER_PACKAGE)/usr/sbin
-	mkdir -p $(CURDIR)/debian/$(FLASHER_PACKAGE)/usr/share/applications/hildon
-	install -m644 $(CURDIR)/debian/kernel-cssu-flasher.sudoers $(CURDIR)/debian/$(FLASHER_PACKAGE)/etc/sudoers.d
 
 install-debug: install-modules
 	mkdir -p $(CURDIR)/debian/$(DEBUG_PACKAGE)/usr/lib/debug/lib/modules/$(RELEASE)
@@ -157,7 +153,7 @@ install-modules:
 			strip --remove-section=.comment --remove-section=.note --strip-unneeded  $(CURDIR)/debian/$(MODULES_PACKAGE)/opt/packet-injection-modules/$(RELEASE)/$$(basename $$f); \
 		done; \
 	done
-	install -m644 $(CURDIR)/debian/kernel-cssu.blacklist $(CURDIR)/debian/$(MODULES_PACKAGE)/etc/modprobe.d
+	install -m644 $(CURDIR)/debian/kernel.blacklist $(CURDIR)/debian/$(MODULES_PACKAGE)/etc/modprobe.d
 
 install-headers:
 	dh_testdir

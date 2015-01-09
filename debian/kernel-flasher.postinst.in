@@ -17,7 +17,5 @@ else
 	fi
 fi
 
-update-sudoers
-
 #DEBHELPER#
 

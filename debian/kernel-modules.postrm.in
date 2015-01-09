@@ -1,0 +1,7 @@
+#!/bin/sh
+
+set -e
+
+test -d /lib/modules/@RELEASE@ && rm -f /lib/modules/@RELEASE@/modules.*
+
+#DEBHELPER#

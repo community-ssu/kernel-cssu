@@ -1,9 +1,0 @@
-#!/bin/sh
-
-test "$1" = remove || exit 0
-dbusmsg="run-standalone.sh dbus-send --type=method_call --dest=org.freedesktop.Notifications /org/freedesktop/Notifications org.freedesktop.Notifications.SystemNoteInfoprint"
-
-if pgrep -f /usr/bin/hildon-application-manager > /dev/null; then
-    $dbusmsg string:"This package can be uninstalled only via \"Nokia Kernel\" menu entry."
-    exit 1
-fi

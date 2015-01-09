@@ -1,0 +1,9 @@
+#!/bin/sh
+
+set -e
+
+/sbin/depmod @RELEASE@
+rm -f /lib/modules/current
+ln -s @RELEASE@ /lib/modules/current
+
+#DEBHELPER#
