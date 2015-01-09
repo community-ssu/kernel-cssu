@@ -48,6 +48,9 @@ endif
 get-orig-source:
 	wget http://repository.maemo.org/pool/maemo5.0/free/k/kernel/kernel_2.6.28.orig.tar.gz -O kernel_2.6.28.orig.tar.gz
 
+unpack-orig-source:
+	wget http://repository.maemo.org/pool/maemo5.0/free/k/kernel/kernel_2.6.28.orig.tar.gz -O - | tar -xz --strip-components=1 kernel-2.6.28
+
 source-stamp:
 	dh_testdir
 	mkdir -p $(KSRC)
