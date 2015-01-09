@@ -168,7 +168,7 @@ install-modules:
 		done; \
 	done
 	ln -s $(RELEASE) $(CURDIR)/debian/$(MODULES_PACKAGE)/lib/modules/current
-	install -m644 $(CURDIR)/debian/kernel.blacklist $(CURDIR)/debian/$(MODULES_PACKAGE)/etc/modprobe.d
+	install -m644 $(CURDIR)/debian/kernel-modules.blacklist $(CURDIR)/debian/$(MODULES_PACKAGE)/etc/modprobe.d/blacklist
 
 install-headers:
 	dh_testdir
