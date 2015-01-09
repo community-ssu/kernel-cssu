@@ -1,5 +1,5 @@
---- kernel-cssu-2.6.28/drivers/media/radio/radio-si4713.c	2012-02-17 20:44:03.508286080 +0100
-+++ kernel-cssu-2.6.28/drivers/media/radio/radio-si4713.c	2012-02-17 20:45:13.976284020 +0100
+--- kernel-power-2.6.28/drivers/media/radio/radio-si4713.c	2012-02-17 20:44:03.508286080 +0100
++++ kernel-power-2.6.28/drivers/media/radio/radio-si4713.c	2012-02-17 20:45:13.976284020 +0100
 @@ -55,23 +55,10 @@
  static int radio_nr = -1;	/* radio device minor (-1 ==> auto assign) */
  

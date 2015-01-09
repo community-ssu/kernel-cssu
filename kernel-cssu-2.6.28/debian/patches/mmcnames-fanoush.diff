@@ -1,5 +1,5 @@
---- kernel-cssu-2.6.28.orig/drivers/mmc/card/block.c
-+++ kernel-cssu-2.6.28/drivers/mmc/card/block.c
+--- kernel-power-2.6.28.orig/drivers/mmc/card/block.c
++++ kernel-power-2.6.28/drivers/mmc/card/block.c
 @@ -479,7 +479,7 @@
  	struct mmc_blk_data *md;
  	int devidx, ret;
@@ -9,8 +9,8 @@
  	if (devidx >= MMC_NUM_MINORS)
  		return ERR_PTR(-ENOSPC);
  	__set_bit(devidx, dev_use);
---- kernel-cssu-2.6.28.orig/drivers/mmc/host/omap_hsmmc.c
-+++ kernel-cssu-2.6.28/drivers/mmc/host/omap_hsmmc.c
+--- kernel-power-2.6.28.orig/drivers/mmc/host/omap_hsmmc.c
++++ kernel-power-2.6.28/drivers/mmc/host/omap_hsmmc.c
 @@ -1804,8 +1804,8 @@
  	omap_hsmmc_protect_card(host);
  
@@ -21,8 +21,8 @@
  		ret = device_create_file(&mmc->class_dev, &dev_attr_slot_name);
  		if (ret < 0)
  			goto err_slot_name;
---- kernel-cssu-2.6.28.orig/include/linux/mmc/host.h
-+++ kernel-cssu-2.6.28/include/linux/mmc/host.h
+--- kernel-power-2.6.28.orig/include/linux/mmc/host.h
++++ kernel-power-2.6.28/include/linux/mmc/host.h
 @@ -207,7 +207,7 @@
  #endif
  

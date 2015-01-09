@@ -1,7 +1,7 @@
-Index: kernel-cssu-2.6.28/drivers/net/wireless/wl12xx/wl1251_cmd.c
+Index: kernel-power-2.6.28/drivers/net/wireless/wl12xx/wl1251_cmd.c
 ===================================================================
---- kernel-cssu-2.6.28.orig/drivers/net/wireless/wl12xx/wl1251_cmd.c	2010-05-14 23:59:06.832141497 +0200
-+++ kernel-cssu-2.6.28/drivers/net/wireless/wl12xx/wl1251_cmd.c	2010-05-14 23:59:07.524273985 +0200
+--- kernel-power-2.6.28.orig/drivers/net/wireless/wl12xx/wl1251_cmd.c	2010-05-14 23:59:06.832141497 +0200
++++ kernel-power-2.6.28/drivers/net/wireless/wl12xx/wl1251_cmd.c	2010-05-14 23:59:07.524273985 +0200
 @@ -204,11 +204,11 @@
  	return 0;
  }
@@ -61,10 +61,10 @@ Index: kernel-cssu-2.6.28/drivers/net/wireless/wl12xx/wl1251_cmd.c
  	ret = wl1251_cmd_send(wl, cmd_tx, cmd, sizeof(*cmd));
  	if (ret < 0) {
  		wl1251_error("tx %s cmd for channel %d failed",
-Index: kernel-cssu-2.6.28/drivers/net/wireless/wl12xx/wl1251_cmd.h
+Index: kernel-power-2.6.28/drivers/net/wireless/wl12xx/wl1251_cmd.h
 ===================================================================
---- kernel-cssu-2.6.28.orig/drivers/net/wireless/wl12xx/wl1251_cmd.h	2010-05-14 23:59:06.832141497 +0200
-+++ kernel-cssu-2.6.28/drivers/net/wireless/wl12xx/wl1251_cmd.h	2010-05-14 23:59:07.524273985 +0200
+--- kernel-power-2.6.28.orig/drivers/net/wireless/wl12xx/wl1251_cmd.h	2010-05-14 23:59:06.832141497 +0200
++++ kernel-power-2.6.28/drivers/net/wireless/wl12xx/wl1251_cmd.h	2010-05-14 23:59:07.524273985 +0200
 @@ -35,7 +35,8 @@
  int wl1251_cmd_configure(struct wl1251 *wl, u16 id, void *buf, size_t len);
  int wl1251_cmd_vbm(struct wl1251 *wl, u8 identity,
@@ -75,10 +75,10 @@ Index: kernel-cssu-2.6.28/drivers/net/wireless/wl12xx/wl1251_cmd.h
  int wl1251_cmd_join(struct wl1251 *wl, u8 bss_type, u8 channel,
  		    u16 beacon_interval, u8 dtim_interval);
  int wl1251_cmd_ps_mode(struct wl1251 *wl, u8 ps_mode);
-Index: kernel-cssu-2.6.28/drivers/net/wireless/wl12xx/wl1251_init.c
+Index: kernel-power-2.6.28/drivers/net/wireless/wl12xx/wl1251_init.c
 ===================================================================
---- kernel-cssu-2.6.28.orig/drivers/net/wireless/wl12xx/wl1251_init.c	2010-05-14 23:59:07.063992150 +0200
-+++ kernel-cssu-2.6.28/drivers/net/wireless/wl12xx/wl1251_init.c	2010-05-15 00:46:16.884045939 +0200
+--- kernel-power-2.6.28.orig/drivers/net/wireless/wl12xx/wl1251_init.c	2010-05-14 23:59:07.063992150 +0200
++++ kernel-power-2.6.28/drivers/net/wireless/wl12xx/wl1251_init.c	2010-05-15 00:46:16.884045939 +0200
 @@ -35,7 +35,7 @@
  {
  	int ret;
@@ -104,10 +104,10 @@ Index: kernel-cssu-2.6.28/drivers/net/wireless/wl12xx/wl1251_init.c
  	if (ret < 0)
  		goto out_free_data_path;
  
-Index: kernel-cssu-2.6.28/drivers/net/wireless/wl12xx/wl1251_main.c
+Index: kernel-power-2.6.28/drivers/net/wireless/wl12xx/wl1251_main.c
 ===================================================================
---- kernel-cssu-2.6.28.orig/drivers/net/wireless/wl12xx/wl1251_main.c	2010-05-14 23:59:07.063992150 +0200
-+++ kernel-cssu-2.6.28/drivers/net/wireless/wl12xx/wl1251_main.c	2010-05-15 03:33:55.871890108 +0200
+--- kernel-power-2.6.28.orig/drivers/net/wireless/wl12xx/wl1251_main.c	2010-05-14 23:59:07.063992150 +0200
++++ kernel-power-2.6.28/drivers/net/wireless/wl12xx/wl1251_main.c	2010-05-15 03:33:55.871890108 +0200
 @@ -667,7 +667,11 @@
  	if (ret < 0)
  		return ret;
@@ -168,10 +168,10 @@ Index: kernel-cssu-2.6.28/drivers/net/wireless/wl12xx/wl1251_main.c
  	wl->channel = channel;
  
  	if (conf->flags & IEEE80211_CONF_PS && !wl->psm_requested) {
-Index: kernel-cssu-2.6.28/drivers/net/wireless/wl12xx/wl1251_acx.c
+Index: kernel-power-2.6.28/drivers/net/wireless/wl12xx/wl1251_acx.c
 ===================================================================
---- kernel-cssu-2.6.28.orig/drivers/net/wireless/wl12xx/wl1251_acx.c	2010-05-15 00:00:22.995807778 +0200
-+++ kernel-cssu-2.6.28/drivers/net/wireless/wl12xx/wl1251_acx.c	2010-05-15 00:14:02.111891358 +0200
+--- kernel-power-2.6.28.orig/drivers/net/wireless/wl12xx/wl1251_acx.c	2010-05-15 00:00:22.995807778 +0200
++++ kernel-power-2.6.28/drivers/net/wireless/wl12xx/wl1251_acx.c	2010-05-15 00:14:02.111891358 +0200
 @@ -212,7 +212,7 @@
  	return ret;
  }
@@ -190,10 +190,10 @@ Index: kernel-cssu-2.6.28/drivers/net/wireless/wl12xx/wl1251_acx.c
  	feature->options = 0;
  
  	ret = wl1251_cmd_configure(wl, ACX_FEATURE_CFG,
-Index: kernel-cssu-2.6.28/drivers/net/wireless/wl12xx/wl1251_acx.h
+Index: kernel-power-2.6.28/drivers/net/wireless/wl12xx/wl1251_acx.h
 ===================================================================
---- kernel-cssu-2.6.28.orig/drivers/net/wireless/wl12xx/wl1251_acx.h	2010-05-15 00:01:16.660049057 +0200
-+++ kernel-cssu-2.6.28/drivers/net/wireless/wl12xx/wl1251_acx.h	2010-05-15 00:14:27.776191658 +0200
+--- kernel-power-2.6.28.orig/drivers/net/wireless/wl12xx/wl1251_acx.h	2010-05-15 00:01:16.660049057 +0200
++++ kernel-power-2.6.28/drivers/net/wireless/wl12xx/wl1251_acx.h	2010-05-15 00:14:27.776191658 +0200
 @@ -1454,7 +1454,7 @@
  int wl1251_acx_sleep_auth(struct wl1251 *wl, u8 sleep_auth);
  int wl1251_acx_fw_version(struct wl1251 *wl, char *buf, size_t len);
@@ -203,10 +203,10 @@ Index: kernel-cssu-2.6.28/drivers/net/wireless/wl12xx/wl1251_acx.h
  int wl1251_acx_mem_map(struct wl1251 *wl,
  		       struct acx_header *mem_map, size_t len);
  int wl1251_acx_data_path_params(struct wl1251 *wl,
-Index: kernel-cssu-2.6.28/drivers/net/wireless/wl12xx/wl1251_rx.c
+Index: kernel-power-2.6.28/drivers/net/wireless/wl12xx/wl1251_rx.c
 ===================================================================
---- kernel-cssu-2.6.28.orig/drivers/net/wireless/wl12xx/wl1251_rx.c	2010-05-16 15:04:08.279402004 +0200
-+++ kernel-cssu-2.6.28/drivers/net/wireless/wl12xx/wl1251_rx.c	2010-05-16 18:56:57.075800531 +0200
+--- kernel-power-2.6.28.orig/drivers/net/wireless/wl12xx/wl1251_rx.c	2010-05-16 15:04:08.279402004 +0200
++++ kernel-power-2.6.28/drivers/net/wireless/wl12xx/wl1251_rx.c	2010-05-16 18:56:57.075800531 +0200
 @@ -100,7 +100,54 @@
  		status->flag |= RX_FLAG_FAILED_FCS_CRC;
  

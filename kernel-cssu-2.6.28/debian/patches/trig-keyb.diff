@@ -1,5 +1,5 @@
---- kernel-cssu-2.6.28.orig/drivers/leds/Kconfig
-+++ kernel-cssu-2.6.28/drivers/leds/Kconfig
+--- kernel-power-2.6.28.orig/drivers/leds/Kconfig
++++ kernel-power-2.6.28/drivers/leds/Kconfig
 @@ -251,4 +251,10 @@
  	  This allows LEDs to be initialised in the ON state.
  	  If unsure, say Y.
@@ -11,15 +11,15 @@
 +	  This allows LEDs to be used as keyboard indication leds.
 +
  endif # NEW_LEDS
---- kernel-cssu-2.6.28.orig/drivers/leds/Makefile
-+++ kernel-cssu-2.6.28/drivers/leds/Makefile
+--- kernel-power-2.6.28.orig/drivers/leds/Makefile
++++ kernel-power-2.6.28/drivers/leds/Makefile
 @@ -34,3 +34,4 @@
  obj-$(CONFIG_LEDS_TRIGGER_HEARTBEAT)	+= ledtrig-heartbeat.o
  obj-$(CONFIG_LEDS_TRIGGER_BACKLIGHT)	+= ledtrig-backlight.o
  obj-$(CONFIG_LEDS_TRIGGER_DEFAULT_ON)	+= ledtrig-default-on.o
 +obj-$(CONFIG_LEDS_TRIGGER_KEYB)	+= ledtrig-keyb.o
 --- /dev/null
-+++ kernel-cssu-2.6.28/drivers/leds/ledtrig-keyb.c
++++ kernel-power-2.6.28/drivers/leds/ledtrig-keyb.c
 @@ -0,0 +1,70 @@
 +/*
 + * LED keyboard driver.

@@ -1,5 +1,5 @@
---- kernel-cssu-2.6.28/drivers/power/bq27x00_battery.c	2011-10-09 17:23:49.655669727 +0200
-+++ kernel-cssu-2.6.28/drivers/power/bq27x00_battery.c	2011-10-09 17:24:58.823667413 +0200
+--- kernel-power-2.6.28/drivers/power/bq27x00_battery.c	2011-10-09 17:23:49.655669727 +0200
++++ kernel-power-2.6.28/drivers/power/bq27x00_battery.c	2011-10-09 17:24:58.823667413 +0200
 @@ -39,7 +39,20 @@
  #include <asm/unaligned.h>
  #include <asm/uaccess.h>

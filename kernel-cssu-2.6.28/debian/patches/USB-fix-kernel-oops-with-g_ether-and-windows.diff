@@ -1,5 +1,5 @@
---- kernel-cssu-2.6.28/drivers/usb/gadget/rndis.c	2008-12-24 18:26:37.000000000 -0500
-+++ kernel-cssu-2.6.28.new/drivers/usb/gadget/rndis.c	2012-02-18 10:05:20.715877000 -0500
+--- kernel-power-2.6.28/drivers/usb/gadget/rndis.c	2008-12-24 18:26:37.000000000 -0500
++++ kernel-power-2.6.28.new/drivers/usb/gadget/rndis.c	2012-02-18 10:05:20.715877000 -0500
 @@ -294,9 +294,13 @@
  	/* mandatory */
  	case OID_GEN_VENDOR_DESCRIPTION:

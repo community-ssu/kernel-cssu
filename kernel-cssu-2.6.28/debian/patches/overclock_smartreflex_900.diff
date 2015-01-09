@@ -1,6 +1,6 @@
-diff -urN kernel-cssu-2.6.28/arch/arm/mach-omap2/omap3-opp.h kernel-power-2.6.28.new/arch/arm/mach-omap2/omap3-opp.h
---- kernel-cssu-2.6.28/arch/arm/mach-omap2/omap3-opp.h	2012-01-07 13:49:16.551071653 +0000
-+++ kernel-cssu-2.6.28.new/arch/arm/mach-omap2/omap3-opp.h	2011-12-31 12:54:23.719318887 +0000
+diff -urN kernel-power-2.6.28/arch/arm/mach-omap2/omap3-opp.h kernel-power-2.6.28.new/arch/arm/mach-omap2/omap3-opp.h
+--- kernel-power-2.6.28/arch/arm/mach-omap2/omap3-opp.h	2012-01-07 13:49:16.551071653 +0000
++++ kernel-power-2.6.28.new/arch/arm/mach-omap2/omap3-opp.h	2011-12-31 12:54:23.719318887 +0000
 @@ -11,8 +11,7 @@
  #define S900M   900000000
  #define S850M   850000000
@@ -11,9 +11,9 @@ diff -urN kernel-cssu-2.6.28/arch/arm/mach-omap2/omap3-opp.h kernel-power-2.6.28
  #define S600M   600000000
  #define S550M   550000000
  #define S500M   500000000
-diff -urN kernel-cssu-2.6.28/arch/arm/mach-omap2/pm34xx.c kernel-power-2.6.28.new/arch/arm/mach-omap2/pm34xx.c
---- kernel-cssu-2.6.28/arch/arm/mach-omap2/pm34xx.c	2012-01-07 13:49:16.515051220 +0000
-+++ kernel-cssu-2.6.28.new/arch/arm/mach-omap2/pm34xx.c	2011-12-31 12:54:23.735963309 +0000
+diff -urN kernel-power-2.6.28/arch/arm/mach-omap2/pm34xx.c kernel-power-2.6.28.new/arch/arm/mach-omap2/pm34xx.c
+--- kernel-power-2.6.28/arch/arm/mach-omap2/pm34xx.c	2012-01-07 13:49:16.515051220 +0000
++++ kernel-power-2.6.28.new/arch/arm/mach-omap2/pm34xx.c	2011-12-31 12:54:23.735963309 +0000
 @@ -629,9 +629,9 @@
  	 * Only needed if we are going to enter retention.
  	 */
@@ -26,9 +26,9 @@ diff -urN kernel-cssu-2.6.28/arch/arm/mach-omap2/pm34xx.c kernel-power-2.6.28.ne
  
  	/* CORE */
  	if (core_next_state < PWRDM_POWER_ON) {
-diff -urN kernel-cssu-2.6.28/arch/arm/mach-omap2/pm.c kernel-power-2.6.28.new/arch/arm/mach-omap2/pm.c
---- kernel-cssu-2.6.28/arch/arm/mach-omap2/pm.c	2012-01-07 13:49:16.567287927 +0000
-+++ kernel-cssu-2.6.28.new/arch/arm/mach-omap2/pm.c	2011-12-31 12:54:23.772101815 +0000
+diff -urN kernel-power-2.6.28/arch/arm/mach-omap2/pm.c kernel-power-2.6.28.new/arch/arm/mach-omap2/pm.c
+--- kernel-power-2.6.28/arch/arm/mach-omap2/pm.c	2012-01-07 13:49:16.567287927 +0000
++++ kernel-power-2.6.28.new/arch/arm/mach-omap2/pm.c	2011-12-31 12:54:23.772101815 +0000
 @@ -44,25 +44,23 @@
  
  struct omap_opp omap3_mpu_rate_table[] = {
@@ -125,9 +125,9 @@ diff -urN kernel-cssu-2.6.28/arch/arm/mach-omap2/pm.c kernel-power-2.6.28.new/ar
  			printk(KERN_ERR "vdd_opp_store: Invalid value\n");
  			return -EINVAL;
  		}
-diff -urN kernel-cssu-2.6.28/arch/arm/mach-omap2/resource34xx.c kernel-power-2.6.28.new/arch/arm/mach-omap2/resource34xx.c
---- kernel-cssu-2.6.28/arch/arm/mach-omap2/resource34xx.c	2012-01-07 13:49:16.527031015 +0000
-+++ kernel-cssu-2.6.28.new/arch/arm/mach-omap2/resource34xx.c	2011-12-31 12:54:23.772101815 +0000
+diff -urN kernel-power-2.6.28/arch/arm/mach-omap2/resource34xx.c kernel-power-2.6.28.new/arch/arm/mach-omap2/resource34xx.c
+--- kernel-power-2.6.28/arch/arm/mach-omap2/resource34xx.c	2012-01-07 13:49:16.527031015 +0000
++++ kernel-power-2.6.28.new/arch/arm/mach-omap2/resource34xx.c	2011-12-31 12:54:23.772101815 +0000
 @@ -279,7 +279,7 @@
  
  #ifdef CONFIG_OMAP_SMARTREFLEX
@@ -137,9 +137,9 @@ diff -urN kernel-cssu-2.6.28/arch/arm/mach-omap2/resource34xx.c kernel-power-2.6
  #endif
  	for (i = 0; i < 2; i++) {
  		if (i == raise)
-diff -urN kernel-cssu-2.6.28/arch/arm/mach-omap2/smartreflex.c kernel-power-2.6.28.new/arch/arm/mach-omap2/smartreflex.c
---- kernel-cssu-2.6.28/arch/arm/mach-omap2/smartreflex.c	2012-01-07 13:49:16.583042210 +0000
-+++ kernel-cssu-2.6.28.new/arch/arm/mach-omap2/smartreflex.c	2012-01-06 20:56:55.000000000 +0000
+diff -urN kernel-power-2.6.28/arch/arm/mach-omap2/smartreflex.c kernel-power-2.6.28.new/arch/arm/mach-omap2/smartreflex.c
+--- kernel-power-2.6.28/arch/arm/mach-omap2/smartreflex.c	2012-01-07 13:49:16.583042210 +0000
++++ kernel-power-2.6.28.new/arch/arm/mach-omap2/smartreflex.c	2012-01-06 20:56:55.000000000 +0000
 @@ -37,6 +37,7 @@
  #include "prm.h"
  #include "smartreflex.h"
@@ -719,9 +719,9 @@ diff -urN kernel-cssu-2.6.28/arch/arm/mach-omap2/smartreflex.c kernel-power-2.6.
  
  	return 0;
  }
-diff -urN kernel-cssu-2.6.28/arch/arm/mach-omap2/smartreflex.h kernel-power-2.6.28.new/arch/arm/mach-omap2/smartreflex.h
---- kernel-cssu-2.6.28/arch/arm/mach-omap2/smartreflex.h	2012-01-07 13:49:16.543132598 +0000
-+++ kernel-cssu-2.6.28.new/arch/arm/mach-omap2/smartreflex.h	2011-12-31 12:54:23.820044299 +0000
+diff -urN kernel-power-2.6.28/arch/arm/mach-omap2/smartreflex.h kernel-power-2.6.28.new/arch/arm/mach-omap2/smartreflex.h
+--- kernel-power-2.6.28/arch/arm/mach-omap2/smartreflex.h	2012-01-07 13:49:16.543132598 +0000
++++ kernel-power-2.6.28.new/arch/arm/mach-omap2/smartreflex.h	2011-12-31 12:54:23.820044299 +0000
 @@ -63,7 +63,7 @@
  
  /* PRM_VP1_VSTEPMAX */
@@ -770,9 +770,9 @@ diff -urN kernel-cssu-2.6.28/arch/arm/mach-omap2/smartreflex.h kernel-power-2.6.
  #else
  static inline void enable_smartreflex(int srid) {}
  static inline void disable_smartreflex(int srid) {}
-diff -urN kernel-cssu-2.6.28/arch/arm/plat-omap/include/mach/omap34xx.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/mach/omap34xx.h
---- kernel-cssu-2.6.28/arch/arm/plat-omap/include/mach/omap34xx.h	2012-01-07 13:49:16.503856035 +0000
-+++ kernel-cssu-2.6.28.new/arch/arm/plat-omap/include/mach/omap34xx.h	2011-12-31 12:54:23.820044299 +0000
+diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/mach/omap34xx.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/mach/omap34xx.h
+--- kernel-power-2.6.28/arch/arm/plat-omap/include/mach/omap34xx.h	2012-01-07 13:49:16.503856035 +0000
++++ kernel-power-2.6.28.new/arch/arm/plat-omap/include/mach/omap34xx.h	2011-12-31 12:54:23.820044299 +0000
 @@ -107,6 +107,14 @@
  #define VDD1_OPP3	0x3
  #define VDD1_OPP4	0x4
@@ -798,9 +798,9 @@ diff -urN kernel-cssu-2.6.28/arch/arm/plat-omap/include/mach/omap34xx.h kernel-p
  #define MIN_VDD2_OPP	VDD2_OPP1
  #define MAX_VDD2_OPP	VDD2_OPP3
  
-diff -urN kernel-cssu-2.6.28/arch/arm/plat-omap/include/mach/omap-pm.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/mach/omap-pm.h
---- kernel-cssu-2.6.28/arch/arm/plat-omap/include/mach/omap-pm.h	2012-01-07 13:49:16.487184834 +0000
-+++ kernel-cssu-2.6.28.new/arch/arm/plat-omap/include/mach/omap-pm.h	2012-01-06 07:35:45.000000000 +0000
+diff -urN kernel-power-2.6.28/arch/arm/plat-omap/include/mach/omap-pm.h kernel-power-2.6.28.new/arch/arm/plat-omap/include/mach/omap-pm.h
+--- kernel-power-2.6.28/arch/arm/plat-omap/include/mach/omap-pm.h	2012-01-07 13:49:16.487184834 +0000
++++ kernel-power-2.6.28.new/arch/arm/plat-omap/include/mach/omap-pm.h	2012-01-06 07:35:45.000000000 +0000
 @@ -280,6 +280,17 @@
  #else
  void omap_pm_dsp_set_min_opp(u8 opp_id);
@@ -819,9 +819,9 @@ diff -urN kernel-cssu-2.6.28/arch/arm/plat-omap/include/mach/omap-pm.h kernel-po
  
  /**
   * omap_pm_dsp_get_opp - report the current DSP OPP ID
-diff -urN kernel-cssu-2.6.28/arch/arm/plat-omap/omap-pm-srf.c kernel-power-2.6.28.new/arch/arm/plat-omap/omap-pm-srf.c
---- kernel-cssu-2.6.28/arch/arm/plat-omap/omap-pm-srf.c	2012-01-07 13:49:16.470963471 +0000
-+++ kernel-cssu-2.6.28.new/arch/arm/plat-omap/omap-pm-srf.c	2012-01-07 13:45:44.000000000 +0000
+diff -urN kernel-power-2.6.28/arch/arm/plat-omap/omap-pm-srf.c kernel-power-2.6.28.new/arch/arm/plat-omap/omap-pm-srf.c
+--- kernel-power-2.6.28/arch/arm/plat-omap/omap-pm-srf.c	2012-01-07 13:49:16.470963471 +0000
++++ kernel-power-2.6.28.new/arch/arm/plat-omap/omap-pm-srf.c	2012-01-07 13:45:44.000000000 +0000
 @@ -36,6 +36,20 @@
  #define LAT_RES_POSTAMBLE "_latency"
  #define MAX_LATENCY_RES_NAME 30

@@ -1,5 +1,5 @@
---- kernel-cssu-2.6.28.orig/drivers/input/keyboard/omap-twl4030keypad.c
-+++ kernel-cssu-2.6.28/drivers/input/keyboard/omap-twl4030keypad.c
+--- kernel-power-2.6.28.orig/drivers/input/keyboard/omap-twl4030keypad.c
++++ kernel-power-2.6.28/drivers/input/keyboard/omap-twl4030keypad.c
 @@ -325,6 +325,18 @@
  static DEVICE_ATTR(disable_kp, 0664, twl4030_kp_disable_show,
  		   twl4030_kp_disable_store);

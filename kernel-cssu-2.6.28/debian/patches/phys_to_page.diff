@@ -1,5 +1,5 @@
---- kernel-cssu-2.6.28.orig/arch/arm/include/asm/memory.h	2008-12-24 23:26:37.000000000 +0000
-+++ kernel-cssu-2.6.28/arch/arm/include/asm/memory.h	2011-04-18 20:34:23.000000000 +0100
+--- kernel-power-2.6.28.orig/arch/arm/include/asm/memory.h	2008-12-24 23:26:37.000000000 +0000
++++ kernel-power-2.6.28/arch/arm/include/asm/memory.h	2011-04-18 20:34:23.000000000 +0100
 @@ -123,6 +123,12 @@
  #define	__phys_to_pfn(paddr)	((paddr) >> PAGE_SHIFT)
  #define	__pfn_to_phys(pfn)	((pfn) << PAGE_SHIFT)

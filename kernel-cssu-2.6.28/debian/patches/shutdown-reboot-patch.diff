@@ -1,5 +1,5 @@
---- kernel-cssu-2.6.28.orig/arch/arm/mach-omap2/pm.c	2011-11-23 11:17:07.555970502 +0000
-+++ kernel-cssu-2.6.28/arch/arm/mach-omap2/pm.c	2011-11-23 11:10:32.626825000 +0000
+--- kernel-power-2.6.28.orig/arch/arm/mach-omap2/pm.c	2011-11-23 11:17:07.555970502 +0000
++++ kernel-power-2.6.28/arch/arm/mach-omap2/pm.c	2011-11-23 11:10:32.626825000 +0000
 @@ -322,6 +322,8 @@
  			resource_lock_opp(PRCM_VDD1);
  			vdd1_locked = 1;
@@ -18,8 +18,8 @@
  	}
  
  	if (attr == &vdd1_opp_attr) {
---- kernel-cssu-2.6.28.orig/drivers/usb/musb/omap2430.c	2011-11-23 11:17:06.856287549 +0000
-+++ kernel-cssu-2.6.28/drivers/usb/musb/omap2430.c	2011-11-22 19:17:27.367424000 +0000
+--- kernel-power-2.6.28.orig/drivers/usb/musb/omap2430.c	2011-11-23 11:17:06.856287549 +0000
++++ kernel-power-2.6.28/drivers/usb/musb/omap2430.c	2011-11-22 19:17:27.367424000 +0000
 @@ -212,6 +212,7 @@
  }
  

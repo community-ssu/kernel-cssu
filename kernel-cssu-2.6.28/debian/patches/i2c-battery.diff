@@ -1,5 +1,5 @@
---- kernel-cssu-2.6.28.orig/drivers/i2c/i2c-dev.c
-+++ kernel-cssu-2.6.28/drivers/i2c/i2c-dev.c
+--- kernel-power-2.6.28.orig/drivers/i2c/i2c-dev.c
++++ kernel-power-2.6.28/drivers/i2c/i2c-dev.c
 @@ -391,9 +391,6 @@
  		if ((arg > 0x3ff) ||
  		    (((client->flags & I2C_M_TEN) == 0) && arg > 0x7f))

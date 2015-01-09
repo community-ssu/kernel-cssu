@@ -1,5 +1,5 @@
---- kernel-cssu-2.6.28.orig/drivers/media/radio/radio-si4713.c
-+++ kernel-cssu-2.6.28/drivers/media/radio/radio-si4713.c
+--- kernel-power-2.6.28.orig/drivers/media/radio/radio-si4713.c
++++ kernel-power-2.6.28/drivers/media/radio/radio-si4713.c
 @@ -200,8 +200,8 @@
  
  	sscanf(buf, "%d", &l);

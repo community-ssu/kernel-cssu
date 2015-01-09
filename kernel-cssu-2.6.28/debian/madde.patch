@@ -1,7 +1,7 @@
-diff --git a/kernel-cssu-2.6.28/debian/control b/kernel-cssu-2.6.28/debian/control
-index ac43331..ec1431c 100644
---- a/kernel-cssu-2.6.28/debian/control
-+++ b/kernel-cssu-2.6.28/debian/control
+diff --git a/kernel-power-2.6.28/debian/control b/kernel-power-2.6.28/debian/control
+index b4f0406..cd80594 100644
+--- a/kernel-power-2.6.28/debian/control
++++ b/kernel-power-2.6.28/debian/control
 @@ -3,7 +3,7 @@ Section: utils
  Priority: optional
  Maintainer: Pali Rohár <pali.rohar@gmail.com>
@@ -11,11 +11,11 @@ index ac43331..ec1431c 100644
  Build-Depends-Indep: bzip2
  Standards-Version: 3.8.0
  
-diff --git a/kernel-cssu-2.6.28/debian/patches/series b/kernel-cssu-2.6.28/debian/patches/series
-index f4f3d98..74a1598 100644
---- a/kernel-cssu-2.6.28/debian/patches/series
-+++ b/kernel-cssu-2.6.28/debian/patches/series
-@@ -6,6 +6,7 @@ nokia-20101501+0m5.diff
+diff --git a/kernel-power-2.6.28/debian/patches/series b/kernel-power-2.6.28/debian/patches/series
+index 469626f..43e30ca 100644
+--- a/kernel-power-2.6.28/debian/patches/series
++++ b/kernel-power-2.6.28/debian/patches/series
+@@ -9,6 +9,7 @@ nokia-20101501+0m5.diff
  nokia-20103103+0m5.diff
  #nokia-20103103+0m5_usb.diff
  2.6.28.10.diff
@@ -23,11 +23,11 @@ index f4f3d98..74a1598 100644
  rx51_defconfig.diff
  unionfs-2.5.3.diff
  dm-loop.diff
-diff --git a/kernel-cssu-2.6.28/debian/rules b/kernel-cssu-2.6.28/debian/rules
-index 6510f9e..51515ac 100755
---- a/kernel-cssu-2.6.28/debian/rules
-+++ b/kernel-cssu-2.6.28/debian/rules
-@@ -1,6 +1,8 @@
+diff --git a/kernel-power-2.6.28/debian/rules b/kernel-power-2.6.28/debian/rules
+index a78394b..25397d5 100755
+--- a/kernel-power-2.6.28/debian/rules
++++ b/kernel-power-2.6.28/debian/rules
+@@ -1,6 +1,11 @@
  #!/usr/bin/make -f
  #
  
