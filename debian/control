@@ -95,14 +95,14 @@ XB-Maemo-Icon-26:
 Package: kernel-flasher
 Architecture: armel
 Pre-Depends: kernel (= ${binary:Version}), softupd (>= 0.4.0), fiasco-image-update-ask
-Provides: kernel-flasher, kernel-feature-netfilter, kernel-feature-ipv6, kernel-feature-ext4, kernel-feature-xfs, kernel-feature-reiserfs,
+Provides: kernel-feature-netfilter, kernel-feature-ipv6, kernel-feature-ext4, kernel-feature-xfs, kernel-feature-reiserfs,
   kernel-feature-ntfs-read, kernel-feature-udf, kernel-feature-cifs, kernel-feature-automounter, kernel-feature-squashfs,
   kernel-feature-unionfs, kernel-feature-crypto, kernel-feature-dmloop, kernel-feature-utf8, kernel-feature-mousejoy,
-  kernel-feature-usbip, kernel-feature-ppp, kernel-feature-qos, kernel-feature-block2mtd, kernel-feature-kexec,
-  kernel-feature-overclock, kernel-feature-joikuspot, kernel-feature-slip, kernel-feature-battery, kernel-feature-pptp,
-  kernel-feature-wlan-monitor, kernel-feature-radiords, kernel-feature-ioacct, kernel-feature-usbhost, kernel-feature-framebuffer,
-  kernel-feature-smartreflex, kernel-feature-video720p, kernel-feature-packet-injection, kernel-feature-charger,
-  kernel-feature-errata-430973-workaround, kernel-feature-usbhost-new, kernel-feature-sigmask, kernel-feature-rx51-battery,
+  kernel-feature-ppp, kernel-feature-qos, kernel-feature-block2mtd,
+  kernel-feature-overclock, kernel-feature-joikuspot, kernel-feature-slip, kernel-feature-pptp,
+  kernel-feature-wlan-monitor, kernel-feature-radiords, kernel-feature-ioacct, kernel-feature-framebuffer,
+  kernel-feature-smartreflex, kernel-feature-video720p, kernel-feature-packet-injection,
+  kernel-feature-errata-430973-workaround, kernel-feature-sigmask, kernel-feature-rx51-battery,
   kernel-feature-bridge
 Description: Linux kernel updater (kernel 2.6.28-omap1)
  This package will flash the kernel image upon installation
