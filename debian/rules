@@ -169,6 +169,7 @@ install-modules:
 	done
 	ln -s $(RELEASE) $(CURDIR)/debian/$(MODULES_PACKAGE)/lib/modules/current
 	install -m644 $(CURDIR)/debian/kernel-modules.blacklist $(CURDIR)/debian/$(MODULES_PACKAGE)/etc/modprobe.d/blacklist
+	install -m644 $(CURDIR)/debian/kernel-modules.bridgedriver $(CURDIR)/debian/$(MODULES_PACKAGE)/etc/modprobe.d/bridgedriver
 
 install-headers:
 	dh_testdir

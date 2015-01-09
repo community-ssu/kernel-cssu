@@ -1,0 +1,1 @@
+options bridgedriver phys_mempool_base=0 base_img=/lib/dsp/baseimage.dof
