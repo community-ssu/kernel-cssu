@@ -105,7 +105,7 @@ diff --git a/drivers/usb/musb/musb_core.c b/drivers/usb/musb/musb_core.c
 index dee8251..efd1eed 100644
 --- a/drivers/usb/musb/musb_core.c
 +++ b/drivers/usb/musb/musb_core.c
-@@ -2651,8 +2651,6 @@ static int musb_suspend(struct platform_device *pdev, pm_message_t message)
+@@ -2589,8 +2589,6 @@ static int musb_suspend(struct platform_
  	unsigned long	flags;
  	struct musb	*musb = dev_to_musb(&pdev->dev);
  
@@ -114,7 +114,7 @@ index dee8251..efd1eed 100644
  
  	spin_lock_irqsave(&musb->lock, flags);
  
-@@ -2674,12 +2672,18 @@ static int musb_suspend(struct platform_device *pdev, pm_message_t message)
+@@ -2612,12 +2610,18 @@ static int musb_suspend(struct platform_
  	 * musb_save_ctx(musb);
  	 */
  
@@ -137,7 +137,7 @@ index dee8251..efd1eed 100644
  	return 0;
  }
  
-@@ -2688,15 +2692,15 @@ static int musb_resume(struct platform_device *pdev)
+@@ -2626,15 +2630,15 @@ static int musb_resume(struct platform_device *pdev)
  	unsigned long	flags;
  	struct musb	*musb = dev_to_musb(&pdev->dev);
  
@@ -159,7 +159,7 @@ index dee8251..efd1eed 100644
  
  	/* restore context */
  	musb_restore_ctx(musb);
-@@ -2706,6 +2710,8 @@ static int musb_resume(struct platform_device *pdev)
+@@ -2644,6 +2648,8 @@ static int musb_resume(struct platform_device *pdev)
  	 * not treating that as a whole-system restart (e.g. swsusp)
  	 */
  	spin_unlock_irqrestore(&musb->lock, flags);
@@ -168,7 +168,7 @@ index dee8251..efd1eed 100644
  	return 0;
  }
  
-@@ -2767,6 +2773,11 @@ subsys_initcall(musb_init);
+@@ -2705,6 +2711,11 @@ subsys_initcall(musb_init);
  
  static void __exit musb_cleanup(void)
  {
