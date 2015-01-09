@@ -1,3 +1,9 @@
+kernel (2.6.28-20103103+0m5+cssu1) fremantle; urgency=low
+
+  * CSSU kernel based on kernel-power v53
+
+ -- Pali Rohár <pali.rohar@gmail.com>  Fri, 09 Jan 2015 15:16:13 +0100
+
 kernel-power (1:2.6.28-10power53) fremantle; urgency=low
 
   * Backport security fixes from upstream kernel for radio driver in patch radio-bcm2048-security.patch
