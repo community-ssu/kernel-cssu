@@ -18,21 +18,3 @@
  	}
  
  	if (attr == &vdd1_opp_attr) {
---- kernel-power-2.6.28.orig/drivers/usb/musb/omap2430.c	2011-11-23 11:17:06.856287549 +0000
-+++ kernel-power-2.6.28/drivers/usb/musb/omap2430.c	2011-11-22 19:17:27.367424000 +0000
-@@ -212,6 +212,7 @@
- }
- 
- static int musb_platform_resume(struct musb *musb);
-+static int musb_platform_suspend(struct musb *musb);
- 
- int musb_platform_set_mode(struct musb *musb, u8 musb_mode, u8 hostspeed)
- {
-@@ -254,6 +255,7 @@
-                         musb_writeb(musb->mregs, MUSB_DEVCTL, devctl);
-  
-                         musb_writeb(musb->mregs, MUSB_TESTMODE, 0);
-+			musb_platform_suspend(musb);
-                 }
-  
- 		otg_set_peripheral(musb->xceiv, &musb->g);
