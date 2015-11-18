@@ -215,8 +215,9 @@ Description: Linux Kernel headers for development (kernel 2.6.28-omap1)
 Package: kernel-modules
 Architecture: armel
 Depends: module-init-tools (>= 3.3)
-Conflicts: omap3430-dsp-baseimage-ti (<< 0.i3.6-15+0m6)
-Replaces: omap3430-dsp-baseimage-ti (<< 0.i3.6-15+0m6)
+Conflicts: omap3430-dsp-baseimage-ti (<< 0.i3.6-15+0m6), kernel-module-cifs
+Replaces: omap3430-dsp-baseimage-ti (<< 0.i3.6-15+0m6), kernel-module-cifs
+Provides: kernel-module-cifs
 Description: Linux kernel modules (kernel 2.6.28-omap1)
  This package provides kernel modules.
 
