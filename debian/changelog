@@ -1,3 +1,9 @@
+kernel (2.6.28-20103103+0m5+cssu1.2) fremantle; urgency=low
+
+  * Conflicts with Extras package kernel-module-cifs which includes also cifs.ko file
+
+ -- Pali Rohár <pali.rohar@gmail.com>  Wed, 18 Nov 2015 15:03:16 +0100
+
 kernel (2.6.28-20103103+0m5+cssu1.1) fremantle; urgency=low
 
   * Conflicts with old omap3430-dsp-baseimage-ti package which provides also /etc/modprobe.d/bridgedriver file
